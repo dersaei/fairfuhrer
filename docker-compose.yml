@@ -1,0 +1,9 @@
+services:
+  directus:
+    image: directus/directus:11.7.2
+    environment:
+      DATABASE_URL: ${DATABASE_URL}
+      ADMIN_EMAIL: ${DIRECTUS_ADMIN_EMAIL}
+      ADMIN_PASSWORD: ${DIRECTUS_ADMIN_PASSWORD}
+    ports:
+      - "8055:8055"
