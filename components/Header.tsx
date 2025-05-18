@@ -15,6 +15,10 @@ export default function Header() {
         />
       </Link>
 
+      <button className={styles.button55} role="button">
+        Karte
+      </button>
+
       <nav className={styles.nav}>
         <Link href="/ueber-uns" className={styles.navLink}>
           Über uns
