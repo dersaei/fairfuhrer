@@ -1,0 +1,9 @@
+.header {
+  position: relative;
+  padding-top: 2vh;
+  padding-left: 2vw;
+  height: 13vh; /* np. wysokość headera */
+  display: flex;
+  align-items: flex-start; /* jeśli logo ma być przy górnej krawędzi */
+  border-bottom: 1px solid black;
+}
