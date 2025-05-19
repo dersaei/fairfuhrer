@@ -15,11 +15,10 @@ export default function Header() {
         />
       </Link>
 
-      <Link href="/karte" className={styles.button55} role="button">
-        Karte
-      </Link>
-
       <nav className={styles.nav}>
+        <Link href="/karte" className={styles.navLink}>
+          Karte
+        </Link>
         <Link href="/ueber-uns" className={styles.navLink}>
           Über uns
         </Link>
