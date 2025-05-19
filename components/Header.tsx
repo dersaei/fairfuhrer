@@ -15,9 +15,9 @@ export default function Header() {
         />
       </Link>
 
-      <button className={styles.button55} role="button">
+      <Link href="/karte" className={styles.button55} role="button">
         Karte
-      </button>
+      </Link>
 
       <nav className={styles.nav}>
         <Link href="/ueber-uns" className={styles.navLink}>
