@@ -1,0 +1,33 @@
+/* components/CategoryFilter.module.css */
+.filterContainer {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.filterLabel {
+  display: flex;
+  align-items: center;
+  padding: 8px 12px;
+  background: #f8f8f8;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.filterLabel:hover {
+  background: #eee;
+}
+
+.filterCheckbox {
+  margin-right: 8px;
+  width: 16px;
+  height: 16px;
+}
+
+.filterName {
+  font-size: 1vw;
+  color: #333;
+  font-weight: 700;
+  font-family: "Lato", sans-serif;
+}

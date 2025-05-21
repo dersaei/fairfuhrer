@@ -1,26 +1,43 @@
-/* Kontener mapy – pełna szerokość i wysokość pod headerem (90px) */
-.mapContainer {
-  width: 100%;
-  height: calc(100vh - 90px);
+/* components/MapBoxMap.module.css */
+.mapContainerWrapper {
+  flex-grow: 1;
   position: relative;
 }
 
-/* Usuń tło pod domyślnymi sprite’ami Mapbox (markery, logo) */
-.mapboxgl-marker-icon,
-.mapboxgl-marker img,
-.mapboxgl-ctrl-logo {
-  background-color: transparent !important;
-  box-shadow: none !important;
+.mapContainer {
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  top: 0;
+  left: 0;
 }
 
-/* ------------ Popup ------------ */
-/* Jeżeli chcesz zmienić tło popupu, możesz tu nadpisać: */
-.mapboxgl-popup-content {
-  /* domyślnie biały, zostaw lub nadpisz */
-  background: white;
-  border-radius: 4px;
+/* Tymczasowy border do testów */
+.mapContainer.debug {
+  border: 2px solid red !important;
+}
+
+.popupContent {
+  font-family: Arial, sans-serif;
+  max-width: 250px;
   padding: 8px;
 }
-.mapboxgl-popup-tip {
-  background: white;
+
+.popupContent h3 {
+  margin: 0 0 4px 0;
+  font-size: 14px;
+  color: #333;
+}
+
+.address {
+  font-style: italic;
+  color: #666;
+  margin: 0 0 6px 0;
+  font-size: 12px;
+}
+
+.description {
+  color: #444;
+  margin: 0;
+  font-size: 13px;
 }
