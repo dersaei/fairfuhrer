@@ -5,7 +5,7 @@ interface DirectusOrt {
   id: number;
   Name: string;
   Adresse: string;
-  Link: string;
+  Kurzbeschreibung: string;
   Breite: string;
   Lange: string;
 }
@@ -15,7 +15,7 @@ export default async function KartePage() {
   if (!rawUrl) throw new Error("Brakuje DIRECTUS_URL w .env.local");
 
   const baseUrl = rawUrl.replace(/\/+$/, "");
-  const url = `${baseUrl}/items/Orte?fields=id,Name,Adresse,Link,Breite,Lange&limit=-1`;
+  const url = `${baseUrl}/items/Orte?fields=id,Name,Adresse,Kurzbeschreibung,Breite,Lange&limit=-1`;
 
   const res = await fetch(url, { cache: "no-store" });
   if (!res.ok) return <div>Błąd ładowania danych miejsc</div>;
@@ -28,7 +28,7 @@ export default async function KartePage() {
     id: item.id,
     nazwa: item.Name,
     adres: item.Adresse,
-    link: item.Link,
+    kurzbeschreibung: item.Kurzbeschreibung,
     latitude: parseFloat(item.Breite),
     longitude: parseFloat(item.Lange),
   }));
