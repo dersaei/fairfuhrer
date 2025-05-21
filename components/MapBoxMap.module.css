@@ -1,0 +1,26 @@
+/* Kontener mapy – pełna szerokość i wysokość pod headerem (90px) */
+.mapContainer {
+  width: 100%;
+  height: calc(100vh - 90px);
+  position: relative;
+}
+
+/* Usuń tło pod domyślnymi sprite’ami Mapbox (markery, logo) */
+.mapboxgl-marker-icon,
+.mapboxgl-marker img,
+.mapboxgl-ctrl-logo {
+  background-color: transparent !important;
+  box-shadow: none !important;
+}
+
+/* ------------ Popup ------------ */
+/* Jeżeli chcesz zmienić tło popupu, możesz tu nadpisać: */
+.mapboxgl-popup-content {
+  /* domyślnie biały, zostaw lub nadpisz */
+  background: white;
+  border-radius: 4px;
+  padding: 8px;
+}
+.mapboxgl-popup-tip {
+  background: white;
+}

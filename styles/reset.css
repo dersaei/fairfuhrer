@@ -82,7 +82,6 @@ video {
   outline: 0;
   font-size: 100%;
   vertical-align: baseline;
-  background: #fffaf3;
 }
 article,
 aside,
@@ -176,4 +175,26 @@ input[type="submit"] {
 body {
   font-family: var(--font-lato), var(--font-geist-sans), var(--font-geist-mono),
     Arial, sans-serif;
+}
+/* reset.css */
+
+html,
+body,
+#__next {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+}
+
+/* Ustaw body jako flex column: header + main */
+body {
+  display: flex;
+  flex-direction: column;
+}
+
+/* main ma wypełniać resztę wysokości i też flex, by container mapy mógł się rozciągnąć */
+main {
+  flex: 1;
+  display: flex;
+  min-height: 0;
 }
