@@ -12,37 +12,50 @@ interface CategoryFilterProps {
   onToggle: (id: number) => void;
 }
 
+// Używamy bezpośrednio HTMLAttributes zamiast pustego interfejsu
+const FilterLabel: React.FC<React.HTMLAttributes<HTMLSpanElement>> = ({
+  children,
+  ...props
+}) => <span {...props}>{children}</span>;
+
 const CategoryFilter: React.FC<CategoryFilterProps> = ({
   categories,
   selectedIds,
   onToggle,
-}) => (
-  <div className={styles.filterContainer}>
-    {categories.map((category) => {
-      const isActive = selectedIds.includes(category.id);
-      return (
-        <div
-          key={category.id}
-          className={styles.filterLabel}
-          style={{
-            backgroundColor: isActive ? category.color : "transparent",
-            border: `1px solid ${isActive ? "black" : "white"}`,
-          }}
-          onClick={() => onToggle(category.id)}
-          role="button"
-          tabIndex={0}
-          aria-pressed={isActive}
-        >
-          <span
-            className={styles.filterName}
-            style={{ color: isActive ? "black" : "white" }}
+}) => {
+  const handleKeyDown =
+    (id: number) => (e: React.KeyboardEvent<HTMLSpanElement>) => {
+      if (e.key === "Enter" || e.key === " ") {
+        e.preventDefault();
+        onToggle(id);
+      }
+    };
+
+  return (
+    <div className={styles.filterContainer}>
+      {categories.map((category) => {
+        const isActive = selectedIds.includes(category.id);
+        return (
+          <FilterLabel
+            key={category.id}
+            className={`${styles.filterLabel} ${
+              isActive ? styles.active : styles.inactive
+            }`}
+            style={
+              {
+                "--bg-color": category.color,
+              } as React.CSSProperties
+            }
+            onClick={() => onToggle(category.id)}
+            onKeyDown={handleKeyDown(category.id)}
+            tabIndex={0}
           >
-            {category.name}
-          </span>
-        </div>
-      );
-    })}
-  </div>
-);
+            <span className={styles.filterName}>{category.name}</span>
+          </FilterLabel>
+        );
+      })}
+    </div>
+  );
+};
 
 export default CategoryFilter;

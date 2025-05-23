@@ -3,10 +3,10 @@
   display: flex;
   flex-wrap: wrap;
   gap: 12px;
-  width: 100%;
+  max-width: 1200px;
   margin: 0 auto;
   justify-content: center;
-  padding: 2vh 1vw;
+  padding: 15px;
 }
 
 .filterLabel {
@@ -14,8 +14,20 @@
   align-items: center;
   padding: 8px 16px;
   border-radius: 20px;
-  transition: all 0.3s ease;
+  background-color: var(--bg-color, transparent);
+  transition: all 0.2s ease;
   cursor: pointer;
+  opacity: 0.7;
+}
+
+.active {
+  border: 1px solid black;
+  opacity: 1;
+}
+
+.inactive {
+  border: 1px solid white;
+  background-color: transparent;
 }
 
 .filterLabel:hover {
@@ -24,12 +36,11 @@
 }
 
 .filterName {
-  font-size: 1rem;
-  font-family: "Work Sans", sans-serif;
-  font-optical-sizing: auto;
-  font-weight: 400;
-  font-style: normal;
-  transition: color 0.3s ease;
+  font-size: 14px;
+  font-weight: 700;
+  font-family: "Lato", sans-serif;
+  transition: color 0.2s ease;
+  color: inherit;
 }
 
 @media (min-width: 768px) {
