@@ -1,7 +1,7 @@
 // components/MapBoxMap.tsx
 "use client";
 
-import { useRef, useEffect, useCallback } from "react";
+import { useRef, useEffect, useCallback, useState } from "react";
 import mapboxgl from "mapbox-gl";
 import "mapbox-gl/dist/mapbox-gl.css";
 import styles from "./MapBoxMap.module.css";
@@ -28,6 +28,12 @@ export default function MapBoxMap({ places }: MapBoxMapProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const mapRef = useRef<mapboxgl.Map | null>(null);
   const markersRef = useRef<mapboxgl.Marker[]>([]);
+  const panelRef = useRef<HTMLDivElement>(null);
+
+  const [selectedPlace, setSelectedPlace] = useState<Place | null>(null);
+  const [isPanelOpen, setIsPanelOpen] = useState(false);
+  const [render, setRender] = useState(false);
+  const [visible, setVisible] = useState(false);
 
   const initializeMap = useCallback(() => {
     if (mapRef.current || !containerRef.current) return;
@@ -52,6 +58,60 @@ export default function MapBoxMap({ places }: MapBoxMapProps) {
     mapRef.current = map;
   }, []);
 
+  const openPanel = (place: Place) => {
+    setSelectedPlace(place);
+    setIsPanelOpen(true);
+    setRender(true);
+
+    // Podwójny RAF dla płynnej animacji
+    requestAnimationFrame(() => {
+      requestAnimationFrame(() => {
+        setVisible(true);
+      });
+    });
+
+    // Przesuń mapę z opóźnieniem, aby animacja panelu była widoczna
+    setTimeout(() => {
+      if (mapRef.current) {
+        const map = mapRef.current;
+        const currentZoom = map.getZoom();
+
+        // Oblicz przesunięcie - 15% całej szerokości mapy w lewo
+        const bounds = map.getBounds();
+        if (bounds) {
+          const mapWidth = bounds.getEast() - bounds.getWest();
+          const offsetLng = mapWidth * 0; // Centrowanie markera
+
+          map.easeTo({
+            center: [place.longitude - offsetLng, place.latitude],
+            zoom: Math.max(currentZoom, 12),
+            duration: 800,
+            easing: (t) => t * (2 - t), // ease-out
+          });
+        }
+      }
+    }, 100);
+  };
+
+  const closePanel = useCallback(() => {
+    setVisible(false);
+    setIsPanelOpen(false);
+
+    // Powrót do pierwotnego widoku mapy - fitBounds do wszystkich miejsc
+    if (mapRef.current && places.length > 0) {
+      const map = mapRef.current;
+      const bounds = new mapboxgl.LngLatBounds();
+      places.forEach((p) => bounds.extend([p.longitude, p.latitude]));
+
+      map.fitBounds(bounds, {
+        padding: 50,
+        maxZoom: 14,
+        duration: 800,
+        easing: (t) => t * (2 - t), // ease-out
+      });
+    }
+  }, [places]);
+
   const updateMarkers = useCallback(() => {
     const map = mapRef.current;
     if (!map || !map.loaded()) return;
@@ -72,6 +132,8 @@ export default function MapBoxMap({ places }: MapBoxMapProps) {
       }
 
       const color = place.categories[0]?.color || "#3388ff";
+
+      // Popup dla tooltip
       const popupContent = `
         <div class="${styles.popupContent}">
           <h3>${place.nazwa}</h3>
@@ -99,6 +161,7 @@ export default function MapBoxMap({ places }: MapBoxMapProps) {
 
       let popupTimeout: NodeJS.Timeout;
 
+      // Tooltip na hover
       markerElement.addEventListener("mouseenter", () => {
         clearTimeout(popupTimeout);
         marker.togglePopup();
@@ -112,15 +175,54 @@ export default function MapBoxMap({ places }: MapBoxMapProps) {
         }, 300);
       });
 
+      // Panel na kliknięcie
+      markerElement.addEventListener("click", (e) => {
+        e.stopPropagation();
+        // Zamknij tooltip przed otwarciem panelu
+        if (marker.getPopup()?.isOpen()) {
+          marker.togglePopup();
+        }
+        openPanel(place);
+      });
+
       markersRef.current.push(marker);
     });
 
-    if (places.length > 0) {
+    if (places.length > 0 && !isPanelOpen) {
       const bounds = new mapboxgl.LngLatBounds();
       places.forEach((p) => bounds.extend([p.longitude, p.latitude]));
       map.fitBounds(bounds, { padding: 50, maxZoom: 14 });
     }
-  }, [places]);
+  }, [places, isPanelOpen]);
+
+  // Obsługa kliknięcia poza panelem
+  useEffect(() => {
+    if (!render || !visible) return;
+
+    const handler = (e: MouseEvent | TouchEvent) => {
+      const target = e.target as HTMLElement;
+      if (panelRef.current?.contains(target)) return;
+      if (target.closest(".mapboxgl-marker")) return;
+      if (target.closest(".mapboxgl-ctrl")) return;
+      closePanel();
+    };
+
+    document.addEventListener("click", handler);
+    document.addEventListener("touchend", handler);
+
+    return () => {
+      document.removeEventListener("click", handler);
+      document.removeEventListener("touchend", handler);
+    };
+  }, [render, visible, closePanel]);
+
+  // Obsługa końca animacji
+  const onTransitionEnd = (e: React.TransitionEvent<HTMLDivElement>) => {
+    if (e.propertyName === "transform" && !visible) {
+      setRender(false);
+      setSelectedPlace(null);
+    }
+  };
 
   useEffect(() => {
     initializeMap();
@@ -145,10 +247,68 @@ export default function MapBoxMap({ places }: MapBoxMapProps) {
     }
   }, [updateMarkers]);
 
-  // W komponencie MapBoxMap.tsx
   return (
     <div className={styles.mapContainerWrapper}>
-      <div ref={containerRef} className={styles.mapContainer} />
+      <div
+        ref={containerRef}
+        className={`${styles.mapContainer} ${
+          isPanelOpen ? styles.mapWithPanel : ""
+        }`}
+      />
+
+      {render && (
+        <div
+          ref={panelRef}
+          className={`${styles.infoPanel} ${visible ? styles.open : ""}`}
+          onTransitionEnd={onTransitionEnd}
+        >
+          <div className={styles.panelHeader}>
+            <h3>{selectedPlace?.nazwa || "Informacje"}</h3>
+            <button
+              className={styles.closeButton}
+              onClick={closePanel}
+              aria-label="Zamknij panel"
+            >
+              ×
+            </button>
+          </div>
+
+          <div className={styles.panelContent}>
+            {selectedPlace ? (
+              <>
+                <div className={styles.infoSection}>
+                  <h4>Adres</h4>
+                  <p>{selectedPlace.adres}</p>
+                </div>
+
+                <div className={styles.infoSection}>
+                  <h4>Opis</h4>
+                  <p>{selectedPlace.kurzbeschreibung}</p>
+                </div>
+
+                {selectedPlace.categories.length > 0 && (
+                  <div className={styles.infoSection}>
+                    <h4>Kategorie</h4>
+                    <div className={styles.categories}>
+                      {selectedPlace.categories.map((category) => (
+                        <span
+                          key={category.id}
+                          className={styles.categoryTag}
+                          style={{ backgroundColor: category.color }}
+                        >
+                          {category.name}
+                        </span>
+                      ))}
+                    </div>
+                  </div>
+                )}
+              </>
+            ) : (
+              <p>Wybierz punkt na mapie, aby zobaczyć szczegóły.</p>
+            )}
+          </div>
+        </div>
+      )}
     </div>
   );
 }
