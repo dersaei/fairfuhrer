@@ -37,14 +37,15 @@ export default function MapWithFilters({
 
   return (
     <div className={styles.container}>
-      <div className={styles.filterWrapper}>
+      <MapBoxMap places={filteredPlaces} />
+
+      <div className={styles.filtersContainer}>
         <CategoryFilter
           categories={categories}
           selectedIds={selectedCategoryIds}
           onToggle={handleToggleCategory}
         />
       </div>
-      <MapBoxMap places={filteredPlaces} />
     </div>
   );
 }

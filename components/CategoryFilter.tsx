@@ -18,21 +18,30 @@ const CategoryFilter: React.FC<CategoryFilterProps> = ({
   onToggle,
 }) => (
   <div className={styles.filterContainer}>
-    {categories.map((category) => (
-      <label
-        key={category.id}
-        className={styles.filterLabel}
-        style={{ backgroundColor: `${category.color}` }}
-      >
-        <input
-          type="checkbox"
-          checked={selectedIds.includes(category.id)}
-          onChange={() => onToggle(category.id)}
-          className={styles.filterCheckbox}
-        />
-        <span className={styles.filterName}>{category.name}</span>
-      </label>
-    ))}
+    {categories.map((category) => {
+      const isActive = selectedIds.includes(category.id);
+      return (
+        <div
+          key={category.id}
+          className={styles.filterLabel}
+          style={{
+            backgroundColor: isActive ? category.color : "transparent",
+            border: `1px solid ${isActive ? "black" : "white"}`,
+          }}
+          onClick={() => onToggle(category.id)}
+          role="button"
+          tabIndex={0}
+          aria-pressed={isActive}
+        >
+          <span
+            className={styles.filterName}
+            style={{ color: isActive ? "black" : "white" }}
+          >
+            {category.name}
+          </span>
+        </div>
+      );
+    })}
   </div>
 );
 

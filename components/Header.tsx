@@ -16,17 +16,14 @@ export default function Header() {
       </Link>
 
       <nav className={styles.nav}>
-        <Link href="/karte" className={styles.navLink}>
-          Karte
+        <Link href="/" className={styles.navLink}>
+          Home
         </Link>
         <Link href="/ueber-uns" className={styles.navLink}>
           Über uns
         </Link>
         <Link href="/partner-werden" className={styles.navLink}>
           Partner werden
-        </Link>
-        <Link href="/hilfe" className={styles.navLink}>
-          Hilfe
         </Link>
         <Link href="/kontakt" className={styles.navLink}>
           Kontakt

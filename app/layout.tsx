@@ -1,18 +1,8 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono, Lato, Oswald } from "next/font/google";
+import { Lato, Oswald, Work_Sans } from "next/font/google";
 import "../styles/reset.css";
 
 import Header from "../components/Header";
-
-const geistSans = Geist({
-  variable: "--font-geist-sans",
-  subsets: ["latin"],
-});
-
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
-});
 
 const lato = Lato({
   variable: "--font-lato",
@@ -24,7 +14,11 @@ const oswald = Oswald({
   weight: ["400", "700"],
   variable: "--font-oswald",
 });
-
+const workSans = Work_Sans({
+  subsets: ["latin"],
+  weight: "400", // Poprawione: pojedyncza wartość jako string
+  variable: "--font-work-sans", // Poprawione: myślnik zamiast podkreślenia
+});
 export const metadata: Metadata = {
   title: "Fair Führer",
   description:
@@ -39,7 +33,7 @@ export default function RootLayout({
   return (
     <html lang="de">
       <body
-        className={`${geistSans.variable} ${geistMono.variable} ${lato.variable} ${oswald.variable}`}
+        className={`${lato.variable} ${oswald.variable} ${workSans.variable}`}
       >
         <Header />
         <main>{children}</main>
