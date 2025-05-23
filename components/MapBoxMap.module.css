@@ -92,6 +92,37 @@
   padding: 1.5rem;
 }
 
+.audioButton.playing {
+  background: #dc3545;
+  box-shadow: 0 2px 4px rgba(220, 53, 69, 0.3);
+}
+
+.audioButton.playing:hover {
+  background: #c82333;
+}
+
+.audioLabel {
+  font-weight: 500;
+  color: #495057;
+}
+
+/* Nazwa miejsca */
+.placeNameSection {
+  margin-bottom: 1.5rem;
+  text-align: center;
+  padding: 1rem 0;
+  border-bottom: 2px solid #e9ecef;
+}
+
+.placeName {
+  margin: 0;
+  font-size: 1.8rem;
+  font-weight: 700;
+  color: #2c3e50;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+}
+
+/* Sekcje informacyjne */
 .infoSection {
   margin-bottom: 2rem;
 }
@@ -115,6 +146,156 @@
   font-size: 1rem;
   line-height: 1.6;
   color: #343a40;
+}
+
+/* Opis z HTML */
+.description {
+  font-size: 1rem;
+  line-height: 1.6;
+  color: #343a40;
+}
+
+.description h1,
+.description h2,
+.description h3 {
+  color: #2c3e50;
+  margin-top: 1rem;
+  margin-bottom: 0.5rem;
+}
+
+.description p {
+  margin-bottom: 1rem;
+}
+
+.description ul,
+.description ol {
+  margin-bottom: 1rem;
+  padding-left: 1.5rem;
+}
+
+.description strong {
+  font-weight: 600;
+  color: #2c3e50;
+}
+
+/* Galeria */
+.gallery {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+  gap: 0.75rem;
+  margin-top: 0.5rem;
+}
+
+.galleryImageWrapper {
+  position: relative;
+  aspect-ratio: 1;
+  border-radius: 6px;
+  overflow: hidden;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  transition: transform 0.2s ease;
+}
+
+.galleryImageWrapper:hover {
+  transform: scale(1.02);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+}
+
+.galleryImage {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  cursor: pointer;
+  transition: opacity 0.2s ease;
+}
+
+.galleryImage:hover {
+  opacity: 0.9;
+}
+
+/* Modal dla zdjęć */
+.imageModal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.9);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 2000;
+  cursor: pointer;
+}
+
+.modalContent {
+  position: relative;
+  max-width: 90%;
+  max-height: 90%;
+}
+
+.modalImage {
+  max-width: 100%;
+  max-height: 100%;
+  border-radius: 8px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+}
+
+.modalClose {
+  position: absolute;
+  top: -10px;
+  right: -10px;
+  background: rgba(255, 255, 255, 0.9);
+  border: none;
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  font-size: 1.5rem;
+  font-weight: bold;
+  color: #333;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+}
+
+.modalClose:hover {
+  background: white;
+  transform: scale(1.1);
+}
+
+/* Mapa iframe */
+.embeddedMap {
+  margin-top: 0.5rem;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.embeddedMap iframe {
+  width: 100%;
+  height: 200px;
+  border: none;
+}
+
+/* Link zewnętrzny */
+.externalLink {
+  display: inline-block;
+  padding: 0.75rem 1.5rem;
+  background: linear-gradient(135deg, #007bff 0%, #0056b3 100%);
+  color: white;
+  text-decoration: none;
+  border-radius: 6px;
+  font-weight: 500;
+  transition: all 0.2s ease;
+  box-shadow: 0 2px 4px rgba(0, 123, 255, 0.3);
+}
+
+.externalLink:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 8px rgba(0, 123, 255, 0.4);
+  text-decoration: none;
+  color: white;
 }
 
 /* Kategorie */
@@ -175,6 +356,10 @@
   .mapWithPanel {
     width: 60%;
   }
+
+  .gallery {
+    grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+  }
 }
 
 @media (max-width: 768px) {
@@ -205,6 +390,22 @@
   .panelHeader h3 {
     font-size: 1.3rem;
   }
+
+  .mainImage {
+    height: 150px;
+  }
+
+  .placeName {
+    font-size: 1.5rem;
+  }
+
+  .gallery {
+    grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
+  }
+
+  .embeddedMap iframe {
+    height: 150px;
+  }
 }
 
 @media (max-width: 480px) {
@@ -228,5 +429,29 @@
     width: 32px;
     height: 32px;
     font-size: 1.1rem;
+  }
+
+  .mainImage {
+    height: 120px;
+  }
+
+  .placeName {
+    font-size: 1.3rem;
+  }
+
+  .audioButton {
+    width: 45px;
+    height: 45px;
+    font-size: 1.1rem;
+  }
+
+  .gallery {
+    grid-template-columns: repeat(auto-fill, minmax(75px, 1fr));
+    gap: 0.5rem;
+  }
+
+  .externalLink {
+    padding: 0.5rem 1rem;
+    font-size: 0.9rem;
   }
 }

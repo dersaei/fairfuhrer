@@ -35,12 +35,19 @@ interface DirectusOrteKategorie {
 
 interface DirectusOrte {
   id: number;
-  Name: string;
-  Adresse: string;
-  Kurzbeschreibung: string;
+  Name: string; // Nazwa miejsca
+  Adresse: string; // Adres
+  Vollbeschreibung?: string; // Pełny opis (WYSIWYG)
   Breite: string;
   Lange: string;
   Kategorie?: DirectusOrteKategorie[];
+  // Nowe pola dla panelu
+  Hauptbild?: string; // Główne zdjęcie
+  Audio_Datei?: string; // Plik audio
+  Link_URL?: string; // URL linku
+  Link_Text?: string; // Tekst przycisku
+  Galerie_Bilder?: string[]; // Galeria zdjęć
+  Karte_Einbetten?: string; // Kod iframe mapy
 }
 
 export default async function KartePage() {
@@ -49,8 +56,8 @@ export default async function KartePage() {
   const baseUrl = rawUrl.replace(/\/+$/, "");
 
   try {
-    // Pobierz miejsca z kategoriami
-    const orteUrl = `${baseUrl}/items/Orte?fields=id,Name,Adresse,Kurzbeschreibung,Breite,Lange,Kategorie.Kategorie_id.id,Kategorie.Kategorie_id.Name,Kategorie.Kategorie_id.Farbe&limit=-1`;
+    // Pobierz miejsca z kategoriami i nowymi polami mediów
+    const orteUrl = `${baseUrl}/items/Orte?fields=id,Name,Adresse,Vollbeschreibung,Breite,Lange,Hauptbild,Audio_Datei,Link_URL,Link_Text,Galerie_Bilder,Karte_Einbetten,Kategorie.Kategorie_id.id,Kategorie.Kategorie_id.Name,Kategorie.Kategorie_id.Farbe&limit=-1`;
     const orteRes = await fetch(orteUrl, { cache: "no-store" });
 
     if (!orteRes.ok)
@@ -71,7 +78,7 @@ export default async function KartePage() {
       (await kategorieRes.json()) as DirectusCollectionResponse<DirectusKategorie>;
     if (kategorieData.errors) throw new Error(kategorieData.errors[0].message);
 
-    // Mapowanie danych
+    // Mapowanie danych z nowymi polami
     const places: Place[] = orteData.data
       .map((ort) => {
         const latitude = parseFloat(ort.Breite);
@@ -84,9 +91,9 @@ export default async function KartePage() {
 
         return {
           id: ort.id,
-          nazwa: ort.Name,
-          adres: ort.Adresse,
-          kurzbeschreibung: ort.Kurzbeschreibung,
+          nazwa: ort.Name, // Nazwa miejsca (pod audio)
+          adres: ort.Adresse, // Adres
+          vollbeschreibung: ort.Vollbeschreibung, // Pełny opis (WYSIWYG)
           latitude,
           longitude,
           categories:
@@ -95,6 +102,13 @@ export default async function KartePage() {
               name: k.Kategorie_id.Name,
               color: k.Kategorie_id.Farbe,
             })) || [],
+          // Nowe pola dla panelu
+          hauptbild: ort.Hauptbild,
+          audioDatei: ort.Audio_Datei,
+          linkUrl: ort.Link_URL,
+          linkText: ort.Link_Text,
+          galerieBilder: ort.Galerie_Bilder,
+          karteEinbetten: ort.Karte_Einbetten, // Kod iframe mapy
         };
       })
       .filter(Boolean) as Place[];

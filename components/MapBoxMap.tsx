@@ -1,24 +1,17 @@
-// components/MapBoxMap.tsx
+// components/MapBoxMap.tsx (wersja z wykorzystaniem komponentów pomocniczych)
 "use client";
 
 import { useRef, useEffect, useCallback, useState } from "react";
 import mapboxgl from "mapbox-gl";
 import "mapbox-gl/dist/mapbox-gl.css";
 import styles from "./MapBoxMap.module.css";
-
-export interface Place {
-  id: number;
-  nazwa: string;
-  adres: string;
-  kurzbeschreibung: string;
-  latitude: number;
-  longitude: number;
-  categories: Array<{
-    id: number;
-    name: string;
-    color: string;
-  }>;
-}
+import {
+  AudioPlayer,
+  ImageGallery,
+  PlaceImage,
+  EmbeddedMap,
+} from "./MediaComponents";
+import type { Place } from "../types";
 
 interface MapBoxMapProps {
   places: Place[];
@@ -70,25 +63,18 @@ export default function MapBoxMap({ places }: MapBoxMapProps) {
       });
     });
 
-    // Przesuń mapę z opóźnieniem, aby animacja panelu była widoczna
+    // Przesuń mapę z opóźnieniem
     setTimeout(() => {
       if (mapRef.current) {
         const map = mapRef.current;
         const currentZoom = map.getZoom();
 
-        // Oblicz przesunięcie - 15% całej szerokości mapy w lewo
-        const bounds = map.getBounds();
-        if (bounds) {
-          const mapWidth = bounds.getEast() - bounds.getWest();
-          const offsetLng = mapWidth * 0; // Centrowanie markera
-
-          map.easeTo({
-            center: [place.longitude - offsetLng, place.latitude],
-            zoom: Math.max(currentZoom, 12),
-            duration: 800,
-            easing: (t) => t * (2 - t), // ease-out
-          });
-        }
+        map.easeTo({
+          center: [place.longitude, place.latitude],
+          zoom: Math.max(currentZoom, 12),
+          duration: 800,
+          easing: (t) => t * (2 - t),
+        });
       }
     }, 100);
   };
@@ -97,7 +83,7 @@ export default function MapBoxMap({ places }: MapBoxMapProps) {
     setVisible(false);
     setIsPanelOpen(false);
 
-    // Powrót do pierwotnego widoku mapy - fitBounds do wszystkich miejsc
+    // Powrót do pierwotnego widoku mapy
     if (mapRef.current && places.length > 0) {
       const map = mapRef.current;
       const bounds = new mapboxgl.LngLatBounds();
@@ -107,7 +93,7 @@ export default function MapBoxMap({ places }: MapBoxMapProps) {
         padding: 50,
         maxZoom: 14,
         duration: 800,
-        easing: (t) => t * (2 - t), // ease-out
+        easing: (t) => t * (2 - t),
       });
     }
   }, [places]);
@@ -138,7 +124,13 @@ export default function MapBoxMap({ places }: MapBoxMapProps) {
         <div class="${styles.popupContent}">
           <h3>${place.nazwa}</h3>
           <p class="${styles.address}">${place.adres}</p>
-          <p class="${styles.description}">${place.kurzbeschreibung}</p>
+          ${
+            place.vollbeschreibung
+              ? `<p class="${styles.description}">${place.vollbeschreibung
+                  .replace(/<[^>]*>/g, "")
+                  .substring(0, 100)}...</p>`
+              : ""
+          }
         </div>
       `;
 
@@ -178,7 +170,6 @@ export default function MapBoxMap({ places }: MapBoxMapProps) {
       // Panel na kliknięcie
       markerElement.addEventListener("click", (e) => {
         e.stopPropagation();
-        // Zamknij tooltip przed otwarciem panelu
         if (marker.getPopup()?.isOpen()) {
           marker.togglePopup();
         }
@@ -276,16 +267,88 @@ export default function MapBoxMap({ places }: MapBoxMapProps) {
           <div className={styles.panelContent}>
             {selectedPlace ? (
               <>
+                {/* Główne zdjęcie */}
+                {selectedPlace.hauptbild && (
+                  <div className={styles.mainImageSection}>
+                    <PlaceImage
+                      placeId={selectedPlace.id}
+                      filename={selectedPlace.hauptbild}
+                      alt={selectedPlace.nazwa}
+                      type="main"
+                      className={styles.mainImage}
+                    />
+                  </div>
+                )}
+
+                {/* Audio */}
+                {selectedPlace.audioDatei && (
+                  <div className={styles.audioSection}>
+                    <AudioPlayer
+                      placeId={selectedPlace.id}
+                      filename={selectedPlace.audioDatei}
+                    />
+                  </div>
+                )}
+
+                {/* Nazwa miejsca */}
+                <div className={styles.placeNameSection}>
+                  <h2 className={styles.placeName}>{selectedPlace.nazwa}</h2>
+                </div>
+
+                {/* Adres */}
                 <div className={styles.infoSection}>
                   <h4>Adres</h4>
                   <p>{selectedPlace.adres}</p>
                 </div>
 
-                <div className={styles.infoSection}>
-                  <h4>Opis</h4>
-                  <p>{selectedPlace.kurzbeschreibung}</p>
-                </div>
+                {/* Pełny opis */}
+                {selectedPlace.vollbeschreibung && (
+                  <div className={styles.infoSection}>
+                    <h4>Opis</h4>
+                    <div
+                      className={styles.description}
+                      dangerouslySetInnerHTML={{
+                        __html: selectedPlace.vollbeschreibung,
+                      }}
+                    />
+                  </div>
+                )}
 
+                {/* Galeria zdjęć */}
+                {selectedPlace.galerieBilder &&
+                  selectedPlace.galerieBilder.length > 0 && (
+                    <div className={styles.infoSection}>
+                      <h4>Galeria</h4>
+                      <ImageGallery
+                        placeId={selectedPlace.id}
+                        images={selectedPlace.galerieBilder}
+                      />
+                    </div>
+                  )}
+
+                {/* Mapa iframe */}
+                {selectedPlace.karteEinbetten && (
+                  <div className={styles.infoSection}>
+                    <h4>Mapa</h4>
+                    <EmbeddedMap embedCode={selectedPlace.karteEinbetten} />
+                  </div>
+                )}
+
+                {/* Link */}
+                {selectedPlace.linkUrl && (
+                  <div className={styles.infoSection}>
+                    <a
+                      href={selectedPlace.linkUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className={styles.externalLink}
+                    >
+                      {selectedPlace.linkText || "Więcej informacji"}
+                    </a>
+                  </div>
+                )}
+
+                {/* Kategorie */}
                 {selectedPlace.categories.length > 0 && (
                   <div className={styles.infoSection}>
                     <h4>Kategorie</h4>

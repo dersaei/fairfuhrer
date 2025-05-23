@@ -2,9 +2,10 @@
 "use client";
 
 import { useState } from "react";
-import MapBoxMap, { type Place } from "./MapBoxMap";
+import MapBoxMap from "./MapBoxMap";
 import CategoryFilter from "./CategoryFilter";
 import styles from "./MapWithFilters.module.css";
+import type { Place } from "../types";
 
 interface MapWithFiltersProps {
   places: Place[];
