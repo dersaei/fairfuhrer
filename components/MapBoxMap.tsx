@@ -1,10 +1,10 @@
-// components/MapBoxMap.tsx (wersja z wykorzystaniem komponentów pomocniczych)
 "use client";
 
 import { useRef, useEffect, useCallback, useState } from "react";
 import mapboxgl from "mapbox-gl";
 import "mapbox-gl/dist/mapbox-gl.css";
 import styles from "./MapBoxMap.module.css";
+import Image from "next/image";
 import {
   AudioPlayer,
   ImageGallery,
@@ -12,6 +12,7 @@ import {
   EmbeddedMap,
 } from "./MediaComponents";
 import type { Place } from "../types";
+import { getImageUrl } from "../lib/supabase";
 
 interface MapBoxMapProps {
   places: Place[];
@@ -27,6 +28,10 @@ export default function MapBoxMap({ places }: MapBoxMapProps) {
   const [isPanelOpen, setIsPanelOpen] = useState(false);
   const [render, setRender] = useState(false);
   const [visible, setVisible] = useState(false);
+  const [selectedGalleryImage, setSelectedGalleryImage] = useState<
+    string | null
+  >(null);
+  const [currentImageIndex, setCurrentImageIndex] = useState(0);
 
   const initializeMap = useCallback(() => {
     if (mapRef.current || !containerRef.current) return;
@@ -51,19 +56,53 @@ export default function MapBoxMap({ places }: MapBoxMapProps) {
     mapRef.current = map;
   }, []);
 
+  const handleNextImage = useCallback(() => {
+    setCurrentImageIndex(
+      (prev) => (prev + 1) % (selectedPlace?.galerieBilder?.length || 1)
+    );
+  }, [selectedPlace?.galerieBilder]);
+
+  const handlePrevImage = useCallback(() => {
+    setCurrentImageIndex((prev) =>
+      prev === 0 ? (selectedPlace?.galerieBilder?.length || 1) - 1 : prev - 1
+    );
+  }, [selectedPlace?.galerieBilder]);
+
+  useEffect(() => {
+    if (!selectedGalleryImage) return;
+
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Escape") {
+        setSelectedGalleryImage(null);
+      }
+      if (e.key === "ArrowRight") {
+        handleNextImage();
+      }
+      if (e.key === "ArrowLeft") {
+        handlePrevImage();
+      }
+    };
+
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [
+    selectedGalleryImage,
+    currentImageIndex,
+    handleNextImage,
+    handlePrevImage,
+  ]);
+
   const openPanel = (place: Place) => {
     setSelectedPlace(place);
     setIsPanelOpen(true);
     setRender(true);
 
-    // Podwójny RAF dla płynnej animacji
     requestAnimationFrame(() => {
       requestAnimationFrame(() => {
         setVisible(true);
       });
     });
 
-    // Przesuń mapę z opóźnieniem
     setTimeout(() => {
       if (mapRef.current) {
         const map = mapRef.current;
@@ -82,8 +121,9 @@ export default function MapBoxMap({ places }: MapBoxMapProps) {
   const closePanel = useCallback(() => {
     setVisible(false);
     setIsPanelOpen(false);
+    setSelectedGalleryImage(null);
+    setCurrentImageIndex(0);
 
-    // Powrót do pierwotnego widoku mapy
     if (mapRef.current && places.length > 0) {
       const map = mapRef.current;
       const bounds = new mapboxgl.LngLatBounds();
@@ -102,7 +142,6 @@ export default function MapBoxMap({ places }: MapBoxMapProps) {
     const map = mapRef.current;
     if (!map || !map.loaded()) return;
 
-    // Usuń stare markery
     markersRef.current.forEach((marker) => marker.remove());
     markersRef.current = [];
 
@@ -119,7 +158,6 @@ export default function MapBoxMap({ places }: MapBoxMapProps) {
 
       const color = place.categories[0]?.color || "#3388ff";
 
-      // Popup dla tooltip
       const popupContent = `
         <div class="${styles.popupContent}">
           <h3>${place.nazwa}</h3>
@@ -153,7 +191,6 @@ export default function MapBoxMap({ places }: MapBoxMapProps) {
 
       let popupTimeout: NodeJS.Timeout;
 
-      // Tooltip na hover
       markerElement.addEventListener("mouseenter", () => {
         clearTimeout(popupTimeout);
         marker.togglePopup();
@@ -167,7 +204,6 @@ export default function MapBoxMap({ places }: MapBoxMapProps) {
         }, 300);
       });
 
-      // Panel na kliknięcie
       markerElement.addEventListener("click", (e) => {
         e.stopPropagation();
         if (marker.getPopup()?.isOpen()) {
@@ -186,12 +222,12 @@ export default function MapBoxMap({ places }: MapBoxMapProps) {
     }
   }, [places, isPanelOpen]);
 
-  // Obsługa kliknięcia poza panelem
   useEffect(() => {
     if (!render || !visible) return;
 
     const handler = (e: MouseEvent | TouchEvent) => {
       const target = e.target as HTMLElement;
+      if (target.closest(`.${styles.fullscreenModal}`)) return;
       if (panelRef.current?.contains(target)) return;
       if (target.closest(".mapboxgl-marker")) return;
       if (target.closest(".mapboxgl-ctrl")) return;
@@ -207,7 +243,6 @@ export default function MapBoxMap({ places }: MapBoxMapProps) {
     };
   }, [render, visible, closePanel]);
 
-  // Obsługa końca animacji
   const onTransitionEnd = (e: React.TransitionEvent<HTMLDivElement>) => {
     if (e.propertyName === "transform" && !visible) {
       setRender(false);
@@ -256,7 +291,6 @@ export default function MapBoxMap({ places }: MapBoxMapProps) {
           <div className={styles.panelContent}>
             {selectedPlace ? (
               <>
-                {/* Główne zdjęcie */}
                 {selectedPlace.hauptbild && (
                   <div className={styles.mainImageSection}>
                     <PlaceImage
@@ -269,7 +303,6 @@ export default function MapBoxMap({ places }: MapBoxMapProps) {
                   </div>
                 )}
 
-                {/* Audio */}
                 {selectedPlace.audioDatei && (
                   <div className={styles.audioSection}>
                     <AudioPlayer
@@ -279,12 +312,10 @@ export default function MapBoxMap({ places }: MapBoxMapProps) {
                   </div>
                 )}
 
-                {/* Nazwa miejsca */}
                 <div className={styles.placeNameSection}>
                   <h2 className={styles.placeName}>{selectedPlace.nazwa}</h2>
                 </div>
 
-                {/* Pełny opis */}
                 {selectedPlace.vollbeschreibung && (
                   <div className={styles.infoSection}>
                     <div
@@ -296,7 +327,6 @@ export default function MapBoxMap({ places }: MapBoxMapProps) {
                   </div>
                 )}
 
-                {/* Link */}
                 {selectedPlace.linkUrl && (
                   <div className={styles.infoSection}>
                     <a
@@ -310,7 +340,6 @@ export default function MapBoxMap({ places }: MapBoxMapProps) {
                   </div>
                 )}
 
-                {/* Galeria zdjęć */}
                 {selectedPlace.galerieBilder &&
                   selectedPlace.galerieBilder.length > 0 && (
                     <div className={styles.infoSection}>
@@ -318,18 +347,24 @@ export default function MapBoxMap({ places }: MapBoxMapProps) {
                       <ImageGallery
                         placeId={selectedPlace.id}
                         images={selectedPlace.galerieBilder}
+                        onImageClickAction={(imageUrl) => {
+                          const index =
+                            selectedPlace.galerieBilder?.findIndex((img) =>
+                              imageUrl.includes(img)
+                            ) ?? 0;
+                          setCurrentImageIndex(index);
+                          setSelectedGalleryImage(imageUrl);
+                        }}
                       />
                     </div>
                   )}
 
-                {/* Mapa iframe */}
                 {selectedPlace.karteEinbetten && (
                   <div className={styles.infoSection}>
                     <EmbeddedMap embedCode={selectedPlace.karteEinbetten} />
                   </div>
                 )}
 
-                {/* Adres */}
                 <div className={styles.infoSection}>
                   <p>{selectedPlace.adres}</p>
                 </div>
@@ -337,6 +372,63 @@ export default function MapBoxMap({ places }: MapBoxMapProps) {
             ) : (
               <p>Wybierz punkt na mapie, aby zobaczyć szczegóły.</p>
             )}
+          </div>
+        </div>
+      )}
+
+      {selectedGalleryImage && selectedPlace && (
+        <div
+          className={styles.fullscreenModal}
+          onClick={(e) => {
+            if (e.target === e.currentTarget) {
+              setSelectedGalleryImage(null);
+            }
+          }}
+        >
+          <div
+            className={styles.modalContent}
+            onClick={(e) => e.stopPropagation()}
+          >
+            <button
+              className={styles.closeButton}
+              onClick={() => setSelectedGalleryImage(null)}
+            >
+              ×
+            </button>
+
+            <div className={styles.sliderContainer}>
+              <button
+                className={styles.navButtonPrev}
+                onClick={handlePrevImage}
+              >
+                ‹
+              </button>
+
+              <Image
+                src={getImageUrl(
+                  selectedPlace.id,
+                  selectedPlace.galerieBilder?.[currentImageIndex] || "",
+                  "gallery"
+                )}
+                alt="Powiększone zdjęcie"
+                width={1200}
+                height={800}
+                style={{ objectFit: "contain" }}
+                className={styles.modalImage}
+              />
+
+              <button
+                className={styles.navButtonNext}
+                onClick={handleNextImage}
+              >
+                ›
+              </button>
+            </div>
+
+            <div className={styles.imageCounter}>
+              {currentImageIndex + 1} /{" "}
+              {selectedPlace.galerieBilder?.length || 0}
+            </div>
           </div>
         </div>
       )}

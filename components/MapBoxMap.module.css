@@ -210,56 +210,128 @@
   opacity: 0.9;
 }
 
-/* Modal dla zdjęć */
-.imageModal {
+/* Fullscreen Modal */
+.fullscreenModal {
   position: fixed;
   top: 0;
   left: 0;
   width: 100%;
   height: 100%;
-  background: rgba(0, 0, 0, 0.9);
+  background: rgba(0, 0, 0, 0.95);
   display: flex;
   align-items: center;
   justify-content: center;
-  z-index: 2000;
+  z-index: 3000;
   cursor: pointer;
+  animation: fadeIn 0.3s ease;
 }
 
 .modalContent {
   position: relative;
-  max-width: 90%;
-  max-height: 90%;
+  max-width: 90vw;
+  max-height: 90vh;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.sliderContainer {
+  position: relative;
+  width: 100%;
+  height: calc(100% - 50px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .modalImage {
   max-width: 100%;
   max-height: 100%;
-  border-radius: 8px;
+  object-fit: contain;
+  border-radius: 4px;
   box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
 }
 
-.modalClose {
+.navButtonPrev,
+.navButtonNext {
   position: absolute;
-  top: -10px;
-  right: -10px;
-  background: rgba(255, 255, 255, 0.9);
+  top: 50%;
+  transform: translateY(-50%);
+  background: rgba(255, 255, 255, 0.1);
   border: none;
+  color: white;
+  font-size: 3rem;
+  width: 60px;
+  height: 60px;
   border-radius: 50%;
-  width: 40px;
-  height: 40px;
-  font-size: 1.5rem;
-  font-weight: bold;
-  color: #333;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  backdrop-filter: blur(5px);
+}
+
+.navButtonPrev:hover,
+.navButtonNext:hover {
+  background: rgba(255, 255, 255, 0.2);
+  transform: translateY(-50%) scale(1.1);
+}
+
+.navButtonPrev {
+  left: 20px;
+}
+
+.navButtonNext {
+  right: 20px;
+}
+
+.imageCounter {
+  position: absolute;
+  bottom: 20px;
+  color: white;
+  font-size: 1.2rem;
+  background: rgba(0, 0, 0, 0.5);
+  padding: 8px 16px;
+  border-radius: 20px;
+  backdrop-filter: blur(5px);
+}
+
+.closeButton {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  background: rgba(0, 0, 0, 0.5);
+  border: none;
+  color: white;
+  font-size: 2.5rem;
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
   cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
-  transition: all 0.2s ease;
+  transition: all 0.3s ease;
+  backdrop-filter: blur(5px);
+  z-index: 10;
 }
 
-.modalClose:hover {
-  background: white;
+.closeButton:hover {
+  background: rgba(0, 0, 0, 0.8);
   transform: scale(1.1);
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
 }
 
 /* Mapa iframe */
@@ -295,55 +367,6 @@
   box-shadow: 0 4px 8px rgba(0, 123, 255, 0.4);
   text-decoration: none;
   color: white;
-}
-
-/* Kategorie */
-.categories {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.5rem;
-}
-
-.categoryTag {
-  display: inline-block;
-  padding: 0.4rem 0.8rem;
-  border-radius: 16px;
-  font-size: 0.85rem;
-  font-weight: 500;
-  color: #ffffff;
-  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  transition: transform 0.2s ease;
-}
-
-.categoryTag:hover {
-  transform: translateY(-1px);
-}
-
-/* Popup content dla markerów */
-.popupContent {
-  font-family: Arial, sans-serif;
-  max-width: 250px;
-  padding: 8px;
-}
-
-.popupContent h3 {
-  margin: 0 0 4px 0;
-  font-size: 14px;
-  color: #333;
-}
-
-.address {
-  font-style: italic;
-  color: #666;
-  margin: 0 0 6px 0;
-  font-size: 12px;
-}
-
-.description {
-  color: #444;
-  margin: 0;
-  font-size: 13px;
 }
 
 /* Responsywność */
@@ -405,6 +428,21 @@
   .embeddedMap iframe {
     height: 150px;
   }
+
+  /* Touch devices */
+  @media (hover: none) and (pointer: coarse) {
+    .navButtonPrev,
+    .navButtonNext {
+      width: 40px;
+      height: 40px;
+      font-size: 2rem;
+    }
+
+    .imageCounter {
+      font-size: 1rem;
+      bottom: 10px;
+    }
+  }
 }
 
 @media (max-width: 480px) {
@@ -453,4 +491,30 @@
     padding: 0.5rem 1rem;
     font-size: 0.9rem;
   }
+}
+
+/* Popup content dla markerów */
+.popupContent {
+  font-family: Arial, sans-serif;
+  max-width: 250px;
+  padding: 8px;
+}
+
+.popupContent h3 {
+  margin: 0 0 4px 0;
+  font-size: 14px;
+  color: #333;
+}
+
+.address {
+  font-style: italic;
+  color: #666;
+  margin: 0 0 6px 0;
+  font-size: 12px;
+}
+
+.description {
+  color: #444;
+  margin: 0;
+  font-size: 13px;
 }

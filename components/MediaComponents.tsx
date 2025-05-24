@@ -1,4 +1,3 @@
-// components/MediaComponents.tsx
 "use client";
 
 import { useState, useRef } from "react";
@@ -108,169 +107,40 @@ interface ImageGalleryProps {
   placeId: number;
   images: string[];
   className?: string;
+  onImageClickAction: (imageUrl: string) => void;
 }
 
 export function ImageGallery({
   placeId,
   images,
   className = "",
+  onImageClickAction,
 }: ImageGalleryProps) {
-  const [selectedImageIndex, setSelectedImageIndex] = useState<number | null>(
-    null
-  );
-
   if (!images || images.length === 0) return null;
 
-  const openModal = (index: number) => {
-    setSelectedImageIndex(index);
-    // Zablokuj scroll na body
-    document.body.style.overflow = "hidden";
-  };
-
-  const closeModal = () => {
-    setSelectedImageIndex(null);
-    // Przywróć scroll
-    document.body.style.overflow = "unset";
-  };
-
-  const goToPrevious = () => {
-    if (selectedImageIndex === null) return;
-    setSelectedImageIndex(
-      selectedImageIndex === 0 ? images.length - 1 : selectedImageIndex - 1
-    );
-  };
-
-  const goToNext = () => {
-    if (selectedImageIndex === null) return;
-    setSelectedImageIndex(
-      selectedImageIndex === images.length - 1 ? 0 : selectedImageIndex + 1
-    );
-  };
-
-  const handleKeyDown = (e: React.KeyboardEvent) => {
-    if (e.key === "Escape") closeModal();
-    if (e.key === "ArrowLeft") goToPrevious();
-    if (e.key === "ArrowRight") goToNext();
-  };
-
   return (
-    <>
-      <div className={`${styles.gallery} ${className}`}>
-        {images.map((imageName, index) => (
-          <div key={index} className={styles.galleryItem}>
-            <Image
-              src={getImageUrl(placeId, imageName, "gallery")}
-              alt={`Zdjęcie ${index + 1}`}
-              className={styles.galleryImage}
-              width={300}
-              height={200}
-              style={{ objectFit: "cover" }}
-              onClick={() => openModal(index)}
-              onError={(e) => {
-                const target = e.target as HTMLImageElement;
-                target.style.display = "none";
-              }}
-            />
-          </div>
-        ))}
-      </div>
-
-      {selectedImageIndex !== null && (
-        <div
-          className={styles.galleryModal}
-          onClick={closeModal}
-          onKeyDown={handleKeyDown}
-          tabIndex={0}
-          role="dialog"
-          aria-modal="true"
-          aria-label="Galeria zdjęć"
-        >
-          <div
-            className={styles.galleryModalContent}
-            onClick={(e) => e.stopPropagation()}
-          >
-            {/* Przycisk zamknięcia */}
-            <button
-              className={styles.galleryModalClose}
-              onClick={closeModal}
-              aria-label="Zamknij galerię"
-            >
-              ×
-            </button>
-
-            {/* Licznik zdjęć */}
-            <div className={styles.imageCounter}>
-              {selectedImageIndex + 1} / {images.length}
-            </div>
-
-            {/* Główne zdjęcie */}
-            <div className={styles.mainImageContainer}>
-              <Image
-                src={getImageUrl(
-                  placeId,
-                  images[selectedImageIndex],
-                  "gallery"
-                )}
-                alt={`Zdjęcie ${selectedImageIndex + 1}`}
-                className={styles.galleryModalImage}
-                width={1200}
-                height={800}
-                style={{ objectFit: "contain" }}
-                priority
-              />
-            </div>
-
-            {/* Przyciski nawigacji */}
-            {images.length > 1 && (
-              <>
-                <button
-                  className={`${styles.navButton} ${styles.prevButton}`}
-                  onClick={goToPrevious}
-                  aria-label="Poprzednie zdjęcie"
-                >
-                  ‹
-                </button>
-                <button
-                  className={`${styles.navButton} ${styles.nextButton}`}
-                  onClick={goToNext}
-                  aria-label="Następne zdjęcie"
-                >
-                  ›
-                </button>
-              </>
-            )}
-
-            {/* Miniaturki (slider) */}
-            {images.length > 1 && (
-              <div className={styles.thumbnailSlider}>
-                <div className={styles.thumbnailContainer}>
-                  {images.map((imageName, index) => (
-                    <div
-                      key={index}
-                      className={`${styles.thumbnail} ${
-                        index === selectedImageIndex
-                          ? styles.activeThumbnail
-                          : ""
-                      }`}
-                      onClick={() => setSelectedImageIndex(index)}
-                    >
-                      <Image
-                        src={getImageUrl(placeId, imageName, "gallery")}
-                        alt={`Miniatura ${index + 1}`}
-                        width={80}
-                        height={60}
-                        style={{ objectFit: "cover" }}
-                        className={styles.thumbnailImage}
-                      />
-                    </div>
-                  ))}
-                </div>
-              </div>
-            )}
-          </div>
+    <div className={`${styles.gallery} ${className}`}>
+      {images.map((imageName, index) => (
+        <div key={index} className={styles.galleryItem}>
+          <Image
+            src={getImageUrl(placeId, imageName, "gallery")}
+            alt={`Zdjęcie ${index + 1}`}
+            className={styles.galleryImage}
+            width={300}
+            height={200}
+            style={{ objectFit: "cover" }}
+            onClick={() => {
+              const imageUrl = getImageUrl(placeId, imageName, "gallery");
+              onImageClickAction(imageUrl);
+            }}
+            onError={(e) => {
+              const target = e.target as HTMLImageElement;
+              target.style.display = "none";
+            }}
+          />
         </div>
-      )}
-    </>
+      ))}
+    </div>
   );
 }
 
