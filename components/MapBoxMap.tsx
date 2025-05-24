@@ -40,7 +40,7 @@ export default function MapBoxMap({ places }: MapBoxMapProps) {
       attributionControl: false,
     });
 
-    map.addControl(new mapboxgl.NavigationControl(), "top-right");
+    map.addControl(new mapboxgl.NavigationControl(), "top-left");
     map.addControl(
       new mapboxgl.AttributionControl({
         compact: true,
@@ -253,17 +253,6 @@ export default function MapBoxMap({ places }: MapBoxMapProps) {
           className={`${styles.infoPanel} ${visible ? styles.open : ""}`}
           onTransitionEnd={onTransitionEnd}
         >
-          <div className={styles.panelHeader}>
-            <h3>{selectedPlace?.nazwa || "Informacje"}</h3>
-            <button
-              className={styles.closeButton}
-              onClick={closePanel}
-              aria-label="Zamknij panel"
-            >
-              ×
-            </button>
-          </div>
-
           <div className={styles.panelContent}>
             {selectedPlace ? (
               <>
@@ -295,42 +284,15 @@ export default function MapBoxMap({ places }: MapBoxMapProps) {
                   <h2 className={styles.placeName}>{selectedPlace.nazwa}</h2>
                 </div>
 
-                {/* Adres */}
-                <div className={styles.infoSection}>
-                  <h4>Adres</h4>
-                  <p>{selectedPlace.adres}</p>
-                </div>
-
                 {/* Pełny opis */}
                 {selectedPlace.vollbeschreibung && (
                   <div className={styles.infoSection}>
-                    <h4>Opis</h4>
                     <div
                       className={styles.description}
                       dangerouslySetInnerHTML={{
                         __html: selectedPlace.vollbeschreibung,
                       }}
                     />
-                  </div>
-                )}
-
-                {/* Galeria zdjęć */}
-                {selectedPlace.galerieBilder &&
-                  selectedPlace.galerieBilder.length > 0 && (
-                    <div className={styles.infoSection}>
-                      <h4>Galeria</h4>
-                      <ImageGallery
-                        placeId={selectedPlace.id}
-                        images={selectedPlace.galerieBilder}
-                      />
-                    </div>
-                  )}
-
-                {/* Mapa iframe */}
-                {selectedPlace.karteEinbetten && (
-                  <div className={styles.infoSection}>
-                    <h4>Mapa</h4>
-                    <EmbeddedMap embedCode={selectedPlace.karteEinbetten} />
                   </div>
                 )}
 
@@ -343,28 +305,34 @@ export default function MapBoxMap({ places }: MapBoxMapProps) {
                       rel="noopener noreferrer"
                       className={styles.externalLink}
                     >
-                      {selectedPlace.linkText || "Więcej informacji"}
+                      {selectedPlace.linkText || "Website besuchen"}
                     </a>
                   </div>
                 )}
 
-                {/* Kategorie */}
-                {selectedPlace.categories.length > 0 && (
-                  <div className={styles.infoSection}>
-                    <h4>Kategorie</h4>
-                    <div className={styles.categories}>
-                      {selectedPlace.categories.map((category) => (
-                        <span
-                          key={category.id}
-                          className={styles.categoryTag}
-                          style={{ backgroundColor: category.color }}
-                        >
-                          {category.name}
-                        </span>
-                      ))}
+                {/* Galeria zdjęć */}
+                {selectedPlace.galerieBilder &&
+                  selectedPlace.galerieBilder.length > 0 && (
+                    <div className={styles.infoSection}>
+                      <h4>Spot-Bildergalerie</h4>
+                      <ImageGallery
+                        placeId={selectedPlace.id}
+                        images={selectedPlace.galerieBilder}
+                      />
                     </div>
+                  )}
+
+                {/* Mapa iframe */}
+                {selectedPlace.karteEinbetten && (
+                  <div className={styles.infoSection}>
+                    <EmbeddedMap embedCode={selectedPlace.karteEinbetten} />
                   </div>
                 )}
+
+                {/* Adres */}
+                <div className={styles.infoSection}>
+                  <p>{selectedPlace.adres}</p>
+                </div>
               </>
             ) : (
               <p>Wybierz punkt na mapie, aby zobaczyć szczegóły.</p>

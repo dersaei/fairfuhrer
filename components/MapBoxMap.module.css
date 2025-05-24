@@ -108,10 +108,9 @@
 
 /* Nazwa miejsca */
 .placeNameSection {
-  margin-bottom: 1.5rem;
-  text-align: center;
+  margin-top: 1vh;
+  text-align: left;
   padding: 1rem 0;
-  border-bottom: 2px solid #e9ecef;
 }
 
 .placeName {
@@ -133,12 +132,11 @@
 
 .infoSection h4 {
   margin: 0 0 0.75rem 0;
-  font-size: 1.1rem;
-  font-weight: 600;
+  font-weight: 700;
   color: #495057;
   text-transform: uppercase;
   letter-spacing: 0.5px;
-  font-size: 0.9rem;
+  font-size: 1rem;
 }
 
 .infoSection p {
@@ -281,8 +279,9 @@
 /* Link zewnętrzny */
 .externalLink {
   display: inline-block;
+  margin: 0 auto;
   padding: 0.75rem 1.5rem;
-  background: linear-gradient(135deg, #007bff 0%, #0056b3 100%);
+  background: rgba(252, 108, 20, 1);
   color: white;
   text-decoration: none;
   border-radius: 6px;

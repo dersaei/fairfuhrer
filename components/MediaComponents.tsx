@@ -85,9 +85,7 @@ export function AudioPlayer({
           <label
             htmlFor={`audio-progress-${placeId}-${filename}`}
             className="sr-only"
-          >
-            Pasek postępu audio
-          </label>
+          ></label>
           <input
             id={`audio-progress-${placeId}-${filename}`}
             type="range"
@@ -198,9 +196,7 @@ export function PlaceImage({
 
   return (
     <div className={`${styles.imageContainer} ${className}`}>
-      {!imageLoaded && (
-        <div className={styles.imagePlaceholder}>Ładowanie...</div>
-      )}
+      {!imageLoaded && <div className={styles.imagePlaceholder}>Laden...</div>}
       <Image
         src={getImageUrl(placeId, filename, type)}
         alt={alt}

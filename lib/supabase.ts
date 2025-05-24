@@ -19,6 +19,6 @@ export const getImageUrl = (
 export const getAudioUrl = (placeId: number, filename: string) => {
   const { data } = supabase.storage
     .from("media-files")
-    .getPublicUrl(`places/audio/${placeId}/${filename}`);
+    .getPublicUrl(`places/audio/${filename}`);
   return data.publicUrl;
 };
