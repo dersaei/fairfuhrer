@@ -7,8 +7,8 @@ export default function Header() {
     <header className={styles.header}>
       <Link href="/">
         <Image
-          src="/images/fairfuehrer logo.avif"
-          alt="Fair führer Logo"
+          src="/images/fair-guide-logo.png"
+          alt="Fair Guide Logo"
           width={226}
           height={65}
           priority

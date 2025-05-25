@@ -20,7 +20,7 @@ const workSans = Work_Sans({
   variable: "--font-work-sans", // Poprawione: myślnik zamiast podkreślenia
 });
 export const metadata: Metadata = {
-  title: "Fair Führer",
+  title: "Fair Guide",
   description:
     "DER DIGITALE REISEFÜHRER FÜR NACHHALTIGESLEBEN & REISEN AM BODENSEE UND IM ALLGÄU",
 };
