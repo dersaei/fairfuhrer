@@ -4,6 +4,12 @@ import { useState, useRef } from "react";
 import Image from "next/image";
 import { getImageUrl, getAudioUrl } from "../lib/supabase";
 import styles from "./MediaComponents.module.css";
+import {
+  PlayIcon,
+  PauseIcon,
+  SkipBackIcon,
+  SkipForwardIcon,
+} from "./AudioIcons";
 
 interface AudioPlayerProps {
   placeId: number;
@@ -91,7 +97,7 @@ export function AudioPlayer({
           onClick={skipBackward}
           title="5 sekund wstecz"
         >
-          ⏪
+          <SkipBackIcon size={32} />
         </button>
 
         <button
@@ -100,7 +106,7 @@ export function AudioPlayer({
           onClick={togglePlay}
           title={isPlaying ? "Pauza" : "Odtwórz"}
         >
-          {isPlaying ? "⏸️" : "▶️"}
+          {isPlaying ? <PauseIcon size={40} /> : <PlayIcon size={40} />}
         </button>
 
         <button
@@ -109,7 +115,7 @@ export function AudioPlayer({
           onClick={skipForward}
           title="5 sekund do przodu"
         >
-          ⏩
+          <SkipForwardIcon size={32} />
         </button>
       </div>
 
