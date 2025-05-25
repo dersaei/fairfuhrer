@@ -291,26 +291,28 @@ export default function MapBoxMap({ places }: MapBoxMapProps) {
           <div className={styles.panelContent}>
             {selectedPlace ? (
               <>
-                {selectedPlace.hauptbild && (
-                  <div className={styles.mainImageSection}>
-                    <PlaceImage
-                      placeId={selectedPlace.id}
-                      filename={selectedPlace.hauptbild}
-                      alt={selectedPlace.nazwa}
-                      type="main"
-                      className={styles.mainImage}
-                    />
-                  </div>
-                )}
+                <div className={styles.imageAudioContainer}>
+                  {selectedPlace.hauptbild && (
+                    <div className={styles.mainImageSection}>
+                      <PlaceImage
+                        placeId={selectedPlace.id}
+                        filename={selectedPlace.hauptbild}
+                        alt={selectedPlace.nazwa}
+                        type="main"
+                        className={styles.mainImage}
+                      />
+                    </div>
+                  )}
 
-                {selectedPlace.audioDatei && (
-                  <div className={styles.audioSection}>
-                    <AudioPlayer
-                      placeId={selectedPlace.id}
-                      filename={selectedPlace.audioDatei}
-                    />
-                  </div>
-                )}
+                  {selectedPlace.audioDatei && (
+                    <div className={styles.audioSection}>
+                      <AudioPlayer
+                        placeId={selectedPlace.id}
+                        filename={selectedPlace.audioDatei}
+                      />
+                    </div>
+                  )}
+                </div>
 
                 <div className={styles.placeNameSection}>
                   <h2 className={styles.placeName}>{selectedPlace.nazwa}</h2>

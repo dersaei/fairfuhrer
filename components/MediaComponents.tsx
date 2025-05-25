@@ -31,6 +31,20 @@ export function AudioPlayer({
     }
   };
 
+  const skipBackward = () => {
+    if (!audioRef.current) return;
+    const newTime = Math.max(0, audioRef.current.currentTime - 5);
+    audioRef.current.currentTime = newTime;
+    setCurrentTime(newTime);
+  };
+
+  const skipForward = () => {
+    if (!audioRef.current) return;
+    const newTime = Math.min(duration, audioRef.current.currentTime + 5);
+    audioRef.current.currentTime = newTime;
+    setCurrentTime(newTime);
+  };
+
   const handleTimeUpdate = () => {
     if (audioRef.current) {
       setCurrentTime(audioRef.current.currentTime);
@@ -73,31 +87,46 @@ export function AudioPlayer({
       <div className={styles.audioControls}>
         <button
           type="button"
+          className={styles.skipButton}
+          onClick={skipBackward}
+          title="5 sekund wstecz"
+        >
+          ⏪
+        </button>
+
+        <button
+          type="button"
           className={`${styles.playButton} ${isPlaying ? styles.playing : ""}`}
           onClick={togglePlay}
+          title={isPlaying ? "Pauza" : "Odtwórz"}
         >
           {isPlaying ? "⏸️" : "▶️"}
         </button>
 
-        <div className={styles.timeInfo}>
-          <span className={styles.currentTime}>{formatTime(currentTime)}</span>
-          <label
-            htmlFor={`audio-progress-${placeId}-${filename}`}
-            className="sr-only"
-          ></label>
-          <input
-            id={`audio-progress-${placeId}-${filename}`}
-            type="range"
-            min="0"
-            max={duration || 0}
-            value={currentTime}
-            onChange={handleSeek}
-            className={styles.progressBar}
-            aria-label="Pasek postępu audio"
-            title="Przeciągnij aby przesunąć się w nagraniu"
-          />
-          <span className={styles.duration}>{formatTime(duration)}</span>
-        </div>
+        <button
+          type="button"
+          className={styles.skipButton}
+          onClick={skipForward}
+          title="5 sekund do przodu"
+        >
+          ⏩
+        </button>
+      </div>
+
+      <div className={styles.progressContainer}>
+        <span className={styles.currentTime}>{formatTime(currentTime)}</span>
+        <input
+          id={`audio-progress-${placeId}-${filename}`}
+          type="range"
+          min="0"
+          max={duration || 0}
+          value={currentTime}
+          onChange={handleSeek}
+          className={styles.progressBar}
+          aria-label="Pasek postępu audio"
+          title="Przeciągnij aby przesunąć się w nagraniu"
+        />
+        <span className={styles.duration}>{formatTime(duration)}</span>
       </div>
     </div>
   );
