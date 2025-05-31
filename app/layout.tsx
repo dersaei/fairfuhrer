@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Lato, Oswald, Work_Sans } from "next/font/google";
+import { Lato, Oswald, Work_Sans, Staatliches } from "next/font/google";
 import "../styles/reset.css";
 
 import Header from "../components/Header";
@@ -8,6 +8,11 @@ const lato = Lato({
   variable: "--font-lato",
   subsets: ["latin"],
   weight: ["400", "700"],
+});
+const staatliches = Staatliches({
+  variable: "--font-staatliches",
+  subsets: ["latin"],
+  weight: "400",
 });
 const oswald = Oswald({
   subsets: ["latin"],
@@ -33,7 +38,7 @@ export default function RootLayout({
   return (
     <html lang="de">
       <body
-        className={`${lato.variable} ${oswald.variable} ${workSans.variable}`}
+        className={`${lato.variable} ${oswald.variable} ${workSans.variable} ${staatliches.variable}`}
       >
         <Header />
         <main>{children}</main>

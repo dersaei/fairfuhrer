@@ -113,7 +113,9 @@ export default function HomePage() {
         <br />
         Fair-Führer
         <br />
-        für Geschichte und gute
+        für Geschichte
+        <br />
+        und gute
         <br />
         Geschichten
       </div>
