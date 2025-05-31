@@ -36,26 +36,17 @@ export default function ContactForm() {
         !formData.subject ||
         !formData.message
       ) {
-        alert("Wszystkie pola są wymagane");
+        alert("Alle Felder sind erforderlich");
         return;
       }
 
       if (!formData.email.includes("@")) {
-        alert("Podaj prawidłowy adres email");
+        alert("Bitte geben Sie eine gültige E-Mail-Adresse ein");
         return;
       }
 
-      // POPRAWKA: Używamy zmiennej środowiskowej z NEXT_PUBLIC_
-      const directusUrl = process.env.NEXT_PUBLIC_DIRECTUS_URL;
-
-      if (!directusUrl) {
-        console.error("Brak NEXT_PUBLIC_DIRECTUS_URL");
-        setSubmitStatus("error");
-        return;
-      }
-
-      // Wysłanie bezpośrednio do Directus
-      const response = await fetch(`${directusUrl}/items/contact_messages`, {
+      // POPRAWKA: Używamy lokalnego API route zamiast bezpośredniego Directus
+      const response = await fetch("/api/contact", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -65,7 +56,6 @@ export default function ContactForm() {
           email: formData.email,
           subject: formData.subject,
           message: formData.message,
-          created_at: new Date().toISOString(),
         }),
       });
 
@@ -77,7 +67,7 @@ export default function ContactForm() {
         setSubmitStatus("error");
       }
     } catch (error) {
-      console.error("Błąd wysyłania:", error);
+      console.error("Fehler beim Senden:", error);
       setSubmitStatus("error");
     } finally {
       setIsSubmitting(false);
@@ -93,23 +83,24 @@ export default function ContactForm() {
 
   return (
     <div className={styles.contactForm}>
-      <h2>Wyślij wiadomość</h2>
+      <h2>Senden Sie uns eine Nachricht</h2>
 
       {submitStatus === "success" && (
         <div className={styles.successMessage}>
-          ✅ Wiadomość wysłana! Odpowiemy wkrótce.
+          ✅ Nachricht gesendet! Wir antworten Ihnen in Kürze!
         </div>
       )}
 
       {submitStatus === "error" && (
         <div className={styles.errorMessage}>
-          ❌ Wystąpił błąd. Spróbuj ponownie lub napisz bezpośrednio na email.
+          ❌ Es ist ein Fehler aufgetreten. Bitte versuchen Sie es erneut oder
+          schreiben Sie direkt an unsere E-Mail-Adresse.
         </div>
       )}
 
       <form onSubmit={handleSubmit}>
         <div className={styles.formGroup}>
-          <label htmlFor="name">Imię i nazwisko</label>
+          <label htmlFor="name">Name</label>
           <input
             type="text"
             id="name"
@@ -135,7 +126,7 @@ export default function ContactForm() {
         </div>
 
         <div className={styles.formGroup}>
-          <label htmlFor="subject">Temat</label>
+          <label htmlFor="subject">Betreff</label>
           <input
             type="text"
             id="subject"
@@ -148,7 +139,7 @@ export default function ContactForm() {
         </div>
 
         <div className={styles.formGroup}>
-          <label htmlFor="message">Wiadomość</label>
+          <label htmlFor="message">Nachricht</label>
           <textarea
             id="message"
             name="message"
@@ -157,7 +148,7 @@ export default function ContactForm() {
             onChange={handleChange}
             required
             disabled={isSubmitting}
-            placeholder="Opisz szczegóły swojego zapytania..."
+            placeholder="Beschreiben Sie Ihr Anliegen im Detail ..."
           />
         </div>
 
@@ -166,7 +157,7 @@ export default function ContactForm() {
           disabled={isSubmitting}
           className={styles.submitButton}
         >
-          {isSubmitting ? "Wysyłanie..." : "Wyślij wiadomość"}
+          {isSubmitting ? "Wird gesendet ..." : "Nachricht senden"}
         </button>
       </form>
     </div>

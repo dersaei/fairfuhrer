@@ -1,13 +1,15 @@
 /* app/kontakt/ContactForm.module.css */
 .contactForm {
-  background: white;
+  background-color: #fffaf3;
   border-radius: 12px;
   padding: 2rem;
-  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+  box-shadow: rgba(14, 30, 37, 0.12) 0px 2px 4px 0px,
+    rgba(14, 30, 37, 0.32) 0px 2px 16px 0px;
+  height: fit-content;
 }
 
 .contactForm h2 {
-  font-size: 1.875rem;
+  font-size: 2rem;
   font-weight: 700;
   color: #1e293b;
   margin-bottom: 1.5rem;
@@ -54,6 +56,7 @@
   transition: border-color 0.2s, box-shadow 0.2s;
   box-sizing: border-box;
   font-family: inherit;
+  box-shadow: rgba(33, 35, 38, 0.1) 0px 10px 10px -10px;
 }
 
 .formGroup input:focus,
@@ -76,7 +79,7 @@
 
 .submitButton {
   width: 100%;
-  background: #3b82f6;
+  background: rgba(252, 108, 20, 1);
   color: white;
   border: none;
   padding: 0.875rem 1.5rem;
@@ -88,7 +91,7 @@
 }
 
 .submitButton:hover:not(:disabled) {
-  background: #2563eb;
+  background: crimson;
   transform: translateY(-1px);
 }
 

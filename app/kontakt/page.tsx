@@ -13,18 +13,9 @@ export const metadata: Metadata = {
 export default function KontaktPage() {
   return (
     <div className={styles.contactPage}>
-      <div className={styles.container}>
-        <header className={styles.pageHeader}>
-          <h1>Skontaktuj się z nami</h1>
-          <p>
-            Jesteśmy tutaj, aby pomóc i odpowiedzieć na wszystkie Twoje pytania.
-          </p>
-        </header>
-
-        <div className={styles.contactContent}>
-          <ContactInfo />
-          <ContactForm />
-        </div>
+      <div className={styles.contactContent}>
+        <ContactInfo />
+        <ContactForm />
       </div>
     </div>
   );

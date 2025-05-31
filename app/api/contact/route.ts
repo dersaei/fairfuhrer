@@ -1,0 +1,74 @@
+// app/api/contact/route.ts
+import { NextRequest, NextResponse } from "next/server";
+
+interface ContactFormData {
+  name: string;
+  email: string;
+  subject: string;
+  message: string;
+}
+
+export async function POST(request: NextRequest) {
+  try {
+    const body: ContactFormData = await request.json();
+
+    // Walidacja
+    if (!body.name || !body.email || !body.subject || !body.message) {
+      return NextResponse.json(
+        { error: "Alle Felder sind erforderlich" },
+        { status: 400 }
+      );
+    }
+
+    if (!body.email.includes("@")) {
+      return NextResponse.json(
+        { error: "Ungültige E-Mail-Adresse" },
+        { status: 400 }
+      );
+    }
+
+    // Wyślij do Directus z serwera (bez problemów CORS)
+    const directusUrl = process.env.DIRECTUS_URL; // Bez NEXT_PUBLIC_
+
+    if (!directusUrl) {
+      console.error("Brak DIRECTUS_URL");
+      return NextResponse.json(
+        { error: "Serverkonfigurationsfehler" },
+        { status: 500 }
+      );
+    }
+
+    const response = await fetch(`${directusUrl}/items/contact_messages`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        name: body.name,
+        email: body.email,
+        subject: body.subject,
+        message: body.message,
+        created_at: new Date().toISOString(),
+      }),
+    });
+
+    if (!response.ok) {
+      console.error("Directus error:", response.status, response.statusText);
+      return NextResponse.json(
+        { error: "Fehler beim Speichern der Nachricht" },
+        { status: 500 }
+      );
+    }
+
+    return NextResponse.json(
+      { success: true, message: "Nachricht erfolgreich gesendet" },
+      { status: 200 }
+    );
+  } catch (error) {
+    console.error("API Error:", error);
+    return NextResponse.json(
+      { error: "Es ist ein Serverfehler aufgetreten" },
+      { status: 500 }
+    );
+  }
+}

@@ -4,10 +4,10 @@ import styles from "./ContactInfo.module.css";
 export default function ContactInfo() {
   return (
     <div className={styles.contactInfo}>
-      <h2>Informacje kontaktowe</h2>
+      <h2>Kontaktinformationen</h2>
       <p className={styles.intro}>
-        Masz pytania lub potrzebujesz pomocy? Skontaktuj się z nami w dogodny
-        dla Ciebie sposób.
+        Haben Sie Fragen oder benötigen Sie Hilfe? Kontaktieren Sie uns auf dem
+        für Sie passenden Weg.
       </p>
 
       <div className={styles.contactMethods}>
@@ -15,8 +15,11 @@ export default function ContactInfo() {
           <div className={styles.methodIcon}>📧</div>
           <div className={styles.methodContent}>
             <h3>Email</h3>
-            <p>kontakt@twojafirma.pl</p>
-            <span className={styles.responseTime}>Odpowiadamy w ciągu 24h</span>
+            <p>frank.gebhard@seenergien.com</p>
+            <span className={styles.responseTime}>
+              {" "}
+              Wir antworten innerhalb von 48 Stunden.
+            </span>
           </div>
         </div>
 
@@ -24,21 +27,23 @@ export default function ContactInfo() {
           <div className={styles.methodIcon}>📞</div>
           <div className={styles.methodContent}>
             <h3>Telefon</h3>
-            <p>+48 123 456 789</p>
-            <span className={styles.responseTime}>Pn-Pt 9:00-17:00</span>
+            <p>+49 1512 3576161</p>
+            <span className={styles.responseTime}>Mo–Do 10:00–18:00</span>
           </div>
         </div>
 
         <div className={styles.contactMethod}>
           <div className={styles.methodIcon}>📍</div>
           <div className={styles.methodContent}>
-            <h3>Adres</h3>
+            <h3>Adresse</h3>
             <p>
-              ul. Przykładowa 123
+              Seenergien GmbH
               <br />
-              00-001 Warszawa
+              Hintere Insel 1<br />
+              88131 Lindau
+              <br />
+              Deutschland
             </p>
-            <span className={styles.responseTime}>Biuro otwarte Pn-Pt</span>
           </div>
         </div>
       </div>
