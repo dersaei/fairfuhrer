@@ -1,9 +1,17 @@
+// layout.tsx
 import type { Metadata } from "next";
-import { Lato, Oswald, Work_Sans, Staatliches } from "next/font/google";
+import {
+  Lato,
+  Oswald,
+  Work_Sans,
+  Staatliches,
+  Oxanium,
+} from "next/font/google";
 import "../styles/reset.css";
 
 import Header from "../components/Header";
 
+// pozostałe fonty
 const lato = Lato({
   variable: "--font-lato",
   subsets: ["latin"],
@@ -21,9 +29,17 @@ const oswald = Oswald({
 });
 const workSans = Work_Sans({
   subsets: ["latin"],
-  weight: "400", // Poprawione: pojedyncza wartość jako string
-  variable: "--font-work-sans", // Poprawione: myślnik zamiast podkreślenia
+  weight: "400",
+  variable: "--font-work-sans",
 });
+
+// nowy import Oxanium
+const oxanium = Oxanium({
+  variable: "--font-oxanium",
+  subsets: ["latin"],
+  weight: ["400", "700"], // tutaj dobierz te wagi, których potrzebujesz
+});
+
 export const metadata: Metadata = {
   title: "Fair Guide",
   description:
@@ -38,7 +54,13 @@ export default function RootLayout({
   return (
     <html lang="de">
       <body
-        className={`${lato.variable} ${oswald.variable} ${workSans.variable} ${staatliches.variable}`}
+        className={`
+          ${lato.variable}
+          ${oswald.variable}
+          ${workSans.variable}
+          ${staatliches.variable}
+          ${oxanium.variable}  /* dodajemy Oxanium na body */
+        `}
       >
         <Header />
         <main>{children}</main>

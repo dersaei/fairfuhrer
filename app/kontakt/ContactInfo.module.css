@@ -3,15 +3,21 @@
   background-color: aliceblue;
   border-radius: 12px;
   padding: 2rem;
-  height: fit-content;
+  height: 100vh;
   box-shadow: rgba(0, 0, 0, 0.09) 0px 3px 12px;
 }
 
 .contactInfo h2 {
-  font-size: 2rem;
+  font-size: 4vw;
   font-weight: 700;
-  color: #1e293b;
+  color: gold;
   margin-bottom: 1rem;
+  font-family: "Staatliches", sans-serif;
+  font-weight: 400;
+  font-style: normal;
+  -webkit-text-stroke: 1px black;
+  text-transform: uppercase;
+  text-shadow: 1px 2px 2px navy;
 }
 
 .intro {
@@ -19,6 +25,8 @@
   margin-bottom: 2rem;
   line-height: 1.6;
   font-size: 1.1rem;
+  font-weight: 400;
+  font-family: "Oxanium", sans-serif;
 }
 
 .contactMethods {
@@ -35,8 +43,7 @@
   border-radius: 8px;
   background: #f8fafc;
   transition: all 0.3s ease-in-out;
-  box-shadow: rgba(0, 0, 0, 0.45) 0px 25px 20px -20px;
-  border: 1px solid black;
+  box-shadow: rgba(149, 157, 165, 0.2) 0px 8px 24px;
 }
 
 .contactMethod:hover {

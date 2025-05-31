@@ -4,14 +4,20 @@
   border-radius: 12px;
   padding: 2rem;
   box-shadow: rgba(0, 0, 0, 0.09) 0px 3px 12px;
-  height: fit-content;
+  height: 100vh;
 }
 
 .contactForm h2 {
-  font-size: 2rem;
+  font-size: 4vw;
   font-weight: 700;
-  color: #1e293b;
-  margin-bottom: 1.5rem;
+  color: black;
+  margin-bottom: 1rem;
+  font-family: "Staatliches", sans-serif;
+  font-weight: 400;
+  font-style: normal;
+  -webkit-text-stroke: 1px gold;
+  text-transform: uppercase;
+  text-shadow: 1px 2px 2px navy;
 }
 
 .successMessage,
@@ -36,6 +42,8 @@
 
 .formGroup {
   margin-bottom: 1.5rem;
+  font-family: "Lato", sans-serif;
+  font-weight: 400;
 }
 
 .formGroup label {
@@ -49,13 +57,14 @@
 .formGroup textarea {
   width: 100%;
   padding: 0.75rem;
-  border: 1px solid #d1d5db;
+  border: 2px solid ghostwhite;
   border-radius: 8px;
   font-size: 1rem;
   transition: border-color 0.2s, box-shadow 0.2s;
   box-sizing: border-box;
   font-family: inherit;
-  box-shadow: rgba(33, 35, 38, 0.1) 0px 10px 10px -10px;
+  box-shadow: rgba(0, 0, 0, 0.06) 0px 2px 4px 0px inset;
+  background-color: antiquewhite;
 }
 
 .formGroup input:focus,

@@ -2,18 +2,15 @@
 .contactPage {
   width: 100%;
   height: fit-content;
-  padding: 4vh 2vw;
-  margin: 2vh 0;
 }
 
 .contactContent {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 3rem;
   align-items: start;
 }
 
-@media (max-width: 768px) {
+@media (max-width: 868px) {
   .contactContent {
     grid-template-columns: 1fr;
     gap: 2rem;
