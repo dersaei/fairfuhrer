@@ -1,0 +1,62 @@
+/* app/kontakt/ContactInfo.module.css */
+.contactInfo {
+  background: white;
+  border-radius: 12px;
+  padding: 2rem;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+  height: fit-content;
+}
+
+.contactInfo h2 {
+  font-size: 1.875rem;
+  font-weight: 700;
+  color: #1e293b;
+  margin-bottom: 1rem;
+}
+
+.intro {
+  color: #64748b;
+  margin-bottom: 2rem;
+  line-height: 1.6;
+}
+
+.contactMethods {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.contactMethod {
+  display: flex;
+  align-items: flex-start;
+  gap: 1rem;
+  padding: 1rem;
+  border-radius: 8px;
+  background: #f8fafc;
+  transition: background-color 0.2s;
+}
+
+.contactMethod:hover {
+  background: #e2e8f0;
+}
+
+.methodIcon {
+  font-size: 1.5rem;
+  flex-shrink: 0;
+}
+
+.methodContent h3 {
+  font-weight: 600;
+  color: #1e293b;
+  margin-bottom: 0.25rem;
+}
+
+.methodContent p {
+  color: #374151;
+  margin-bottom: 0.25rem;
+}
+
+.responseTime {
+  font-size: 0.875rem;
+  color: #6b7280;
+}
