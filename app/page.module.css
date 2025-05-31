@@ -1,0 +1,171 @@
+/* app/page.module.css */
+
+.container {
+  width: 100vw;
+  height: calc(100vh - 90px);
+  position: relative;
+}
+
+.loadingContainer {
+  width: 100vw;
+  height: calc(100vh - 90px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #f0f0f0;
+}
+
+/* Napis po lewej stronie */
+.leftText {
+  position: absolute;
+  top: 50%;
+  left: 2rem;
+  transform: translateY(-50%);
+  font-size: 3rem;
+  font-weight: 300;
+  color: rgba(252, 108, 20, 1);
+  text-align: left;
+  line-height: 1.4;
+  text-shadow: 1px 2px 1px white;
+  z-index: 10;
+  max-width: 350px;
+  font-family: "Inter", "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+}
+
+/* Kontener przycisku play */
+.playButtonContainer {
+  position: absolute;
+  top: 53%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  cursor: pointer;
+  z-index: 20;
+  transition: all 0.3s ease-in-out;
+  scale: 1.1;
+}
+
+.playButtonContainer:hover {
+  transform: translate(-50%, -50%) scale(1.2);
+}
+
+/* Ikona Play */
+.playButton {
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  background-color: rgba(255, 255, 255, 0.15);
+  backdrop-filter: blur(10px);
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+  margin-bottom: 1.5rem;
+  transition: all 0.3s ease;
+}
+
+/* Trójkąt Play */
+.playTriangle {
+  width: 0;
+  height: 0;
+  border-left: 35px solid rgba(255, 255, 255, 0.9);
+  border-top: 20px solid transparent;
+  border-bottom: 20px solid transparent;
+  margin-left: 8px;
+}
+
+/* Tekst "Zur Karte" */
+.mapText {
+  padding: 0.8rem 2rem;
+  background-color: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(10px);
+  border-radius: 30px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  color: rgba(255, 255, 255, 0.95);
+  font-size: 1.3rem;
+  font-weight: 500;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+  font-family: "Inter", "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+}
+
+/* Responsywność dla tabletów */
+@media (max-width: 768px) {
+  .leftText {
+    font-size: 1.5rem;
+    left: 1.5rem;
+    max-width: 280px;
+  }
+
+  .playButton {
+    width: 80px;
+    height: 80px;
+    margin-bottom: 1.2rem;
+  }
+
+  .playTriangle {
+    border-left-width: 22px;
+    border-top-width: 13px;
+    border-bottom-width: 13px;
+    margin-left: 5px;
+  }
+
+  .mapText {
+    font-size: 1.1rem;
+    padding: 0.6rem 1.5rem;
+  }
+}
+
+/* Responsywność dla telefonów */
+@media (max-width: 480px) {
+  .leftText {
+    font-size: 1.2rem;
+    left: 1rem;
+    max-width: 200px;
+  }
+
+  .playButton {
+    width: 70px;
+    height: 70px;
+    margin-bottom: 1rem;
+  }
+
+  .playTriangle {
+    border-left-width: 18px;
+    border-top-width: 11px;
+    border-bottom-width: 11px;
+    margin-left: 4px;
+  }
+
+  .mapText {
+    font-size: 1rem;
+    padding: 0.5rem 1.2rem;
+  }
+}
+
+/* Bardzo małe ekrany */
+@media (max-width: 360px) {
+  .leftText {
+    font-size: 1rem;
+    max-width: 160px;
+  }
+
+  .playButton {
+    width: 60px;
+    height: 60px;
+  }
+
+  .playTriangle {
+    border-left-width: 15px;
+    border-top-width: 9px;
+    border-bottom-width: 9px;
+  }
+
+  .mapText {
+    font-size: 0.9rem;
+    padding: 0.4rem 1rem;
+  }
+}

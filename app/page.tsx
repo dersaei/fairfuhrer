@@ -5,6 +5,7 @@ import Map, { type MapRef } from "react-map-gl/mapbox";
 import "mapbox-gl/dist/mapbox-gl.css";
 import { useRouter } from "next/navigation";
 import type { StyleSpecification } from "mapbox-gl";
+import styles from "./page.module.css";
 
 // Typ dla naszego stylu atmosfery
 interface AtmosphereStyle extends StyleSpecification {
@@ -62,20 +63,16 @@ export default function HomePage() {
     }
   }, [atmosphereStyle]);
 
+  // Funkcja obsługi kliknięcia
+  const handleMapClick = () => {
+    router.push("/karte");
+  };
+
   // Loading state
   if (isLoading) {
     return (
-      <div
-        style={{
-          width: "100vw",
-          height: "calc(100vh - 90px)",
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
-          backgroundColor: "transparent",
-        }}
-      >
-        <div>Karte wird geladen ...</div>
+      <div className={styles.loadingContainer}>
+        <div>Ładowanie mapy...</div>
       </div>
     );
   }
@@ -83,23 +80,15 @@ export default function HomePage() {
   // Error state
   if (!atmosphereStyle) {
     return (
-      <div
-        style={{
-          width: "100vw",
-          height: "calc(100vh - 90px)",
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
-          backgroundColor: "transparent",
-        }}
-      >
-        <div>Fehler beim Laden des Kartenstils</div>
+      <div className={styles.loadingContainer}>
+        <div>Błąd podczas ładowania stylu mapy</div>
       </div>
     );
   }
 
   return (
-    <div style={{ width: "100vw", height: "calc(100vh - 90px)" }}>
+    <div className={styles.container}>
+      {/* Mapa jako tło */}
       <Map
         ref={mapRef}
         mapboxAccessToken={MAPBOX_TOKEN}
@@ -107,7 +96,7 @@ export default function HomePage() {
         projection="globe"
         interactive={false}
         cursor="pointer"
-        onClick={() => router.push("/karte")}
+        onClick={handleMapClick}
         initialViewState={{
           longitude: atmosphereStyle.center[0],
           latitude: atmosphereStyle.center[1],
@@ -115,7 +104,31 @@ export default function HomePage() {
           bearing: atmosphereStyle.bearing,
           pitch: atmosphereStyle.pitch,
         }}
+        style={{ width: "100%", height: "100%" }}
       />
+
+      {/* Napis po lewej stronie */}
+      <div className={styles.leftText}>
+        Dein
+        <br />
+        Fair-Führer
+        <br />
+        für Geschichte und gute
+        <br />
+        Geschichten
+      </div>
+
+      {/* Przycisk Play na środku globu */}
+      <div onClick={handleMapClick} className={styles.playButtonContainer}>
+        {/* Ikona Play */}
+        <div className={styles.playButton}>
+          {/* Trójkąt Play */}
+          <div className={styles.playTriangle} />
+        </div>
+
+        {/* Tekst "Zur Karte" */}
+        <div className={styles.mapText}>Zur Karte</div>
+      </div>
     </div>
   );
 }
