@@ -40,16 +40,15 @@
   gap: 1rem;
   padding: 1rem;
   border-radius: 8px;
-  background: lavender;
-  border: 5px solid white;
+  background: aliceblue;
   transition: all 0.3s ease-in-out;
-  box-shadow: rgba(149, 157, 165, 0.2) 0px 8px 24px;
+  box-shadow: rgba(0, 0, 0, 0.4) 0px 2px 4px,
+    rgba(0, 0, 0, 0.3) 0px 7px 13px -3px, rgba(0, 0, 0, 0.2) 0px -3px 0px inset;
 }
 
 .contactMethod:hover {
   background: #e2e8f0;
   box-shadow: none;
-  border: 5px solid transparent;
 }
 
 .methodIcon {
