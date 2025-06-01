@@ -48,7 +48,6 @@ interface DirectusOrte {
   Link_URL?: string;
   Link_Text?: string;
   Galerie_Bilder?: string[];
-  Karte_Einbetten?: string;
 }
 
 export default async function KartePage() {
@@ -100,7 +99,6 @@ export default async function KartePage() {
           Link_URL: ort.Link_URL,
           Link_Text: ort.Link_Text,
           Galerie_Bilder: ort.Galerie_Bilder,
-          karteEinbetten: ort.Karte_Einbetten,
         };
       })
       .filter(Boolean) as Place[];
