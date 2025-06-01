@@ -1,8 +1,9 @@
+// components/MediaComponents.tsx
 "use client";
 
 import { useState, useRef } from "react";
 import Image from "next/image";
-import { getImageUrl, getAudioUrl } from "../lib/supabase";
+import { getAudioUrl, getOptimizedImagePath } from "../lib/supabase";
 import styles from "./MediaComponents.module.css";
 import {
   PlayIcon,
@@ -142,7 +143,7 @@ interface ImageGalleryProps {
   placeId: number;
   images: string[];
   className?: string;
-  onImageClickAction: (imageUrl: string) => void;
+  onImageClickAction: (imagePath: string) => void; // ✅ ZMIENIONE: imagePath zamiast imageUrl
 }
 
 export function ImageGallery({
@@ -158,15 +159,18 @@ export function ImageGallery({
       {images.map((imageName, index) => (
         <div key={index} className={styles.galleryItem}>
           <Image
-            src={getImageUrl(placeId, imageName, "gallery")}
+            src={getOptimizedImagePath(placeId, imageName, "gallery")} // ✅ ZOPTYMALIZOWANE
             alt={`Zdjęcie ${index + 1}`}
             className={styles.galleryImage}
             width={300}
             height={200}
             style={{ objectFit: "cover" }}
+            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 300px"
             onClick={() => {
-              const imageUrl = getImageUrl(placeId, imageName, "gallery");
-              onImageClickAction(imageUrl);
+              // ✅ POPRAWKA: Przekaż path zamiast pełnego URL
+              onImageClickAction(
+                getOptimizedImagePath(placeId, imageName, "gallery")
+              );
             }}
             onError={(e) => {
               const target = e.target as HTMLImageElement;
@@ -207,29 +211,19 @@ export function PlaceImage({
     <div className={`${styles.imageContainer} ${className}`}>
       {!imageLoaded && <div className={styles.imagePlaceholder}>Laden...</div>}
       <Image
-        src={getImageUrl(placeId, filename, type)}
+        src={getOptimizedImagePath(placeId, filename, type)} // ✅ ZOPTYMALIZOWANE
         alt={alt}
         className={`${styles.placeImage} ${imageLoaded ? styles.loaded : ""}`}
         width={width}
         height={height}
         style={{ objectFit: "cover" }}
+        sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 400px"
         onLoad={() => setImageLoaded(true)}
         onError={() => setImageError(true)}
+        priority={type === "main"} // ✅ Priority dla głównych obrazków
       />
     </div>
   );
 }
 
-interface EmbeddedMapProps {
-  embedCode: string;
-  className?: string;
-}
-
-export function EmbeddedMap({ embedCode, className = "" }: EmbeddedMapProps) {
-  return (
-    <div
-      className={`${styles.embeddedMap} ${className}`}
-      dangerouslySetInnerHTML={{ __html: embedCode }}
-    />
-  );
-}
+// EmbeddedMap - usunięte bo nie jest używane

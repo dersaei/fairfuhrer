@@ -1,16 +1,17 @@
 import styles from "./Header.module.css";
 import Image from "next/image";
 import Link from "next/link";
+import { getAssetPath } from "../lib/supabase";
 
 export default function Header() {
   return (
     <header className={styles.header}>
       <Link href="/">
         <Image
-          src="/images/fair-guide-logo.png"
+          src={getAssetPath("logo-fairguide.png")}
           alt="Fair Guide Logo"
-          width={226}
-          height={65}
+          width={232}
+          height={66}
           priority
         />
       </Link>

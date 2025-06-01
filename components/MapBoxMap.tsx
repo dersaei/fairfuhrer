@@ -8,7 +8,7 @@ import styles from "./MapBoxMap.module.css";
 import Image from "next/image";
 import { AudioPlayer, ImageGallery, PlaceImage } from "./MediaComponents";
 import type { Place } from "../types";
-import { getImageUrl } from "../lib/supabase";
+import { getOptimizedImagePath } from "../lib/supabase";
 
 interface MapBoxMapProps {
   places: Place[];
@@ -26,7 +26,7 @@ export default function MapBoxMap({ places }: MapBoxMapProps) {
   const [visible, setVisible] = useState(false);
   const [selectedGalleryImage, setSelectedGalleryImage] = useState<
     string | null
-  >(null);
+  >(null); // Teraz przechowuje path
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
 
   const initializeMap = useCallback(() => {
@@ -348,13 +348,14 @@ export default function MapBoxMap({ places }: MapBoxMapProps) {
                       <ImageGallery
                         placeId={selectedPlace.id}
                         images={selectedPlace.Galerie_Bilder}
-                        onImageClickAction={(imageUrl) => {
+                        onImageClickAction={(imagePath) => {
+                          // ✅ POPRAWKA: imagePath to już optymalizowany path
                           const index =
                             selectedPlace.Galerie_Bilder?.findIndex((img) =>
-                              imageUrl.includes(img)
+                              imagePath.includes(img)
                             ) ?? 0;
                           setCurrentImageIndex(index);
-                          setSelectedGalleryImage(imageUrl);
+                          setSelectedGalleryImage(imagePath); // Zapisz path, nie URL
                         }}
                       />
                     </div>
@@ -402,7 +403,7 @@ export default function MapBoxMap({ places }: MapBoxMapProps) {
               </button>
 
               <Image
-                src={getImageUrl(
+                src={getOptimizedImagePath(
                   selectedPlace.id,
                   selectedPlace.Galerie_Bilder?.[currentImageIndex] || "",
                   "gallery"

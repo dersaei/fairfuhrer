@@ -1,9 +1,8 @@
 /* app/kontakt/ContactInfo.module.css */
 .contactInfo {
-  background-color: aliceblue;
-  border-radius: 12px;
+  background-color: transparent;
   padding: 2rem;
-  height: 100vh;
+  height: 95vh;
   box-shadow: rgba(0, 0, 0, 0.09) 0px 3px 12px;
 }
 
@@ -41,7 +40,8 @@
   gap: 1rem;
   padding: 1rem;
   border-radius: 8px;
-  background: #f8fafc;
+  background: lavender;
+  border: 5px solid white;
   transition: all 0.3s ease-in-out;
   box-shadow: rgba(149, 157, 165, 0.2) 0px 8px 24px;
 }
@@ -49,6 +49,7 @@
 .contactMethod:hover {
   background: #e2e8f0;
   box-shadow: none;
+  border: 5px solid transparent;
 }
 
 .methodIcon {

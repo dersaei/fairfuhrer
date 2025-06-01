@@ -1,21 +1,11 @@
+// next.config.ts
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
   images: {
-    remotePatterns: [
-      {
-        protocol: "https",
-        hostname: "oockmooumzncrvkrjkcc.supabase.co",
-        pathname: "/storage/v1/object/public/media-files/**",
-      },
-      {
-        protocol: "https",
-        hostname: "*.supabase.co",
-        pathname: "/storage/v1/object/public/**",
-      },
-    ],
+    loader: "custom",
+    loaderFile: "./supabase-image-loader.ts",
   },
-  // Dodaj cache headers dla pliku atmosphere.json
   async headers() {
     return [
       {
@@ -28,6 +18,16 @@ const nextConfig: NextConfig = {
           {
             key: "Content-Type",
             value: "application/json",
+          },
+        ],
+      },
+      // cache dla obrazków
+      {
+        source: "/images/:path*",
+        headers: [
+          {
+            key: "Cache-Control",
+            value: "public, max-age=86400", // 24h cache
           },
         ],
       },
