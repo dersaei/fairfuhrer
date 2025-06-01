@@ -59,7 +59,7 @@ export default function RootLayout({
           ${oswald.variable}
           ${workSans.variable}
           ${staatliches.variable}
-          ${oxanium.variable}  /* dodajemy Oxanium na body */
+          ${oxanium.variable}
         `}
       >
         <Header />

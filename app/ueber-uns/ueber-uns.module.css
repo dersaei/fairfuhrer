@@ -1,0 +1,162 @@
+/* app/ueber-uns/ueber-uns.module.css */
+
+.container {
+  height: fit-content;
+}
+
+.content {
+  width: 100%;
+  background-color: #3dd1e7;
+  box-sizing: border-box;
+  color: #000000;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+  text-align: center;
+  text-decoration: none #000000 solid;
+  text-decoration-thickness: auto;
+  position: relative;
+}
+
+.pageHeader {
+  padding: 0 3vw;
+}
+
+.pageTitle {
+  font-size: 4rem;
+  font-weight: 700;
+  color: gold;
+  font-family: "Staatliches", sans-serif;
+  font-weight: 400;
+  font-style: normal;
+  -webkit-text-stroke: 1px black;
+  text-transform: uppercase;
+  text-shadow: 1px 2px 2px navy;
+  transform: rotate(-2deg);
+}
+
+.introSection {
+  background: powderblue;
+  border-radius: 12px 0 0 12px;
+  padding: 3vh 4vw;
+  box-shadow: rgba(0, 0, 0, 0.45) 0px 25px 20px -20px;
+  margin: 2vh 0;
+  border: 2px dashed black;
+}
+
+.introText {
+  font-size: 1.5vw;
+  line-height: 1.7;
+  color: #374151;
+  font-family: "Work Sans", sans-serif;
+  font-optical-sizing: auto;
+  font-weight: 400;
+  font-style: normal;
+}
+
+.introText h2 {
+  color: #1e293b;
+  font-size: 1.6vw;
+  margin-top: 2rem;
+  margin-bottom: 1rem;
+}
+
+.introText h3 {
+  color: #1e293b;
+  font-size: 1.25rem;
+  margin-top: 1.5rem;
+  margin-bottom: 0.75rem;
+}
+
+.introText p {
+  margin-bottom: 1rem;
+}
+
+.introText ul,
+.introText ol {
+  margin-bottom: 1rem;
+  padding-left: 1.5rem;
+}
+
+.introText li {
+  margin-bottom: 0.5rem;
+}
+
+.introText strong {
+  color: white !important;
+  background-color: rgba(252, 108, 20, 1);
+  padding: 4px 4px;
+}
+
+.additionalContent {
+  background: white;
+  border-radius: 12px;
+  padding: 2rem;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+}
+
+.additionalContent h2 {
+  color: #1e293b;
+  font-size: 1.5rem;
+  margin-bottom: 1rem;
+}
+
+.additionalContent p {
+  color: #64748b;
+  line-height: 1.6;
+}
+
+.errorMessage {
+  text-align: center;
+  background: white;
+  border-radius: 12px;
+  padding: 3rem 2rem;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+}
+
+.errorMessage h1 {
+  color: #dc2626;
+  font-size: 1.5rem;
+  margin-bottom: 1rem;
+}
+
+.errorMessage p {
+  color: #64748b;
+}
+
+@media (max-width: 968px) {
+  .pageTitle {
+    font-size: 3rem;
+  }
+  .introText {
+    font-size: 1.7vw;
+  }
+  .introText h2 {
+    font-size: 1.8vw;
+  }
+  .introSection {
+    padding: 2vh 3vw;
+  }
+}
+@media (max-width: 800px) {
+  .content {
+    display: block;
+  }
+  .pageTitle {
+    transform: rotate(0);
+    padding: 3vh 0;
+  }
+  .introSection {
+    border-radius: 0;
+    padding: 4vh 5vw;
+    margin: 0 auto;
+    width: 90%;
+  }
+  .introText {
+    font-size: 1rem;
+  }
+  .introText h2 {
+    font-size: 1.2rem;
+  }
+}

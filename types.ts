@@ -8,25 +8,45 @@ export interface Category {
 // Alias dla niemieckiej nazwy kolekcji w Directus
 export type Kategorie = Category;
 
+// ZAKTUALIZOWANE - polskie nazwy (jak używasz w mapowaniu)
 export interface Place {
   id: number;
-  // ZAKTUALIZOWANE - niemieckie nazwy pól jak w Directus:
-  Name: string; // było: nazwa
-  Adresse: string; // było: adres
-  Vollbeschreibung?: string; // OK
-  Breite: number; // było: latitude
-  Lange: number; // było: longitude
-  Kategorie: Category[]; // było: categories
+  Name: string; // niemieckie nazwy pól jak w Directus
+  Adresse: string;
+  Vollbeschreibung?: string;
+  Breite: number;
+  Lange: number;
+  Kategorie: Category[];
   // Pola dla mediów i dodatkowych informacji
-  Hauptbild?: string; // OK
-  Audio_Datei?: string; // było: audioDatei
-  Link_URL?: string; // było: linkUrl
-  Link_Text?: string; // było: linkText
-  Galerie_Bilder?: string[]; // było: galerieBilder
+  Hauptbild?: string;
+  Audio_Datei?: string;
+  Link_URL?: string;
+  Link_Text?: string;
+  Galerie_Bilder?: string[];
+  // USUNIĘTE: karteEinbetten - powoduje błąd 403
 }
 
 // Alias dla niemieckiej nazwy kolekcji w Directus
 export type Orte = Place;
+
+// DODANE - Contact message interface
+export interface ContactMessage {
+  id: string; // UUID w Directus
+  name: string;
+  email: string;
+  subject: string;
+  message: string;
+  created_at: string; // ISO date string
+  status?: "new" | "read" | "replied" | "archived"; // opcjonalne pole statusu
+}
+
+// NOWE - Page content interface
+export interface PageContent {
+  id: number;
+  page_slug: string;
+  title: string;
+  intro_text: string;
+}
 
 // NOWY - dodaj to:
 export interface ContactMessage {
