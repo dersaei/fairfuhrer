@@ -10,19 +10,19 @@ export type Kategorie = Category;
 
 export interface Place {
   id: number;
-  nazwa: string; // Name - nazwa miejsca (pod audio)
-  adres: string; // Adresse - adres
-  vollbeschreibung?: string; // Vollbeschreibung - pełny opis (WYSIWYG)
-  latitude: number;
-  longitude: number;
-  categories: Category[];
+  // ZAKTUALIZOWANE - niemieckie nazwy pól jak w Directus:
+  Name: string; // było: nazwa
+  Adresse: string; // było: adres
+  Vollbeschreibung?: string; // OK
+  Breite: number; // było: latitude
+  Lange: number; // było: longitude
+  Kategorie: Category[]; // było: categories
   // Pola dla mediów i dodatkowych informacji
-  hauptbild?: string; // nazwa głównego zdjęcia
-  audioDatei?: string; // nazwa pliku audio
-  linkUrl?: string; // URL do linku
-  linkText?: string; // tekst wyświetlany na przycisku
-  galerieBilder?: string[]; // tablica nazw zdjęć w galerii
-  karteEinbetten?: string; // kod iframe mapy z Directus
+  Hauptbild?: string; // OK
+  Audio_Datei?: string; // było: audioDatei
+  Link_URL?: string; // było: linkUrl
+  Link_Text?: string; // było: linkText
+  Galerie_Bilder?: string[]; // było: galerieBilder
 }
 
 // Alias dla niemieckiej nazwy kolekcji w Directus

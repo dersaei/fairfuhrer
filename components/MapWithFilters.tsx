@@ -5,15 +5,11 @@ import { useState } from "react";
 import MapBoxMap from "./MapBoxMap";
 import CategoryFilter from "./CategoryFilter";
 import styles from "./MapWithFilters.module.css";
-import type { Place } from "../types";
+import type { Place, Category } from "../types"; // Dodaj Category
 
 interface MapWithFiltersProps {
   places: Place[];
-  categories: Array<{
-    id: number;
-    name: string;
-    color: string;
-  }>;
+  categories: Category[]; // Użyj typu Category zamiast inline
 }
 
 export default function MapWithFilters({
@@ -32,8 +28,11 @@ export default function MapWithFilters({
     );
   };
 
+  // POPRAWKA: place.Kategorie zamiast place.categories
   const filteredPlaces = places.filter((place) =>
-    place.categories.some((cat) => selectedCategoryIds.includes(cat.id))
+    place.Kategorie.some((cat: Category) =>
+      selectedCategoryIds.includes(cat.id)
+    )
   );
 
   return (

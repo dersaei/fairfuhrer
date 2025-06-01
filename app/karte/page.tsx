@@ -58,7 +58,7 @@ export default async function KartePage() {
 
   try {
     // standardowy fetch – bez cache:"no-store"
-    const orteUrl = `${baseUrl}/items/Orte?fields=id,Name,Adresse,Vollbeschreibung,Breite,Lange,Hauptbild,Audio_Datei,Link_URL,Link_Text,Galerie_Bilder,Karte_Einbetten,Kategorie.Kategorie_id.id,Kategorie.Kategorie_id.Name,Kategorie.Kategorie_id.Farbe&limit=-1`;
+    const orteUrl = `${baseUrl}/items/Orte?fields=id,Name,Adresse,Vollbeschreibung,Breite,Lange,Hauptbild,Audio_Datei,Link_URL,Link_Text,Galerie_Bilder,Kategorie.Kategorie_id.id,Kategorie.Kategorie_id.Name,Kategorie.Kategorie_id.Farbe&limit=-1`;
     const orteRes = await fetch(orteUrl);
     if (!orteRes.ok)
       throw new Error(`Błąd pobierania miejsc: ${orteRes.status}`);
@@ -84,22 +84,22 @@ export default async function KartePage() {
         }
         return {
           id: ort.id,
-          nazwa: ort.Name,
-          adres: ort.Adresse,
-          vollbeschreibung: ort.Vollbeschreibung,
-          latitude,
-          longitude,
-          categories:
+          Name: ort.Name, // niemieckie → niemieckie
+          Adresse: ort.Adresse, // niemieckie → niemieckie
+          Vollbeschreibung: ort.Vollbeschreibung,
+          Breite: latitude, // już sparsowane
+          Lange: longitude, // już sparsowane
+          Kategorie:
             ort.Kategorie?.map((k) => ({
               id: k.Kategorie_id.id,
               name: k.Kategorie_id.Name,
               color: k.Kategorie_id.Farbe,
             })) || [],
-          hauptbild: ort.Hauptbild,
-          audioDatei: ort.Audio_Datei,
-          linkUrl: ort.Link_URL,
-          linkText: ort.Link_Text,
-          galerieBilder: ort.Galerie_Bilder,
+          Hauptbild: ort.Hauptbild,
+          Audio_Datei: ort.Audio_Datei,
+          Link_URL: ort.Link_URL,
+          Link_Text: ort.Link_Text,
+          Galerie_Bilder: ort.Galerie_Bilder,
           karteEinbetten: ort.Karte_Einbetten,
         };
       })

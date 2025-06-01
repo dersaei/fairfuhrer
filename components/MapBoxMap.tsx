@@ -1,3 +1,4 @@
+// components/MapBoxMap.tsx
 "use client";
 
 import { useRef, useEffect, useCallback, useState } from "react";
@@ -5,12 +6,7 @@ import mapboxgl from "mapbox-gl";
 import "mapbox-gl/dist/mapbox-gl.css";
 import styles from "./MapBoxMap.module.css";
 import Image from "next/image";
-import {
-  AudioPlayer,
-  ImageGallery,
-  PlaceImage,
-  EmbeddedMap,
-} from "./MediaComponents";
+import { AudioPlayer, ImageGallery, PlaceImage } from "./MediaComponents";
 import type { Place } from "../types";
 import { getImageUrl } from "../lib/supabase";
 
@@ -58,15 +54,15 @@ export default function MapBoxMap({ places }: MapBoxMapProps) {
 
   const handleNextImage = useCallback(() => {
     setCurrentImageIndex(
-      (prev) => (prev + 1) % (selectedPlace?.galerieBilder?.length || 1)
+      (prev) => (prev + 1) % (selectedPlace?.Galerie_Bilder?.length || 1)
     );
-  }, [selectedPlace?.galerieBilder]);
+  }, [selectedPlace?.Galerie_Bilder]);
 
   const handlePrevImage = useCallback(() => {
     setCurrentImageIndex((prev) =>
-      prev === 0 ? (selectedPlace?.galerieBilder?.length || 1) - 1 : prev - 1
+      prev === 0 ? (selectedPlace?.Galerie_Bilder?.length || 1) - 1 : prev - 1
     );
-  }, [selectedPlace?.galerieBilder]);
+  }, [selectedPlace?.Galerie_Bilder]);
 
   useEffect(() => {
     if (!selectedGalleryImage) return;
@@ -109,7 +105,7 @@ export default function MapBoxMap({ places }: MapBoxMapProps) {
         const currentZoom = map.getZoom();
 
         map.easeTo({
-          center: [place.longitude, place.latitude],
+          center: [place.Lange, place.Breite], // POPRAWKA: niemieckie nazwy
           zoom: Math.max(currentZoom, 12),
           duration: 800,
           easing: (t) => t * (2 - t),
@@ -127,7 +123,7 @@ export default function MapBoxMap({ places }: MapBoxMapProps) {
     if (mapRef.current && places.length > 0) {
       const map = mapRef.current;
       const bounds = new mapboxgl.LngLatBounds();
-      places.forEach((p) => bounds.extend([p.longitude, p.latitude]));
+      places.forEach((p) => bounds.extend([p.Lange, p.Breite])); // POPRAWKA: niemieckie nazwy
 
       map.fitBounds(bounds, {
         padding: 50,
@@ -147,26 +143,29 @@ export default function MapBoxMap({ places }: MapBoxMapProps) {
 
     places.forEach((place) => {
       if (
-        !place.latitude ||
-        !place.longitude ||
-        Math.abs(place.latitude) > 90 ||
-        Math.abs(place.longitude) > 180
+        !place.Breite ||
+        !place.Lange ||
+        Math.abs(place.Breite) > 90 ||
+        Math.abs(place.Lange) > 180
       ) {
         console.error(`Nieprawidłowe współrzędne dla miejsca ${place.id}`);
         return;
       }
 
-      const color = place.categories[0]?.color || "#3388ff";
+      const color = place.Kategorie[0]?.color || "#3388ff";
 
       const popupContent = `
         <div class="${styles.popupContent}">
-          <h3>${place.nazwa}</h3>
-          <p class="${styles.address}">${place.adres}</p>
+          <h3>${place.Name}</h3>
+          <p class="${styles.address}">${place.Adresse}</p>
           ${
-            place.vollbeschreibung
-              ? `<p class="${styles.description}">${place.vollbeschreibung
-                  .replace(/<[^>]*>/g, "")
-                  .substring(0, 100)}...</p>`
+            place.Vollbeschreibung
+              ? `<p class="${
+                  styles.description
+                }">${place.Vollbeschreibung.replace(/<[^>]*>/g, "").substring(
+                  0,
+                  100
+                )}...</p>`
               : ""
           }
         </div>
@@ -182,7 +181,7 @@ export default function MapBoxMap({ places }: MapBoxMapProps) {
         color: color,
         scale: 0.8,
       })
-        .setLngLat([place.longitude, place.latitude])
+        .setLngLat([place.Lange, place.Breite]) // POPRAWKA: niemieckie nazwy
         .setPopup(popup)
         .addTo(map);
 
@@ -217,7 +216,7 @@ export default function MapBoxMap({ places }: MapBoxMapProps) {
 
     if (places.length > 0 && !isPanelOpen) {
       const bounds = new mapboxgl.LngLatBounds();
-      places.forEach((p) => bounds.extend([p.longitude, p.latitude]));
+      places.forEach((p) => bounds.extend([p.Lange, p.Breite])); // POPRAWKA: niemieckie nazwy
       map.fitBounds(bounds, { padding: 50, maxZoom: 14 });
     }
   }, [places, isPanelOpen]);
@@ -292,66 +291,66 @@ export default function MapBoxMap({ places }: MapBoxMapProps) {
             {selectedPlace ? (
               <>
                 <div className={styles.imageAudioContainer}>
-                  {selectedPlace.hauptbild && (
+                  {selectedPlace.Hauptbild && (
                     <div className={styles.mainImageSection}>
                       <PlaceImage
                         placeId={selectedPlace.id}
-                        filename={selectedPlace.hauptbild}
-                        alt={selectedPlace.nazwa}
+                        filename={selectedPlace.Hauptbild}
+                        alt={selectedPlace.Name}
                         type="main"
                         className={styles.mainImage}
                       />
                     </div>
                   )}
 
-                  {selectedPlace.audioDatei && (
+                  {selectedPlace.Audio_Datei && (
                     <div className={styles.audioSection}>
                       <AudioPlayer
                         placeId={selectedPlace.id}
-                        filename={selectedPlace.audioDatei}
+                        filename={selectedPlace.Audio_Datei}
                       />
                     </div>
                   )}
                 </div>
 
                 <div className={styles.placeNameSection}>
-                  <h2 className={styles.placeName}>{selectedPlace.nazwa}</h2>
+                  <h2 className={styles.placeName}>{selectedPlace.Name}</h2>
                 </div>
 
-                {selectedPlace.vollbeschreibung && (
+                {selectedPlace.Vollbeschreibung && (
                   <div className={styles.infoSection}>
                     <div
                       className={styles.description}
                       dangerouslySetInnerHTML={{
-                        __html: selectedPlace.vollbeschreibung,
+                        __html: selectedPlace.Vollbeschreibung,
                       }}
                     />
                   </div>
                 )}
 
-                {selectedPlace.linkUrl && (
+                {selectedPlace.Link_URL && (
                   <div className={styles.infoSection}>
                     <a
-                      href={selectedPlace.linkUrl}
+                      href={selectedPlace.Link_URL}
                       target="_blank"
                       rel="noopener noreferrer"
                       className={styles.externalLink}
                     >
-                      {selectedPlace.linkText || "Website besuchen"}
+                      {selectedPlace.Link_Text || "Website besuchen"}
                     </a>
                   </div>
                 )}
 
-                {selectedPlace.galerieBilder &&
-                  selectedPlace.galerieBilder.length > 0 && (
+                {selectedPlace.Galerie_Bilder &&
+                  selectedPlace.Galerie_Bilder.length > 0 && (
                     <div className={styles.infoSection}>
                       <h4>Spot-Bildergalerie</h4>
                       <ImageGallery
                         placeId={selectedPlace.id}
-                        images={selectedPlace.galerieBilder}
+                        images={selectedPlace.Galerie_Bilder}
                         onImageClickAction={(imageUrl) => {
                           const index =
-                            selectedPlace.galerieBilder?.findIndex((img) =>
+                            selectedPlace.Galerie_Bilder?.findIndex((img) =>
                               imageUrl.includes(img)
                             ) ?? 0;
                           setCurrentImageIndex(index);
@@ -361,14 +360,10 @@ export default function MapBoxMap({ places }: MapBoxMapProps) {
                     </div>
                   )}
 
-                {selectedPlace.karteEinbetten && (
-                  <div className={styles.infoSection}>
-                    <EmbeddedMap embedCode={selectedPlace.karteEinbetten} />
-                  </div>
-                )}
+                {/* USUNIĘTE: karteEinbetten section */}
 
                 <div className={styles.infoSection}>
-                  <p>{selectedPlace.adres}</p>
+                  <p>{selectedPlace.Adresse}</p>
                 </div>
               </>
             ) : (
@@ -409,7 +404,7 @@ export default function MapBoxMap({ places }: MapBoxMapProps) {
               <Image
                 src={getImageUrl(
                   selectedPlace.id,
-                  selectedPlace.galerieBilder?.[currentImageIndex] || "",
+                  selectedPlace.Galerie_Bilder?.[currentImageIndex] || "",
                   "gallery"
                 )}
                 alt="Powiększone zdjęcie"
@@ -429,7 +424,7 @@ export default function MapBoxMap({ places }: MapBoxMapProps) {
 
             <div className={styles.imageCounter}>
               {currentImageIndex + 1} /{" "}
-              {selectedPlace.galerieBilder?.length || 0}
+              {selectedPlace.Galerie_Bilder?.length || 0}
             </div>
           </div>
         </div>
