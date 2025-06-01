@@ -2,9 +2,14 @@
 
 .container {
   height: fit-content;
+  display: block;
+  position: relative;
+}
+.content {
+  display: block;
 }
 
-.content {
+.sekcja1 {
   width: 100%;
   background-color: #3dd1e7;
   box-sizing: border-box;
@@ -14,9 +19,6 @@
   align-items: center;
   position: relative;
   text-align: center;
-  text-decoration: none #000000 solid;
-  text-decoration-thickness: auto;
-  position: relative;
 }
 
 .pageHeader {
@@ -41,12 +43,14 @@
   border-radius: 12px 0 0 12px;
   padding: 3vh 4vw;
   box-shadow: rgba(0, 0, 0, 0.45) 0px 25px 20px -20px;
-  margin: 2vh 0;
-  border: 2px dashed black;
+  margin: 3vh 0;
+  border-top: 2px dashed black;
+  border-bottom: 2px dashed black;
+  border-left: 2px dashed black;
 }
 
 .introText {
-  font-size: 1.5vw;
+  font-size: 1.2rem;
   line-height: 1.7;
   color: #374151;
   font-family: "Work Sans", sans-serif;
@@ -124,7 +128,63 @@
 .errorMessage p {
   color: #64748b;
 }
-
+.categoriesSection {
+  display: block;
+  position: relative;
+  width: 100%;
+  background-color: rgba(252, 108, 20, 1);
+  padding: 5vh 4vw;
+}
+.categoriesTitle {
+  font-size: 5rem;
+  font-weight: 700;
+  color: black;
+  font-family: "Staatliches", sans-serif;
+  font-weight: 400;
+  font-style: normal;
+  -webkit-text-stroke: 1px gold;
+  text-transform: uppercase;
+  text-shadow: 1px 2px 2px navy;
+  text-align: center;
+}
+.categoriesSubtitle {
+  text-align: center;
+  font-size: 1.5rem;
+  color: red;
+  text-shadow: 1px 2px 1px goldenrod;
+  font-family: "Lato", sans-serif;
+  font-weight: 400;
+  font-style: normal;
+  margin: 0 auto 2vh;
+  background-color: gold;
+  width: 17rem;
+  padding: 1vh 1vw;
+  border: 2px dashed black;
+}
+.categoriesGrid {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: stretch;
+  gap: 15px;
+  margin: 1vh 2vw;
+  background-color: white;
+  padding: 4vh 4vw;
+}
+.categoryCard {
+  width: 35vw;
+  padding: 4vh 2vw;
+  text-align: center;
+  border: 2px dashed black;
+  border-radius: 12px;
+}
+.categoryName {
+  font-size: 1.8rem;
+  padding-bottom: 2vh;
+}
+.categoryDescription {
+  font-size: 1.2rem;
+}
 @media (max-width: 968px) {
   .pageTitle {
     font-size: 3rem;
@@ -138,10 +198,17 @@
   .introSection {
     padding: 2vh 3vw;
   }
+  .categoriesGrid {
+    display: block;
+  }
+  .categoryCard {
+    width: 80%;
+    margin: 0 auto 2vh;
+  }
 }
 @media (max-width: 800px) {
-  .content {
-    display: block;
+  .sekcja1 {
+    align-items: flex-start;
   }
   .pageTitle {
     transform: rotate(0);
@@ -152,11 +219,22 @@
     padding: 4vh 5vw;
     margin: 0 auto;
     width: 90%;
+    border-bottom: 0;
+    border-top: 0;
   }
   .introText {
     font-size: 1rem;
   }
   .introText h2 {
     font-size: 1.2rem;
+  }
+}
+@media (max-width: 500px) {
+  .sekcja1 {
+    display: block;
+    padding-bottom: 3vh;
+  }
+  .introSection {
+    border: 2px dashed black;
   }
 }
