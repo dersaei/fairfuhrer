@@ -2,7 +2,7 @@
 import MapWithFilters from "../../components/MapWithFilters";
 import type { Place, Category } from "../../types";
 
-export const dynamic = "force-static"; // ← wymusza pełne SSG
+export const revalidate = 21600;
 
 interface DirectusMeta {
   total_count?: number;
