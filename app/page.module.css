@@ -28,7 +28,7 @@
   line-height: 1.4;
   text-shadow: 3px 6px 3px black;
   z-index: 10;
-  max-width: 350px;
+  width: 350px;
   font-family: "Staatliches", sans-serif;
   font-weight: 400;
   font-style: normal;
@@ -96,79 +96,26 @@
 }
 
 /* Responsywność dla tabletów */
-@media (max-width: 768px) {
+@media (max-width: 900px) {
   .leftText {
-    font-size: 1.5rem;
-    left: 1.5rem;
-    max-width: 280px;
-  }
-
-  .playButton {
-    width: 80px;
-    height: 80px;
-    margin-bottom: 1.2rem;
-  }
-
-  .playTriangle {
-    border-left-width: 22px;
-    border-top-width: 13px;
-    border-bottom-width: 13px;
-    margin-left: 5px;
-  }
-
-  .mapText {
-    font-size: 1.1rem;
-    padding: 0.6rem 1.5rem;
+    bottom: -7vh;
+    left: 0;
+    width: 100%;
+    text-align: center;
+    top: auto;
+    padding: 0 2vw;
   }
 }
-
-/* Responsywność dla telefonów */
-@media (max-width: 480px) {
+@media (max-width: 650px) {
   .leftText {
-    font-size: 1.2rem;
-    left: 1rem;
-    max-width: 200px;
-  }
-
-  .playButton {
-    width: 70px;
-    height: 70px;
-    margin-bottom: 1rem;
-  }
-
-  .playTriangle {
-    border-left-width: 18px;
-    border-top-width: 11px;
-    border-bottom-width: 11px;
-    margin-left: 4px;
-  }
-
-  .mapText {
-    font-size: 1rem;
-    padding: 0.5rem 1.2rem;
+    font-size: 2.6rem;
   }
 }
-
-/* Bardzo małe ekrany */
-@media (max-width: 360px) {
+@media (max-width: 550px) {
   .leftText {
-    font-size: 1rem;
-    max-width: 160px;
-  }
-
-  .playButton {
-    width: 60px;
-    height: 60px;
-  }
-
-  .playTriangle {
-    border-left-width: 15px;
-    border-top-width: 9px;
-    border-bottom-width: 9px;
-  }
-
-  .mapText {
-    font-size: 0.9rem;
-    padding: 0.4rem 1rem;
+    font-size: 7.2vw;
+    bottom: 0;
+    text-shadow: 2px 4px 2px black;
+    -webkit-text-stroke: 0.3px lavender;
   }
 }

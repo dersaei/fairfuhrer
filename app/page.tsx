@@ -109,15 +109,7 @@ export default function HomePage() {
 
       {/* Napis po lewej stronie */}
       <div className={styles.leftText}>
-        Dein
-        <br />
-        Fair-Führer
-        <br />
-        für Geschichte
-        <br />
-        und gute
-        <br />
-        Geschichten
+        Dein Fair-Führer für Geschichte und gute Geschichten
       </div>
 
       {/* Przycisk Play na środku globu */}
