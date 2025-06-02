@@ -6,17 +6,16 @@ const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!;
 
 export const supabase = createClient(supabaseUrl, supabaseAnonKey);
 
-// ✅ NOWA - Zoptymalizowana funkcja dla Next.js Image Loader
+// ✅ Dla miejsc na mapie (istniejące)
 export const getOptimizedImagePath = (
   placeId: number,
   filename: string,
   type: "main" | "gallery"
 ): string => {
-  // Zwraca path dla Supabase Image Loader (bez pełnego URL)
   return `media-files/places/images/${type}/${filename}`;
 };
 
-// ✅ ZACHOWANE - Dla kompatybilności wstecznej (audio, fallback)
+// ✅ Kompatybilność wsteczna (audio, fallback)
 export const getImageUrl = (
   placeId: number,
   filename: string,
@@ -35,6 +34,33 @@ export const getAudioUrl = (placeId: number, filename: string) => {
   return data.publicUrl;
 };
 
+// ✅ Dla logo (istniejące)
 export const getAssetPath = (filename: string): string => {
   return `media-files/assets/logos/${filename}`;
+};
+
+// ✅ NOWE - Dla obrazków na stronach (Partner werden, etc.)
+export const getPageAssetPath = (filename: string): string => {
+  return `media-files/assets/pages/${filename}`;
+};
+
+// ✅ NOWE - Fallback URL dla obrazków stron (jeśli potrzebne)
+export const getPageAssetUrl = (filename: string) => {
+  const { data } = supabase.storage
+    .from("media-files")
+    .getPublicUrl(`assets/pages/${filename}`);
+  return data.publicUrl;
+};
+
+// ✅ NOWE - Dla obrazków tła (backgrounds)
+export const getBackgroundAssetPath = (filename: string): string => {
+  return `media-files/assets/backgrounds/${filename}`;
+};
+
+// ✅ NOWE - Fallback URL dla obrazków tła
+export const getBackgroundAssetUrl = (filename: string) => {
+  const { data } = supabase.storage
+    .from("media-files")
+    .getPublicUrl(`assets/backgrounds/${filename}`);
+  return data.publicUrl;
 };

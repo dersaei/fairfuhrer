@@ -1,15 +1,16 @@
 // types.ts
+
+// ✅ Category - BEZ description (nie ma w Directus)
 export interface Category {
   id: number;
   name: string;
   color: string;
-  description?: string; // DODANE - opis kategorii
 }
 
 // Alias dla niemieckiej nazwy kolekcji w Directus
 export type Kategorie = Category;
 
-// ZAKTUALIZOWANE - polskie nazwy (jak używasz w mapowaniu)
+// ✅ Place - niemieckie nazwy pól
 export interface Place {
   id: number;
   Name: string; // niemieckie nazwy pól jak w Directus
@@ -24,13 +25,12 @@ export interface Place {
   Link_URL?: string;
   Link_Text?: string;
   Galerie_Bilder?: string[];
-  // USUNIĘTE: karteEinbetten - powoduje błąd 403
 }
 
 // Alias dla niemieckiej nazwy kolekcji w Directus
 export type Orte = Place;
 
-// DODANE - Contact message interface
+// ✅ ContactMessage - TYLKO JEDEN (bez duplikatu)
 export interface ContactMessage {
   id: string; // UUID w Directus
   name: string;
@@ -38,19 +38,19 @@ export interface ContactMessage {
   subject: string;
   message: string;
   created_at: string; // ISO date string
-  status?: "new" | "read" | "replied" | "archived"; // opcjonalne pole statusu
+  status?: "new" | "read" | "replied" | "archived";
 }
 
-// ROZSZERZONE - Page content interface
+// ✅ PageContent - dla strony "Über uns"
 export interface PageContent {
   id: number;
   page_slug: string;
   title: string;
   intro_text: string;
-  // POLA dla sekcji kategorii:
+  // Sekcja kwadratów:
   categories_section_title?: string;
   categories_section_subtitle?: string;
-  // 7 KWADRATÓW:
+  // 7 kwadratów:
   square1_title?: string;
   square1_description?: string;
   square1_color?: string;
@@ -74,13 +74,33 @@ export interface PageContent {
   square7_color?: string;
 }
 
-// NOWY - dodaj to:
-export interface ContactMessage {
-  id: string; // UUID w Directus
-  name: string;
-  email: string;
-  subject: string;
-  message: string;
-  created_at: string; // ISO date string
-  status?: "new" | "read" | "replied" | "archived"; // opcjonalne pole statusu
+// ✅ NOWY - PartnerPageContent - dla strony "Partner werden"
+export interface PartnerPageContent {
+  id: number;
+  page_slug: string;
+
+  // SEKCJA 1 - Grid dwukolumnowy
+  section1_left_title?: string;
+  section1_left_text?: string;
+  section1_left_image?: string;
+  section1_right_text?: string;
+  section1_right_image?: string;
+
+  // SEKCJA 2 - Tekst na tle obrazu
+  section2_title?: string;
+  section2_text?: string;
+  section2_background_image?: string;
+
+  // SEKCJA 3 - Tekst + YouTube video
+  section3_left_title?: string;
+  section3_left_text?: string;
+  section3_youtube_url?: string;
+
+  // SEKCJA 4 - Formularz kontaktowy
+  section4_title?: string;
+  section4_subtitle?: string;
+
+  // SEKCJA 5 - Końcowa sekcja
+  section5_title?: string;
+  section5_text?: string;
 }

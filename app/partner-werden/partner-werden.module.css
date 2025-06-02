@@ -1,0 +1,409 @@
+/* app/partner-werden/partner-werden.module.css */
+
+.container {
+  min-height: 100vh;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+}
+
+.errorMessage {
+  text-align: center;
+  background: white;
+  border-radius: 12px;
+  padding: 3rem 2rem;
+  margin: 2rem;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+}
+
+/* SEKCJA 1 - Grid dwukolumnowy */
+.section1 {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  min-height: 100vh;
+  gap: 0;
+}
+
+.section1Left {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 50%);
+  padding: 4rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  color: white;
+}
+
+.section1Right {
+  background: linear-gradient(135deg, #764ba2 50%, #667eea 100%);
+  padding: 4rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  color: white;
+}
+
+.section1Title {
+  font-size: 3rem;
+  font-weight: 700;
+  margin-bottom: 2rem;
+  line-height: 1.2;
+}
+
+.section1Text {
+  font-size: 1.125rem;
+  line-height: 1.7;
+  margin-bottom: 2rem;
+}
+
+.section2Text a {
+  color: #fbbf24; /* Żółty kolor - widoczny na ciemnym tle */
+  text-decoration: underline;
+  font-weight: 500;
+  transition: color 0.3s ease;
+  font-size: 110%;
+}
+
+.section2Text a:hover {
+  color: #f59e0b;
+  text-decoration: none;
+}
+.section5Text a {
+  background-color: #fbbf24;
+  color: black;
+  padding: 2px 4px;
+}
+.section1TextRight h2 {
+  font-size: 6vw;
+  color: gold;
+  font-weight: 700;
+  font-family: "Staatliches", sans-serif;
+  -webkit-text-stroke: 1px black;
+  text-shadow: 1px 2px 2px navy;
+  text-align: center;
+}
+.section1TextRight h3 {
+  font-size: 4vw;
+  text-align: center;
+  color: black;
+}
+
+/* ✅ DODANE - Style dla WYSIWYG content */
+.section1Text p {
+  margin-bottom: 1rem;
+}
+
+.section1Text ul,
+.section1Text ol {
+  margin: 1rem 0;
+  padding-left: 1.5rem;
+  list-style: disc; /* ✅ DODANE - pokaż bullets */
+}
+
+.section1Text ol {
+  list-style: decimal; /* ✅ DODANE - numeracja dla ol */
+}
+
+.section1Text li {
+  margin-bottom: 0.5rem;
+  display: list-item; /* ✅ DODANE - wymuś wyświetlanie jako lista */
+}
+
+.section1Text h2,
+.section1Text h3 {
+  margin: 1.5rem 0 1rem 0;
+  color: white;
+  font-weight: 600;
+}
+
+.section1Text strong {
+  font-weight: 700;
+}
+
+.section1Text em {
+  font-style: italic;
+}
+
+/* ✅ NOWE - Style dla linków w WYSIWYG */
+.section1Text a {
+  color: #fbbf24; /* Żółty kolor - widoczny na ciemnym tle */
+  text-decoration: underline;
+  font-weight: 500;
+  transition: color 0.3s ease;
+}
+
+.section1Text a:hover {
+  color: #f59e0b;
+  text-decoration: none;
+}
+
+.section1ImageContainer {
+  margin-top: 2rem;
+}
+
+.section1Image {
+  border-radius: 12px;
+  width: 100%;
+  height: auto;
+}
+
+.section1SmallImage {
+  border-radius: 12px;
+  width: 100%;
+  height: auto;
+  max-width: 300px;
+}
+
+/* SEKCJA 2 - Tekst na tle obrazu */
+.section2 {
+  min-height: 60vh;
+  background-size: cover;
+  background-position: center;
+  background-attachment: fixed;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+}
+
+.section2::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+}
+
+.section2Content {
+  position: relative;
+  z-index: 1;
+  text-align: center;
+  color: white;
+  max-width: 800px;
+  padding: 3rem;
+}
+
+.section2Title {
+  font-size: 2.5rem;
+  font-weight: 700;
+  margin-bottom: 2rem;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+}
+
+.section2Text {
+  font-size: 1.25rem;
+  line-height: 1.7;
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+}
+
+/* ✅ DODANE - Style dla WYSIWYG w sekcji 2 */
+.section2Text p {
+  margin-bottom: 1rem;
+}
+
+.section2Text ul,
+.section2Text ol {
+  margin: 1rem 0;
+  padding-left: 1.5rem;
+}
+
+.section2Text li {
+  margin-bottom: 0.5rem;
+}
+
+.section2Text strong {
+  font-weight: 700;
+}
+
+/* SEKCJA 3 - Tekst + YouTube */
+.section3 {
+  display: grid;
+  grid-template-columns: 1fr 1.2fr; /* Video trochę szersze */
+  gap: 4rem;
+  padding: 4rem;
+  background: white;
+  align-items: center;
+}
+
+.section3Left {
+  padding: 2rem;
+}
+
+.section3Title {
+  font-size: 2.5rem;
+  font-weight: 700;
+  color: #1e293b;
+  margin-bottom: 2rem;
+  line-height: 1.2;
+}
+
+.section3Text {
+  font-size: 1.125rem;
+  line-height: 1.7;
+  color: #374151;
+}
+
+/* ✅ DODANE - Style dla WYSIWYG w sekcji 3 */
+.section3Text p {
+  margin-bottom: 1rem;
+}
+
+.section3Text ul,
+.section3Text ol {
+  margin: 1rem 0;
+  padding-left: 1.5rem;
+}
+
+.section3Text li {
+  margin-bottom: 0.5rem;
+}
+
+.section3Text h2,
+.section3Text h3 {
+  margin: 1.5rem 0 1rem 0;
+  color: #1e293b;
+  font-weight: 600;
+}
+
+.section3Text strong {
+  font-weight: 700;
+}
+
+.section3Right {
+  padding: 2rem;
+}
+
+/* SEKCJA 4 - Formularz kontaktowy */
+.section4 {
+  background: rgba(252, 108, 20, 1);
+  padding: 4rem;
+  text-align: center;
+  color: white;
+}
+
+.section4Title {
+  font-size: 2.5rem;
+  font-weight: 700;
+  margin-bottom: 1rem;
+}
+
+.section4Subtitle {
+  font-size: 1.25rem;
+  opacity: 0.9;
+}
+
+.contactFormContainer {
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+/* SEKCJA 5 - Końcowa */
+.section5 {
+  background: #f8fafc;
+  padding: 4rem;
+  text-align: center;
+}
+
+.section5Title {
+  font-size: 2.5rem;
+  font-weight: 700;
+  color: #1e293b;
+  margin-bottom: 2rem;
+}
+
+.section5Text {
+  font-size: 1.125rem;
+  line-height: 1.7;
+  color: #374151;
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+/* ✅ DODANE - Style dla WYSIWYG w sekcji 5 */
+.section5Text p {
+  margin-bottom: 1rem;
+}
+
+.section5Text ul,
+.section5Text ol {
+  margin: 1rem 0;
+  padding-left: 1.5rem;
+  text-align: left;
+}
+
+.section5Text li {
+  margin-bottom: 0.5rem;
+}
+
+.section5Text h2,
+.section5Text h3 {
+  margin: 1.5rem 0 1rem 0;
+  color: #1e293b;
+  font-weight: 600;
+}
+
+.section5Text strong {
+  font-weight: 700;
+}
+
+/* RESPONSIVE DESIGN */
+@media (max-width: 968px) {
+  .section1 {
+    grid-template-columns: 1fr;
+  }
+
+  .section1Left,
+  .section1Right {
+    padding: 3rem 2rem;
+    min-height: 50vh;
+  }
+
+  .section1Title {
+    font-size: 2.5rem;
+  }
+
+  .section3 {
+    grid-template-columns: 1fr;
+    gap: 2rem;
+    padding: 3rem 2rem;
+  }
+
+  .section3Title {
+    font-size: 2rem;
+  }
+
+  .section2Content {
+    padding: 2rem;
+  }
+
+  .section2Title {
+    font-size: 2rem;
+  }
+
+  .section4,
+  .section5 {
+    padding: 3rem 2rem;
+  }
+
+  .section4Title,
+  .section5Title {
+    font-size: 2rem;
+  }
+}
+
+@media (max-width: 640px) {
+  .section1Left,
+  .section1Right {
+    padding: 2rem 1rem;
+  }
+
+  .section1Title {
+    font-size: 2rem;
+  }
+
+  .section3,
+  .section4,
+  .section5 {
+    padding: 2rem 1rem;
+  }
+}

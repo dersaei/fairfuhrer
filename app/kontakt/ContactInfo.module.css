@@ -1,8 +1,8 @@
 /* app/kontakt/ContactInfo.module.css */
 .contactInfo {
-  background-color: transparent;
+  background: linear-gradient(135deg, #764ba2 50%, #667eea 100%);
   padding: 2rem;
-  height: 96vh;
+  height: 92vh;
   box-shadow: rgba(0, 0, 0, 0.09) 0px 3px 12px;
 }
 
@@ -20,18 +20,22 @@
 }
 
 .intro {
-  color: #64748b;
-  margin-bottom: 2rem;
+  color: black;
+  margin-bottom: 1rem;
   line-height: 1.6;
-  font-size: 1.1rem;
+  font-size: 1.15rem;
   font-weight: 400;
   font-family: "Oxanium", sans-serif;
+}
+.intro span {
+  background-color: #3dd1e7;
+  padding: 2px 0;
 }
 
 .contactMethods {
   display: flex;
   flex-direction: column;
-  gap: 1.5rem;
+  gap: 1.3rem;
 }
 
 .contactMethod {

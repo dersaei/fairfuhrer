@@ -6,8 +6,8 @@ export default function ContactInfo() {
     <div className={styles.contactInfo}>
       <h2>Kontaktinformationen</h2>
       <p className={styles.intro}>
-        Haben Sie Fragen oder benötigen Sie Hilfe? Kontaktieren Sie uns auf dem
-        für Sie passenden Weg.
+        <span>Haben Sie Fragen oder benötigen Sie Hilfe?</span> <br />
+        <span>Kontaktieren Sie uns auf dem für Sie passenden Weg</span>
       </p>
 
       <div className={styles.contactMethods}>

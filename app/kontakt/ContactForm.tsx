@@ -100,7 +100,6 @@ export default function ContactForm() {
 
       <form onSubmit={handleSubmit}>
         <div className={styles.formGroup}>
-          <label htmlFor="name">Name</label>
           <input
             type="text"
             id="name"
@@ -109,11 +108,11 @@ export default function ContactForm() {
             onChange={handleChange}
             required
             disabled={isSubmitting}
+            placeholder="Name"
           />
         </div>
 
         <div className={styles.formGroup}>
-          <label htmlFor="email">Email</label>
           <input
             type="email"
             id="email"
@@ -122,11 +121,11 @@ export default function ContactForm() {
             onChange={handleChange}
             required
             disabled={isSubmitting}
+            placeholder="Email"
           />
         </div>
 
         <div className={styles.formGroup}>
-          <label htmlFor="subject">Betreff</label>
           <input
             type="text"
             id="subject"
@@ -135,11 +134,11 @@ export default function ContactForm() {
             onChange={handleChange}
             required
             disabled={isSubmitting}
+            placeholder="Betreff"
           />
         </div>
 
         <div className={styles.formGroup}>
-          <label htmlFor="message">Nachricht</label>
           <textarea
             id="message"
             name="message"

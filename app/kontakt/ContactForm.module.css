@@ -1,9 +1,9 @@
 /* app/kontakt/ContactForm.module.css */
 .contactForm {
-  background-color: #fffaf3;
+  background-color: rgba(252, 108, 20, 1);
   padding: 2rem;
   box-shadow: rgba(0, 0, 0, 0.09) 0px 3px 12px;
-  height: 96vh;
+  height: 92vh;
 }
 
 .contactForm h2 {
@@ -40,9 +40,9 @@
 }
 
 .formGroup {
-  margin-bottom: 1.5rem;
-  font-family: "Lato", sans-serif;
+  margin-bottom: 1.3rem;
   font-weight: 400;
+  font-family: "Oxanium", sans-serif;
 }
 
 .formGroup label {
@@ -86,7 +86,7 @@
 
 .submitButton {
   width: 100%;
-  background: rgba(252, 108, 20, 1);
+  background: firebrick;
   color: white;
   border: none;
   padding: 0.875rem 1.5rem;
