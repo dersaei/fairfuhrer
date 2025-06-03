@@ -3,9 +3,9 @@ import type { Metadata } from "next";
 import {
   Lato,
   Oswald,
-  Work_Sans,
   Staatliches,
   Oxanium,
+  Patrick_Hand,
 } from "next/font/google";
 import "../styles/reset.css";
 
@@ -27,10 +27,10 @@ const oswald = Oswald({
   weight: ["400", "700"],
   variable: "--font-oswald",
 });
-const workSans = Work_Sans({
+const patrickHand = Patrick_Hand({
+  variable: "--font-patrick-hand",
   subsets: ["latin"],
   weight: "400",
-  variable: "--font-work-sans",
 });
 
 // nowy import Oxanium
@@ -55,12 +55,12 @@ export default function RootLayout({
     <html lang="de">
       <body
         className={`
-          ${lato.variable}
-          ${oswald.variable}
-          ${workSans.variable}
-          ${staatliches.variable}
-          ${oxanium.variable}
-        `}
+    ${lato.variable}
+    ${oswald.variable}
+    ${staatliches.variable}
+    ${oxanium.variable}
+    ${patrickHand.variable}
+  `}
       >
         <Header />
         <main>{children}</main>

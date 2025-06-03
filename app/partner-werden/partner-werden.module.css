@@ -74,10 +74,11 @@
 .section1TextRight h2 {
   font-size: 6vw;
   color: gold;
-  font-weight: 700;
+  font-weight: 400;
   font-family: "Staatliches", sans-serif;
   -webkit-text-stroke: 1px black;
-  text-shadow: 1px 2px 2px navy;
+  text-transform: uppercase;
+  text-shadow: 4px 4px 3px navy;
   text-align: center;
 }
 .section1TextRight h3 {
