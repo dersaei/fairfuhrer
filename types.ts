@@ -82,7 +82,7 @@ export interface PartnerPageContent {
   // SEKCJA 1 - Grid dwukolumnowy
   section1_left_title?: string;
   section1_left_text?: string;
-  section1_left_image?: string;
+  // USUNIĘTE: section1_left_image - nie jest już potrzebne
   section1_right_text?: string;
   section1_right_image?: string;
 
@@ -103,4 +103,5 @@ export interface PartnerPageContent {
   // SEKCJA 5 - Końcowa sekcja
   section5_title?: string;
   section5_text?: string;
+  section5_image?: string; // ✅ DODANE - obrazek na końcu sekcji 5
 }

@@ -93,20 +93,8 @@ export default async function PartnerWerdenPage() {
                 src={getPageAssetPath(pageData.section1_right_image)}
                 alt="Partnerschaft"
                 width={300}
-                height={90}
+                height={200}
                 className={styles.section1SmallImage}
-              />
-            </div>
-          )}
-          {/* DODANE - zdjęcie z lewej strony, teraz na dole prawej */}
-          {pageData.section1_left_image && (
-            <div className={styles.section1ImageContainer}>
-              <Image
-                src={getPageAssetPath(pageData.section1_left_image)}
-                alt="Partner werden"
-                width={900}
-                height={50}
-                className={styles.section1Image}
               />
             </div>
           )}
@@ -191,6 +179,17 @@ export default async function PartnerWerdenPage() {
               className={styles.section5Text}
               dangerouslySetInnerHTML={{ __html: pageData.section5_text }}
             />
+          )}
+          {pageData.section5_image && (
+            <div className={styles.section5ImageContainer}>
+              <Image
+                src={getPageAssetPath(pageData.section5_image)}
+                alt="Partner werden"
+                width={300}
+                height={90}
+                className={styles.section5Image}
+              />
+            </div>
           )}
         </section>
       )}
