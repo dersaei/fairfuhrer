@@ -1,6 +1,6 @@
 {
   "version": 8,
-  "name": "Minimal Globe",
+  "name": "Enhanced Globe with Stars and Terrain",
   "center": [15, 50],
   "zoom": 1,
   "bearing": 0,
@@ -22,7 +22,7 @@
       ["exponential", 1.2],
       ["zoom"],
       5.5,
-      "hsl(199, 51%, 35%)",
+      "hsl(199, 51%, 25%)",
       6,
       "hsl(199, 61%, 87%)"
     ],
@@ -39,9 +39,15 @@
       "interpolate",
       ["exponential", 1.2],
       ["zoom"],
+      0,
+      0.8,
+      4,
+      0.6,
       5.5,
-      0.1,
+      0.4,
       6,
+      0.2,
+      8,
       0
     ]
   },
@@ -67,6 +73,126 @@
           "hsl(199, 61%, 87%)",
           11,
           "hsl(35, 12%, 89%)"
+        ]
+      }
+    },
+    {
+      "id": "landcover",
+      "type": "fill",
+      "source": "composite",
+      "source-layer": "landcover",
+      "maxzoom": 12,
+      "filter": [
+        "match",
+        ["get", "class"],
+        ["wood", "grass", "scrub", "crop", "snow"],
+        true,
+        false
+      ],
+      "paint": {
+        "fill-color": [
+          "match",
+          ["get", "class"],
+          "wood",
+          "hsl(104, 45%, 65%)",
+          "grass",
+          "hsl(99, 40%, 75%)",
+          "scrub",
+          "hsl(99, 35%, 70%)",
+          "crop",
+          "hsl(67, 45%, 80%)",
+          "snow",
+          "hsl(196, 50%, 90%)",
+          "hsl(35, 12%, 89%)"
+        ],
+        "fill-opacity": [
+          "interpolate",
+          ["exponential", 1.5],
+          ["zoom"],
+          0,
+          0.8,
+          4,
+          0.7,
+          8,
+          0.6,
+          12,
+          0.4
+        ]
+      }
+    },
+    {
+      "id": "landuse",
+      "type": "fill",
+      "source": "composite",
+      "source-layer": "landuse",
+      "minzoom": 2,
+      "filter": [
+        "match",
+        ["get", "class"],
+        ["park", "agriculture", "wood", "grass", "scrub", "glacier", "sand"],
+        true,
+        false
+      ],
+      "paint": {
+        "fill-color": [
+          "match",
+          ["get", "class"],
+          "wood",
+          "hsl(104, 50%, 60%)",
+          "park",
+          "hsl(99, 55%, 68%)",
+          "agriculture",
+          "hsl(67, 50%, 78%)",
+          "grass",
+          "hsl(99, 45%, 72%)",
+          "scrub",
+          "hsl(99, 35%, 65%)",
+          "glacier",
+          "hsl(196, 60%, 88%)",
+          "sand",
+          "hsl(45, 60%, 82%)",
+          "hsl(35, 12%, 89%)"
+        ],
+        "fill-opacity": [
+          "interpolate",
+          ["linear"],
+          ["zoom"],
+          2,
+          0.6,
+          6,
+          0.5,
+          10,
+          0.3
+        ]
+      }
+    },
+    {
+      "id": "hillshade",
+      "type": "fill",
+      "source": "composite",
+      "source-layer": "hillshade",
+      "maxzoom": 16,
+      "filter": ["match", ["get", "level"], [89, 78, 67, 56], true, false],
+      "paint": {
+        "fill-color": [
+          "match",
+          ["get", "class"],
+          "shadow",
+          "hsla(30, 20%, 40%, 0.15)",
+          "hsla(35, 25%, 85%, 0.12)"
+        ],
+        "fill-opacity": [
+          "interpolate",
+          ["linear"],
+          ["zoom"],
+          0,
+          0.4,
+          8,
+          0.3,
+          14,
+          0.1,
+          16,
+          0
         ]
       }
     },

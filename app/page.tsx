@@ -109,7 +109,7 @@ export default function HomePage() {
 
       {/* Napis po lewej stronie */}
       <div className={styles.leftText}>
-        Dein Fair-Führer für Geschichte und gute Geschichten
+        Dein Reiseführer für Geschichte und gute Geschichten
       </div>
 
       {/* Przycisk Play na środku globu */}
