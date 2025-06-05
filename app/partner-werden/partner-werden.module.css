@@ -20,25 +20,28 @@
   grid-template-columns: 1fr 1fr;
   min-height: 100vh;
   gap: 0;
+  border-bottom: 2px solid black;
 }
 
 .section1Left {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 50%);
+  background: rgba(252, 108, 20, 1);
   padding: 4rem;
   display: flex;
   flex-direction: column;
   justify-content: center;
   color: white;
+  border-right: 1px solid black;
 }
 
 .section1Right {
-  background: linear-gradient(135deg, #764ba2 50%, #667eea 100%);
+  background: #3dd1e7;
   padding: 4rem;
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
   color: white;
+  border-left: 1px solid black;
 }
 
 .section1Title {
@@ -224,6 +227,8 @@
   padding: 4rem;
   background: white;
   align-items: center;
+  border-bottom: 2px solid black;
+  border-top: 2px solid black;
 }
 
 .section3Left {
@@ -280,6 +285,7 @@
   padding: 4rem;
   text-align: center;
   color: white;
+  border-bottom: 2px solid black;
 }
 
 .section4Title {

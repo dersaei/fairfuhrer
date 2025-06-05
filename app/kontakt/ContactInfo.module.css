@@ -1,9 +1,9 @@
 /* app/kontakt/ContactInfo.module.css */
 .contactInfo {
-  background: linear-gradient(135deg, #764ba2 50%, #667eea 100%);
+  background: #3dd1e7;
   padding: 2rem;
   height: 92vh;
-  box-shadow: rgba(0, 0, 0, 0.09) 0px 3px 12px;
+  border-right: 2px solid black;
 }
 
 .contactInfo h2 {

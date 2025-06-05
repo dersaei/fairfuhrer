@@ -11,7 +11,7 @@
 
 .sekcja1 {
   width: 100%;
-  background: linear-gradient(135deg, #764ba2 50%, #667eea 100%);
+  background: #3dd1e7;
   box-sizing: border-box;
   color: #000000;
   display: flex;
@@ -19,6 +19,7 @@
   align-items: center;
   position: relative;
   text-align: center;
+  border-bottom: 2px solid black;
 }
 
 .pageHeader {
