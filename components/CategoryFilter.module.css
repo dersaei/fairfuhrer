@@ -2,18 +2,16 @@
 .filterContainer {
   display: flex;
   flex-wrap: wrap;
-  gap: 12px;
-  max-width: 1200px;
-  margin: 0 auto;
+  gap: 8px;
+  width: 100%;
   justify-content: center;
-  padding: 15px;
 }
 
 .filterLabel {
   display: flex;
   align-items: center;
-  padding: 8px 16px;
-  border-radius: 20px;
+  padding: 6px 12px;
+  border-radius: 16px;
   background-color: var(--bg-color, transparent);
   transition: all 0.2s ease;
   cursor: pointer;
@@ -26,7 +24,7 @@
 }
 
 .inactive {
-  border: 1px solid white;
+  border: 1px solid #666;
   background-color: transparent;
 }
 
@@ -40,11 +38,11 @@
   font-weight: 700;
   font-family: "Lato", sans-serif;
   transition: color 0.2s ease;
-  color: inherit;
+  color: #333;
 }
 
 @media (min-width: 768px) {
   .filterName {
-    font-size: 16px;
+    font-size: 14px;
   }
 }
