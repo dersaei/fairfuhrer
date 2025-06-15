@@ -1,21 +1,20 @@
 /* components/CategoryFilter.module.css */
 .filterContainer {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
-  width: 100%;
-  justify-content: center;
+  display: block;
+  margin: 0 auto;
+  padding: 15px;
 }
 
 .filterLabel {
-  display: flex;
-  align-items: center;
-  padding: 6px 12px;
-  border-radius: 16px;
+  display: block;
+  margin: 0 0 1vh 0;
+  padding: 8px 16px;
+  border-radius: 20px;
   background-color: var(--bg-color, transparent);
   transition: all 0.2s ease;
   cursor: pointer;
   opacity: 0.7;
+  text-align: center;
 }
 
 .active {
@@ -24,7 +23,7 @@
 }
 
 .inactive {
-  border: 1px solid #666;
+  border: 1px solid white;
   background-color: transparent;
 }
 
@@ -38,11 +37,11 @@
   font-weight: 700;
   font-family: "Lato", sans-serif;
   transition: color 0.2s ease;
-  color: #333;
+  color: inherit;
 }
 
 @media (min-width: 768px) {
   .filterName {
-    font-size: 14px;
+    font-size: 16px;
   }
 }

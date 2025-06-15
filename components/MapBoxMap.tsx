@@ -584,6 +584,13 @@ export default function MapBoxMap({ places }: MapBoxMapProps) {
 
   return (
     <div className={styles.mapContainerWrapper}>
+      <div
+        ref={containerRef}
+        className={`${styles.mapContainer} ${
+          isPanelOpen ? styles.mapWithPanel : ""
+        }`}
+      />
+
       {locationError && (
         <div className={styles.locationError}>
           <p>Geolocation-Fehler: {locationError}</p>
@@ -592,13 +599,6 @@ export default function MapBoxMap({ places }: MapBoxMapProps) {
           </button>
         </div>
       )}
-
-      <div
-        ref={containerRef}
-        className={`${styles.mapContainer} ${
-          isPanelOpen ? styles.mapWithPanel : ""
-        }`}
-      />
 
       {render && (
         <div
