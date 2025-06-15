@@ -1,12 +1,6 @@
 // layout.tsx
 import type { Metadata } from "next";
-import {
-  Lato,
-  Oswald,
-  Staatliches,
-  Oxanium,
-  Patrick_Hand,
-} from "next/font/google";
+import { Lato, Montserrat, Staatliches, Oxanium } from "next/font/google";
 import "../styles/reset.css";
 
 import Header from "../components/Header";
@@ -17,27 +11,24 @@ const lato = Lato({
   subsets: ["latin"],
   weight: ["400", "700"],
 });
+
 const staatliches = Staatliches({
   variable: "--font-staatliches",
   subsets: ["latin"],
   weight: "400",
 });
-const oswald = Oswald({
-  subsets: ["latin"],
-  weight: ["400", "700"],
-  variable: "--font-oswald",
-});
-const patrickHand = Patrick_Hand({
-  variable: "--font-patrick-hand",
-  subsets: ["latin"],
-  weight: "400",
-});
 
-// nowy import Oxanium
 const oxanium = Oxanium({
   variable: "--font-oxanium",
   subsets: ["latin"],
-  weight: ["400", "700"], // tutaj dobierz te wagi, których potrzebujesz
+  weight: ["400", "700"],
+});
+
+// nowy font Montserrat
+const montserrat = Montserrat({
+  variable: "--font-montserrat",
+  subsets: ["latin"],
+  weight: ["400", "500", "600", "700"], // możesz dostosować wagi według potrzeb
 });
 
 export const metadata: Metadata = {
@@ -56,10 +47,9 @@ export default function RootLayout({
       <body
         className={`
     ${lato.variable}
-    ${oswald.variable}
     ${staatliches.variable}
     ${oxanium.variable}
-    ${patrickHand.variable}
+    ${montserrat.variable}
   `}
       >
         <Header />

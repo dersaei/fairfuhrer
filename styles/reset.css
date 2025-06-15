@@ -97,7 +97,7 @@ section {
   display: block;
 }
 ul {
-  list-style: none;
+  text-align: left;
 }
 blockquote,
 q {

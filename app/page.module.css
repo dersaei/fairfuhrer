@@ -1,13 +1,13 @@
 /* app/page.module.css */
 
 .container {
-  width: 100vw;
+  width: 100%;
   height: calc(100vh - 90px);
   position: relative;
 }
 
 .loadingContainer {
-  width: 100vw;
+  width: 100%;
   height: calc(100vh - 90px);
   display: flex;
   align-items: center;
@@ -21,18 +21,9 @@
   top: 50%;
   left: 3vw;
   transform: translateY(-50%);
-  font-size: 5.2vw;
-  font-weight: 300;
-  color: black;
-  text-align: center;
-  line-height: 1.4;
-  text-shadow: 3px 6px 3px black;
   z-index: 10;
   width: 30vw;
-  font-family: "Staatliches", sans-serif;
-  font-weight: 400;
-  font-style: normal;
-  -webkit-text-stroke: 1px gold;
+  text-align: center;
 }
 
 /* Kontener przycisku play */
@@ -95,8 +86,147 @@
   font-family: "Oxanium", sans-serif;
 }
 
+/* Podstawowy styl sekcji */
+.section {
+  width: 100%;
+  height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 4rem 2rem;
+  box-sizing: border-box;
+  margin: 0;
+}
+
+.section2Title {
+  text-align: left;
+  font-size: 3rem;
+  margin-bottom: 2rem;
+  color: white;
+  font-family: "Montserrat", sans-serif;
+  font-optical-sizing: auto;
+  font-weight: 400;
+  font-style: normal;
+}
+
+/* Alternatywne kolory tła dla sekcji */
+.section:nth-child(2) {
+  background-color: rgb(252, 108, 20);
+}
+
+.section:nth-child(3) {
+  background-color: rgb(191, 191, 191);
+}
+
+.section:nth-child(4) {
+  background-color: #2c3e50;
+  color: white;
+}
+
+/* Zawartość sekcji */
+.sectionContent {
+  max-width: 800px;
+  width: 100%;
+  text-align: center;
+  padding: 0 1rem;
+}
+
+/* Tytuły sekcji */
+.sectionTitle {
+  font-family: "Montserrat", sans-serif;
+  font-optical-sizing: auto;
+  font-weight: 400;
+  font-style: normal;
+  font-size: 3.5rem;
+  margin-bottom: 2rem;
+  color: inherit;
+}
+
+.section1Title {
+  font-size: 4vw;
+  font-weight: 300;
+  color: black;
+  line-height: 1.4;
+  font-family: "Montserrat", sans-serif;
+  font-optical-sizing: auto;
+  font-weight: 400;
+  font-style: normal;
+}
+.section1Subtitle {
+  font-size: 2.5vw;
+  font-family: "Lato", sans-serif;
+  font-weight: 400;
+  font-style: normal;
+}
+
+/* Tekst sekcji */
+.sectionText {
+  font-family: "Lato", sans-serif;
+  font-size: 1.4rem;
+  line-height: 1.8;
+  margin-bottom: 3rem;
+  color: inherit;
+  opacity: 0.9;
+}
+
+/* Kolory dla sectionText w poszczególnych sekcjach */
+.section:nth-child(2) .sectionText {
+  color: white;
+}
+
+.section:nth-child(3) .sectionText {
+  color: black;
+}
+
+/* Przycisk partnera */
+.partnerButton {
+  background: linear-gradient(135deg, #3498db, #2980b9);
+  color: white;
+  border: none;
+  padding: 1.2rem 3rem;
+  font-size: 1.3rem;
+  font-family: "Oxanium", sans-serif;
+  font-weight: 600;
+  border-radius: 50px;
+  cursor: pointer;
+  transition: all 0.3s ease-in-out;
+  box-shadow: 0 4px 15px rgba(52, 152, 219, 0.3);
+}
+
+.partnerButton:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 6px 25px rgba(52, 152, 219, 0.4);
+  background: linear-gradient(135deg, #2980b9, #3498db);
+}
+
+.main {
+  display: block;
+  width: 100%;
+  margin: 0;
+  padding: 0;
+}
+
 /* Responsywność dla tabletów */
-@media (max-width: 900px) {
+@media (max-width: 950px) {
+  .section {
+    height: auto;
+    min-height: 80vh;
+    padding: 3rem 1.5rem;
+  }
+
+  .sectionTitle {
+    font-size: 2.8rem;
+  }
+
+  .sectionText {
+    font-size: 1.2rem;
+  }
+
+  .partnerButton {
+    padding: 1rem 2.5rem;
+    font-size: 1.2rem;
+  }
+
   .leftText {
     bottom: 13vh;
     left: 0;
@@ -106,6 +236,39 @@
     position: relative;
     text-align: center;
     top: auto;
-    font-size: 7vw;
+  }
+  .section1Title {
+    font-size: 5vw;
+  }
+  .section1Subtitle {
+    font-size: 3vw;
+  }
+}
+
+/* Responsywność dla telefonów */
+@media (max-width: 600px) {
+  .section {
+    padding: 2rem 1rem;
+    min-height: 70vh;
+  }
+
+  .sectionContent {
+    padding: 0 0.5rem;
+  }
+
+  .sectionTitle {
+    font-size: 2.2rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .sectionText {
+    font-size: 1.1rem;
+    line-height: 1.6;
+    margin-bottom: 2rem;
+  }
+
+  .partnerButton {
+    padding: 0.9rem 2rem;
+    font-size: 1.1rem;
   }
 }

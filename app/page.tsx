@@ -1,5 +1,4 @@
 "use client";
-
 import React, { useRef, useEffect, useState } from "react";
 import Map, { type MapRef } from "react-map-gl/mapbox";
 import "mapbox-gl/dist/mapbox-gl.css";
@@ -27,7 +26,7 @@ export default function HomePage() {
   useEffect(() => {
     const loadAtmosphereStyle = async () => {
       try {
-        const response = await fetch("/styles/atmosphere.json");
+        const response = await fetch("/styles/atmosphere-v2.json");
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);
         }
@@ -68,6 +67,10 @@ export default function HomePage() {
     router.push("/karte");
   };
 
+  const handlePartnerClick = () => {
+    router.push("/partner-werden");
+  };
+
   // Loading state
   if (isLoading) {
     return (
@@ -87,42 +90,110 @@ export default function HomePage() {
   }
 
   return (
-    <div className={styles.container}>
-      {/* Mapa jako tło */}
-      <Map
-        ref={mapRef}
-        mapboxAccessToken={MAPBOX_TOKEN}
-        mapStyle={atmosphereStyle}
-        projection="globe"
-        interactive={false}
-        cursor="pointer"
-        onClick={handleMapClick}
-        initialViewState={{
-          longitude: atmosphereStyle.center[0],
-          latitude: atmosphereStyle.center[1],
-          zoom: atmosphereStyle.zoom,
-          bearing: atmosphereStyle.bearing,
-          pitch: atmosphereStyle.pitch,
-        }}
-        style={{ width: "100%", height: "100%" }}
-      />
+    <>
+      <main className={styles.main}>
+        {/* Sekcja 1: Mapa (oryginalny kod) */}
+        <div className={styles.container}>
+          {/* Mapa jako tło */}
+          <Map
+            ref={mapRef}
+            mapboxAccessToken={MAPBOX_TOKEN}
+            mapStyle={atmosphereStyle}
+            projection="globe"
+            interactive={false}
+            cursor="pointer"
+            onClick={handleMapClick}
+            initialViewState={{
+              longitude: atmosphereStyle.center[0],
+              latitude: atmosphereStyle.center[1],
+              zoom: atmosphereStyle.zoom,
+              bearing: atmosphereStyle.bearing,
+              pitch: atmosphereStyle.pitch,
+            }}
+            style={{ width: "100%", height: "100%" }}
+          />
 
-      {/* Napis po lewej stronie */}
-      <div className={styles.leftText}>
-        Dein Reiseführer für Geschichte und gute Geschichten
-      </div>
+          {/* Napis po lewej stronie */}
+          <div className={styles.leftText}>
+            <h2 className={styles.section1Title}>
+              Dein Reiseführer für Geschichte und gute Geschichten
+            </h2>
+            <h3 className={styles.section1Subtitle}>
+              Rund um den Bodensee und im Allgäu
+            </h3>
+          </div>
 
-      {/* Przycisk Play na środku globu */}
-      <div onClick={handleMapClick} className={styles.playButtonContainer}>
-        {/* Ikona Play */}
-        <div className={styles.playButton}>
-          {/* Trójkąt Play */}
-          <div className={styles.playTriangle} />
+          {/* Przycisk Play na środku globu */}
+          <div onClick={handleMapClick} className={styles.playButtonContainer}>
+            {/* Ikona Play */}
+            <div className={styles.playButton}>
+              {/* Trójkąt Play */}
+              <div className={styles.playTriangle} />
+            </div>
+
+            {/* Tekst "Zur Karte" */}
+            <div className={styles.mapText}>Zur Karte</div>
+          </div>
         </div>
 
-        {/* Tekst "Zur Karte" */}
-        <div className={styles.mapText}>Zur Karte</div>
-      </div>
-    </div>
+        {/* Sekcja 2: Was macht uns besonders? */}
+        <section className={styles.section}>
+          <div className={styles.sectionContent}>
+            <h2 className={styles.section2Title}>
+              Hunderte gute Geschichten vom Bodensee, aus dem Allgäu und aus
+              aller Welt
+            </h2>
+
+            <ul className={styles.sectionText}>
+              <li>
+                jede Stecknadel erzählt über ein einzigartiges Highlight / einen
+                Insidertipp / ein heimisches Angebot / eine regionale Anekdote
+              </li>
+              <li>über 10 Stunden Hörerlebnis</li>
+              <li>spannend, interessant und unterhaltsam</li>
+              <li>basierend auf dem Augenmerk Nachhaltigkeit und Innovation</li>
+            </ul>
+          </div>
+        </section>
+
+        {/* Sekcja 3: Unsere Mission */}
+        <section className={styles.section}>
+          <div className={styles.sectionContent}>
+            <h2 className={styles.sectionTitle}>
+              Interessantes, Informatives, Inspirierendes entdecken
+            </h2>
+            <p className={styles.sectionText}>
+              Staunen Sie über die innovativen & nachhaltigen Angebote unserer
+              Region! Hören Sie ihrer Geschichte zu und werden Sie zu ihrem
+              Besucher...
+            </p>
+          </div>
+        </section>
+
+        {/* Sekcja 4: Partner werden */}
+        <section className={styles.section}>
+          <div className={styles.sectionContent}>
+            <h2 className={styles.sectionTitle}>
+              LASSEN SIE UNS GEMEINSAM IHRE GUTE GESCHICHTE ERZÄHLEN!
+            </h2>
+            <p className={styles.sectionText}>
+              Ihr Betrieb, Ihr Verein o.ä. handelt im Sinne der 17 Ziele für
+              nachhaltige Entwicklung (SDGs)? Ihr sinnstiftendes Tun und Ihr
+              Beitrag zu einer besseren und gerechteren Welt / Umwelt hat mehr
+              Aufmerksamkeit verdient? Dann freuen wir uns, wenn Sie Partner
+              unseres Netzwerkes werden und der FAIRFÜHRER Ihr Angebot
+              &quot;fairmarkten&quot; darf.
+            </p>
+            <button
+              type="button"
+              onClick={handlePartnerClick}
+              className={styles.partnerButton}
+            >
+              Partner werden
+            </button>
+          </div>
+        </section>
+      </main>
+    </>
   );
 }
