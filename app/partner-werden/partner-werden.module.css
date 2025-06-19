@@ -2,7 +2,6 @@
 
 .container {
   min-height: 100vh;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
 }
 
 .errorMessage {
@@ -14,7 +13,7 @@
   box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
 }
 
-/* SEKCJA 1 - Grid dwukolumnowy */
+/* SEKCJA 1 - Grid dwukolumnowy - USUNIĘTE stałe kolory */
 .section1 {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -24,23 +23,23 @@
 }
 
 .section1Left {
-  background: rgba(252, 108, 20, 1);
+  /* USUNIĘTE: background: rgba(252, 108, 20, 1); */
+  /* USUNIĘTE: color: white; */
   padding: 4rem;
   display: flex;
   flex-direction: column;
   justify-content: center;
-  color: white;
   border-right: 1px solid black;
 }
 
 .section1Right {
-  background: #3dd1e7;
+  /* USUNIĘTE: background: #3dd1e7; */
+  /* USUNIĘTE: color: white; */
   padding: 4rem;
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  color: white;
   border-left: 1px solid black;
 }
 
@@ -57,6 +56,8 @@
   margin-bottom: 2rem;
 }
 
+/* Style dla linków - będą dziedziczyć kolor z parent */
+.section1Text a,
 .section2Text a {
   color: #fbbf24; /* Żółty kolor - widoczny na ciemnym tle */
   text-decoration: underline;
@@ -65,32 +66,28 @@
   font-size: 110%;
 }
 
+.section1Text a:hover,
 .section2Text a:hover {
   color: #f59e0b;
   text-decoration: none;
 }
-.section5Text a {
-  background-color: #fbbf24;
-  color: black;
-  padding: 2px 4px;
-}
-.section1TextRight h2 {
-  font-size: 6vw;
-  color: gold;
-  font-weight: 400;
-  font-family: "Staatliches", sans-serif;
-  -webkit-text-stroke: 1px black;
-  text-transform: uppercase;
-  text-shadow: 4px 4px 3px navy;
-  text-align: center;
-}
-.section1TextRight h3 {
+
+.section1RightTitle {
   font-size: 4vw;
+  font-weight: 700;
+  margin-bottom: 1.5rem;
+  line-height: 1.2;
   text-align: center;
-  color: black;
 }
 
-/* ✅ DODANE - Style dla WYSIWYG content */
+.section1TextRight {
+  font-size: 3vw;
+  font-weight: 400;
+  text-transform: uppercase;
+  text-align: center;
+}
+
+/* Style dla WYSIWYG content */
 .section1Text p {
   margin-bottom: 1rem;
 }
@@ -99,22 +96,22 @@
 .section1Text ol {
   margin: 1rem 0;
   padding-left: 1.5rem;
-  list-style: disc; /* ✅ DODANE - pokaż bullets */
+  list-style: disc;
 }
 
 .section1Text ol {
-  list-style: decimal; /* ✅ DODANE - numeracja dla ol */
+  list-style: decimal;
 }
 
 .section1Text li {
   margin-bottom: 0.5rem;
-  display: list-item; /* ✅ DODANE - wymuś wyświetlanie jako lista */
+  display: list-item;
 }
 
 .section1Text h2,
 .section1Text h3 {
   margin: 1.5rem 0 1rem 0;
-  color: white;
+  /* USUNIĘTE: color: white; - będzie dziedziczone */
   font-weight: 600;
 }
 
@@ -124,19 +121,6 @@
 
 .section1Text em {
   font-style: italic;
-}
-
-/* ✅ NOWE - Style dla linków w WYSIWYG */
-.section1Text a {
-  color: #fbbf24; /* Żółty kolor - widoczny na ciemnym tle */
-  text-decoration: underline;
-  font-weight: 500;
-  transition: color 0.3s ease;
-}
-
-.section1Text a:hover {
-  color: #f59e0b;
-  text-decoration: none;
 }
 
 .section1ImageContainer {
@@ -168,21 +152,21 @@
   position: relative;
 }
 
-.section2::before {
-  content: "";
+/* NOWY dynamiczny overlay zamiast ::before */
+.section2Overlay {
   position: absolute;
   top: 0;
   left: 0;
   right: 0;
   bottom: 0;
-  background: rgba(0, 0, 0, 0.5);
+  /* backgroundColor i opacity będą ustawiane dynamicznie */
 }
 
 .section2Content {
   position: relative;
   z-index: 1;
   text-align: center;
-  color: white;
+  /* USUNIĘTE: color: white; - będzie ustawiane dynamicznie */
   max-width: 800px;
   padding: 3rem;
 }
@@ -191,16 +175,14 @@
   font-size: 2.5rem;
   font-weight: 700;
   margin-bottom: 2rem;
-  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
 }
 
 .section2Text {
   font-size: 1.25rem;
   line-height: 1.7;
-  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
 }
 
-/* ✅ DODANE - Style dla WYSIWYG w sekcji 2 */
+/* Style dla WYSIWYG w sekcji 2 */
 .section2Text p {
   margin-bottom: 1rem;
 }
@@ -219,13 +201,13 @@
   font-weight: 700;
 }
 
-/* SEKCJA 3 - Tekst + YouTube */
+/* SEKCJA 3 - Tekst + YouTube - USUNIĘTE stałe kolory */
 .section3 {
   display: grid;
-  grid-template-columns: 1fr 1.2fr; /* Video trochę szersze */
+  grid-template-columns: 1fr 1.2fr;
   gap: 4rem;
   padding: 4rem;
-  background: white;
+  /* USUNIĘTE: background: white; - będzie ustawiane dynamicznie */
   align-items: center;
   border-bottom: 2px solid black;
   border-top: 2px solid black;
@@ -238,7 +220,7 @@
 .section3Title {
   font-size: 2.5rem;
   font-weight: 700;
-  color: #1e293b;
+  /* USUNIĘTE: color: #1e293b; - będzie ustawiane dynamicznie */
   margin-bottom: 2rem;
   line-height: 1.2;
 }
@@ -246,10 +228,10 @@
 .section3Text {
   font-size: 1.125rem;
   line-height: 1.7;
-  color: #374151;
+  /* USUNIĘTE: color: #374151; - będzie ustawiane dynamicznie */
 }
 
-/* ✅ DODANE - Style dla WYSIWYG w sekcji 3 */
+/* Style dla WYSIWYG w sekcji 3 */
 .section3Text p {
   margin-bottom: 1rem;
 }
@@ -267,7 +249,7 @@
 .section3Text h2,
 .section3Text h3 {
   margin: 1.5rem 0 1rem 0;
-  color: #1e293b;
+  /* USUNIĘTE: color: #1e293b; - będzie dziedziczone */
   font-weight: 600;
 }
 
@@ -279,12 +261,12 @@
   padding: 2rem;
 }
 
-/* SEKCJA 4 - Formularz kontaktowy */
+/* SEKCJA 4 - Formularz kontaktowy - USUNIĘTE stałe kolory */
 .section4 {
-  background: rgba(252, 108, 20, 1);
+  /* USUNIĘTE: background: rgba(252, 108, 20, 1); */
+  /* USUNIĘTE: color: white; */
   padding: 4rem;
   text-align: center;
-  color: white;
   border-bottom: 2px solid black;
 }
 
@@ -304,9 +286,9 @@
   margin: 0 auto;
 }
 
-/* SEKCJA 5 - Końcowa */
+/* SEKCJA 5 - Końcowa - USUNIĘTE stałe kolory */
 .section5 {
-  background: #f8fafc;
+  /* USUNIĘTE: background: #f8fafc; */
   padding: 4rem 4rem 2rem 4rem;
   text-align: center;
 }
@@ -314,19 +296,19 @@
 .section5Title {
   font-size: 2.5rem;
   font-weight: 700;
-  color: #1e293b;
+  /* USUNIĘTE: color: #1e293b; - będzie ustawiane dynamicznie */
   margin-bottom: 2rem;
 }
 
 .section5Text {
   font-size: 1.125rem;
   line-height: 1.7;
-  color: #374151;
+  /* USUNIĘTE: color: #374151; - będzie ustawiane dynamicznie */
   max-width: 800px;
   margin: 0 auto;
 }
 
-/* ✅ DODANE - Style dla WYSIWYG w sekcji 5 */
+/* Style dla WYSIWYG w sekcji 5 */
 .section5Text p {
   margin-bottom: 1rem;
 }
@@ -345,7 +327,7 @@
 .section5Text h2,
 .section5Text h3 {
   margin: 1.5rem 0 1rem 0;
-  color: #1e293b;
+  /* USUNIĘTE: color: #1e293b; - będzie dziedziczone */
   font-weight: 600;
 }
 
@@ -353,7 +335,7 @@
   font-weight: 700;
 }
 
-/* RESPONSIVE DESIGN */
+/* RESPONSIVE DESIGN - bez zmian */
 @media (max-width: 968px) {
   .section1 {
     grid-template-columns: 1fr;

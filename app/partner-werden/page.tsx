@@ -7,7 +7,6 @@ import YouTubeEmbed from "../../components/YouTubeEmbed";
 import ContactForm from "../kontakt/ContactForm";
 import styles from "./partner-werden.module.css";
 
-// ✅ Cache na 24 godziny
 export const revalidate = 86400;
 
 interface DirectusResponse<T> {
@@ -63,9 +62,16 @@ export default async function PartnerWerdenPage() {
 
   return (
     <div className={styles.container}>
-      {/* SEKCJA 1 - Grid dwukolumnowy */}
+      {/* SEKCJA 1 - Grid dwukolumnowy z dynamicznymi kolorami */}
       <section className={styles.section1}>
-        <div className={styles.section1Left}>
+        <div
+          className={styles.section1Left}
+          style={{
+            backgroundColor:
+              pageData.section1_left_background_color || undefined,
+            color: pageData.section1_left_text_color || undefined,
+          }}
+        >
           {pageData.section1_left_title && (
             <h1 className={styles.section1Title}>
               {pageData.section1_left_title}
@@ -77,10 +83,29 @@ export default async function PartnerWerdenPage() {
               dangerouslySetInnerHTML={{ __html: pageData.section1_left_text }}
             />
           )}
-          {/* USUNIĘTE - zdjęcie przeniesione na prawą stronę */}
         </div>
 
-        <div className={styles.section1Right}>
+        <div
+          className={styles.section1Right}
+          style={{
+            backgroundColor:
+              pageData.section1_right_background_color || undefined,
+            color: pageData.section1_right_text_color || undefined,
+          }}
+        >
+          {pageData.section1_right_title && (
+            <h2
+              className={styles.section1RightTitle}
+              style={{
+                color:
+                  pageData.section1_right_title_color ||
+                  pageData.section1_right_text_color ||
+                  undefined,
+              }}
+            >
+              {pageData.section1_right_title}
+            </h2>
+          )}
           {pageData.section1_right_text && (
             <div
               className={styles.section1TextRight}
@@ -101,7 +126,7 @@ export default async function PartnerWerdenPage() {
         </div>
       </section>
 
-      {/* SEKCJA 2 - Tekst na tle obrazu */}
+      {/* SEKCJA 2 - Tekst na tle obrazu z dynamicznym overlay */}
       {pageData.section2_background_image && (
         <section
           className={styles.section2}
@@ -109,7 +134,22 @@ export default async function PartnerWerdenPage() {
             backgroundImage: `url(${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/media-files/assets/pages/${pageData.section2_background_image})`,
           }}
         >
-          <div className={styles.section2Content}>
+          {/* Dynamiczny overlay */}
+          <div
+            className={styles.section2Overlay}
+            style={{
+              backgroundColor:
+                pageData.section2_overlay_color || "rgba(0, 0, 0, 0.5)",
+              opacity: pageData.section2_overlay_opacity || 0.5,
+            }}
+          />
+
+          <div
+            className={styles.section2Content}
+            style={{
+              color: pageData.section2_text_color || undefined,
+            }}
+          >
             {pageData.section2_title && (
               <h2 className={styles.section2Title}>
                 {pageData.section2_title}
@@ -125,11 +165,25 @@ export default async function PartnerWerdenPage() {
         </section>
       )}
 
-      {/* SEKCJA 3 - Tekst + YouTube */}
-      <section className={styles.section3}>
+      {/* SEKCJA 3 - Tekst + YouTube z dynamicznymi kolorami */}
+      <section
+        className={styles.section3}
+        style={{
+          backgroundColor: pageData.section3_background_color || undefined,
+          color: pageData.section3_text_color || undefined,
+        }}
+      >
         <div className={styles.section3Left}>
           {pageData.section3_left_title && (
-            <h2 className={styles.section3Title}>
+            <h2
+              className={styles.section3Title}
+              style={{
+                color:
+                  pageData.section3_title_color ||
+                  pageData.section3_text_color ||
+                  undefined,
+              }}
+            >
               {pageData.section3_left_title}
             </h2>
           )}
@@ -152,8 +206,14 @@ export default async function PartnerWerdenPage() {
         </div>
       </section>
 
-      {/* SEKCJA 4 - Formularz kontaktowy */}
-      <section className={styles.section4}>
+      {/* SEKCJA 4 - Formularz kontaktowy z dynamicznymi kolorami */}
+      <section
+        className={styles.section4}
+        style={{
+          backgroundColor: pageData.section4_background_color || undefined,
+          color: pageData.section4_text_color || undefined,
+        }}
+      >
         {pageData.section4_title && (
           <h2 className={styles.section4Title}>{pageData.section4_title}</h2>
         )}
@@ -168,11 +228,27 @@ export default async function PartnerWerdenPage() {
         </div>
       </section>
 
-      {/* SEKCJA 5 - Końcowa */}
+      {/* SEKCJA 5 - Końcowa z dynamicznymi kolorami */}
       {(pageData.section5_title || pageData.section5_text) && (
-        <section className={styles.section5}>
+        <section
+          className={styles.section5}
+          style={{
+            backgroundColor: pageData.section5_background_color || undefined,
+            color: pageData.section5_text_color || undefined,
+          }}
+        >
           {pageData.section5_title && (
-            <h2 className={styles.section5Title}>{pageData.section5_title}</h2>
+            <h2
+              className={styles.section5Title}
+              style={{
+                color:
+                  pageData.section5_title_color ||
+                  pageData.section5_text_color ||
+                  undefined,
+              }}
+            >
+              {pageData.section5_title}
+            </h2>
           )}
           {pageData.section5_text && (
             <div
