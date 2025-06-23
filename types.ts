@@ -1,3 +1,79 @@
+// types.ts
+
+// ✅ Category - BEZ description (nie ma w Directus)
+export interface Category {
+  id: number;
+  name: string;
+  color: string;
+}
+
+// Alias dla niemieckiej nazwy kolekcji w Directus
+export type Kategorie = Category;
+
+// ✅ Place - niemieckie nazwy pól
+export interface Place {
+  id: number;
+  Name: string; // niemieckie nazwy pól jak w Directus
+  Adresse: string;
+  Vollbeschreibung?: string;
+  Breite: number;
+  Lange: number;
+  Kategorie: Category[];
+  // Pola dla mediów i dodatkowych informacji
+  Hauptbild?: string;
+  Audio_Datei?: string;
+  Link_URL?: string;
+  Link_Text?: string;
+  Galerie_Bilder?: string[];
+}
+
+// Alias dla niemieckiej nazwy kolekcji w Directus
+export type Orte = Place;
+
+// ✅ ContactMessage - TYLKO JEDEN (bez duplikatu)
+export interface ContactMessage {
+  id: string; // UUID w Directus
+  name: string;
+  email: string;
+  subject: string;
+  message: string;
+  created_at: string; // ISO date string
+  status?: "new" | "read" | "replied" | "archived";
+}
+
+// ✅ PageContent - dla strony "Über uns"
+export interface PageContent {
+  id: number;
+  page_slug: string;
+  title: string;
+  intro_text: string;
+  // Sekcja kwadratów:
+  categories_section_title?: string;
+  categories_section_subtitle?: string;
+  // 7 kwadratów:
+  square1_title?: string;
+  square1_description?: string;
+  square1_color?: string;
+  square2_title?: string;
+  square2_description?: string;
+  square2_color?: string;
+  square3_title?: string;
+  square3_description?: string;
+  square3_color?: string;
+  square4_title?: string;
+  square4_description?: string;
+  square4_color?: string;
+  square5_title?: string;
+  square5_description?: string;
+  square5_color?: string;
+  square6_title?: string;
+  square6_description?: string;
+  square6_color?: string;
+  square7_title?: string;
+  square7_description?: string;
+  square7_color?: string;
+}
+
 // ✅ ROZSZERZONE - PartnerPageContent z kolorami dla każdej sekcji
 export interface PartnerPageContent {
   id: number;
