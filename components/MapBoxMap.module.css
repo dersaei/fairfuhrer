@@ -1,8 +1,9 @@
 /* components/MapBoxMap.module.css */
 .mapContainerWrapper {
-  flex-grow: 1;
   position: relative;
   overflow: hidden;
+  width: 100vw;
+  height: calc(100vh - 90px); /* Cały ekran minus header */
 }
 
 .mapContainer {
@@ -434,6 +435,9 @@
 }
 
 @media (max-width: 480px) {
+  .mapContainerWrapper {
+    height: calc(100vh - 70px);
+  }
   .infoPanel {
     height: 70%;
   }
