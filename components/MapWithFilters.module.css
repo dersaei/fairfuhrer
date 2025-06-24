@@ -37,3 +37,8 @@
     width: 100%;
   }
 }
+@media (max-width: 480px) {
+  .container {
+    height: calc(100vh - 70px);
+  }
+}

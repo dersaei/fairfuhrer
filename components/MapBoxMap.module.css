@@ -359,6 +359,30 @@
   text-decoration: none;
   color: white;
 }
+/* Popup content dla markerów */
+.popupContent {
+  max-width: 250px;
+  padding: 8px;
+}
+
+.popupContent h3 {
+  margin: 0 0 4px 0;
+  font-size: 14px;
+  color: #333;
+}
+
+.address {
+  font-style: italic;
+  color: #666;
+  margin: 0 0 6px 0;
+  font-size: 12px;
+}
+
+.description {
+  color: #444;
+  margin: 0;
+  font-size: 13px;
+}
 
 /* Responsywność */
 @media screen and (max-width: 980px) {
@@ -479,30 +503,4 @@
     padding: 0.5rem 1rem;
     font-size: 0.9rem;
   }
-}
-
-/* Popup content dla markerów */
-.popupContent {
-  font-family: Arial, sans-serif;
-  max-width: 250px;
-  padding: 8px;
-}
-
-.popupContent h3 {
-  margin: 0 0 4px 0;
-  font-size: 14px;
-  color: #333;
-}
-
-.address {
-  font-style: italic;
-  color: #666;
-  margin: 0 0 6px 0;
-  font-size: 12px;
-}
-
-.description {
-  color: #444;
-  margin: 0;
-  font-size: 13px;
 }
