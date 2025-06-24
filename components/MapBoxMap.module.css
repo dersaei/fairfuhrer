@@ -2,7 +2,7 @@
 .mapContainerWrapper {
   position: relative;
   overflow: hidden;
-  width: 100vw;
+  width: 100%;
   height: calc(100vh - 90px); /* Cały ekran minus header */
 }
 
@@ -400,6 +400,11 @@
 }
 
 @media (max-width: 768px) {
+  .mapContainerWrapper {
+    height: calc(
+      100svh - 90px
+    ); /* svh = small viewport height - uwzględnia pasek adresu */
+  }
   .infoPanel {
     top: auto;
     right: 0;
@@ -454,6 +459,15 @@
     .imageCounter {
       font-size: 1rem;
       bottom: 10px;
+    }
+  }
+}
+/* Fallback dla starszych przeglądarek */
+@supports not (height: 100svh) {
+  @media screen and (max-width: 768px) {
+    .mapContainerWrapper {
+      height: calc(100vh - 90px);
+      height: calc(var(--vh, 1vh) * 100 - 90px); /* JavaScript fallback */
     }
   }
 }

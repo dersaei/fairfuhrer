@@ -54,6 +54,23 @@ export default function RootLayout({
       >
         <Header />
         <main>{children}</main>
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `
+              // Fix dla paska adresu na mobile
+              function setRealViewportHeight() {
+                const vh = window.innerHeight * 0.01;
+                document.documentElement.style.setProperty('--vh', vh + 'px');
+              }
+              
+              setRealViewportHeight();
+              window.addEventListener('resize', setRealViewportHeight);
+              window.addEventListener('orientationchange', function() {
+                setTimeout(setRealViewportHeight, 100);
+              });
+            `,
+          }}
+        />
       </body>
     </html>
   );
