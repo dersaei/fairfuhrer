@@ -5,6 +5,7 @@
   height: calc(100vh - 90px);
   display: flex;
   flex-direction: column;
+  overflow: hidden;
 }
 
 .mapArea {
@@ -31,6 +32,20 @@
   font-family: "Montserrat", sans-serif;
   color: #333;
   text-align: center;
+}
+@media screen and (max-width: 768px) {
+  .container {
+    height: calc(100svh - 90px); /* svh uwzględnia pasek przeglądarki */
+  }
+}
+
+/* Fallback dla starszych przeglądarek */
+@supports not (height: 100svh) {
+  @media screen and (max-width: 768px) {
+    .container {
+      height: calc(var(--vh, 1vh) * 100 - 90px);
+    }
+  }
 }
 @media screen and (max-width: 680px) {
   .filtersContainer {
