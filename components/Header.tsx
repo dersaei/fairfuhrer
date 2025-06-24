@@ -143,9 +143,6 @@ export default function Header() {
           </a>
         </div>
       </div>
-
-      {/* Overlay */}
-      {isMenuOpen && <div className={styles.overlay} onClick={closeMenu}></div>}
     </header>
   );
 }

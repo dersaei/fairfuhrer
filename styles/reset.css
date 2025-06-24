@@ -172,10 +172,6 @@ input[type="submit"] {
   height: 0;
   pointer-events: none;
 }
-body {
-  font-family: var(--font-lato), var(--font-geist-sans), var(--font-geist-mono),
-    Arial, sans-serif;
-}
 /* reset.css */
 
 html,
@@ -190,11 +186,4 @@ body,
 body {
   display: flex;
   flex-direction: column;
-}
-
-/* main ma wypełniać resztę wysokości i też flex, by container mapy mógł się rozciągnąć */
-main {
-  flex: 1;
-  display: flex;
-  min-height: 0;
 }
