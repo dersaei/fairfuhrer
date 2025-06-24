@@ -459,9 +459,6 @@
 }
 
 @media (max-width: 480px) {
-  .mapContainerWrapper {
-    height: calc(100vh - 70px);
-  }
   .infoPanel {
     height: 70%;
   }

@@ -278,3 +278,11 @@
     font-size: 1.1rem;
   }
 }
+@media screen and (max-width: 480px) {
+  .section1Title {
+    font-size: 6.2vw;
+  }
+  .section1Subtitle {
+    font-size: 4.2vw;
+  }
+}
