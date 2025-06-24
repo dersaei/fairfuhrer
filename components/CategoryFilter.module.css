@@ -1,13 +1,15 @@
 /* components/CategoryFilter.module.css */
 .filterContainer {
-  display: block;
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
   margin: 0 auto;
   padding: 15px;
 }
 
 .filterLabel {
   display: block;
-  margin: 0 0 1vh 0;
+  margin: 0 0.3vw 1vh 0.3vw;
   padding: 8px 16px;
   border-radius: 20px;
   background-color: var(--bg-color, transparent);
@@ -33,15 +35,9 @@
 }
 
 .filterName {
-  font-size: 14px;
+  font-size: 16px;
   font-weight: 700;
   font-family: "Lato", sans-serif;
   transition: color 0.2s ease;
   color: inherit;
-}
-
-@media (min-width: 768px) {
-  .filterName {
-    font-size: 16px;
-  }
 }
