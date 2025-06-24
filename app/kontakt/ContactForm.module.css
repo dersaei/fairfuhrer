@@ -12,9 +12,7 @@
   font-family: "Staatliches", sans-serif;
   font-weight: 400;
   font-style: normal;
-  -webkit-text-stroke: 1px gold;
   text-transform: uppercase;
-  text-shadow: 1px 2px 2px navy;
   text-align: center;
 }
 
@@ -85,8 +83,7 @@
 }
 
 .submitButton {
-  width: 100%;
-  background: firebrick;
+  background: #4654a3;
   color: white;
   border: none;
   padding: 0.875rem 1.5rem;
@@ -101,7 +98,7 @@
 }
 
 .submitButton:hover:not(:disabled) {
-  background: crimson;
+  background: navy;
   transform: translateY(-1px);
 }
 

@@ -45,7 +45,7 @@ export default function Header() {
       {/* Social media - Desktop */}
       <div className={styles.social}>
         <a
-          href="https://instagram.com/"
+          href="https://www.instagram.com/fairfuehrer.audioreisefuehrer?igsh=MWcyNjRmMjFuaXljYG"
           target="_blank"
           rel="noopener noreferrer"
           className={styles.socialIcon}
@@ -56,7 +56,7 @@ export default function Header() {
           </svg>
         </a>
         <a
-          href="https://facebook.com/"
+          href="https://www.facebook.com/profile.php?id=61561084330676"
           target="_blank"
           rel="noopener noreferrer"
           className={styles.socialIcon}
