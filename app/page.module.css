@@ -4,6 +4,7 @@
   width: 100%;
   height: calc(100vh - 90px);
   position: relative;
+  overflow: hidden;
 }
 
 .loadingContainer {
@@ -89,7 +90,7 @@
 /* Podstawowy styl sekcji */
 .section {
   width: 100%;
-  height: 100vh;
+  height: calc(100vh - 90px);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -244,6 +245,9 @@
 
 /* Responsywność dla telefonów */
 @media (max-width: 600px) {
+  .container {
+    height: calc(100svh - 90px);
+  }
   .section {
     padding: 2rem 1rem;
     min-height: 70vh;
@@ -267,6 +271,15 @@
   .partnerButton {
     padding: 0.9rem 2rem;
     font-size: 1.1rem;
+  }
+}
+/* Fallback dla starszych przeglądarek */
+@supports not (height: 100svh) {
+  @media screen and (max-width: 768px) {
+    .mapContainerWrapper {
+      height: calc(100vh - 90px);
+      height: calc(var(--vh, 1vh) * 100 - 90px); /* JavaScript fallback */
+    }
   }
 }
 @media screen and (max-width: 480px) {

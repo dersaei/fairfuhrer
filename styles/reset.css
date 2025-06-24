@@ -172,18 +172,3 @@ input[type="submit"] {
   height: 0;
   pointer-events: none;
 }
-/* reset.css */
-
-html,
-body,
-#__next {
-  height: 100%;
-  margin: 0;
-  padding: 0;
-}
-
-/* Ustaw body jako flex column: header + main */
-body {
-  display: flex;
-  flex-direction: column;
-}
