@@ -1,13 +1,12 @@
 /* app/kontakt/ContactInfo.module.css */
 .contactInfo {
   background: #3dd1e7;
-  padding: 2rem;
-  height: 92vh;
-  border-right: 2px solid black;
+  padding: 4vh 2vw;
+  height: fit-content;
 }
 
 .contactInfo h2 {
-  font-size: 4vw;
+  font-size: 4rem;
   color: gold;
   margin-bottom: 1rem;
   font-family: "Staatliches", sans-serif;
@@ -16,6 +15,7 @@
   -webkit-text-stroke: 1px black;
   text-transform: uppercase;
   text-shadow: 1px 2px 2px navy;
+  text-align: center;
 }
 
 .intro {
@@ -25,6 +25,7 @@
   font-size: 1.15rem;
   font-weight: 400;
   font-family: "Oxanium", sans-serif;
+  text-align: center;
 }
 .intro span {
   background-color: #3dd1e7;
@@ -35,11 +36,13 @@
   display: flex;
   flex-direction: column;
   gap: 1.3rem;
+  width: 50%;
+  margin: 0 auto;
 }
 
 .contactMethod {
   display: flex;
-  align-items: flex-start;
+  align-items: center;
   gap: 1rem;
   padding: 1rem;
   border-radius: 8px;
@@ -75,4 +78,17 @@
 .responseTime {
   font-size: 0.875rem;
   color: #6b7280;
+}
+@media (max-width: 750px) {
+  .contactMethods {
+    width: 80%;
+  }
+}
+@media (max-width: 600px) {
+  .contactInfo h2 {
+    font-size: 10vw;
+  }
+  .contactMethods {
+    width: 90%;
+  }
 }

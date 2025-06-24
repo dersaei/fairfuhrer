@@ -6,12 +6,6 @@
 
 .contactContent {
   display: grid;
-  grid-template-columns: 1fr 1fr;
-  align-items: start;
-}
-
-@media (max-width: 868px) {
-  .contactContent {
-    grid-template-columns: 1fr;
-  }
+  grid-template-columns: 1fr;
+  align-items: center;
 }

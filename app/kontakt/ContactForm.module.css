@@ -1,12 +1,12 @@
 /* app/kontakt/ContactForm.module.css */
 .contactForm {
   background-color: rgba(252, 108, 20, 1);
-  padding: 2rem;
-  height: 92vh;
+  padding: 4vh 2vw;
+  height: fit-content;
 }
 
 .contactForm h2 {
-  font-size: 4vw;
+  font-size: 4rem;
   color: black;
   margin-bottom: 1rem;
   font-family: "Staatliches", sans-serif;
@@ -15,6 +15,7 @@
   -webkit-text-stroke: 1px gold;
   text-transform: uppercase;
   text-shadow: 1px 2px 2px navy;
+  text-align: center;
 }
 
 .successMessage,
@@ -38,9 +39,10 @@
 }
 
 .formGroup {
-  margin-bottom: 1.3rem;
   font-weight: 400;
   font-family: "Oxanium", sans-serif;
+  width: 60%;
+  margin: 0 auto 1.3rem auto;
 }
 
 .formGroup label {
@@ -93,6 +95,9 @@
   font-weight: 600;
   cursor: pointer;
   transition: background-color 0.2s, transform 0.1s;
+  width: 60%;
+  margin: 0 auto;
+  display: block;
 }
 
 .submitButton:hover:not(:disabled) {
@@ -104,4 +109,17 @@
   background: #9ca3af;
   cursor: not-allowed;
   transform: none;
+}
+@media (max-width: 750px) {
+  .formGroup {
+    width: 80%;
+  }
+}
+@media (max-width: 600px) {
+  .contactForm h2 {
+    font-size: 10vw;
+  }
+  .formGroup {
+    width: 90%;
+  }
 }
