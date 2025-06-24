@@ -98,17 +98,6 @@
   margin: 0;
 }
 
-.section2Title {
-  text-align: left;
-  font-size: 3rem;
-  margin-bottom: 2rem;
-  color: white;
-  font-family: "Montserrat", sans-serif;
-  font-optical-sizing: auto;
-  font-weight: 400;
-  font-style: normal;
-}
-
 /* Alternatywne kolory tła dla sekcji */
 .section:nth-child(2) {
   background-color: rgb(252, 108, 20);
@@ -179,6 +168,9 @@
 .section:nth-child(2) .sectionText {
   color: white;
 }
+.section:nth-child(2) .sectionTitle {
+  color: white;
+}
 
 .section:nth-child(3) .sectionText {
   color: black;
@@ -216,7 +208,6 @@
 @media (max-width: 950px) {
   .section {
     height: auto;
-    min-height: 80vh;
     padding: 3rem 1.5rem;
   }
 

@@ -139,7 +139,7 @@ export default function HomePage() {
         {/* Sekcja 2: Was macht uns besonders? */}
         <section className={styles.section}>
           <div className={styles.sectionContent}>
-            <h2 className={styles.section2Title}>
+            <h2 className={styles.sectionTitle}>
               Hunderte gute Geschichten vom Bodensee, aus dem Allgäu und aus
               aller Welt
             </h2>
