@@ -6,11 +6,12 @@
 }
 
 .contactInfo h2 {
-  font-size: 4rem;
+  font-size: 2rem;
   color: black;
   margin-bottom: 1rem;
-  font-family: "Staatliches", sans-serif;
-  font-weight: 400;
+  font-family: "Montserrat", sans-serif;
+  font-optical-sizing: auto;
+  font-weight: 700;
   font-style: normal;
   text-transform: uppercase;
   text-align: center;
@@ -22,12 +23,9 @@
   line-height: 1.6;
   font-size: 1.15rem;
   font-weight: 400;
-  font-family: "Oxanium", sans-serif;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto",
+    sans-serif;
   text-align: center;
-}
-.intro span {
-  background-color: #3dd1e7;
-  padding: 2px 0;
 }
 
 .contactMethods {
@@ -84,7 +82,7 @@
 }
 @media (max-width: 600px) {
   .contactInfo h2 {
-    font-size: 10vw;
+    font-size: 6vw;
   }
   .contactMethods {
     width: 90%;

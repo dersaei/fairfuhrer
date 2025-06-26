@@ -19,28 +19,25 @@
   grid-template-columns: 1fr 1fr;
   min-height: 100vh;
   gap: 0;
-  border-bottom: 2px solid black;
 }
 
 .section1Left {
   /* USUNIĘTE: background: rgba(252, 108, 20, 1); */
   /* USUNIĘTE: color: white; */
-  padding: 4rem;
+  padding: 4vh 4vw;
   display: flex;
   flex-direction: column;
   justify-content: center;
-  border-right: 1px solid black;
 }
 
 .section1Right {
   /* USUNIĘTE: background: #3dd1e7; */
   /* USUNIĘTE: color: white; */
-  padding: 4rem;
+  padding: 4vh 4vw;
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  border-left: 1px solid black;
 }
 
 .section1Title {
@@ -54,22 +51,6 @@
   font-size: 1.125rem;
   line-height: 1.7;
   margin-bottom: 2rem;
-}
-
-/* Style dla linków - będą dziedziczyć kolor z parent */
-.section1Text a,
-.section2Text a {
-  color: #fbbf24; /* Żółty kolor - widoczny na ciemnym tle */
-  text-decoration: underline;
-  font-weight: 500;
-  transition: color 0.3s ease;
-  font-size: 110%;
-}
-
-.section1Text a:hover,
-.section2Text a:hover {
-  color: #f59e0b;
-  text-decoration: none;
 }
 
 .section1RightTitle {
@@ -125,12 +106,6 @@
 
 .section1ImageContainer {
   margin-top: 2rem;
-}
-
-.section1Image {
-  border-radius: 12px;
-  width: 100%;
-  height: auto;
 }
 
 .section1SmallImage {
@@ -209,8 +184,6 @@
   padding: 4rem;
   /* USUNIĘTE: background: white; - będzie ustawiane dynamicznie */
   align-items: center;
-  border-bottom: 2px solid black;
-  border-top: 2px solid black;
 }
 
 .section3Left {
@@ -267,7 +240,6 @@
   /* USUNIĘTE: color: white; */
   padding: 4rem;
   text-align: center;
-  border-bottom: 2px solid black;
 }
 
 .section4Title {

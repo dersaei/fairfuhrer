@@ -33,7 +33,7 @@ export default function HomePage() {
         const style = (await response.json()) as AtmosphereStyle;
         setAtmosphereStyle(style);
       } catch (error) {
-        console.error("Błąd podczas ładowania stylu atmosphere:", error);
+        console.error("Fehler beim Laden des Atmosphere-Stils:", error);
       } finally {
         setIsLoading(false);
       }
@@ -75,7 +75,7 @@ export default function HomePage() {
   if (isLoading) {
     return (
       <div className={styles.loadingContainer}>
-        <div>Ładowanie mapy...</div>
+        <div>Karte wird geladen...</div>
       </div>
     );
   }
@@ -84,7 +84,7 @@ export default function HomePage() {
   if (!atmosphereStyle) {
     return (
       <div className={styles.loadingContainer}>
-        <div>Błąd podczas ładowania stylu mapy</div>
+        <div>Fehler beim Laden des Kartenstils</div>
       </div>
     );
   }

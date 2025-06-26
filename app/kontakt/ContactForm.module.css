@@ -6,11 +6,12 @@
 }
 
 .contactForm h2 {
-  font-size: 4rem;
+  font-size: 2rem;
   color: black;
   margin-bottom: 1rem;
-  font-family: "Staatliches", sans-serif;
-  font-weight: 400;
+  font-family: "Montserrat", sans-serif;
+  font-optical-sizing: auto;
+  font-weight: 700;
   font-style: normal;
   text-transform: uppercase;
   text-align: center;
@@ -37,8 +38,8 @@
 }
 
 .formGroup {
-  font-weight: 400;
-  font-family: "Oxanium", sans-serif;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto",
+    sans-serif;
   width: 60%;
   margin: 0 auto 1.3rem auto;
 }
@@ -114,7 +115,7 @@
 }
 @media (max-width: 600px) {
   .contactForm h2 {
-    font-size: 10vw;
+    font-size: 6vw;
   }
   .formGroup {
     width: 90%;
