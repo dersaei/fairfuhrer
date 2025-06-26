@@ -2,7 +2,6 @@
 
 import type { Metadata } from "next";
 import { Lato, Montserrat, Staatliches, Oxanium } from "next/font/google";
-import { headers } from "next/headers";
 import "../styles/reset.css";
 
 import Header from "../components/Header";
@@ -40,19 +39,11 @@ export const metadata: Metadata = {
     "DER DIGITALE REISEFÜHRER FÜR NACHHALTIGESLEBEN & REISEN AM BODENSEE UND IM ALLGÄU",
 };
 
-export default async function RootLayout({
+export default function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  // Pobierz pathname z headers (dodane przez middleware)
-  const headersList = await headers();
-  const pathname = headersList.get("x-pathname") || "";
-
-  // Strony bez footera
-  const pagesWithoutFooter = ["/karte"];
-  const shouldShowFooter = !pagesWithoutFooter.includes(pathname);
-
   return (
     <html lang="de">
       <body
@@ -65,9 +56,7 @@ export default async function RootLayout({
       >
         <Header />
         <main>{children}</main>
-
-        {/* Footer tylko na wybranych stronach */}
-        {shouldShowFooter && <Footer />}
+        <Footer />
 
         <script
           dangerouslySetInnerHTML={{
