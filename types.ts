@@ -133,3 +133,10 @@ export interface ImpressumContent {
   business_info_bottom: string; // Tekst na dole (UID: DE270557749)
   legal_content: string; // Tekst WYSIWYG z treścią prawną (HTML)
 }
+// ✅ DatenschutzContent - dla strony Datenschutz
+export interface DatenschutzContent {
+  id: number;
+  page_slug: string; // dla identyfikacji strony (np. "datenschutz")
+  title: string; // Tytuł strony
+  content: string; // Treść WYSIWYG (HTML)
+}

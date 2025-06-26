@@ -6,7 +6,8 @@ import type {
   Category,
   ContactMessage,
   ImpressumContent,
-} from "@/types"; // DODAJ ImpressumContent
+  DatenschutzContent,
+} from "@/types";
 
 const DIRECTUS_URL = process.env.DIRECTUS_URL;
 if (!DIRECTUS_URL) {
@@ -24,15 +25,15 @@ export const directus = createDirectus(DIRECTUS_URL).with(
   })
 );
 
-// Typ dla Directus Schema z twoimi kolekcjami
+// Typ dla Directus Schema z moimi kolekcjami
 export interface DirectusSchema {
   Orte: Place[]; // Niemiecka nazwa
   Kategorie: Category[]; // Niemiecka nazwa
   contact_messages: ContactMessage[];
-  impressum_content: ImpressumContent[]; // DODAJ NOWĄ KOLEKCJĘ
+  impressum_content: ImpressumContent[];
+  datenschutz_content: DatenschutzContent[];
 }
 
-// DODAJ NOWĄ FUNKCJĘ dla Impressum
 export async function getImpressumContent(): Promise<ImpressumContent | null> {
   try {
     const response = await fetch(
@@ -58,6 +59,34 @@ export async function getImpressumContent(): Promise<ImpressumContent | null> {
     return null;
   } catch (error) {
     console.error("Error fetching impressum content:", error);
+    return null;
+  }
+}
+export async function getDatenschutzContent(): Promise<DatenschutzContent | null> {
+  try {
+    const response = await fetch(
+      `${DIRECTUS_URL}/items/datenschutz_content?filter[page_slug][_eq]=datenschutz`,
+      {
+        headers: {
+          "Content-Type": "application/json",
+        },
+        next: { revalidate: 3600 }, // Revalidacja co godzinę
+      }
+    );
+
+    if (!response.ok) {
+      throw new Error("Failed to fetch datenschutz content");
+    }
+
+    const data = await response.json();
+
+    if (data.data && data.data.length > 0) {
+      return data.data[0] as DatenschutzContent;
+    }
+
+    return null;
+  } catch (error) {
+    console.error("Error fetching datenschutz content:", error);
     return null;
   }
 }
