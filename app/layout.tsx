@@ -1,9 +1,12 @@
-// layout.tsx
+// app/layout.tsx
+
 import type { Metadata } from "next";
 import { Lato, Montserrat, Staatliches, Oxanium } from "next/font/google";
+import { headers } from "next/headers";
 import "../styles/reset.css";
 
 import Header from "../components/Header";
+import Footer from "../components/Footer";
 
 // pozostałe fonty
 const lato = Lato({
@@ -28,7 +31,7 @@ const oxanium = Oxanium({
 const montserrat = Montserrat({
   variable: "--font-montserrat",
   subsets: ["latin"],
-  weight: ["400", "500", "600", "700"], // możesz dostosować wagi według potrzeb
+  weight: ["400", "500", "600", "700"],
 });
 
 export const metadata: Metadata = {
@@ -37,23 +40,35 @@ export const metadata: Metadata = {
     "DER DIGITALE REISEFÜHRER FÜR NACHHALTIGESLEBEN & REISEN AM BODENSEE UND IM ALLGÄU",
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  // Pobierz pathname z headers (dodane przez middleware)
+  const headersList = await headers();
+  const pathname = headersList.get("x-pathname") || "";
+
+  // Strony bez footera
+  const pagesWithoutFooter = ["/karte"];
+  const shouldShowFooter = !pagesWithoutFooter.includes(pathname);
+
   return (
     <html lang="de">
       <body
         className={`
-    ${lato.variable}
-    ${staatliches.variable}
-    ${oxanium.variable}
-    ${montserrat.variable}
-  `}
+          ${lato.variable}
+          ${staatliches.variable}
+          ${oxanium.variable}
+          ${montserrat.variable}
+        `}
       >
         <Header />
         <main>{children}</main>
+
+        {/* Footer tylko na wybranych stronach */}
+        {shouldShowFooter && <Footer />}
+
         <script
           dangerouslySetInnerHTML={{
             __html: `
@@ -62,7 +77,7 @@ export default function RootLayout({
                 const vh = window.innerHeight * 0.01;
                 document.documentElement.style.setProperty('--vh', vh + 'px');
               }
-              
+             
               setRealViewportHeight();
               window.addEventListener('resize', setRealViewportHeight);
               window.addEventListener('orientationchange', function() {
