@@ -1,6 +1,12 @@
-// lib/directus.ts
+// lib/directus.ts - rozszerz swój istniejący plik
+
 import { createDirectus, rest } from "@directus/sdk";
-import type { Place, Category, ContactMessage } from "@/types"; // DODANE IMPORTY
+import type {
+  Place,
+  Category,
+  ContactMessage,
+  ImpressumContent,
+} from "@/types"; // DODAJ ImpressumContent
 
 const DIRECTUS_URL = process.env.DIRECTUS_URL;
 if (!DIRECTUS_URL) {
@@ -23,4 +29,35 @@ export interface DirectusSchema {
   Orte: Place[]; // Niemiecka nazwa
   Kategorie: Category[]; // Niemiecka nazwa
   contact_messages: ContactMessage[];
+  impressum_content: ImpressumContent[]; // DODAJ NOWĄ KOLEKCJĘ
+}
+
+// DODAJ NOWĄ FUNKCJĘ dla Impressum
+export async function getImpressumContent(): Promise<ImpressumContent | null> {
+  try {
+    const response = await fetch(
+      `${DIRECTUS_URL}/items/impressum_content?filter[page_slug][_eq]=impressum`,
+      {
+        headers: {
+          "Content-Type": "application/json",
+        },
+        next: { revalidate: 3600 }, // Revalidacja co godzinę - TYLKO dla tej strony
+      }
+    );
+
+    if (!response.ok) {
+      throw new Error("Failed to fetch impressum content");
+    }
+
+    const data = await response.json();
+
+    if (data.data && data.data.length > 0) {
+      return data.data[0] as ImpressumContent;
+    }
+
+    return null;
+  } catch (error) {
+    console.error("Error fetching impressum content:", error);
+    return null;
+  }
 }

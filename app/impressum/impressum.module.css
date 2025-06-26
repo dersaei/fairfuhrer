@@ -1,0 +1,135 @@
+/* app/impressum/impressum.module.css */
+
+.container {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 2rem 1rem;
+  font-family: "Montserrat", sans-serif;
+  font-optical-sizing: auto;
+  font-weight: 400;
+  font-style: normal;
+  line-height: 1.6;
+  color: #333;
+}
+
+.title {
+  font-size: 2rem;
+  font-weight: 700;
+  margin-bottom: 2rem;
+  text-align: center;
+  color: #1a1a1a;
+}
+
+.infoSection {
+  background-color: #f8f9fa;
+  padding: 1.5rem;
+  border-radius: 8px;
+  margin-bottom: 2rem;
+  border: 1px solid #e9ecef;
+}
+
+.businessInfo {
+  font-weight: 600;
+  margin-bottom: 1.5rem;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid #dee2e6;
+  color: #495057;
+}
+
+.sectionHeading {
+  font-size: 1.125rem;
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+  color: #343a40;
+}
+
+.addressSection {
+  margin-bottom: 1.5rem;
+}
+
+.addressText {
+  color: #6c757d;
+  white-space: pre-line;
+}
+
+.emailSection {
+  margin-bottom: 1.5rem;
+}
+
+.emailLink {
+  color: #007bff;
+  text-decoration: underline;
+  transition: color 0.2s ease;
+}
+
+.emailLink:hover {
+  color: #0056b3;
+  text-decoration: none;
+}
+
+.uidInfo {
+  margin-top: 1rem;
+  padding-top: 1rem;
+  border-top: 1px solid #dee2e6;
+  color: #6c757d;
+  font-style: italic;
+}
+
+.legalContent {
+  color: #495057;
+}
+
+/* Style dla treści WYSIWYG */
+.legalContent h2 {
+  font-size: 1.5rem;
+  font-weight: 600;
+  margin-top: 2rem;
+  margin-bottom: 1rem;
+  color: #1a1a1a;
+  border-bottom: 2px solid #e9ecef;
+  padding-bottom: 0.5rem;
+}
+
+.legalContent h2:first-child {
+  margin-top: 0;
+}
+
+.legalContent p {
+  margin-bottom: 1rem;
+  line-height: 1.6;
+  color: #495057;
+}
+
+.legalContent ul {
+  margin-bottom: 1rem;
+  padding-left: 1.5rem;
+}
+
+.legalContent li {
+  margin-bottom: 0.5rem;
+  color: #495057;
+}
+
+.legalContent strong {
+  font-weight: 600;
+  color: #343a40;
+}
+
+/* Responsywność */
+@media (max-width: 768px) {
+  .container {
+    padding: 1rem 0.5rem;
+  }
+
+  .title {
+    font-size: 1.75rem;
+  }
+
+  .infoSection {
+    padding: 1rem;
+  }
+
+  .legalContent h2 {
+    font-size: 1.25rem;
+  }
+}

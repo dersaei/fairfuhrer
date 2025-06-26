@@ -122,3 +122,14 @@ export interface PartnerPageContent {
   section5_text_color?: string; // ✅ NOWE
   section5_title_color?: string; // ✅ NOWE - oddzielny kolor dla tytułu
 }
+
+export interface ImpressumContent {
+  id: number;
+  page_slug: string; // dla identyfikacji strony (np. "impressum")
+  title: string; // Tytuł strony
+  address: string; // Adres firmy
+  email: string; // Adres email
+  business_info_top: string; // Tekst na górze (Geschäftsführung: Frank Gebhard)
+  business_info_bottom: string; // Tekst na dole (UID: DE270557749)
+  legal_content: string; // Tekst WYSIWYG z treścią prawną (HTML)
+}
