@@ -140,8 +140,8 @@ export default function HomePage() {
         <section className={styles.section}>
           <div className={styles.sectionContent}>
             <h2 className={styles.sectionTitle}>
-              Hunderte gute Geschichten vom Bodensee, aus dem Allgäu und aus
-              aller Welt
+              Hunderte Gute Geschichten vom Bodensee, Aus Dem Allgäu Und Aus
+              Aller Welt
             </h2>
 
             <ul className={styles.sectionText}>
@@ -160,7 +160,7 @@ export default function HomePage() {
         <section className={styles.section}>
           <div className={styles.sectionContent}>
             <h2 className={styles.sectionTitle}>
-              Interessantes, Informatives, Inspirierendes entdecken
+              Interessantes, Informatives, Inspirierendes Entdecken
             </h2>
             <p className={styles.sectionText}>
               Staunen Sie über die innovativen & nachhaltigen Angebote unserer
@@ -174,7 +174,7 @@ export default function HomePage() {
         <section className={styles.section}>
           <div className={styles.sectionContent}>
             <h2 className={styles.sectionTitle}>
-              LASSEN SIE UNS GEMEINSAM IHRE GUTE GESCHICHTE ERZÄHLEN!
+              Lassen Sie Uns Gemeinsam Ihre Gute Geschichte Erzählen!
             </h2>
             <p className={styles.sectionText}>
               Ihr Betrieb, Ihr Verein o.ä. handelt im Sinne der 17 Ziele für
