@@ -144,7 +144,9 @@ export default function MapWithFilters({
       {/* Pokaż filtry tylko jeśli są dostępne kategorie w pobliżu */}
       {availableCategories.length > 0 && (
         <div className={styles.filtersContainer}>
-          <h3 className={styles.legendTitle}>Legende (Umgebung)</h3>
+          <h3 className={styles.legendTitle}>
+            Legende &#40;Kategoriefilter&#41;
+          </h3>
           <CategoryFilter
             categories={availableCategories}
             selectedIds={selectedCategoryIds}
