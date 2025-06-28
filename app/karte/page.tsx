@@ -60,7 +60,7 @@ export default async function KartePage() {
     const orteUrl = `${baseUrl}/items/Orte?fields=id,Name,Adresse,Vollbeschreibung,Breite,Lange,Hauptbild,Audio_Datei,Link_URL,Link_Text,Galerie_Bilder,Kategorie.Kategorie_id.id,Kategorie.Kategorie_id.Name,Kategorie.Kategorie_id.Farbe&limit=-1`;
     const orteRes = await fetch(orteUrl);
     if (!orteRes.ok)
-      throw new Error(`Błąd pobierania miejsc: ${orteRes.status}`);
+      throw new Error(`Fehler beim Abrufen der Orte: ${orteRes.status}`);
     const orteData =
       (await orteRes.json()) as DirectusCollectionResponse<DirectusOrte>;
     if (orteData.errors) throw new Error(orteData.errors[0].message);
@@ -68,7 +68,9 @@ export default async function KartePage() {
     const kategorieUrl = `${baseUrl}/items/Kategorie?fields=id,Name,Farbe&limit=-1`;
     const kategorieRes = await fetch(kategorieUrl);
     if (!kategorieRes.ok)
-      throw new Error(`Błąd pobierania kategorii: ${kategorieRes.status}`);
+      throw new Error(
+        `Fehler beim Abrufen der Kategorien: ${kategorieRes.status}`
+      );
     const kategorieData =
       (await kategorieRes.json()) as DirectusCollectionResponse<DirectusKategorie>;
     if (kategorieData.errors) throw new Error(kategorieData.errors[0].message);
@@ -78,7 +80,7 @@ export default async function KartePage() {
         const latitude = parseFloat(ort.Breite);
         const longitude = parseFloat(ort.Lange);
         if (isNaN(latitude) || isNaN(longitude)) {
-          console.error(`Nieprawidłowe współrzędne dla miejsca ${ort.id}`);
+          console.error(`Ungültige Koordinaten für Ort ${ort.id}`);
           return null;
         }
         return {
@@ -114,7 +116,7 @@ export default async function KartePage() {
     console.error("Błąd:", error);
     return (
       <div className="error-container">
-        <h2>Błąd ładowania mapy</h2>
+        <h2>Fehler beim Laden der Karte</h2>
         <p>{(error as Error).message}</p>
       </div>
     );

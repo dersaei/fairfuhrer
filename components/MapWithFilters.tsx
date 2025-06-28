@@ -50,7 +50,7 @@ export default function MapWithFilters({
   // Pobierz lokalizację użytkownika
   const getUserLocation = useCallback(() => {
     if (!navigator.geolocation) {
-      console.warn("Geolocation nie jest obsługiwane");
+      console.warn("Geolocation wird nicht unterstützt");
       return;
     }
 
@@ -60,7 +60,7 @@ export default function MapWithFilters({
         setUserLocation([longitude, latitude]);
       },
       (error) => {
-        console.error("Błąd geolokalizacji:", error);
+        console.error("Geolocation-Fehler:", error);
         // Jeśli nie można pobrać lokalizacji, pokaż wszystkie miejsca
         setNearbyPlaces(places);
       },
