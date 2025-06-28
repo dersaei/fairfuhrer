@@ -4,7 +4,7 @@
   justify-content: center;
   flex-wrap: wrap;
   margin: 0 auto;
-  padding: 15px;
+  padding: 10px;
 }
 
 .filterLabel {
@@ -40,4 +40,12 @@
   font-family: "Lato", sans-serif;
   transition: color 0.2s ease;
   color: inherit;
+}
+@media screen and (max-width: 568px) {
+  .filterName {
+    font-size: 13px;
+  }
+  .filterLabel {
+    padding: 4px 8px;
+  }
 }
