@@ -41,24 +41,34 @@
 }
 
 .section1Title {
-  font-size: 3rem;
-  font-weight: 700;
+  font-size: 2rem;
   margin-bottom: 2rem;
   line-height: 1.2;
+  font-family: "Montserrat", sans-serif;
+  font-optical-sizing: auto;
+  font-weight: 700;
+  font-style: normal;
 }
 
 .section1Text {
   font-size: 1.125rem;
   line-height: 1.7;
   margin-bottom: 2rem;
+  font-family: "Lato", sans-serif;
+  font-weight: 400;
+  font-style: normal;
+  text-align: justify;
 }
 
 .section1RightTitle {
   font-size: 4vw;
-  font-weight: 700;
   margin-bottom: 1.5rem;
   line-height: 1.2;
   text-align: center;
+  font-family: "Montserrat", sans-serif;
+  font-optical-sizing: auto;
+  font-weight: 700;
+  font-style: normal;
 }
 
 .section1TextRight {
@@ -78,6 +88,7 @@
   margin: 1rem 0;
   padding-left: 1.5rem;
   list-style: disc;
+  text-align: justify;
 }
 
 .section1Text ol {
@@ -87,13 +98,6 @@
 .section1Text li {
   margin-bottom: 0.5rem;
   display: list-item;
-}
-
-.section1Text h2,
-.section1Text h3 {
-  margin: 1.5rem 0 1rem 0;
-  /* USUNIĘTE: color: white; - będzie dziedziczone */
-  font-weight: 600;
 }
 
 .section1Text strong {
@@ -150,11 +154,17 @@
   font-size: 2.5rem;
   font-weight: 700;
   margin-bottom: 2rem;
+  font-family: "Montserrat", sans-serif;
+  font-optical-sizing: auto;
+  font-style: normal;
 }
 
 .section2Text {
   font-size: 1.25rem;
   line-height: 1.7;
+  font-family: "Lato", sans-serif;
+  font-weight: 400;
+  font-style: normal;
 }
 
 /* Style dla WYSIWYG w sekcji 2 */
@@ -196,12 +206,18 @@
   /* USUNIĘTE: color: #1e293b; - będzie ustawiane dynamicznie */
   margin-bottom: 2rem;
   line-height: 1.2;
+  font-family: "Montserrat", sans-serif;
+  font-optical-sizing: auto;
+  font-style: normal;
 }
 
 .section3Text {
   font-size: 1.125rem;
   line-height: 1.7;
-  /* USUNIĘTE: color: #374151; - będzie ustawiane dynamicznie */
+  font-family: "Lato", sans-serif;
+  font-weight: 400;
+  font-style: normal;
+  text-align: justify;
 }
 
 /* Style dla WYSIWYG w sekcji 3 */
@@ -246,11 +262,17 @@
   font-size: 2.5rem;
   font-weight: 700;
   margin-bottom: 1rem;
+  font-family: "Montserrat", sans-serif;
+  font-optical-sizing: auto;
+  font-style: normal;
 }
 
 .section4Subtitle {
   font-size: 1.25rem;
   opacity: 0.9;
+  font-family: "Lato", sans-serif;
+  font-weight: 400;
+  font-style: normal;
 }
 
 .contactFormContainer {
@@ -270,6 +292,9 @@
   font-weight: 700;
   /* USUNIĘTE: color: #1e293b; - będzie ustawiane dynamicznie */
   margin-bottom: 2rem;
+  font-family: "Montserrat", sans-serif;
+  font-optical-sizing: auto;
+  font-style: normal;
 }
 
 .section5Text {
@@ -278,6 +303,10 @@
   /* USUNIĘTE: color: #374151; - będzie ustawiane dynamicznie */
   max-width: 800px;
   margin: 0 auto;
+  font-family: "Lato", sans-serif;
+  font-weight: 400;
+  font-style: normal;
+  text-align: justify;
 }
 
 /* Style dla WYSIWYG w sekcji 5 */
