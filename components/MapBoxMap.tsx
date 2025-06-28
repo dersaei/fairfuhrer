@@ -14,32 +14,15 @@ interface MapBoxMapProps {
   places: Place[];
 }
 
-// Funkcja do obliczania odległości między dwoma punktami w kilometrach
-const calculateDistance = (
-  lat1: number,
-  lon1: number,
-  lat2: number,
-  lon2: number
-): number => {
-  const R = 6371; // Promień Ziemi w kilometrach
-  const dLat = (lat2 - lat1) * (Math.PI / 180);
-  const dLon = (lon2 - lon1) * (Math.PI / 180);
-  const a =
-    Math.sin(dLat / 2) * Math.sin(dLat / 2) +
-    Math.cos(lat1 * (Math.PI / 180)) *
-      Math.cos(lat2 * (Math.PI / 180)) *
-      Math.sin(dLon / 2) *
-      Math.sin(dLon / 2);
-  const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-  return R * c;
-};
-
 export default function MapBoxMap({ places }: MapBoxMapProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const mapRef = useRef<mapboxgl.Map | null>(null);
   const markersRef = useRef<mapboxgl.Marker[]>([]);
   const panelRef = useRef<HTMLDivElement>(null);
   const userLocationMarkerRef = useRef<mapboxgl.Marker | null>(null);
+
+  const userLocationRequestedRef = useRef(false);
+  const isMobile = useRef(false);
 
   const [selectedPlace, setSelectedPlace] = useState<Place | null>(null);
   const [isPanelOpen, setIsPanelOpen] = useState(false);
@@ -53,46 +36,160 @@ export default function MapBoxMap({ places }: MapBoxMapProps) {
     null
   );
   const [locationError, setLocationError] = useState<string | null>(null);
-  const [initialLocationSet, setInitialLocationSet] = useState(false);
+  const [mapLoadingState, setMapLoadingState] = useState<
+    "idle" | "loading" | "success" | "error"
+  >("idle");
 
-  // NOWY STAN - do zapamiętania początkowego stanu mapy
-  const [initialMapState, setInitialMapState] = useState<{
-    center: [number, number];
-    zoom: number;
-  } | null>(null);
+  // Walidacja Mapbox token
+  const isValidMapboxToken = () => {
+    const token = process.env.NEXT_PUBLIC_MAPBOX_TOKEN;
+    return Boolean(token && token.startsWith("pk."));
+  };
 
-  // Promień wyszukiwania w kilometrach - można dostosować
-  const [searchRadius, setSearchRadius] = useState(10); // 10 km domyślnie
-  const [nearbyPlaces, setNearbyPlaces] = useState<Place[]>([]);
+  // ✅ UPROSZCZONA funkcja resizeMap - nie potrzebuje już synchronizacji z panelem
+  const resizeMap = useCallback(() => {
+    if (mapRef.current) {
+      const resize = () => {
+        try {
+          mapRef.current?.resize();
+        } catch (error) {
+          console.warn("Błąd podczas aktualizacji rozmiaru mapy:", error);
+        }
+      };
 
-  // Funkcja do filtrowania miejsc w pobliżu użytkownika
-  const filterNearbyPlaces = useCallback(() => {
-    if (!userLocation) {
-      setNearbyPlaces([]);
-      return;
+      resize();
+      setTimeout(resize, 50);
     }
-
-    const [userLng, userLat] = userLocation;
-    const filtered = places.filter((place) => {
-      const distance = calculateDistance(
-        userLat,
-        userLng,
-        place.Breite,
-        place.Lange
-      );
-      return distance <= searchRadius;
-    });
-
-    setNearbyPlaces(filtered);
-  }, [userLocation, places, searchRadius]);
-
-  // Funkcja do aktualizacji promienia wyszukiwania
-  const updateSearchRadius = useCallback((newRadius: number) => {
-    setSearchRadius(newRadius);
   }, []);
 
-  // ZMODYFIKOWANA FUNKCJA getUserLocation z dodatkowymi logami
+  // Sprawdź czy urządzenie jest mobilne
+  useEffect(() => {
+    const checkIfMobile = () => {
+      isMobile.current = window.matchMedia("(max-width: 768px)").matches;
+    };
+
+    checkIfMobile();
+    window.addEventListener("resize", checkIfMobile);
+    return () => window.removeEventListener("resize", checkIfMobile);
+  }, []);
+
+  // Animacja do lokalizacji z płynnym wygładzaniem
+  const animateToLocation = useCallback(
+    (location: [number, number], zoom: number, duration = 1500) => {
+      if (mapRef.current) {
+        mapRef.current.easeTo({
+          center: location,
+          zoom: zoom,
+          duration: duration,
+          easing: (t) => {
+            return 1 - Math.pow(1 - t, 3);
+          },
+          essential: true,
+        });
+      }
+    },
+    []
+  );
+
+  const addUserLocationMarker = useCallback(
+    (map: mapboxgl.Map, location: [number, number]) => {
+      try {
+        if (userLocationMarkerRef.current) {
+          userLocationMarkerRef.current.remove();
+          userLocationMarkerRef.current = null;
+        }
+
+        if (!map || !map.loaded()) {
+          console.warn("Mapa nie jest gotowa do dodania markera użytkownika");
+          return;
+        }
+
+        if (!document.head.querySelector("#user-location-styles")) {
+          const style = document.createElement("style");
+          style.id = "user-location-styles";
+          style.textContent = `
+            .user-location-marker {
+              position: relative;
+              width: 20px;
+              height: 20px;
+              cursor: pointer;
+            }
+            .user-location-marker .marker-dot {
+              position: absolute;
+              top: 0;
+              left: 0;
+              width: 20px;
+              height: 20px;
+              border-radius: 50%;
+              background: #4285F4;
+              border: 3px solid white;
+              box-shadow: 0 2px 6px rgba(0,0,0,0.3);
+              z-index: 2;
+            }
+            .user-location-marker .marker-pulse {
+              position: absolute;
+              top: 50%;
+              left: 50%;
+              width: 20px;
+              height: 20px;
+              border-radius: 50%;
+              background: rgba(66, 133, 244, 0.4);
+              transform: translate(-50%, -50%);
+              animation: user-location-pulse 2s infinite;
+              z-index: 1;
+            }
+            @keyframes user-location-pulse {
+              0% { transform: translate(-50%, -50%) scale(0.8); opacity: 1; }
+              100% { transform: translate(-50%, -50%) scale(2.5); opacity: 0; }
+            }
+          `;
+          document.head.appendChild(style);
+        }
+
+        const userMarkerElement = document.createElement("div");
+        userMarkerElement.className = "user-location-marker";
+        userMarkerElement.innerHTML = `
+          <div class="marker-dot"></div>
+          <div class="marker-pulse"></div>
+        `;
+
+        const popup = new mapboxgl.Popup({
+          offset: [0, -15],
+          closeButton: false,
+          className: styles.popup,
+        }).setHTML(`
+          <div class="${styles.popupContent}">
+            <h3>Ihre Position</h3>
+            <p>Sie sind hier</p>
+          </div>
+        `);
+
+        const userMarker = new mapboxgl.Marker({ element: userMarkerElement })
+          .setLngLat(location)
+          .setPopup(popup)
+          .addTo(map);
+
+        userMarkerElement.addEventListener("mouseenter", () => {
+          if (userMarker.getPopup()) userMarker.togglePopup();
+        });
+
+        userMarkerElement.addEventListener("mouseleave", () => {
+          setTimeout(() => {
+            if (userMarker.getPopup()?.isOpen()) userMarker.togglePopup();
+          }, 300);
+        });
+
+        userLocationMarkerRef.current = userMarker;
+      } catch (error) {
+        console.warn("Błąd podczas dodawania markera użytkownika:", error);
+      }
+    },
+    []
+  );
+
   const getUserLocation = useCallback(() => {
+    userLocationRequestedRef.current = true;
+
     if (!navigator.geolocation) {
       setLocationError("Geolocation wird von diesem Browser nicht unterstützt");
       return;
@@ -105,31 +202,11 @@ export default function MapBoxMap({ places }: MapBoxMapProps) {
         setUserLocation(newLocation);
         setLocationError(null);
 
-        console.log("getUserLocation - newLocation:", newLocation);
-        console.log(
-          "getUserLocation - initialLocationSet:",
-          initialLocationSet
-        );
-
-        // Wenn die Karte bereits existiert und es ist die erste Lokalisierung
-        if (mapRef.current && !initialLocationSet) {
-          const targetZoom = 14;
-
-          // Zapisz początkowy stan mapy (pozycja użytkownika + zoom)
-          const newMapState = {
-            center: newLocation,
-            zoom: targetZoom,
-          };
-
-          console.log("Zapisuję initialMapState:", newMapState);
-          setInitialMapState(newMapState);
-
-          mapRef.current.easeTo({
-            center: newLocation,
-            zoom: targetZoom,
-            duration: 1000,
-          });
-          setInitialLocationSet(true);
+        if (mapRef.current) {
+          setTimeout(() => {
+            animateToLocation(newLocation, 14, isMobile.current ? 2000 : 1800);
+            addUserLocationMarker(mapRef.current!, newLocation);
+          }, 100);
         }
       },
       (error) => {
@@ -153,148 +230,24 @@ export default function MapBoxMap({ places }: MapBoxMapProps) {
             break;
         }
       },
-      {
-        enableHighAccuracy: true,
-        timeout: 10000,
-        maximumAge: 300000, // 5 Minuten Cache
-      }
+      { enableHighAccuracy: true, timeout: 10000, maximumAge: 300000 }
     );
-  }, [initialLocationSet]);
-
-  // Aktualizacja miejsc w pobliżu po zmianie lokalizacji użytkownika
-  useEffect(() => {
-    filterNearbyPlaces();
-  }, [filterNearbyPlaces]);
-
-  // Funktion zum Hinzufügen des Benutzerposition-Markers
-  const addUserLocationMarker = useCallback(
-    (map: mapboxgl.Map, location: [number, number]) => {
-      try {
-        // Vorherigen Marker entfernen, falls vorhanden
-        if (userLocationMarkerRef.current) {
-          userLocationMarkerRef.current.remove();
-          userLocationMarkerRef.current = null;
-        }
-
-        // Überprüfen, ob die Karte verfügbar und geladen ist
-        if (!map || !map.loaded()) {
-          console.warn(
-            "Karte nicht bereit für das Hinzufügen des Benutzerposition-Markers"
-          );
-          return;
-        }
-
-        // Styles für den Marker-Punkt und Pulsierung direkt hinzufügen
-        if (!document.head.querySelector("#user-location-styles")) {
-          const style = document.createElement("style");
-          style.id = "user-location-styles";
-          style.textContent = `
-          .user-location-marker {
-            position: relative;
-            width: 20px;
-            height: 20px;
-            cursor: pointer;
-          }
-          .user-location-marker .marker-dot {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 20px;
-            height: 20px;
-            border-radius: 50%;
-            background: #4285F4;
-            border: 3px solid white;
-            box-shadow: 0 2px 6px rgba(0,0,0,0.3);
-            z-index: 2;
-          }
-          .user-location-marker .marker-pulse {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            width: 20px;
-            height: 20px;
-            border-radius: 50%;
-            background: rgba(66, 133, 244, 0.4);
-            transform: translate(-50%, -50%);
-            animation: user-location-pulse 2s infinite;
-            z-index: 1;
-          }
-          @keyframes user-location-pulse {
-            0% {
-              transform: translate(-50%, -50%) scale(0.8);
-              opacity: 1;
-            }
-            100% {
-              transform: translate(-50%, -50%) scale(2.5);
-              opacity: 0;
-            }
-          }
-        `;
-          document.head.appendChild(style);
-        }
-
-        // Benutzerdefiniertes Element für den Benutzerposition-Marker erstellen
-        const userMarkerElement = document.createElement("div");
-        userMarkerElement.className = "user-location-marker";
-        userMarkerElement.innerHTML = `
-        <div class="marker-dot"></div>
-        <div class="marker-pulse"></div>
-      `;
-
-        const popup = new mapboxgl.Popup({
-          offset: [0, -15],
-          closeButton: false,
-          className: styles.popup,
-        }).setHTML(`
-        <div class="${styles.popupContent}">
-          <h3>Ihre Position</h3>
-          <p>Sie sind hier</p>
-          <p>Suchradius: ${searchRadius} km</p>
-        </div>
-      `);
-
-        const userMarker = new mapboxgl.Marker({
-          element: userMarkerElement,
-        })
-          .setLngLat(location)
-          .setPopup(popup)
-          .addTo(map);
-
-        // Interaktionen hinzufügen
-        userMarkerElement.addEventListener("mouseenter", () => {
-          if (userMarker.getPopup()) {
-            userMarker.togglePopup();
-          }
-        });
-
-        userMarkerElement.addEventListener("mouseleave", () => {
-          setTimeout(() => {
-            if (userMarker.getPopup()?.isOpen()) {
-              userMarker.togglePopup();
-            }
-          }, 300);
-        });
-
-        userLocationMarkerRef.current = userMarker;
-      } catch (error) {
-        console.warn(
-          "Fehler beim Hinzufügen des Benutzerposition-Markers:",
-          error
-        );
-      }
-    },
-    [searchRadius]
-  );
+  }, [addUserLocationMarker, animateToLocation]);
 
   const initializeMap = useCallback(() => {
     if (mapRef.current || !containerRef.current) return;
 
-    try {
-      mapboxgl.accessToken = process.env.NEXT_PUBLIC_MAPBOX_TOKEN!;
+    if (!isValidMapboxToken()) {
+      setMapLoadingState("error");
+      console.error("Nieprawidłowy lub brakujący token Mapbox");
+      return;
+    }
 
-      // Anfangszentrum der Karte - priorität für lokalizację użytkownika
-      const initialCenter: [number, number] = userLocation || [19.0, 52.0];
-      const initialZoom = userLocation ? 14 : 6; // Wyższy zoom dla lokalizacji użytkownika
+    try {
+      setMapLoadingState("loading");
+      mapboxgl.accessToken = process.env.NEXT_PUBLIC_MAPBOX_TOKEN!;
+      const initialCenter: [number, number] = userLocation || [9.0, 47.5];
+      const initialZoom = userLocation ? 12 : 6;
 
       const map = new mapboxgl.Map({
         container: containerRef.current,
@@ -311,96 +264,68 @@ export default function MapBoxMap({ places }: MapBoxMapProps) {
         },
       });
 
-      // Listener do zapisania stanu mapy po zakończeniu ruchu
-      map.on("moveend", () => {
-        if (
-          !initialMapState &&
-          userLocation &&
-          initialLocationSet &&
-          !isPanelOpen
-        ) {
-          const currentCenter = map.getCenter();
-          const currentZoom = map.getZoom();
-          console.log("Zapisuję stan mapy po moveend:", {
-            center: [currentCenter.lng, currentCenter.lat],
-            zoom: currentZoom,
-          });
-          setInitialMapState({
-            center: [currentCenter.lng, currentCenter.lat],
-            zoom: currentZoom,
-          });
-        }
-      });
-
-      // Steuerelemente erst nach dem Laden der Karte hinzufügen
       map.on("load", () => {
         try {
+          setMapLoadingState("success");
           map.addControl(new mapboxgl.NavigationControl(), "top-left");
 
-          // Geolocation-Steuerelement hinzufügen
           const geolocateControl = new mapboxgl.GeolocateControl({
-            positionOptions: {
-              enableHighAccuracy: true,
-            },
+            positionOptions: { enableHighAccuracy: true },
             trackUserLocation: true,
             showUserHeading: true,
-            showUserLocation: false, // Wyłączamy domyślny marker, używamy własnego
+            showUserLocation: true,
           });
 
           map.addControl(geolocateControl, "top-left");
-
           map.addControl(
-            new mapboxgl.AttributionControl({
-              compact: true,
-            }),
+            new mapboxgl.AttributionControl({ compact: true }),
             "bottom-right"
           );
 
-          // Event Listener für Geolocation
           geolocateControl.on("geolocate", (e) => {
+            userLocationRequestedRef.current = true;
             const { longitude, latitude } = e.coords;
             setUserLocation([longitude, latitude]);
             addUserLocationMarker(map, [longitude, latitude]);
+
+            const duration = isMobile.current ? 2000 : 1800;
+            setTimeout(() => {
+              animateToLocation([longitude, latitude], 14, duration);
+            }, 150);
           });
 
-          // Wenn wir bereits die Benutzerposition haben, Marker hinzufügen
           if (userLocation) {
             addUserLocationMarker(map, userLocation);
           }
         } catch (error) {
-          console.warn(
-            "Fehler beim Hinzufügen der Kartensteuerelemente:",
-            error
-          );
+          console.warn("Błąd podczas dodawania kontrolek mapy:", error);
+          setMapLoadingState("error");
         }
       });
 
-      // Fehlerbehandlung für die Karte
       map.on("error", (e) => {
-        console.error("Kartenfehler:", e);
+        console.error("Błąd mapy:", e);
+        setMapLoadingState("error");
       });
 
       mapRef.current = map;
     } catch (error) {
-      console.error("Fehler beim Initialisieren der Karte:", error);
+      console.error("Błąd inicjalizacji mapy:", error);
+      setMapLoadingState("error");
     }
-  }, [
-    userLocation,
-    addUserLocationMarker,
-    initialMapState,
-    initialLocationSet,
-    isPanelOpen,
-  ]);
+  }, [userLocation, addUserLocationMarker, animateToLocation]);
 
   const handleNextImage = useCallback(() => {
+    if (!selectedPlace?.Galerie_Bilder) return;
     setCurrentImageIndex(
-      (prev) => (prev + 1) % (selectedPlace?.Galerie_Bilder?.length || 1)
+      (prev) => (prev + 1) % selectedPlace.Galerie_Bilder!.length
     );
   }, [selectedPlace?.Galerie_Bilder]);
 
   const handlePrevImage = useCallback(() => {
+    if (!selectedPlace?.Galerie_Bilder) return;
     setCurrentImageIndex((prev) =>
-      prev === 0 ? (selectedPlace?.Galerie_Bilder?.length || 1) - 1 : prev - 1
+      prev === 0 ? selectedPlace.Galerie_Bilder!.length - 1 : prev - 1
     );
   }, [selectedPlace?.Galerie_Bilder]);
 
@@ -428,120 +353,85 @@ export default function MapBoxMap({ places }: MapBoxMapProps) {
     handlePrevImage,
   ]);
 
-  const openPanel = (place: Place) => {
-    setSelectedPlace(place);
-    setIsPanelOpen(true);
-    setRender(true);
+  // ✅ UPROSZCZONA funkcja openPanel
+  const openPanel = useCallback(
+    (place: Place) => {
+      setSelectedPlace(place);
+      setIsPanelOpen(true);
+      setRender(true);
 
-    requestAnimationFrame(() => {
       requestAnimationFrame(() => {
-        setVisible(true);
-      });
-    });
+        requestAnimationFrame(() => {
+          setVisible(true);
 
-    setTimeout(() => {
-      if (mapRef.current) {
-        const map = mapRef.current;
-        const currentZoom = map.getZoom();
-
-        map.easeTo({
-          center: [place.Lange, place.Breite],
-          zoom: Math.max(currentZoom, 15), // Wyższy zoom dla szczegółów
-          duration: 800,
-          easing: (t) => t * (2 - t),
+          // Animacja do miejsca (bez resize mapy)
+          if (mapRef.current) {
+            const currentZoom = mapRef.current.getZoom();
+            setTimeout(() => {
+              animateToLocation(
+                [place.Lange, place.Breite],
+                Math.max(currentZoom, 12),
+                1200
+              );
+            }, 300);
+          }
         });
-      }
-    }, 100);
-  };
+      });
+    },
+    [animateToLocation]
+  );
 
-  // ZMODYFIKOWANA FUNKCJA closePanel z debugowaniem
+  // ✅ UPROSZCZONA funkcja closePanel
   const closePanel = useCallback(() => {
     setVisible(false);
-    setIsPanelOpen(false);
     setSelectedGalleryImage(null);
     setCurrentImageIndex(0);
 
-    console.log("closePanel - initialMapState:", initialMapState);
-    console.log("closePanel - userLocation:", userLocation);
+    // Panel nie wpływa na szerokość mapy, więc nie trzeba resizeować
+    setTimeout(() => {
+      setIsPanelOpen(false);
 
-    if (mapRef.current) {
-      const map = mapRef.current;
-
-      // Jeśli mamy zapisany stan początkowy, użyj go
-      if (initialMapState) {
-        console.log("Używam initialMapState");
-        map.easeTo({
-          center: initialMapState.center,
-          zoom: initialMapState.zoom,
-          duration: 800,
-          easing: (t) => t * (2 - t),
-        });
+      // Opcjonalnie: animacja powrotu do lokalizacji użytkownika
+      if (mapRef.current && userLocation) {
+        const duration = isMobile.current ? 2000 : 1800;
+        animateToLocation(userLocation, 14, duration);
       }
-      // Jeśli nie ma zapisanego stanu, ale mamy lokalizację użytkownika
-      else if (userLocation) {
-        console.log("Używam userLocation jako fallback");
-        map.easeTo({
-          center: userLocation,
-          zoom: 14,
-          duration: 800,
-          easing: (t) => t * (2 - t),
-        });
-      }
-    }
-  }, [initialMapState, userLocation]);
+    }, 600); // Poczekaj na animację panelu
+  }, [userLocation, animateToLocation]);
 
   const updateMarkers = useCallback(() => {
     const map = mapRef.current;
     if (!map || !map.loaded()) return;
 
     try {
-      // Vorherige Marker entfernen
       if (markersRef.current) {
         markersRef.current.forEach((marker) => {
           try {
             marker.remove();
           } catch (error) {
-            console.warn("Fehler beim Entfernen des Markers:", error);
+            console.warn("Błąd usuwania markera:", error);
           }
         });
         markersRef.current = [];
       }
 
-      // Używamy nearbyPlaces zamiast wszystkich places
-      nearbyPlaces.forEach((place) => {
+      places.forEach((place) => {
         if (
           !place.Breite ||
           !place.Lange ||
           Math.abs(place.Breite) > 90 ||
           Math.abs(place.Lange) > 180
         ) {
-          console.error(`Ungültige Koordinaten für Ort ${place.id}`);
+          console.error(`Nieprawidłowe współrzędne dla miejsca ${place.id}`);
           return;
         }
 
         try {
           const color = place.Kategorie[0]?.color || "#3388ff";
-
-          // Obliczanie odległości od użytkownika dla popup
-          let distanceText = "";
-          if (userLocation) {
-            const [userLng, userLat] = userLocation;
-            const distance = calculateDistance(
-              userLat,
-              userLng,
-              place.Breite,
-              place.Lange
-            );
-            distanceText = `<p class="${
-              styles.distance
-            }">Entfernung: ${distance.toFixed(1)} km</p>`;
-          }
-
           const popupContent = `
             <div class="${styles.popupContent}">
               <h3>${place.Name}</h3>
               <p class="${styles.address}">${place.Adresse}</p>
-              ${distanceText}
               ${
                 place.Vollbeschreibung
                   ? `<p class="${
@@ -561,10 +451,7 @@ export default function MapBoxMap({ places }: MapBoxMapProps) {
             className: styles.popup,
           }).setHTML(popupContent);
 
-          const marker = new mapboxgl.Marker({
-            color: color,
-            scale: 0.8,
-          })
+          const marker = new mapboxgl.Marker({ color, scale: 0.8 })
             .setLngLat([place.Lange, place.Breite])
             .setPopup(popup)
             .addTo(map);
@@ -573,64 +460,52 @@ export default function MapBoxMap({ places }: MapBoxMapProps) {
           markerElement.style.cursor = "pointer";
 
           let popupTimeout: NodeJS.Timeout;
-
           markerElement.addEventListener("mouseenter", () => {
             clearTimeout(popupTimeout);
-            if (marker.getPopup()) {
-              marker.togglePopup();
-            }
+            if (marker.getPopup()) marker.togglePopup();
           });
 
           markerElement.addEventListener("mouseleave", () => {
             popupTimeout = setTimeout(() => {
-              if (marker.getPopup()?.isOpen()) {
-                marker.togglePopup();
-              }
+              if (marker.getPopup()?.isOpen()) marker.togglePopup();
             }, 300);
           });
 
           markerElement.addEventListener("click", (e) => {
             e.stopPropagation();
-            if (marker.getPopup()?.isOpen()) {
-              marker.togglePopup();
-            }
+            if (marker.getPopup()?.isOpen()) marker.togglePopup();
             openPanel(place);
           });
 
           markersRef.current.push(marker);
         } catch (error) {
           console.warn(
-            `Fehler beim Erstellen des Markers für Ort ${place.id}:`,
+            `Błąd tworzenia markera dla miejsca ${place.id}:`,
             error
           );
         }
       });
 
-      // Dostosowanie widoku do miejsc w pobliżu i pozycji użytkownika
-      if (nearbyPlaces.length > 0 && !isPanelOpen && userLocation) {
+      if (
+        places.length > 0 &&
+        !isPanelOpen &&
+        !userLocationRequestedRef.current
+      ) {
         try {
           const bounds = new mapboxgl.LngLatBounds();
-
-          // Dodaj pozycję użytkownika do granic
-          bounds.extend(userLocation);
-
-          // Dodaj miejsca w pobliżu
-          nearbyPlaces.forEach((p) => bounds.extend([p.Lange, p.Breite]));
-
-          map.fitBounds(bounds, {
-            padding: 100,
-            maxZoom: 16, // Ograniczamy maksymalny zoom
-            duration: 1000,
-          });
+          places.forEach((p) => bounds.extend([p.Lange, p.Breite]));
+          if (userLocation) bounds.extend(userLocation);
+          map.fitBounds(bounds, { padding: 50 });
         } catch (error) {
-          console.warn("Fehler beim Anpassen der Grenzen:", error);
+          console.warn("Błąd dopasowania granic:", error);
         }
       }
     } catch (error) {
-      console.error("Fehler beim Aktualisieren der Marker:", error);
+      console.error("Błąd aktualizacji markerów:", error);
     }
-  }, [nearbyPlaces, isPanelOpen, userLocation]);
+  }, [places, isPanelOpen, userLocation, openPanel]);
 
+  // ✅ UPROSZCZONY click outside handler
   useEffect(() => {
     if (!render || !visible) return;
 
@@ -640,6 +515,13 @@ export default function MapBoxMap({ places }: MapBoxMapProps) {
       if (panelRef.current?.contains(target)) return;
       if (target.closest(".mapboxgl-marker")) return;
       if (target.closest(".mapboxgl-ctrl")) return;
+
+      // ✅ DODANE: Kliknięcie w backdrop zamyka panel
+      if (target.classList.contains(styles.panelBackdrop)) {
+        closePanel();
+        return;
+      }
+
       closePanel();
     };
 
@@ -659,7 +541,25 @@ export default function MapBoxMap({ places }: MapBoxMapProps) {
     }
   };
 
-  // Benutzerposition beim ersten Laden abrufen
+  // Window resize handler z debouncing
+  useEffect(() => {
+    let timeoutId: NodeJS.Timeout;
+
+    const handleResize = () => {
+      clearTimeout(timeoutId);
+      timeoutId = setTimeout(() => {
+        resizeMap();
+      }, 100);
+    };
+
+    window.addEventListener("resize", handleResize);
+    return () => {
+      window.removeEventListener("resize", handleResize);
+      clearTimeout(timeoutId);
+    };
+  }, [resizeMap]);
+
+  // Pobierz lokalizację użytkownika przy pierwszym załadowaniu
   useEffect(() => {
     getUserLocation();
   }, [getUserLocation]);
@@ -668,41 +568,37 @@ export default function MapBoxMap({ places }: MapBoxMapProps) {
     initializeMap();
 
     return () => {
-      // Cleanup markers
+      // Czyszczenie markerów
       if (markersRef.current) {
         markersRef.current.forEach((marker) => {
           try {
             marker.remove();
           } catch (error) {
-            console.warn("Fehler beim Entfernen des Markers:", error);
+            console.warn("Błąd usuwania markera:", error);
           }
         });
         markersRef.current = [];
       }
 
-      // Cleanup user location marker
+      // Czyszczenie markera użytkownika
       if (userLocationMarkerRef.current) {
         try {
           userLocationMarkerRef.current.remove();
           userLocationMarkerRef.current = null;
         } catch (error) {
-          console.warn(
-            "Fehler beim Entfernen des Benutzerposition-Markers:",
-            error
-          );
+          console.warn("Błąd usuwania markera użytkownika:", error);
         }
       }
 
-      // Cleanup map
+      // Czyszczenie mapy
       if (mapRef.current) {
         try {
           const map = mapRef.current;
-          // Überprüfen, ob die Karte vollständig geladen ist, bevor sie entfernt wird
           if (map.loaded()) {
             map.remove();
           }
         } catch (error) {
-          console.warn("Fehler beim Entfernen der Karte:", error);
+          console.warn("Błąd usuwania mapy:", error);
         } finally {
           mapRef.current = null;
         }
@@ -721,34 +617,50 @@ export default function MapBoxMap({ places }: MapBoxMapProps) {
     }
   }, [updateMarkers]);
 
+  // Error boundary fallback
+  if (!isValidMapboxToken()) {
+    return (
+      <div className={styles.mapContainerWrapper}>
+        <div className={styles.errorContainer}>
+          <h3>Konfigurationsfehler</h3>
+          <p>Mapbox-Token ist nicht konfiguriert oder ungültig.</p>
+          <button
+            onClick={() => window.location.reload()}
+            className={styles.retryButton}
+          >
+            Seite neu laden
+          </button>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className={styles.mapContainerWrapper}>
-      {/* Kontrolka promienia wyszukiwania */}
-      {userLocation && (
-        <div className={styles.radiusControl}>
-          <label htmlFor="radius-slider">Suchradius: {searchRadius} km</label>
-          <input
-            id="radius-slider"
-            type="range"
-            min="1"
-            max="50"
-            value={searchRadius}
-            onChange={(e) => updateSearchRadius(Number(e.target.value))}
-            className={styles.radiusSlider}
-          />
-          <div className={styles.nearbyCount}>
-            Gefundene Orte: {nearbyPlaces.length}
+      {/* Loading state */}
+      {mapLoadingState === "loading" && (
+        <div className={styles.loadingOverlay}>
+          <div className={styles.loadingSpinner}>Karte wird geladen...</div>
+        </div>
+      )}
+
+      {/* Error state */}
+      {mapLoadingState === "error" && (
+        <div className={styles.errorOverlay}>
+          <div className={styles.errorContainer}>
+            <h3>Fehler beim Laden der Karte</h3>
+            <p>Die Karte konnte nicht geladen werden.</p>
+            <button onClick={initializeMap} className={styles.retryButton}>
+              Erneut versuchen
+            </button>
           </div>
         </div>
       )}
 
-      <div
-        ref={containerRef}
-        className={`${styles.mapContainer} ${
-          isPanelOpen ? styles.mapWithPanel : ""
-        }`}
-      />
+      {/* ✅ MAPA ZAWSZE PEŁNA SZEROKOŚĆ - usuń mapWithPanel class */}
+      <div ref={containerRef} className={styles.mapContainer} />
 
+      {/* Location error */}
       {locationError && (
         <div className={styles.locationError}>
           <p>Geolocation-Fehler: {locationError}</p>
@@ -758,15 +670,15 @@ export default function MapBoxMap({ places }: MapBoxMapProps) {
         </div>
       )}
 
-      {!userLocation && !locationError && (
-        <div className={styles.locationPrompt}>
-          <p>
-            Bitte erlauben Sie den Zugriff auf Ihre Position, um Orte in der
-            Nähe zu finden.
-          </p>
-        </div>
+      {/* ✅ OPCJONALNY BACKDROP */}
+      {isPanelOpen && (
+        <div
+          className={`${styles.panelBackdrop} ${visible ? styles.visible : ""}`}
+          onClick={closePanel}
+        />
       )}
 
+      {/* ✅ PANEL JAKO OVERLAY */}
       {render && (
         <div
           ref={panelRef}
@@ -802,18 +714,6 @@ export default function MapBoxMap({ places }: MapBoxMapProps) {
                 <div className={styles.placeNameSection}>
                   <h2 className={styles.placeName}>{selectedPlace.Name}</h2>
                   <p className={styles.placeAddress}>{selectedPlace.Adresse}</p>
-                  {userLocation && (
-                    <p className={styles.placeDistance}>
-                      Entfernung:{" "}
-                      {calculateDistance(
-                        userLocation[1],
-                        userLocation[0],
-                        selectedPlace.Breite,
-                        selectedPlace.Lange
-                      ).toFixed(1)}{" "}
-                      km
-                    </p>
-                  )}
                 </div>
 
                 {selectedPlace.Vollbeschreibung && (
@@ -868,62 +768,82 @@ export default function MapBoxMap({ places }: MapBoxMapProps) {
         </div>
       )}
 
-      {selectedGalleryImage && selectedPlace && (
-        <div
-          className={styles.fullscreenModal}
-          onClick={(e) => {
-            if (e.target === e.currentTarget) {
-              setSelectedGalleryImage(null);
-            }
-          }}
-        >
+      {/* Fullscreen gallery modal */}
+      {selectedGalleryImage &&
+        selectedPlace &&
+        selectedPlace.Galerie_Bilder && (
           <div
-            className={styles.modalContent}
-            onClick={(e) => e.stopPropagation()}
+            className={styles.fullscreenModal}
+            onClick={(e) => {
+              if (e.target === e.currentTarget) {
+                setSelectedGalleryImage(null);
+              }
+            }}
           >
-            <button
-              className={styles.closeButton}
-              onClick={() => setSelectedGalleryImage(null)}
+            <div
+              className={styles.modalContent}
+              onClick={(e) => e.stopPropagation()}
             >
-              ×
-            </button>
-
-            <div className={styles.sliderContainer}>
               <button
-                className={styles.navButtonPrev}
-                onClick={handlePrevImage}
+                className={styles.closeButton}
+                onClick={() => setSelectedGalleryImage(null)}
+                aria-label="Galerie schließen"
               >
-                ‹
+                ×
               </button>
 
-              <Image
-                src={getOptimizedImagePath(
-                  selectedPlace.id,
-                  selectedPlace.Galerie_Bilder?.[currentImageIndex] || "",
-                  "gallery"
+              <div className={styles.sliderContainer}>
+                <button
+                  className={styles.navButtonPrev}
+                  onClick={handlePrevImage}
+                  aria-label="Vorheriges Bild"
+                  disabled={
+                    !selectedPlace.Galerie_Bilder ||
+                    selectedPlace.Galerie_Bilder.length <= 1
+                  }
+                >
+                  ‹
+                </button>
+
+                <Image
+                  src={getOptimizedImagePath(
+                    selectedPlace.id,
+                    selectedPlace.Galerie_Bilder[currentImageIndex] || "",
+                    "gallery"
+                  )}
+                  alt={`Galeriebild ${currentImageIndex + 1} von ${
+                    selectedPlace.Name
+                  }`}
+                  width={1200}
+                  height={800}
+                  style={{ objectFit: "contain" }}
+                  className={styles.modalImage}
+                  priority
+                />
+
+                <button
+                  className={styles.navButtonNext}
+                  onClick={handleNextImage}
+                  aria-label="Nächstes Bild"
+                  disabled={
+                    !selectedPlace.Galerie_Bilder ||
+                    selectedPlace.Galerie_Bilder.length <= 1
+                  }
+                >
+                  ›
+                </button>
+              </div>
+
+              {selectedPlace.Galerie_Bilder &&
+                selectedPlace.Galerie_Bilder.length > 1 && (
+                  <div className={styles.imageCounter}>
+                    {currentImageIndex + 1} /{" "}
+                    {selectedPlace.Galerie_Bilder.length}
+                  </div>
                 )}
-                alt="Vergrößertes Bild"
-                width={1200}
-                height={800}
-                style={{ objectFit: "contain" }}
-                className={styles.modalImage}
-              />
-
-              <button
-                className={styles.navButtonNext}
-                onClick={handleNextImage}
-              >
-                ›
-              </button>
-            </div>
-
-            <div className={styles.imageCounter}>
-              {currentImageIndex + 1} /{" "}
-              {selectedPlace.Galerie_Bilder?.length || 0}
             </div>
           </div>
-        </div>
-      )}
+        )}
     </div>
   );
 }

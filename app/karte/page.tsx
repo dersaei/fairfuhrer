@@ -1,124 +1,416 @@
 // app/karte/page.tsx
 import MapWithFilters from "../../components/MapWithFilters";
-import type { Place, Category } from "../../types";
+import { ErrorBoundary } from "../../components/ErrorBoundary";
+import type {
+  Place,
+  Category,
+  DirectusCollectionResponse,
+  DirectusKategorie,
+  DirectusOrte,
+} from "../../types";
 
+// ISR revalidation - dane będą odświeżane co 6 godzin
 export const revalidate = 21600;
 
-interface DirectusMeta {
-  total_count?: number;
-  filter_count?: number;
+// ========================================
+// HELPER FUNCTIONS
+// ========================================
+
+/**
+ * Bezpieczne parsowanie współrzędnych z string do number
+ */
+function parseCoordinate(value: string, fallback: number = 0): number {
+  const parsed = parseFloat(value);
+  return isNaN(parsed) ? fallback : parsed;
 }
 
-interface DirectusError {
-  message: string;
-  extensions: {
-    code: string;
-    [key: string]: unknown;
-  };
+/**
+ * Walidacja współrzędnych geograficznych
+ */
+function isValidCoordinate(lat: number, lng: number): boolean {
+  return (
+    !isNaN(lat) && !isNaN(lng) && Math.abs(lat) <= 90 && Math.abs(lng) <= 180
+  );
 }
 
-interface DirectusCollectionResponse<T> {
-  data: T[];
-  meta?: DirectusMeta;
-  errors?: DirectusError[];
+/**
+ * Transformacja Directus Orte do Place z walidacją
+ */
+function transformDirectusOrteToPlace(ort: DirectusOrte): Place | null {
+  try {
+    const latitude = parseCoordinate(ort.Breite);
+    const longitude = parseCoordinate(ort.Lange);
+
+    // Walidacja współrzędnych
+    if (!isValidCoordinate(latitude, longitude)) {
+      console.error(
+        `Ungültige Koordinaten für Ort ${ort.id}: lat=${latitude}, lng=${longitude}`
+      );
+      return null;
+    }
+
+    // Walidacja wymaganych pól
+    if (!ort.Name || !ort.Adresse) {
+      console.error(`Fehlende erforderliche Felder für Ort ${ort.id}`);
+      return null;
+    }
+
+    return {
+      id: ort.id,
+      Name: ort.Name.trim(),
+      Adresse: ort.Adresse.trim(),
+      Vollbeschreibung: ort.Vollbeschreibung?.trim(),
+      Breite: latitude,
+      Lange: longitude,
+      Kategorie:
+        ort.Kategorie?.map((k) => ({
+          id: k.Kategorie_id.id,
+          name: k.Kategorie_id.Name.trim(),
+          color: k.Kategorie_id.Farbe.trim(),
+        })) ?? [],
+      Hauptbild: ort.Hauptbild?.trim(),
+      Audio_Datei: ort.Audio_Datei?.trim(),
+      Link_URL: ort.Link_URL?.trim(),
+      Link_Text: ort.Link_Text?.trim(),
+      Galerie_Bilder: ort.Galerie_Bilder?.filter(
+        (img) => img.trim().length > 0
+      ),
+    };
+  } catch (error) {
+    console.error(`Fehler bei der Transformation von Ort ${ort.id}:`, error);
+    return null;
+  }
 }
 
-interface DirectusKategorie {
-  id: number;
-  Name: string;
-  Farbe: string;
+/**
+ * Fetch data from Directus with error handling
+ */
+async function fetchFromDirectus<T>(
+  url: string,
+  entityName: string
+): Promise<DirectusCollectionResponse<T>> {
+  try {
+    const response = await fetch(url, {
+      next: {
+        revalidate: 21600,
+        tags: [entityName.toLowerCase()],
+      },
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json",
+      },
+    });
+
+    if (!response.ok) {
+      throw new Error(
+        `HTTP ${response.status} ${response.statusText} beim Abrufen von ${entityName}`
+      );
+    }
+
+    const data = (await response.json()) as DirectusCollectionResponse<T>;
+
+    // Prüfe auf Directus API Fehler
+    if (data.errors?.length) {
+      throw new Error(
+        `Directus API Fehler bei ${entityName}: ${data.errors[0].message}`
+      );
+    }
+
+    return data;
+  } catch (error) {
+    console.error(`Fehler beim Abrufen von ${entityName}:`, error);
+    throw error;
+  }
 }
 
-interface DirectusOrteKategorie {
-  id: number;
-  Orte_id: number;
-  Kategorie_id: DirectusKategorie;
-}
-
-interface DirectusOrte {
-  id: number;
-  Name: string;
-  Adresse: string;
-  Vollbeschreibung?: string;
-  Breite: string;
-  Lange: string;
-  Kategorie?: DirectusOrteKategorie[];
-  Hauptbild?: string;
-  Audio_Datei?: string;
-  Link_URL?: string;
-  Link_Text?: string;
-  Galerie_Bilder?: string[];
-}
+// ========================================
+// MAIN PAGE COMPONENT
+// ========================================
 
 export default async function KartePage() {
+  // Validierung der Umgebungsvariable
   const rawUrl = process.env.DIRECTUS_URL;
-  if (!rawUrl) throw new Error("Brakuje DIRECTUS_URL w .env.local");
+  if (!rawUrl) {
+    throw new Error(
+      "DIRECTUS_URL Umgebungsvariable ist nicht in .env.local konfiguriert"
+    );
+  }
+
   const baseUrl = rawUrl.replace(/\/+$/, "");
 
   try {
-    // standardowy fetch – bez cache:"no-store"
-    const orteUrl = `${baseUrl}/items/Orte?fields=id,Name,Adresse,Vollbeschreibung,Breite,Lange,Hauptbild,Audio_Datei,Link_URL,Link_Text,Galerie_Bilder,Kategorie.Kategorie_id.id,Kategorie.Kategorie_id.Name,Kategorie.Kategorie_id.Farbe&limit=-1`;
-    const orteRes = await fetch(orteUrl);
-    if (!orteRes.ok)
-      throw new Error(`Fehler beim Abrufen der Orte: ${orteRes.status}`);
-    const orteData =
-      (await orteRes.json()) as DirectusCollectionResponse<DirectusOrte>;
-    if (orteData.errors) throw new Error(orteData.errors[0].message);
+    // ========================================
+    // FETCH ORTE (PLACES)
+    // ========================================
 
-    const kategorieUrl = `${baseUrl}/items/Kategorie?fields=id,Name,Farbe&limit=-1`;
-    const kategorieRes = await fetch(kategorieUrl);
-    if (!kategorieRes.ok)
-      throw new Error(
-        `Fehler beim Abrufen der Kategorien: ${kategorieRes.status}`
-      );
-    const kategorieData =
-      (await kategorieRes.json()) as DirectusCollectionResponse<DirectusKategorie>;
-    if (kategorieData.errors) throw new Error(kategorieData.errors[0].message);
+    const orteUrl = new URL(`${baseUrl}/items/Orte`);
+    orteUrl.searchParams.set(
+      "fields",
+      [
+        "id",
+        "Name",
+        "Adresse",
+        "Vollbeschreibung",
+        "Breite",
+        "Lange",
+        "Hauptbild",
+        "Audio_Datei",
+        "Link_URL",
+        "Link_Text",
+        "Galerie_Bilder",
+        "Kategorie.Kategorie_id.id",
+        "Kategorie.Kategorie_id.Name",
+        "Kategorie.Kategorie_id.Farbe",
+      ].join(",")
+    );
+    orteUrl.searchParams.set("limit", "-1");
+    orteUrl.searchParams.set("sort", "Name"); // Sortierung nach Namen
 
+    const orteData = await fetchFromDirectus<DirectusOrte>(
+      orteUrl.toString(),
+      "Orte"
+    );
+
+    // ========================================
+    // FETCH KATEGORIEN
+    // ========================================
+
+    const kategorieUrl = new URL(`${baseUrl}/items/Kategorie`);
+    kategorieUrl.searchParams.set("fields", "id,Name,Farbe");
+    kategorieUrl.searchParams.set("limit", "-1");
+    kategorieUrl.searchParams.set("sort", "Name"); // Sortierung nach Namen
+
+    const kategorieData = await fetchFromDirectus<DirectusKategorie>(
+      kategorieUrl.toString(),
+      "Kategorien"
+    );
+
+    // ========================================
+    // DATA TRANSFORMATION
+    // ========================================
+
+    // Transform places mit filtering von invalid entries
     const places: Place[] = orteData.data
-      .map((ort) => {
-        const latitude = parseFloat(ort.Breite);
-        const longitude = parseFloat(ort.Lange);
-        if (isNaN(latitude) || isNaN(longitude)) {
-          console.error(`Ungültige Koordinaten für Ort ${ort.id}`);
-          return null;
-        }
-        return {
-          id: ort.id,
-          Name: ort.Name, // niemieckie → niemieckie
-          Adresse: ort.Adresse, // niemieckie → niemieckie
-          Vollbeschreibung: ort.Vollbeschreibung,
-          Breite: latitude, // już sparsowane
-          Lange: longitude, // już sparsowane
-          Kategorie:
-            ort.Kategorie?.map((k) => ({
-              id: k.Kategorie_id.id,
-              name: k.Kategorie_id.Name,
-              color: k.Kategorie_id.Farbe,
-            })) || [],
-          Hauptbild: ort.Hauptbild,
-          Audio_Datei: ort.Audio_Datei,
-          Link_URL: ort.Link_URL,
-          Link_Text: ort.Link_Text,
-          Galerie_Bilder: ort.Galerie_Bilder,
-        };
-      })
-      .filter(Boolean) as Place[];
+      .map(transformDirectusOrteToPlace)
+      .filter((place): place is Place => place !== null);
 
-    const categories: Category[] = kategorieData.data.map((kat) => ({
-      id: kat.id,
-      name: kat.Name,
-      color: kat.Farbe,
-    }));
+    // Transform categories
+    const categories: Category[] = kategorieData.data
+      .map((kat) => ({
+        id: kat.id,
+        name: kat.Name.trim(),
+        color: kat.Farbe.trim(),
+      }))
+      .filter((cat) => cat.name.length > 0 && cat.color.length > 0);
 
-    return <MapWithFilters places={places} categories={categories} />;
-  } catch (error) {
-    console.error("Błąd:", error);
+    // ========================================
+    // DATA VALIDATION
+    // ========================================
+
+    // Log statistiken
+    console.log(`✅ Erfolgreich geladen:`);
+    console.log(`   - ${places.length} von ${orteData.data.length} Orte`);
+    console.log(
+      `   - ${categories.length} von ${kategorieData.data.length} Kategorien`
+    );
+
+    if (places.length === 0) {
+      console.warn("⚠️  Keine gültigen Orte gefunden");
+    }
+
+    if (categories.length === 0) {
+      console.warn("⚠️  Keine gültigen Kategorien gefunden");
+    }
+
+    // Prüfe ob alle Places mindestens eine Kategorie haben
+    const placesWithoutCategories = places.filter(
+      (p) => p.Kategorie.length === 0
+    );
+    if (placesWithoutCategories.length > 0) {
+      console.warn(
+        `⚠️  ${placesWithoutCategories.length} Orte ohne Kategorien:`,
+        placesWithoutCategories.map((p) => `${p.Name} (ID: ${p.id})`)
+      );
+    }
+
+    // ========================================
+    // RENDER COMPONENT
+    // ========================================
+
     return (
-      <div className="error-container">
+      <ErrorBoundary
+        fallback={
+          <div
+            style={{
+              padding: "2rem",
+              textAlign: "center",
+              backgroundColor: "#fee",
+              border: "1px solid #fcc",
+              borderRadius: "8px",
+              margin: "2rem",
+              maxWidth: "800px",
+              marginLeft: "auto",
+              marginRight: "auto",
+            }}
+          >
+            <h2>Fehler beim Laden der Kartenkomponente</h2>
+            <p>Die interaktive Karte konnte nicht geladen werden.</p>
+            <p style={{ fontSize: "0.9em", color: "#666", marginTop: "1rem" }}>
+              Bitte versuchen Sie, die Seite zu aktualisieren oder kontaktieren
+              Sie den Support.
+            </p>
+          </div>
+        }
+      >
+        <MapWithFilters places={places} categories={categories} />
+      </ErrorBoundary>
+    );
+  } catch (error) {
+    // ========================================
+    // ERROR HANDLING
+    // ========================================
+
+    console.error("❌ Kritischer Fehler beim Laden der Kartendaten:", error);
+
+    // Bestimme Fehlertyp für bessere UX
+    let userMessage = "Ein unbekannter Fehler ist aufgetreten.";
+    let technicalDetails = "";
+
+    if (error instanceof Error) {
+      technicalDetails = error.message;
+
+      if (error.message.includes("DIRECTUS_URL")) {
+        userMessage =
+          "Konfigurationsfehler: Datenbankverbindung nicht verfügbar.";
+      } else if (error.message.includes("HTTP")) {
+        userMessage = "Netzwerkfehler: Daten konnten nicht abgerufen werden.";
+      } else if (error.message.includes("JSON")) {
+        userMessage = "Datenfehler: Ungültige Antwort vom Server.";
+      }
+    }
+
+    return (
+      <div
+        style={{
+          padding: "2rem",
+          textAlign: "center",
+          backgroundColor: "#fee",
+          border: "1px solid #fcc",
+          borderRadius: "8px",
+          margin: "2rem",
+          maxWidth: "800px",
+          marginLeft: "auto",
+          marginRight: "auto",
+        }}
+      >
         <h2>Fehler beim Laden der Karte</h2>
-        <p>{(error as Error).message}</p>
+        <p style={{ color: "#c33", fontSize: "1.1em", marginBottom: "1rem" }}>
+          {userMessage}
+        </p>
+
+        <div style={{ marginBottom: "2rem" }}>
+          <button
+            onClick={() => window.location.reload()}
+            style={{
+              padding: "0.75rem 1.5rem",
+              backgroundColor: "#007bff",
+              color: "white",
+              border: "none",
+              borderRadius: "4px",
+              cursor: "pointer",
+              fontSize: "1rem",
+              marginRight: "1rem",
+            }}
+          >
+            Seite neu laden
+          </button>
+
+          <button
+            onClick={() => window.history.back()}
+            style={{
+              padding: "0.75rem 1.5rem",
+              backgroundColor: "#6c757d",
+              color: "white",
+              border: "none",
+              borderRadius: "4px",
+              cursor: "pointer",
+              fontSize: "1rem",
+            }}
+          >
+            Zurück
+          </button>
+        </div>
+
+        {/* Technische Details für Entwickler */}
+        <details
+          style={{
+            marginTop: "2rem",
+            textAlign: "left",
+            backgroundColor: "#f8f9fa",
+            padding: "1rem",
+            borderRadius: "4px",
+            border: "1px solid #dee2e6",
+          }}
+        >
+          <summary
+            style={{
+              cursor: "pointer",
+              fontWeight: "bold",
+              marginBottom: "0.5rem",
+            }}
+          >
+            Technische Details (für Entwickler)
+          </summary>
+          <pre
+            style={{
+              fontSize: "0.8rem",
+              backgroundColor: "#f5f5f5",
+              padding: "1rem",
+              borderRadius: "4px",
+              overflow: "auto",
+              whiteSpace: "pre-wrap",
+              wordBreak: "break-word",
+            }}
+          >
+            <strong>Fehler:</strong> {technicalDetails}
+            {"\n\n"}
+            <strong>Zeitstempel:</strong> {new Date().toISOString()}
+            {"\n"}
+            <strong>URL:</strong>{" "}
+            {typeof window !== "undefined"
+              ? window.location.href
+              : "Server-side"}
+            {"\n"}
+            <strong>User Agent:</strong>{" "}
+            {typeof navigator !== "undefined"
+              ? navigator.userAgent
+              : "Server-side"}
+            {error instanceof Error &&
+              error.stack &&
+              "\n\nStack Trace:\n" + error.stack}
+          </pre>
+        </details>
       </div>
     );
   }
 }
+
+// ========================================
+// METADATA EXPORT (für SEO)
+// ========================================
+
+export const metadata = {
+  title: "Interaktive Karte",
+  description: "Entdecken Sie interessante Orte auf unserer interaktiven Karte",
+  keywords: "Karte, Orte, Standorte, Navigation",
+};
+
+// ========================================
+// STATIC GENERATION (Optional)
+// ========================================
+
+// Jeśli chcesz pre-generować stronę w build time
+export const dynamic = "force-dynamic"; // lub 'auto' dla hybrid
+
+// Dla lepszej wydajności możesz też użyć:
+// export const runtime = 'edge'; // Edge Runtime dla szybszego ładowania
