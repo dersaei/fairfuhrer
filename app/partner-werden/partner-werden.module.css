@@ -379,6 +379,12 @@
   .section5Title {
     font-size: 2rem;
   }
+  .section1RightTitle {
+    font-size: 3rem;
+  }
+  .section1TextRight {
+    font-size: 2rem;
+  }
 }
 
 @media (max-width: 640px) {
