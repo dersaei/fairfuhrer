@@ -14,6 +14,26 @@ interface MapBoxMapProps {
   places: Place[];
 }
 
+// Funkcja do obliczania odległości między dwoma punktami w kilometrach
+const calculateDistance = (
+  lat1: number,
+  lon1: number,
+  lat2: number,
+  lon2: number
+): number => {
+  const R = 6371; // Promień Ziemi w kilometrach
+  const dLat = (lat2 - lat1) * (Math.PI / 180);
+  const dLon = (lon2 - lon1) * (Math.PI / 180);
+  const a =
+    Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+    Math.cos(lat1 * (Math.PI / 180)) *
+      Math.cos(lat2 * (Math.PI / 180)) *
+      Math.sin(dLon / 2) *
+      Math.sin(dLon / 2);
+  const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+  return R * c;
+};
+
 export default function MapBoxMap({ places }: MapBoxMapProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const mapRef = useRef<mapboxgl.Map | null>(null);
@@ -35,6 +55,36 @@ export default function MapBoxMap({ places }: MapBoxMapProps) {
   const [locationError, setLocationError] = useState<string | null>(null);
   const [initialLocationSet, setInitialLocationSet] = useState(false);
 
+  // Promień wyszukiwania w kilometrach - można dostosować
+  const [searchRadius, setSearchRadius] = useState(10); // 10 km domyślnie
+  const [nearbyPlaces, setNearbyPlaces] = useState<Place[]>([]);
+
+  // Funkcja do filtrowania miejsc w pobliżu użytkownika
+  const filterNearbyPlaces = useCallback(() => {
+    if (!userLocation) {
+      setNearbyPlaces([]);
+      return;
+    }
+
+    const [userLng, userLat] = userLocation;
+    const filtered = places.filter((place) => {
+      const distance = calculateDistance(
+        userLat,
+        userLng,
+        place.Breite,
+        place.Lange
+      );
+      return distance <= searchRadius;
+    });
+
+    setNearbyPlaces(filtered);
+  }, [userLocation, places, searchRadius]);
+
+  // Funkcja do aktualizacji promienia wyszukiwania
+  const updateSearchRadius = useCallback((newRadius: number) => {
+    setSearchRadius(newRadius);
+  }, []);
+
   // Funktion zum Abrufen der Benutzerposition
   const getUserLocation = useCallback(() => {
     if (!navigator.geolocation) {
@@ -53,7 +103,7 @@ export default function MapBoxMap({ places }: MapBoxMapProps) {
         if (mapRef.current && !initialLocationSet) {
           mapRef.current.easeTo({
             center: newLocation,
-            zoom: 12,
+            zoom: 14, // Zwiększamy zoom dla lepszego widoku lokalnego
             duration: 1000,
           });
           setInitialLocationSet(true);
@@ -87,6 +137,11 @@ export default function MapBoxMap({ places }: MapBoxMapProps) {
       }
     );
   }, [initialLocationSet]);
+
+  // Aktualizacja miejsc w pobliżu po zmianie lokalizacji użytkownika
+  useEffect(() => {
+    filterNearbyPlaces();
+  }, [filterNearbyPlaces]);
 
   // Funktion zum Hinzufügen des Benutzerposition-Markers
   const addUserLocationMarker = useCallback(
@@ -171,6 +226,7 @@ export default function MapBoxMap({ places }: MapBoxMapProps) {
         <div class="${styles.popupContent}">
           <h3>Ihre Position</h3>
           <p>Sie sind hier</p>
+          <p>Suchradius: ${searchRadius} km</p>
         </div>
       `);
 
@@ -204,7 +260,7 @@ export default function MapBoxMap({ places }: MapBoxMapProps) {
         );
       }
     },
-    []
+    [searchRadius]
   );
 
   const initializeMap = useCallback(() => {
@@ -213,9 +269,9 @@ export default function MapBoxMap({ places }: MapBoxMapProps) {
     try {
       mapboxgl.accessToken = process.env.NEXT_PUBLIC_MAPBOX_TOKEN!;
 
-      // Anfangszentrum der Karte auf Benutzerposition oder Standardposition setzen
+      // Anfangszentrum der Karte - priorität für lokalizację użytkownika
       const initialCenter: [number, number] = userLocation || [19.0, 52.0];
-      const initialZoom = userLocation ? 12 : 6;
+      const initialZoom = userLocation ? 14 : 6; // Wyższy zoom dla lokalizacji użytkownika
 
       const map = new mapboxgl.Map({
         container: containerRef.current,
@@ -244,7 +300,7 @@ export default function MapBoxMap({ places }: MapBoxMapProps) {
             },
             trackUserLocation: true,
             showUserHeading: true,
-            showUserLocation: true,
+            showUserLocation: false, // Wyłączamy domyślny marker, używamy własnego
           });
 
           map.addControl(geolocateControl, "top-left");
@@ -340,7 +396,7 @@ export default function MapBoxMap({ places }: MapBoxMapProps) {
 
         map.easeTo({
           center: [place.Lange, place.Breite],
-          zoom: Math.max(currentZoom, 12),
+          zoom: Math.max(currentZoom, 15), // Wyższy zoom dla szczegółów
           duration: 800,
           easing: (t) => t * (2 - t),
         });
@@ -354,24 +410,18 @@ export default function MapBoxMap({ places }: MapBoxMapProps) {
     setSelectedGalleryImage(null);
     setCurrentImageIndex(0);
 
-    if (mapRef.current && places.length > 0) {
+    if (mapRef.current && userLocation) {
       const map = mapRef.current;
-      const bounds = new mapboxgl.LngLatBounds();
-      places.forEach((p) => bounds.extend([p.Lange, p.Breite]));
 
-      // Wenn wir die Benutzerposition haben, in die Grenzen einbeziehen
-      if (userLocation) {
-        bounds.extend(userLocation);
-      }
-
-      map.fitBounds(bounds, {
-        padding: 50,
-        maxZoom: 14,
+      // Powrót do widoku skupionego na użytkowniku
+      map.easeTo({
+        center: userLocation,
+        zoom: 14,
         duration: 800,
         easing: (t) => t * (2 - t),
       });
     }
-  }, [places, userLocation]);
+  }, [userLocation]);
 
   const updateMarkers = useCallback(() => {
     const map = mapRef.current;
@@ -390,7 +440,8 @@ export default function MapBoxMap({ places }: MapBoxMapProps) {
         markersRef.current = [];
       }
 
-      places.forEach((place) => {
+      // Używamy nearbyPlaces zamiast wszystkich places
+      nearbyPlaces.forEach((place) => {
         if (
           !place.Breite ||
           !place.Lange ||
@@ -404,10 +455,26 @@ export default function MapBoxMap({ places }: MapBoxMapProps) {
         try {
           const color = place.Kategorie[0]?.color || "#3388ff";
 
+          // Obliczanie odległości od użytkownika dla popup
+          let distanceText = "";
+          if (userLocation) {
+            const [userLng, userLat] = userLocation;
+            const distance = calculateDistance(
+              userLat,
+              userLng,
+              place.Breite,
+              place.Lange
+            );
+            distanceText = `<p class="${
+              styles.distance
+            }">Entfernung: ${distance.toFixed(1)} km</p>`;
+          }
+
           const popupContent = `
             <div class="${styles.popupContent}">
               <h3>${place.Name}</h3>
               <p class="${styles.address}">${place.Adresse}</p>
+              ${distanceText}
               ${
                 place.Vollbeschreibung
                   ? `<p class="${
@@ -472,17 +539,22 @@ export default function MapBoxMap({ places }: MapBoxMapProps) {
         }
       });
 
-      if (places.length > 0 && !isPanelOpen) {
+      // Dostosowanie widoku do miejsc w pobliżu i pozycji użytkownika
+      if (nearbyPlaces.length > 0 && !isPanelOpen && userLocation) {
         try {
           const bounds = new mapboxgl.LngLatBounds();
-          places.forEach((p) => bounds.extend([p.Lange, p.Breite]));
 
-          // Wenn wir die Benutzerposition haben, in die Grenzen einbeziehen
-          if (userLocation) {
-            bounds.extend(userLocation);
-          }
+          // Dodaj pozycję użytkownika do granic
+          bounds.extend(userLocation);
 
-          map.fitBounds(bounds, { padding: 50, maxZoom: 14 });
+          // Dodaj miejsca w pobliżu
+          nearbyPlaces.forEach((p) => bounds.extend([p.Lange, p.Breite]));
+
+          map.fitBounds(bounds, {
+            padding: 100,
+            maxZoom: 16, // Ograniczamy maksymalny zoom
+            duration: 1000,
+          });
         } catch (error) {
           console.warn("Fehler beim Anpassen der Grenzen:", error);
         }
@@ -490,7 +562,7 @@ export default function MapBoxMap({ places }: MapBoxMapProps) {
     } catch (error) {
       console.error("Fehler beim Aktualisieren der Marker:", error);
     }
-  }, [places, isPanelOpen, userLocation]);
+  }, [nearbyPlaces, isPanelOpen, userLocation]);
 
   useEffect(() => {
     if (!render || !visible) return;
@@ -584,6 +656,25 @@ export default function MapBoxMap({ places }: MapBoxMapProps) {
 
   return (
     <div className={styles.mapContainerWrapper}>
+      {/* Kontrolka promienia wyszukiwania */}
+      {userLocation && (
+        <div className={styles.radiusControl}>
+          <label htmlFor="radius-slider">Suchradius: {searchRadius} km</label>
+          <input
+            id="radius-slider"
+            type="range"
+            min="1"
+            max="50"
+            value={searchRadius}
+            onChange={(e) => updateSearchRadius(Number(e.target.value))}
+            className={styles.radiusSlider}
+          />
+          <div className={styles.nearbyCount}>
+            Gefundene Orte: {nearbyPlaces.length}
+          </div>
+        </div>
+      )}
+
       <div
         ref={containerRef}
         className={`${styles.mapContainer} ${
@@ -597,6 +688,15 @@ export default function MapBoxMap({ places }: MapBoxMapProps) {
           <button onClick={getUserLocation} className={styles.retryButton}>
             Erneut versuchen
           </button>
+        </div>
+      )}
+
+      {!userLocation && !locationError && (
+        <div className={styles.locationPrompt}>
+          <p>
+            Bitte erlauben Sie den Zugriff auf Ihre Position, um Orte in der
+            Nähe zu finden.
+          </p>
         </div>
       )}
 
@@ -635,6 +735,18 @@ export default function MapBoxMap({ places }: MapBoxMapProps) {
                 <div className={styles.placeNameSection}>
                   <h2 className={styles.placeName}>{selectedPlace.Name}</h2>
                   <p className={styles.placeAddress}>{selectedPlace.Adresse}</p>
+                  {userLocation && (
+                    <p className={styles.placeDistance}>
+                      Entfernung:{" "}
+                      {calculateDistance(
+                        userLocation[1],
+                        userLocation[0],
+                        selectedPlace.Breite,
+                        selectedPlace.Lange
+                      ).toFixed(1)}{" "}
+                      km
+                    </p>
+                  )}
                 </div>
 
                 {selectedPlace.Vollbeschreibung && (
