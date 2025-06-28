@@ -549,10 +549,16 @@
   }
   .radiusControl {
     top: auto;
-    bottom: 100px;
-    right: 10px;
-    left: 10px;
+    bottom: 0;
+    right: 0;
+    left: 0;
     min-width: auto;
+    border-radius: 0;
+    text-align: center;
+    padding: 5px;
+  }
+  .radiusControl label {
+    margin-bottom: 2px;
   }
 
   .locationPrompt {
@@ -627,13 +633,9 @@
     padding: 0.5rem 1rem;
     font-size: 0.9rem;
   }
-  .radiusControl {
-    bottom: 80px;
-    padding: 10px;
-  }
 
   .radiusControl label {
-    font-size: 12px;
+    font-size: 13px;
   }
 
   .nearbyCount {

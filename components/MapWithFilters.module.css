@@ -18,7 +18,7 @@
   display: block;
   bottom: 0;
   width: 50%;
-  background: rgba(255, 255, 255, 0.5);
+  background: rgba(255, 255, 255, 0.7);
   padding: 5px;
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
   backdrop-filter: blur(10px);
@@ -26,13 +26,6 @@
   z-index: 10;
 }
 
-.legendTitle {
-  font-size: 2rem;
-  font-weight: 700;
-  font-family: "Montserrat", sans-serif;
-  color: #333;
-  text-align: center;
-}
 /* Informacje o lokalizacji w filtrach */
 .locationInfo {
   text-align: center;
@@ -81,20 +74,6 @@
   margin-bottom: 5px; /* Dodano margin */
 }
 
-/* Aktualizacja kontenera filtrów */
-.filtersContainer {
-  position: absolute;
-  display: block;
-  bottom: 0;
-  width: 50%;
-  background: rgba(255, 255, 255, 0.95);
-  padding: 10px; /* Zmniejszono z 5px */
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
-  backdrop-filter: blur(10px);
-  border: 1px solid rgba(0, 0, 0, 0.1);
-  z-index: 10;
-  border-radius: 8px 8px 0 0; /* Zaokrąglone górne rogi */
-}
 @media screen and (max-width: 768px) {
   .container {
     height: calc(100svh - 90px); /* svh uwzględnia pasek przeglądarki */
@@ -109,6 +88,16 @@
   .locationInfo p {
     font-size: 11px;
   }
+  .filtersContainer {
+    width: 100%;
+  }
+  .filtersContainer {
+    width: 100%;
+  }
+
+  .legendTitle {
+    font-size: 1.2rem;
+  }
 }
 
 /* Fallback dla starszych przeglądarek */
@@ -119,18 +108,6 @@
     }
   }
 }
-@media screen and (max-width: 680px) {
-  .filtersContainer {
-    width: 100%;
-  }
-  .filtersContainer {
-    width: 100%;
-  }
-
-  .legendTitle {
-    font-size: 1.4rem;
-  }
-}
 @media (max-width: 480px) {
   .noLocationInfo {
     bottom: 15px;
@@ -139,10 +116,6 @@
 
   .noLocationInfo p {
     font-size: 12px;
-  }
-
-  .legendTitle {
-    font-size: 1.2rem;
   }
 
   .locationInfo p {
