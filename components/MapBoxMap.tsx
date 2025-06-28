@@ -55,6 +55,12 @@ export default function MapBoxMap({ places }: MapBoxMapProps) {
   const [locationError, setLocationError] = useState<string | null>(null);
   const [initialLocationSet, setInitialLocationSet] = useState(false);
 
+  // NOWY STAN - do zapamiętania początkowego stanu mapy
+  const [initialMapState, setInitialMapState] = useState<{
+    center: [number, number];
+    zoom: number;
+  } | null>(null);
+
   // Promień wyszukiwania w kilometrach - można dostosować
   const [searchRadius, setSearchRadius] = useState(10); // 10 km domyślnie
   const [nearbyPlaces, setNearbyPlaces] = useState<Place[]>([]);
@@ -85,7 +91,7 @@ export default function MapBoxMap({ places }: MapBoxMapProps) {
     setSearchRadius(newRadius);
   }, []);
 
-  // Funktion zum Abrufen der Benutzerposition
+  // ZMODYFIKOWANA FUNKCJA getUserLocation z dodatkowymi logami
   const getUserLocation = useCallback(() => {
     if (!navigator.geolocation) {
       setLocationError("Geolocation wird von diesem Browser nicht unterstützt");
@@ -99,11 +105,28 @@ export default function MapBoxMap({ places }: MapBoxMapProps) {
         setUserLocation(newLocation);
         setLocationError(null);
 
+        console.log("getUserLocation - newLocation:", newLocation);
+        console.log(
+          "getUserLocation - initialLocationSet:",
+          initialLocationSet
+        );
+
         // Wenn die Karte bereits existiert und es ist die erste Lokalisierung
         if (mapRef.current && !initialLocationSet) {
+          const targetZoom = 14;
+
+          // Zapisz początkowy stan mapy (pozycja użytkownika + zoom)
+          const newMapState = {
+            center: newLocation,
+            zoom: targetZoom,
+          };
+
+          console.log("Zapisuję initialMapState:", newMapState);
+          setInitialMapState(newMapState);
+
           mapRef.current.easeTo({
             center: newLocation,
-            zoom: 14, // Zwiększamy zoom dla lepszego widoku lokalnego
+            zoom: targetZoom,
             duration: 1000,
           });
           setInitialLocationSet(true);
@@ -288,6 +311,27 @@ export default function MapBoxMap({ places }: MapBoxMapProps) {
         },
       });
 
+      // Listener do zapisania stanu mapy po zakończeniu ruchu
+      map.on("moveend", () => {
+        if (
+          !initialMapState &&
+          userLocation &&
+          initialLocationSet &&
+          !isPanelOpen
+        ) {
+          const currentCenter = map.getCenter();
+          const currentZoom = map.getZoom();
+          console.log("Zapisuję stan mapy po moveend:", {
+            center: [currentCenter.lng, currentCenter.lat],
+            zoom: currentZoom,
+          });
+          setInitialMapState({
+            center: [currentCenter.lng, currentCenter.lat],
+            zoom: currentZoom,
+          });
+        }
+      });
+
       // Steuerelemente erst nach dem Laden der Karte hinzufügen
       map.on("load", () => {
         try {
@@ -340,7 +384,13 @@ export default function MapBoxMap({ places }: MapBoxMapProps) {
     } catch (error) {
       console.error("Fehler beim Initialisieren der Karte:", error);
     }
-  }, [userLocation, addUserLocationMarker]);
+  }, [
+    userLocation,
+    addUserLocationMarker,
+    initialMapState,
+    initialLocationSet,
+    isPanelOpen,
+  ]);
 
   const handleNextImage = useCallback(() => {
     setCurrentImageIndex(
@@ -404,24 +454,41 @@ export default function MapBoxMap({ places }: MapBoxMapProps) {
     }, 100);
   };
 
+  // ZMODYFIKOWANA FUNKCJA closePanel z debugowaniem
   const closePanel = useCallback(() => {
     setVisible(false);
     setIsPanelOpen(false);
     setSelectedGalleryImage(null);
     setCurrentImageIndex(0);
 
-    if (mapRef.current && userLocation) {
+    console.log("closePanel - initialMapState:", initialMapState);
+    console.log("closePanel - userLocation:", userLocation);
+
+    if (mapRef.current) {
       const map = mapRef.current;
 
-      // Powrót do widoku skupionego na użytkowniku
-      map.easeTo({
-        center: userLocation,
-        zoom: 14,
-        duration: 800,
-        easing: (t) => t * (2 - t),
-      });
+      // Jeśli mamy zapisany stan początkowy, użyj go
+      if (initialMapState) {
+        console.log("Używam initialMapState");
+        map.easeTo({
+          center: initialMapState.center,
+          zoom: initialMapState.zoom,
+          duration: 800,
+          easing: (t) => t * (2 - t),
+        });
+      }
+      // Jeśli nie ma zapisanego stanu, ale mamy lokalizację użytkownika
+      else if (userLocation) {
+        console.log("Używam userLocation jako fallback");
+        map.easeTo({
+          center: userLocation,
+          zoom: 14,
+          duration: 800,
+          easing: (t) => t * (2 - t),
+        });
+      }
     }
-  }, [userLocation]);
+  }, [initialMapState, userLocation]);
 
   const updateMarkers = useCallback(() => {
     const map = mapRef.current;
