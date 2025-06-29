@@ -1,4 +1,4 @@
-// app/karte/page.tsx
+// app/karte/page.tsx - TYLKO DODANIE SSR TREŚCI
 import MapWithFilters from "../../components/MapWithFilters";
 import { ErrorBoundary } from "../../components/ErrorBoundary";
 import type {
@@ -13,7 +13,7 @@ import type {
 export const revalidate = 21600;
 
 // ========================================
-// HELPER FUNCTIONS
+// HELPER FUNCTIONS (POZOSTAJĄ BEZ ZMIAN)
 // ========================================
 
 /**
@@ -164,7 +164,7 @@ export default async function KartePage() {
       ].join(",")
     );
     orteUrl.searchParams.set("limit", "-1");
-    orteUrl.searchParams.set("sort", "Name"); // Sortierung nach Namen
+    orteUrl.searchParams.set("sort", "Name");
 
     const orteData = await fetchFromDirectus<DirectusOrte>(
       orteUrl.toString(),
@@ -178,7 +178,7 @@ export default async function KartePage() {
     const kategorieUrl = new URL(`${baseUrl}/items/Kategorie`);
     kategorieUrl.searchParams.set("fields", "id,Name,Farbe");
     kategorieUrl.searchParams.set("limit", "-1");
-    kategorieUrl.searchParams.set("sort", "Name"); // Sortierung nach Namen
+    kategorieUrl.searchParams.set("sort", "Name");
 
     const kategorieData = await fetchFromDirectus<DirectusKategorie>(
       kategorieUrl.toString(),
@@ -234,40 +234,89 @@ export default async function KartePage() {
     }
 
     // ========================================
-    // RENDER COMPONENT
+    // ✅ RENDER COMPONENT - DODANIE SSR TREŚCI
     // ========================================
 
     return (
-      <ErrorBoundary
-        fallback={
-          <div
-            style={{
-              padding: "2rem",
-              textAlign: "center",
-              backgroundColor: "#fee",
-              border: "1px solid #fcc",
-              borderRadius: "8px",
-              margin: "2rem",
-              maxWidth: "800px",
-              marginLeft: "auto",
-              marginRight: "auto",
-            }}
-          >
-            <h2>Fehler beim Laden der Kartenkomponente</h2>
-            <p>Die interaktive Karte konnte nicht geladen werden.</p>
-            <p style={{ fontSize: "0.9em", color: "#666", marginTop: "1rem" }}>
-              Bitte versuchen Sie, die Seite zu aktualisieren oder kontaktieren
-              Sie den Support.
-            </p>
-          </div>
-        }
-      >
-        <MapWithFilters places={places} categories={categories} />
-      </ErrorBoundary>
+      <div>
+        {/* ✅ UKRYTA TREŚĆ SSR - TYLKO DLA GOOGLE (niewidoczna dla użytkowników) */}
+        <div
+          style={{
+            position: "absolute",
+            left: "-9999px",
+            width: "1px",
+            height: "1px",
+            overflow: "hidden",
+          }}
+        >
+          <h1>Interaktive Karte - {places.length} Orte entdecken</h1>
+          <p>
+            Entdecken Sie {places.length} interessante Orte in{" "}
+            {categories.length} Kategorien am Bodensee und im Allgäu.
+          </p>
+
+          <h2>Verfügbare Kategorien:</h2>
+          <ul>
+            {categories.map((category: Category) => (
+              <li key={category.id}>{category.name}</li>
+            ))}
+          </ul>
+
+          <h2>Ausgewählte Orte:</h2>
+          {places.slice(0, 10).map((place: Place) => (
+            <div key={place.id}>
+              <h3>{place.Name}</h3>
+              <p>📍 {place.Adresse}</p>
+              {place.Vollbeschreibung && (
+                <p>
+                  {place.Vollbeschreibung.replace(/<[^>]*>/g, "").substring(
+                    0,
+                    200
+                  )}
+                </p>
+              )}
+              <div>
+                Kategorien:{" "}
+                {place.Kategorie.map((kat: Category) => kat.name).join(", ")}
+              </div>
+            </div>
+          ))}
+        </div>
+
+        {/* ✅ TWOJA NORMALNA MAPA - BEZ ZMIAN */}
+        <ErrorBoundary
+          fallback={
+            <div
+              style={{
+                padding: "2rem",
+                textAlign: "center",
+                backgroundColor: "#fee",
+                border: "1px solid #fcc",
+                borderRadius: "8px",
+                margin: "2rem",
+                maxWidth: "800px",
+                marginLeft: "auto",
+                marginRight: "auto",
+              }}
+            >
+              <h2>Fehler beim Laden der Kartenkomponente</h2>
+              <p>Die interaktive Karte konnte nicht geladen werden.</p>
+              <p
+                style={{ fontSize: "0.9em", color: "#666", marginTop: "1rem" }}
+              >
+                Bitte versuchen Sie, die Seite zu aktualisieren oder
+                kontaktieren Sie den Support.
+              </p>
+            </div>
+          }
+        >
+          <MapWithFilters places={places} categories={categories} />
+        </ErrorBoundary>
+      </div>
     );
   } catch (error) {
     // ========================================
-    // ERROR HANDLING
+    // ERROR HANDLING (POZOSTAJE BEZ ZMIAN)
     // ========================================
 
     console.error("❌ Kritischer Fehler beim Laden der Kartendaten:", error);
@@ -396,7 +445,7 @@ export default async function KartePage() {
 }
 
 // ========================================
-// METADATA EXPORT (für SEO)
+// METADATA EXPORT (POZOSTAJE BEZ ZMIAN)
 // ========================================
 
 export const metadata = {
@@ -406,11 +455,7 @@ export const metadata = {
 };
 
 // ========================================
-// STATIC GENERATION (Optional)
+// STATIC GENERATION (POZOSTAJE BEZ ZMIAN)
 // ========================================
 
-// Jeśli chcesz pre-generować stronę w build time
-export const dynamic = "force-dynamic"; // lub 'auto' dla hybrid
-
-// Dla lepszej wydajności możesz też użyć:
-// export const runtime = 'edge'; // Edge Runtime dla szybszego ładowania
+export const dynamic = "force-dynamic";
