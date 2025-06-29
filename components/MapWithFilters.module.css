@@ -17,21 +17,44 @@
   position: absolute;
   display: block;
   bottom: 0;
-  width: 250px;
-  background: rgba(255, 255, 255, 0.5);
-  padding: 4px;
+  width: 230px; /* Zwiększona szerokość dla nowego layoutu */
+  background: rgba(255, 255, 255, 0.6); /* Zwiększona nieprzezroczystość */
+  padding: 10px;
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
   backdrop-filter: blur(10px);
   z-index: 10;
+  border-radius: 0 8px 0 0; /* Zaokrąglone góry */
 }
 
 .legendTitle {
-  font-size: 1.4rem;
+  font-size: 1.3rem;
   font-weight: 700;
   font-family: "Montserrat", sans-serif;
   color: #333;
   text-align: center;
+  margin: 0 0 4px 0;
 }
+
+.legendSubtitle {
+  font-size: 0.85rem;
+  font-weight: 400;
+  font-family: "Lato", sans-serif;
+  color: #666;
+  text-align: center;
+  margin: 0 0 6px 0;
+  font-style: italic;
+}
+
+.errorMessage {
+  padding: 2rem;
+  text-align: center;
+  background-color: #fee;
+  border: 1px solid #fcc;
+  border-radius: 8px;
+  margin: 2rem;
+  color: #c33;
+}
+
 @media screen and (max-width: 768px) {
   .container {
     height: calc(100svh - 90px); /* svh uwzględnia pasek przeglądarki */
@@ -46,8 +69,22 @@
     }
   }
 }
+
 @media screen and (max-width: 580px) {
   .filtersContainer {
     width: 100%;
+    left: 0;
+    right: 0;
+    padding: 4px 8px;
+    border-radius: 0;
+    position: relative;
+  }
+
+  .legendTitle {
+    font-size: 1.2rem;
+  }
+
+  .legendSubtitle {
+    font-size: 0.8rem;
   }
 }

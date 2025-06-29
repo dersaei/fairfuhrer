@@ -1,4 +1,4 @@
-// components/CategoryFilter.tsx - Poprawki TypeScript
+// components/CategoryFilter.tsx - Ostateczna wersja
 import React, { useCallback } from "react";
 import styles from "./CategoryFilter.module.css";
 
@@ -14,15 +14,6 @@ interface CategoryFilterProps {
   onToggle: (id: number) => void;
 }
 
-// Lepsze typowanie dla FilterLabel
-interface FilterLabelProps extends React.HTMLAttributes<HTMLSpanElement> {
-  children: React.ReactNode;
-}
-
-const FilterLabel: React.FC<FilterLabelProps> = ({ children, ...props }) => (
-  <span {...props}>{children}</span>
-);
-
 const CategoryFilter: React.FC<CategoryFilterProps> = ({
   categories,
   selectedIds,
@@ -30,7 +21,7 @@ const CategoryFilter: React.FC<CategoryFilterProps> = ({
 }) => {
   // Memoized handler dla keyboard events
   const createKeyDownHandler = useCallback(
-    (id: number) => (e: React.KeyboardEvent<HTMLSpanElement>) => {
+    (id: number) => (e: React.KeyboardEvent<HTMLDivElement>) => {
       if (e.key === "Enter" || e.key === " ") {
         e.preventDefault();
         onToggle(id);
@@ -54,37 +45,28 @@ const CategoryFilter: React.FC<CategoryFilterProps> = ({
         const isActive = selectedIds.includes(category.id);
 
         return (
-          <FilterLabel
+          <div
             key={category.id}
-            className={`${styles.filterLabel} ${
-              isActive ? styles.active : styles.inactive
-            }`}
-            style={
-              {
-                "--bg-color": category.color,
-              } as React.CSSProperties & { "--bg-color": string }
-            }
+            className={styles.filterItem}
             onClick={() => onToggle(category.id)}
             onKeyDown={createKeyDownHandler(category.id)}
             tabIndex={0}
             role="button"
-            aria-pressed={isActive}
+            aria-pressed={isActive ? "true" : "false"}
             aria-label={`Kategorie ${category.name} ${
               isActive ? "ausblenden" : "anzeigen"
             }`}
           >
+            <div
+              className={`${styles.checkmark} ${isActive ? styles.active : ""}`}
+              style={
+                { "--category-color": category.color } as React.CSSProperties
+              }
+            />
             <span className={styles.filterName}>{category.name}</span>
-            <span className={styles.filterIcon} aria-hidden="true">
-              {isActive ? "✓" : "○"}
-            </span>
-          </FilterLabel>
+          </div>
         );
       })}
-
-      {/* Zusätzliche Info über Auswahl 
-      <div className={styles.selectionInfo}>
-        {selectedIds.length} von {categories.length} Kategorien aktiv
-      </div> */}
     </div>
   );
 };

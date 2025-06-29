@@ -1,4 +1,4 @@
-// components/MapWithFilters.tsx - Poprawki TypeScript
+// components/MapWithFilters.tsx - Z dodanym podtytułem
 "use client";
 
 import { useState, useCallback, useMemo } from "react";
@@ -68,6 +68,9 @@ export default function MapWithFilters({
 
       <div className={styles.filtersContainer}>
         <h3 className={styles.legendTitle}>Legende</h3>
+        <p className={styles.legendSubtitle}>
+          Filtern Sie Orte nach Kategorien
+        </p>
         <CategoryFilter
           categories={categories}
           selectedIds={selectedCategoryIds}

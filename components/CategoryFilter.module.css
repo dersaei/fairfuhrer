@@ -1,49 +1,111 @@
-/* components/CategoryFilter.module.css */
+/* components/CategoryFilter.module.css - Ostateczna wersja */
 .filterContainer {
   display: flex;
-  justify-content: center;
-  flex-wrap: wrap;
+  flex-direction: column;
   margin: 0 auto;
-  padding: 5px;
+  padding: 8px;
+  gap: 8px;
 }
 
-.filterLabel {
-  display: block;
-  margin: 0 0.3vw 1vh 0.3vw;
-  padding: 4px 8px;
-  background-color: var(--bg-color, transparent);
-  transition: all 0.2s ease;
+.filterItem {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 6px 8px;
   cursor: pointer;
-  opacity: 0.7;
-  text-align: center;
-  width: 80%;
-  border-radius: 20px;
-}
-
-.active {
-  border: 1px solid black;
-  opacity: 1;
-}
-
-.inactive {
-  border: 1px solid white;
+  border-radius: 6px;
+  transition: all 0.2s ease;
   background-color: transparent;
+  -webkit-user-select: none;
+  user-select: none;
 }
 
-.filterLabel:hover {
-  transform: scale(1.05);
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+.filterItem:hover {
+  background-color: rgba(0, 0, 0, 0.05);
+  transform: translateX(2px);
+}
+
+.filterItem:focus-visible {
+  outline: 2px solid #007bff;
+  outline-offset: 2px;
+}
+
+.checkmark {
+  width: 16px;
+  height: 16px;
+  border-radius: 3px;
+  border: 2px solid var(--category-color, #ccc);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+  flex-shrink: 0;
+  position: relative;
+}
+
+.checkmark.active {
+  background-color: var(--category-color, #007bff);
+  border-color: var(--category-color, #007bff);
+}
+
+.checkmark.active::after {
+  content: "✓";
+  color: white;
+  font-size: 12px;
+  font-weight: bold;
+  line-height: 1;
 }
 
 .filterName {
   font-size: 15px;
   font-weight: 400;
   font-family: "Lato", sans-serif;
+  color: #333;
   transition: color 0.2s ease;
-  color: inherit;
+  flex: 1;
 }
+
+.filterItem:hover .filterName {
+  color: #000;
+}
+
+.noCategories {
+  text-align: center;
+  color: #666;
+  font-style: italic;
+  padding: 1rem;
+  font-size: 14px;
+}
+
+/* Responsive adjustments */
 @media screen and (max-width: 580px) {
-  .filterLabel {
-    width: auto;
+  .filterContainer {
+    padding: 6px;
+    gap: 3px;
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+
+  .filterItem {
+    padding: 4px;
+    gap: 4px;
+  }
+
+  .checkmark {
+    width: 19px;
+    height: 19px;
+  }
+
+  .filterName {
+    font-size: 14px;
+  }
+}
+@media screen and (max-width: 420px) {
+  .filterName {
+    font-size: 12px;
+  }
+  .filterItem {
+    padding: 2px;
   }
 }
