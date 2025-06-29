@@ -77,6 +77,7 @@ export default function HomePage() {
   const [atmosphereStyle, setAtmosphereStyle] =
     useState<AtmosphereStyle | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [mapLoaded, setMapLoaded] = useState(false);
   const MAPBOX_TOKEN = process.env.NEXT_PUBLIC_MAPBOX_TOKEN!;
 
   // Responsywne ustawienia kamery - tylko gdy atmosphereStyle jest załadowany
@@ -106,9 +107,32 @@ export default function HomePage() {
     loadAtmosphereStyle();
   }, []);
 
-  // Efekt dla aktualizacji widoku na resize
+  // Obsługa załadowania mapy
+  const handleMapLoad = () => {
+    setMapLoaded(true);
+
+    // Upewnij się, że mapa ma prawidłowe ustawienia po załadowaniu
+    if (mapRef.current && atmosphereStyle) {
+      const map = mapRef.current.getMap();
+
+      // Daj mapie czas na pełne załadowanie przed ustawieniem widoku
+      setTimeout(() => {
+        map.jumpTo({
+          center: atmosphereStyle.center,
+          zoom: responsiveSettings.zoom,
+          bearing: responsiveSettings.bearing,
+          pitch: responsiveSettings.pitch,
+        });
+
+        // Wymuszaj ponowne renderowanie
+        map.triggerRepaint();
+      }, 100);
+    }
+  };
+
+  // Efekt dla aktualizacji widoku na resize - tylko gdy mapa jest załadowana
   useEffect(() => {
-    if (mapRef.current && atmosphereStyle && responsiveSettings) {
+    if (mapRef.current && atmosphereStyle && responsiveSettings && mapLoaded) {
       const map = mapRef.current.getMap();
 
       map.jumpTo({
@@ -122,7 +146,7 @@ export default function HomePage() {
         map.triggerRepaint();
       }, 100);
     }
-  }, [atmosphereStyle, responsiveSettings]);
+  }, [atmosphereStyle, responsiveSettings, mapLoaded]);
 
   // Loading state
   if (isLoading) {
@@ -154,12 +178,13 @@ export default function HomePage() {
             projection="globe"
             interactive={false}
             cursor="default"
+            onLoad={handleMapLoad}
             initialViewState={{
               longitude: atmosphereStyle.center[0],
               latitude: atmosphereStyle.center[1],
-              zoom: responsiveSettings.zoom,
-              bearing: responsiveSettings.bearing,
-              pitch: responsiveSettings.pitch,
+              zoom: responsiveSettings.zoom || atmosphereStyle.zoom,
+              bearing: responsiveSettings.bearing || atmosphereStyle.bearing,
+              pitch: responsiveSettings.pitch || atmosphereStyle.pitch,
             }}
             style={{ width: "100%", height: "100%" }}
           />
