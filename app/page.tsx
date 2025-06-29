@@ -17,31 +17,43 @@ interface AtmosphereStyle extends StyleSpecification {
 
 // Hook do responsywnych ustawień mapy
 const useResponsiveMapSettings = (
-  defaultSettings: { zoom: number; pitch: number; bearing: number } | null
+  baseZoom: number,
+  basePitch: number,
+  baseBearing: number
 ) => {
   const [settings, setSettings] = useState<{
     zoom: number;
     pitch: number;
     bearing: number;
-  } | null>(null);
+  }>({
+    zoom: baseZoom,
+    pitch: basePitch,
+    bearing: baseBearing,
+  });
 
   useEffect(() => {
-    if (!defaultSettings) return;
+    // Nie uruchamiaj jeśli wartości to 0 (znaczy że dane się jeszcze nie załadowały)
+    if (baseZoom === 0 && basePitch === 0 && baseBearing === 0) {
+      return;
+    }
 
     const updateSettings = () => {
       const width = window.innerWidth;
 
-      if (width <= 950) {
-        // Tablety i telefony - jedna zmiana dla wszystkich mobile devices
-        setSettings({
-          zoom: defaultSettings.zoom - 0.38,
-          pitch: defaultSettings.pitch,
-          bearing: defaultSettings.bearing,
-        });
-      } else {
-        // Desktop - oryginalne ustawienia z JSON
-        setSettings(defaultSettings);
-      }
+      const newSettings =
+        width <= 950
+          ? {
+              zoom: baseZoom - 0.38,
+              pitch: basePitch,
+              bearing: baseBearing,
+            }
+          : {
+              zoom: baseZoom,
+              pitch: basePitch,
+              bearing: baseBearing,
+            };
+
+      setSettings(newSettings);
     };
 
     updateSettings();
@@ -55,7 +67,7 @@ const useResponsiveMapSettings = (
     return () => {
       window.removeEventListener("resize", handleResize);
     };
-  }, [defaultSettings?.zoom, defaultSettings?.pitch, defaultSettings?.bearing]);
+  }, [baseZoom, basePitch, baseBearing]);
 
   return settings;
 };
@@ -69,13 +81,9 @@ export default function HomePage() {
 
   // Responsywne ustawienia kamery - tylko gdy atmosphereStyle jest załadowany
   const responsiveSettings = useResponsiveMapSettings(
-    atmosphereStyle
-      ? {
-          zoom: atmosphereStyle.zoom,
-          pitch: atmosphereStyle.pitch,
-          bearing: atmosphereStyle.bearing,
-        }
-      : null
+    atmosphereStyle?.zoom || 0,
+    atmosphereStyle?.pitch || 0,
+    atmosphereStyle?.bearing || 0
   );
 
   // Załaduj styl atmosphere z public/styles/
@@ -149,9 +157,9 @@ export default function HomePage() {
             initialViewState={{
               longitude: atmosphereStyle.center[0],
               latitude: atmosphereStyle.center[1],
-              zoom: responsiveSettings?.zoom || atmosphereStyle.zoom,
-              bearing: responsiveSettings?.bearing || atmosphereStyle.bearing,
-              pitch: responsiveSettings?.pitch || atmosphereStyle.pitch,
+              zoom: responsiveSettings.zoom,
+              bearing: responsiveSettings.bearing,
+              pitch: responsiveSettings.pitch,
             }}
             style={{ width: "100%", height: "100%" }}
           />
