@@ -1,10 +1,10 @@
-// app/partner-werden/page.tsx
+// app/partner-werden/page.tsx - zaktualizowana wersja z nowym formularzem
 import { Metadata } from "next";
 import Image from "next/image";
 import type { PartnerPageContent } from "../../types";
 import { getPageAssetPath } from "../../lib/supabase";
 import YouTubeEmbed from "../../components/YouTubeEmbed";
-import ContactForm from "../kontakt/ContactForm";
+import PartnerForm from "../../components/PartnerForm"; // NOWY FORMULARZ
 import styles from "./partner-werden.module.css";
 
 export const revalidate = 86400;
@@ -206,7 +206,7 @@ export default async function PartnerWerdenPage() {
         </div>
       </section>
 
-      {/* SEKCJA 4 - Formularz kontaktowy z dynamicznymi kolorami */}
+      {/* SEKCJA 4 - NOWY FORMULARZ PARTNERSKI z dynamicznymi kolorami */}
       <section
         className={styles.section4}
         style={{
@@ -223,8 +223,8 @@ export default async function PartnerWerdenPage() {
           </p>
         )}
 
-        <div className={styles.contactFormContainer}>
-          <ContactForm />
+        <div className={styles.partnerFormContainer}>
+          <PartnerForm />
         </div>
       </section>
 

@@ -1,0 +1,444 @@
+/* components/PartnerForm.module.css - z custom file inputs */
+
+.form {
+  max-width: 800px;
+  margin: 0 auto;
+  background: white;
+  border-radius: 16px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+}
+
+.formHeader {
+  background: linear-gradient(
+    135deg,
+    rgba(252, 108, 20, 1) 0%,
+    rgba(61, 209, 231, 1) 100%
+  );
+  color: white;
+  padding: 2rem;
+  text-align: center;
+}
+
+.formHeader h3 {
+  font-family: "Montserrat", sans-serif;
+  font-size: 1.75rem;
+  font-weight: 700;
+  margin-bottom: 0.5rem;
+}
+
+.formHeader p {
+  font-family: "Lato", sans-serif;
+  font-size: 1rem;
+  opacity: 0.9;
+}
+
+.section {
+  padding: 2rem;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.section:last-child {
+  border-bottom: none;
+}
+
+.section h4 {
+  font-family: "Montserrat", sans-serif;
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: #1f2937;
+  margin-bottom: 1rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 2px solid rgba(252, 108, 20, 0.3);
+}
+
+.sectionNote {
+  font-family: "Lato", sans-serif;
+  font-size: 0.9rem;
+  color: #6b7280;
+  margin-bottom: 1.5rem;
+  font-style: italic;
+}
+
+.row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.5rem;
+  margin-bottom: 1.5rem;
+}
+
+.field {
+  margin-bottom: 1.5rem;
+}
+
+.field label {
+  display: block;
+  font-family: "Lato", sans-serif;
+  font-weight: 600;
+  color: #374151;
+  margin-bottom: 0.5rem;
+  font-size: 0.95rem;
+}
+
+.field input,
+.field textarea {
+  width: 100%;
+  padding: 0.75rem;
+  border: 2px solid #d1d5db;
+  border-radius: 8px;
+  font-family: "Lato", sans-serif;
+  font-size: 1rem;
+  transition: border-color 0.2s ease;
+  background: white;
+}
+
+.field input:focus,
+.field textarea:focus {
+  outline: none;
+  border-color: rgba(252, 108, 20, 1);
+  box-shadow: 0 0 0 3px rgba(252, 108, 20, 0.1);
+}
+
+.inputError {
+  border-color: #ef4444 !important;
+  box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.1) !important;
+}
+
+.error {
+  display: block;
+  color: #ef4444;
+  font-family: "Lato", sans-serif;
+  font-size: 0.875rem;
+  margin-top: 0.25rem;
+}
+
+.errorGeneral {
+  background: #fef2f2;
+  border: 1px solid #fecaca;
+  color: #dc2626;
+  padding: 1rem;
+  border-radius: 8px;
+  margin: 1rem 2rem;
+  font-family: "Lato", sans-serif;
+}
+
+.fileInputWrapper {
+  position: relative;
+}
+
+/* NOWE STYLE DLA CUSTOM FILE INPUTS */
+
+/* Ukryj domyślny file input */
+.hiddenFileInput {
+  position: absolute;
+  left: -9999px;
+  opacity: 0;
+  pointer-events: none;
+}
+
+/* Custom przycisk file upload */
+.customFileButton {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 1rem 1.25rem;
+  background: #f8fafc;
+  border: 2px dashed #cbd5e1;
+  border-radius: 12px;
+  color: #475569;
+  font-family: "Lato", sans-serif;
+  font-size: 0.95rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  width: 100%;
+  justify-content: center;
+  text-align: center;
+  min-height: 60px;
+}
+
+.customFileButton:hover {
+  background: #f1f5f9;
+  border-color: rgba(252, 108, 20, 0.4);
+  color: #334155;
+  transform: translateY(-1px);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.customFileButton:focus {
+  outline: none;
+  border-color: rgba(252, 108, 20, 1);
+  box-shadow: 0 0 0 3px rgba(252, 108, 20, 0.1);
+}
+
+.customFileButtonError {
+  border-color: #ef4444;
+  background: #fef2f2;
+  color: #dc2626;
+}
+
+.customFileButtonError:hover {
+  background: #fecaca;
+  border-color: #dc2626;
+}
+
+.fileIcon {
+  font-size: 1.25rem;
+  flex-shrink: 0;
+}
+
+/* Style dla wybranego pliku */
+.selectedFile {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 0.75rem;
+  padding: 0.75rem 1rem;
+  background: #f0f9ff;
+  border: 1px solid #bae6fd;
+  border-radius: 8px;
+  font-size: 0.9rem;
+  color: #0369a1;
+  font-family: "Lato", sans-serif;
+}
+
+.clearFileButton {
+  background: #ef4444;
+  color: white;
+  border: none;
+  border-radius: 50%;
+  width: 24px;
+  height: 24px;
+  cursor: pointer;
+  font-size: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background-color 0.2s ease;
+  margin-left: 0.5rem;
+  flex-shrink: 0;
+}
+
+.clearFileButton:hover {
+  background: #dc2626;
+}
+
+/* POZOSTAŁE STYLE BEZ ZMIAN */
+
+.charCounter {
+  text-align: right;
+  font-family: "Lato", sans-serif;
+  font-size: 0.8rem;
+  color: #6b7280;
+  margin-top: 0.25rem;
+}
+
+.coordinatesHelp {
+  background: #f0f9ff;
+  border: 1px solid #bae6fd;
+  border-radius: 8px;
+  padding: 0.75rem;
+  margin-top: 1rem;
+  font-family: "Lato", sans-serif;
+  font-size: 0.9rem;
+  color: #0369a1;
+}
+
+.submitSection {
+  padding: 2rem;
+  text-align: center;
+  background: #f9fafb;
+}
+
+.submitButton {
+  background: linear-gradient(
+    135deg,
+    rgba(252, 108, 20, 1) 0%,
+    rgba(61, 209, 231, 1) 100%
+  );
+  color: white;
+  border: none;
+  padding: 1rem 3rem;
+  border-radius: 50px;
+  font-family: "Montserrat", sans-serif;
+  font-size: 1.1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 15px rgba(252, 108, 20, 0.3);
+  min-width: 200px;
+}
+
+.submitButton:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(252, 108, 20, 0.4);
+}
+
+.submitButton:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.successMessage {
+  max-width: 600px;
+  margin: 0 auto;
+  background: white;
+  border-radius: 16px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+  text-align: center;
+  padding: 3rem 2rem;
+}
+
+.successMessage h3 {
+  font-family: "Montserrat", sans-serif;
+  font-size: 1.75rem;
+  font-weight: 700;
+  color: #059669;
+  margin-bottom: 1rem;
+}
+
+.successMessage p {
+  font-family: "Lato", sans-serif;
+  font-size: 1.1rem;
+  color: #374151;
+  line-height: 1.6;
+  margin-bottom: 2rem;
+}
+
+.newApplicationButton {
+  background: linear-gradient(
+    135deg,
+    rgba(252, 108, 20, 1) 0%,
+    rgba(61, 209, 231, 1) 100%
+  );
+  color: white;
+  border: none;
+  padding: 0.75rem 2rem;
+  border-radius: 50px;
+  font-family: "Montserrat", sans-serif;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.newApplicationButton:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 15px rgba(252, 108, 20, 0.3);
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .form {
+    margin: 1rem;
+    border-radius: 12px;
+  }
+
+  .formHeader {
+    padding: 1.5rem;
+  }
+
+  .formHeader h3 {
+    font-size: 1.5rem;
+  }
+
+  .section {
+    padding: 1.5rem;
+  }
+
+  .section h4 {
+    font-size: 1.1rem;
+  }
+
+  .row {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+
+  .field {
+    margin-bottom: 1.25rem;
+  }
+
+  .customFileButton {
+    padding: 0.875rem 1rem;
+    font-size: 0.9rem;
+    min-height: 50px;
+  }
+
+  .fileIcon {
+    font-size: 1.1rem;
+  }
+
+  .submitButton {
+    padding: 0.875rem 2rem;
+    font-size: 1rem;
+    min-width: 180px;
+  }
+
+  .successMessage {
+    margin: 1rem;
+    padding: 2rem 1.5rem;
+  }
+
+  .successMessage h3 {
+    font-size: 1.5rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .formHeader {
+    padding: 1rem;
+  }
+
+  .formHeader h3 {
+    font-size: 1.25rem;
+  }
+
+  .section {
+    padding: 1rem;
+  }
+
+  .field input,
+  .field textarea {
+    padding: 0.625rem;
+    font-size: 0.95rem;
+  }
+
+  .customFileButton {
+    padding: 0.75rem 0.875rem;
+    font-size: 0.85rem;
+    gap: 0.5rem;
+    min-height: 45px;
+  }
+
+  .fileIcon {
+    font-size: 1rem;
+  }
+
+  .selectedFile {
+    padding: 0.625rem 0.875rem;
+    font-size: 0.85rem;
+  }
+
+  .clearFileButton {
+    width: 20px;
+    height: 20px;
+    font-size: 10px;
+  }
+
+  .submitButton {
+    padding: 0.75rem 1.5rem;
+    font-size: 0.95rem;
+    min-width: 160px;
+  }
+
+  .successMessage {
+    padding: 1.5rem 1rem;
+  }
+
+  .coordinatesHelp {
+    font-size: 0.85rem;
+    padding: 0.5rem;
+  }
+}

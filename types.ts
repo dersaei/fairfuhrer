@@ -170,6 +170,108 @@ export interface FormValidationErrors {
 }
 
 // ========================================
+// TYPY DLA FORMULARZA PARTNERSKIEGO
+// ========================================
+
+export interface PartnerFormData {
+  // Dane osobowe (wymagane)
+  firstName: string;
+  lastName: string;
+  email: string;
+  phone: string;
+
+  // Dane miejsca (wymagane)
+  placeName: string;
+  address: string;
+  latitude: string;
+  longitude: string;
+
+  // Pliki (główne zdjęcie wymagane)
+  mainImage: File | null;
+  additionalImages: File[]; // maksymalnie 3
+
+  // Tekst (wymagany - TYLKO tekst, bez pliku)
+  textContent: string;
+
+  // Opcjonalne
+  audioFile: File | null;
+  websiteUrl: string;
+  message: string;
+}
+
+export interface PartnerFormErrors {
+  firstName?: string;
+  lastName?: string;
+  email?: string;
+  phone?: string;
+  placeName?: string;
+  address?: string;
+  latitude?: string;
+  longitude?: string;
+  mainImage?: string;
+  additionalImages?: string;
+  textContent?: string;
+  audioFile?: string;
+  websiteUrl?: string;
+  message?: string;
+  general?: string;
+}
+
+export interface PartnerSubmissionData {
+  // Dane osobowe
+  first_name: string;
+  last_name: string;
+  email: string;
+  phone: string;
+
+  // Dane miejsca
+  place_name: string;
+  address: string;
+  latitude: number;
+  longitude: number;
+
+  // Zawartość tekstowa (wymagana)
+  text_content: string;
+
+  // Opcjonalne pola tekstowe
+  website_url?: string;
+  message?: string;
+
+  // Status
+  status: "new" | "review" | "approved" | "rejected";
+  created_at: string;
+
+  // URL-e do plików w Supabase (po upload)
+  main_image_url: string;
+  additional_images_urls?: string[];
+  audio_file_url?: string;
+}
+
+export interface PartnerApplication {
+  id: number;
+  first_name: string;
+  last_name: string;
+  email: string;
+  phone: string;
+  place_name: string;
+  address: string;
+  latitude: number;
+  longitude: number;
+  text_content: string;
+  main_image_url: string;
+  additional_images_urls?: string[];
+  audio_file_url?: string;
+  website_url?: string;
+  message?: string;
+  status: "new" | "review" | "approved" | "rejected";
+  created_at: string;
+  updated_at: string;
+  admin_notes?: string;
+  reviewed_by?: string;
+  reviewed_at?: string;
+}
+
+// ========================================
 // TYPY DLA ZAWARTOŚCI STRON
 // ========================================
 

@@ -1,4 +1,4 @@
-/* app/partner-werden/partner-werden.module.css */
+/* app/partner-werden/partner-werden.module.css - zaktualizowana wersja */
 
 .container {
   min-height: 100vh;
@@ -22,8 +22,6 @@
 }
 
 .section1Left {
-  /* USUNIĘTE: background: rgba(252, 108, 20, 1); */
-  /* USUNIĘTE: color: white; */
   padding: 4vh 4vw;
   display: flex;
   flex-direction: column;
@@ -31,8 +29,6 @@
 }
 
 .section1Right {
-  /* USUNIĘTE: background: #3dd1e7; */
-  /* USUNIĘTE: color: white; */
   padding: 4vh 4vw;
   display: flex;
   flex-direction: column;
@@ -131,21 +127,18 @@
   position: relative;
 }
 
-/* NOWY dynamiczny overlay zamiast ::before */
 .section2Overlay {
   position: absolute;
   top: 0;
   left: 0;
   right: 0;
   bottom: 0;
-  /* backgroundColor i opacity będą ustawiane dynamicznie */
 }
 
 .section2Content {
   position: relative;
   z-index: 1;
   text-align: center;
-  /* USUNIĘTE: color: white; - będzie ustawiane dynamicznie */
   max-width: 800px;
   padding: 3rem;
 }
@@ -192,7 +185,6 @@
   grid-template-columns: 1fr 1.2fr;
   gap: 4rem;
   padding: 4rem;
-  /* USUNIĘTE: background: white; - będzie ustawiane dynamicznie */
   align-items: center;
 }
 
@@ -203,7 +195,6 @@
 .section3Title {
   font-size: 2.5rem;
   font-weight: 700;
-  /* USUNIĘTE: color: #1e293b; - będzie ustawiane dynamicznie */
   margin-bottom: 2rem;
   line-height: 1.2;
   font-family: "Montserrat", sans-serif;
@@ -238,7 +229,6 @@
 .section3Text h2,
 .section3Text h3 {
   margin: 1.5rem 0 1rem 0;
-  /* USUNIĘTE: color: #1e293b; - będzie dziedziczone */
   font-weight: 600;
 }
 
@@ -250,11 +240,9 @@
   padding: 2rem;
 }
 
-/* SEKCJA 4 - Formularz kontaktowy - USUNIĘTE stałe kolory */
+/* SEKCJA 4 - NOWY FORMULARZ PARTNERSKI - USUNIĘTE stałe kolory */
 .section4 {
-  /* USUNIĘTE: background: rgba(252, 108, 20, 1); */
-  /* USUNIĘTE: color: white; */
-  padding: 4rem;
+  padding: 4rem 2rem;
   text-align: center;
 }
 
@@ -273,16 +261,18 @@
   font-family: "Lato", sans-serif;
   font-weight: 400;
   font-style: normal;
+  margin-bottom: 3rem;
 }
 
-.contactFormContainer {
-  max-width: 600px;
+/* NOWY KONTENER dla formularza partnerskiego */
+.partnerFormContainer {
+  max-width: 900px;
   margin: 0 auto;
+  text-align: left; /* Reset text-align dla formularza */
 }
 
 /* SEKCJA 5 - Końcowa - USUNIĘTE stałe kolory */
 .section5 {
-  /* USUNIĘTE: background: #f8fafc; */
   padding: 4rem 4rem 2rem 4rem;
   text-align: center;
 }
@@ -290,7 +280,6 @@
 .section5Title {
   font-size: 2.5rem;
   font-weight: 700;
-  /* USUNIĘTE: color: #1e293b; - będzie ustawiane dynamicznie */
   margin-bottom: 2rem;
   font-family: "Montserrat", sans-serif;
   font-optical-sizing: auto;
@@ -300,7 +289,6 @@
 .section5Text {
   font-size: 1.125rem;
   line-height: 1.7;
-  /* USUNIĘTE: color: #374151; - będzie ustawiane dynamicznie */
   max-width: 800px;
   margin: 0 auto;
   font-family: "Lato", sans-serif;
@@ -328,7 +316,6 @@
 .section5Text h2,
 .section5Text h3 {
   margin: 1.5rem 0 1rem 0;
-  /* USUNIĘTE: color: #1e293b; - będzie dziedziczone */
   font-weight: 600;
 }
 
@@ -336,7 +323,18 @@
   font-weight: 700;
 }
 
-/* RESPONSIVE DESIGN - bez zmian */
+.section5ImageContainer {
+  margin-top: 2rem;
+}
+
+.section5Image {
+  border-radius: 12px;
+  width: 100%;
+  height: auto;
+  max-width: 300px;
+}
+
+/* RESPONSIVE DESIGN */
 @media (max-width: 968px) {
   .section1 {
     grid-template-columns: 1fr;
@@ -370,18 +368,30 @@
     font-size: 2rem;
   }
 
-  .section4,
+  .section4 {
+    padding: 3rem 1.5rem;
+  }
+
+  .section4Title {
+    font-size: 2rem;
+  }
+
+  .partnerFormContainer {
+    max-width: 100%;
+  }
+
   .section5 {
     padding: 3rem 2rem;
   }
 
-  .section4Title,
   .section5Title {
     font-size: 2rem;
   }
+
   .section1RightTitle {
     font-size: 3rem;
   }
+
   .section1TextRight {
     font-size: 2rem;
   }
@@ -401,5 +411,19 @@
   .section4,
   .section5 {
     padding: 2rem 1rem;
+  }
+
+  .section4Title,
+  .section5Title {
+    font-size: 1.75rem;
+  }
+
+  .section4Subtitle {
+    font-size: 1.1rem;
+    margin-bottom: 2rem;
+  }
+
+  .partnerFormContainer {
+    margin: 0;
   }
 }
