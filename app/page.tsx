@@ -2,7 +2,8 @@
 import React, { useRef, useEffect, useState } from "react";
 import Map, { type MapRef } from "react-map-gl/mapbox";
 import "mapbox-gl/dist/mapbox-gl.css";
-import { useRouter } from "next/navigation";
+
+import Link from "next/link";
 import type { StyleSpecification } from "mapbox-gl";
 import styles from "./page.module.css";
 
@@ -27,26 +28,39 @@ const useResponsiveMapSettings = (
   useEffect(() => {
     if (!defaultSettings) return;
 
-    const width = window.innerWidth;
+    const updateSettings = () => {
+      const width = window.innerWidth;
 
-    if (width <= 950) {
-      // Tablety i telefony - jedna zmiana dla wszystkich mobile devices
-      setSettings({
-        zoom: defaultSettings.zoom - 0.38,
-        pitch: defaultSettings.pitch,
-        bearing: defaultSettings.bearing,
-      });
-    } else {
-      // Desktop - oryginalne ustawienia z JSON
-      setSettings(defaultSettings);
-    }
-  }, [defaultSettings]);
+      if (width <= 950) {
+        // Tablety i telefony - jedna zmiana dla wszystkich mobile devices
+        setSettings({
+          zoom: defaultSettings.zoom - 0.38,
+          pitch: defaultSettings.pitch,
+          bearing: defaultSettings.bearing,
+        });
+      } else {
+        // Desktop - oryginalne ustawienia z JSON
+        setSettings(defaultSettings);
+      }
+    };
+
+    updateSettings();
+
+    const handleResize = () => {
+      updateSettings();
+    };
+
+    window.addEventListener("resize", handleResize);
+
+    return () => {
+      window.removeEventListener("resize", handleResize);
+    };
+  }, [defaultSettings?.zoom, defaultSettings?.pitch, defaultSettings?.bearing]);
 
   return settings;
 };
 
 export default function HomePage() {
-  const router = useRouter();
   const mapRef = useRef<MapRef>(null);
   const [atmosphereStyle, setAtmosphereStyle] =
     useState<AtmosphereStyle | null>(null);
@@ -102,15 +116,6 @@ export default function HomePage() {
     }
   }, [atmosphereStyle, responsiveSettings]);
 
-  // Funkcja obsługi kliknięcia
-  const handleMapClick = () => {
-    router.push("/karte");
-  };
-
-  const handlePartnerClick = () => {
-    router.push("/partner-werden");
-  };
-
   // Loading state
   if (isLoading) {
     return (
@@ -140,8 +145,7 @@ export default function HomePage() {
             mapStyle={atmosphereStyle}
             projection="globe"
             interactive={false}
-            cursor="pointer"
-            onClick={handleMapClick}
+            cursor="default"
             initialViewState={{
               longitude: atmosphereStyle.center[0],
               latitude: atmosphereStyle.center[1],
@@ -162,13 +166,13 @@ export default function HomePage() {
             </h3>
           </div>
 
-          {/* Przycisk Play na środku globu */}
-          <div onClick={handleMapClick} className={styles.playButtonContainer}>
+          {/* Przycisk Play na środku globu - ZAMIENIONY NA LINK */}
+          <Link href="/karte" className={styles.playButtonContainer}>
             <div className={styles.playButton}>
               <div className={styles.playTriangle} />
             </div>
             <div className={styles.mapText}>Zur Karte</div>
-          </div>
+          </Link>
         </div>
 
         {/* Pozostałe sekcje bez zmian */}
@@ -216,13 +220,10 @@ export default function HomePage() {
               unseres Netzwerkes werden und der FAIRFÜHRER Ihr Angebot
               &quot;fairmarkten&quot; darf.
             </p>
-            <button
-              type="button"
-              onClick={handlePartnerClick}
-              className={styles.partnerButton}
-            >
+            {/* PRZYCISK PARTNER ZAMIENIONY NA LINK */}
+            <Link href="/partner-werden" className={styles.partnerButton}>
               Partner werden
-            </button>
+            </Link>
           </div>
         </section>
       </main>
