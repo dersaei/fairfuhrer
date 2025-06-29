@@ -36,8 +36,8 @@
 }
 
 .filterName {
-  font-size: 13px;
-  font-weight: 700;
+  font-size: 15px;
+  font-weight: 400;
   font-family: "Lato", sans-serif;
   transition: color 0.2s ease;
   color: inherit;
