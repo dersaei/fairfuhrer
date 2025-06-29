@@ -14,6 +14,37 @@ interface AtmosphereStyle extends StyleSpecification {
   pitch: number;
 }
 
+// Hook do responsywnych ustawień mapy
+const useResponsiveMapSettings = (
+  defaultSettings: { zoom: number; pitch: number; bearing: number } | null
+) => {
+  const [settings, setSettings] = useState<{
+    zoom: number;
+    pitch: number;
+    bearing: number;
+  } | null>(null);
+
+  useEffect(() => {
+    if (!defaultSettings) return;
+
+    const width = window.innerWidth;
+
+    if (width <= 950) {
+      // Tablety i telefony - jedna zmiana dla wszystkich mobile devices
+      setSettings({
+        zoom: defaultSettings.zoom - 0.38,
+        pitch: defaultSettings.pitch,
+        bearing: defaultSettings.bearing,
+      });
+    } else {
+      // Desktop - oryginalne ustawienia z JSON
+      setSettings(defaultSettings);
+    }
+  }, [defaultSettings]);
+
+  return settings;
+};
+
 export default function HomePage() {
   const router = useRouter();
   const mapRef = useRef<MapRef>(null);
@@ -21,6 +52,17 @@ export default function HomePage() {
     useState<AtmosphereStyle | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const MAPBOX_TOKEN = process.env.NEXT_PUBLIC_MAPBOX_TOKEN!;
+
+  // Responsywne ustawienia kamery - tylko gdy atmosphereStyle jest załadowany
+  const responsiveSettings = useResponsiveMapSettings(
+    atmosphereStyle
+      ? {
+          zoom: atmosphereStyle.zoom,
+          pitch: atmosphereStyle.pitch,
+          bearing: atmosphereStyle.bearing,
+        }
+      : null
+  );
 
   // Załaduj styl atmosphere z public/styles/
   useEffect(() => {
@@ -42,25 +84,23 @@ export default function HomePage() {
     loadAtmosphereStyle();
   }, []);
 
-  // Efekt dla ręcznej aktualizacji widoku (po załadowaniu stylu)
+  // Efekt dla aktualizacji widoku na resize
   useEffect(() => {
-    if (mapRef.current && atmosphereStyle) {
+    if (mapRef.current && atmosphereStyle && responsiveSettings) {
       const map = mapRef.current.getMap();
 
-      // Wymuś aktualizację parametrów kamery
       map.jumpTo({
         center: atmosphereStyle.center,
-        zoom: atmosphereStyle.zoom,
-        bearing: atmosphereStyle.bearing,
-        pitch: atmosphereStyle.pitch,
+        zoom: responsiveSettings.zoom,
+        bearing: responsiveSettings.bearing,
+        pitch: responsiveSettings.pitch,
       });
 
-      // Dodaj opóźnienie dla pewności
       setTimeout(() => {
         map.triggerRepaint();
       }, 100);
     }
-  }, [atmosphereStyle]);
+  }, [atmosphereStyle, responsiveSettings]);
 
   // Funkcja obsługi kliknięcia
   const handleMapClick = () => {
@@ -92,9 +132,8 @@ export default function HomePage() {
   return (
     <>
       <main className={styles.main}>
-        {/* Sekcja 1: Mapa (oryginalny kod) */}
+        {/* Sekcja 1: Mapa */}
         <div className={styles.container}>
-          {/* Mapa jako tło */}
           <Map
             ref={mapRef}
             mapboxAccessToken={MAPBOX_TOKEN}
@@ -106,9 +145,9 @@ export default function HomePage() {
             initialViewState={{
               longitude: atmosphereStyle.center[0],
               latitude: atmosphereStyle.center[1],
-              zoom: atmosphereStyle.zoom,
-              bearing: atmosphereStyle.bearing,
-              pitch: atmosphereStyle.pitch,
+              zoom: responsiveSettings?.zoom || atmosphereStyle.zoom,
+              bearing: responsiveSettings?.bearing || atmosphereStyle.bearing,
+              pitch: responsiveSettings?.pitch || atmosphereStyle.pitch,
             }}
             style={{ width: "100%", height: "100%" }}
           />
@@ -125,25 +164,20 @@ export default function HomePage() {
 
           {/* Przycisk Play na środku globu */}
           <div onClick={handleMapClick} className={styles.playButtonContainer}>
-            {/* Ikona Play */}
             <div className={styles.playButton}>
-              {/* Trójkąt Play */}
               <div className={styles.playTriangle} />
             </div>
-
-            {/* Tekst "Zur Karte" */}
             <div className={styles.mapText}>Zur Karte</div>
           </div>
         </div>
 
-        {/* Sekcja 2: Was macht uns besonders? */}
+        {/* Pozostałe sekcje bez zmian */}
         <section className={styles.section}>
           <div className={styles.sectionContent}>
             <h2 className={styles.sectionTitle}>
               Hunderte Gute Geschichten vom Bodensee, Aus Dem Allgäu Und Aus
               Aller Welt
             </h2>
-
             <ul className={styles.sectionText}>
               <li>
                 jede Stecknadel erzählt über ein einzigartiges Highlight / einen
@@ -156,7 +190,6 @@ export default function HomePage() {
           </div>
         </section>
 
-        {/* Sekcja 3: Unsere Mission */}
         <section className={styles.section}>
           <div className={styles.sectionContent}>
             <h2 className={styles.sectionTitle}>
@@ -170,7 +203,6 @@ export default function HomePage() {
           </div>
         </section>
 
-        {/* Sekcja 4: Partner werden */}
         <section className={styles.section}>
           <div className={styles.sectionContent}>
             <h2 className={styles.sectionTitle}>
