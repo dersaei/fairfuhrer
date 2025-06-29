@@ -17,17 +17,16 @@
   position: absolute;
   display: block;
   bottom: 0;
-  width: 50%;
+  width: 200px;
   background: rgba(255, 255, 255, 0.5);
-  padding: 5px;
+  padding: 4px;
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
   backdrop-filter: blur(10px);
-  border: 1px solid rgba(0, 0, 0, 0.1);
   z-index: 10;
 }
 
 .legendTitle {
-  font-size: 2rem;
+  font-size: 1.3rem;
   font-weight: 700;
   font-family: "Montserrat", sans-serif;
   color: #333;
@@ -47,7 +46,7 @@
     }
   }
 }
-@media screen and (max-width: 680px) {
+@media screen and (max-width: 580px) {
   .filtersContainer {
     width: 100%;
   }
