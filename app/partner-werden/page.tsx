@@ -40,7 +40,7 @@ async function getPartnerPageContent(): Promise<PartnerPageContent | null> {
 
 export async function generateMetadata(): Promise<Metadata> {
   return {
-    title: "Partner werden - Fair Guide",
+    title: "Partner werden",
     description:
       "Werden Sie unser Partner und profitieren Sie von unserem Netzwerk.",
   };

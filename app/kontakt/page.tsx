@@ -5,9 +5,8 @@ import ContactInfo from "./ContactInfo";
 import styles from "./kontakt.module.css";
 
 export const metadata: Metadata = {
-  title: "Kontakt - Twoja Firma",
-  description:
-    "Skontaktuj się z nami. Jesteśmy tutaj, aby pomóc i odpowiedzieć na wszystkie Twoje pytania.",
+  title: "Kontakt",
+  description: "Kontaktieren Sie uns auf dem für Sie passenden Weg.",
 };
 
 export default function KontaktPage() {

@@ -1,13 +1,14 @@
-// components/PartnerForm.tsx - z custom file inputs
+// components/PartnerForm.tsx - z poprawionymi limitami
 "use client";
 
 import { useState, useRef, ChangeEvent, FormEvent } from "react";
 import type { PartnerFormData, PartnerFormErrors } from "../types";
 import styles from "./PartnerForm.module.css";
 
-const MAX_MAIN_IMAGE_SIZE = 500 * 1024 * 1024; // 500MB
-const MAX_ADDITIONAL_IMAGE_SIZE = 500 * 1024 * 1024; // 500MB
-const MAX_AUDIO_SIZE = 1024 * 1024 * 1024; // 1GB
+// POPRAWIONE LIMITY
+const MAX_MAIN_IMAGE_SIZE = 500 * 1024; // 500KB (było 500MB)
+const MAX_ADDITIONAL_IMAGE_SIZE = 500 * 1024; // 500KB (było 500MB)
+const MAX_AUDIO_SIZE = 1 * 1024 * 1024; // 1MB (było 1GB)
 const ALLOWED_IMAGE_TYPES = [
   "image/jpeg",
   "image/jpg",
@@ -169,7 +170,7 @@ export default function PartnerForm() {
     if (file.size > MAX_MAIN_IMAGE_SIZE) {
       setErrors((prev) => ({
         ...prev,
-        mainImage: "Datei ist zu groß (maximal 500MB)",
+        mainImage: "Datei ist zu groß (maximal 500KB)",
       }));
       return;
     }
@@ -208,7 +209,7 @@ export default function PartnerForm() {
       if (file.size > MAX_ADDITIONAL_IMAGE_SIZE) {
         setErrors((prev) => ({
           ...prev,
-          additionalImages: "Jede Datei kann maximal 500MB haben",
+          additionalImages: "Jede Datei kann maximal 500KB haben",
         }));
         return;
       }
@@ -240,7 +241,7 @@ export default function PartnerForm() {
     if (file.size > MAX_AUDIO_SIZE) {
       setErrors((prev) => ({
         ...prev,
-        audioFile: "Datei ist zu groß (maximal 1GB)",
+        audioFile: "Datei ist zu groß (maximal 1MB)",
       }));
       return;
     }
@@ -553,12 +554,12 @@ export default function PartnerForm() {
         </div>
       </section>
 
-      {/* Zdjęcia - CUSTOM FILE INPUTS */}
+      {/* Zdjęcia - CUSTOM FILE INPUTS z poprawionymi limitami */}
       <section className={styles.section}>
         <h4>Bilder</h4>
 
         <div className={styles.field}>
-          <label htmlFor="mainImage">Hauptbild * (max. 500MB)</label>
+          <label htmlFor="mainImage">Hauptbild * (max. 500KB)</label>
           <div className={styles.fileInputWrapper}>
             {/* Ukryty domyślny input */}
             <input
@@ -604,7 +605,7 @@ export default function PartnerForm() {
 
         <div className={styles.field}>
           <label htmlFor="additionalImages">
-            Zusätzliche Bilder (max. 3, je max. 500MB)
+            Zusätzliche Bilder (max. 3, je max. 500KB)
           </label>
           <div className={styles.fileInputWrapper}>
             {/* Ukryty domyślny input */}
@@ -678,12 +679,12 @@ export default function PartnerForm() {
         </div>
       </section>
 
-      {/* Opcjonalne pliki - CUSTOM AUDIO INPUT */}
+      {/* Opcjonalne pliki - CUSTOM AUDIO INPUT z poprawionym limitem */}
       <section className={styles.section}>
         <h4>Zusätzliche Materialien (optional)</h4>
 
         <div className={styles.field}>
-          <label htmlFor="audioFile">Audio-Datei (MP3, max. 1GB)</label>
+          <label htmlFor="audioFile">Audio-Datei (MP3, max. 1MB)</label>
           <div className={styles.fileInputWrapper}>
             {/* Ukryty domyślny input */}
             <input
