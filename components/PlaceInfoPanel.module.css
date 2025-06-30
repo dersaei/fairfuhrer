@@ -1,0 +1,300 @@
+/* components/PlaceInfoPanel.module.css */
+/* ✅ KOMPATYBILNE z istniejącymi stylami MapBoxMap.module.css */
+
+/* Backdrop - identyczne nazwy jak w MapBoxMap */
+.panelBackdrop {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100vh;
+  background: rgba(0, 0, 0, 0.3);
+  z-index: 9999;
+  opacity: 0;
+  transition: opacity 0.6s ease;
+  pointer-events: none;
+}
+
+.panelBackdrop.visible {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+/* Panel - identyczne nazwy i style jak w MapBoxMap */
+.infoPanel {
+  position: fixed;
+  top: 0;
+  right: 0;
+  width: 400px;
+  height: 100vh;
+  background: #fffaf3;
+  box-shadow: -4px 0 20px rgba(0, 0, 0, 0.15);
+  overflow-y: auto;
+  transform: translateX(100%);
+  transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+  z-index: 10000;
+  border-left: 1px solid #e9ecef;
+  will-change: transform;
+}
+
+.infoPanel.open {
+  transform: translateX(0);
+}
+
+/* Content - identyczne nazwy */
+.panelContent {
+  padding: 0;
+  min-height: 100%;
+}
+
+/* ✅ ZACHOWANE WSZYSTKIE ISTNIEJĄCE NAZWY KLAS */
+.imageAudioContainer {
+  position: relative;
+  width: 100%;
+}
+
+.mainImageSection {
+  width: 100%;
+  margin: 0;
+  padding: 0;
+  position: relative;
+}
+
+.mainImage {
+  width: 100%;
+  height: 250px;
+  object-fit: cover;
+  display: block;
+}
+
+.audioSection {
+  position: absolute;
+  bottom: -8vh;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 80%;
+  z-index: 10;
+}
+
+/* ✅ ZACHOWANA NAZWA z MapBoxMap.module.css */
+.placeNameSection {
+  margin-top: 9vh;
+  margin-bottom: 2vh;
+  text-align: left;
+  padding: 1rem 1.5rem 0 1.5rem;
+  font-family: "Oxanium", sans-serif;
+}
+
+.placeName {
+  margin: 0;
+  font-size: 1.8rem;
+  font-weight: 700;
+  color: #2c3e50;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+}
+
+.placeAddress {
+  margin: 5px 0 15px 0;
+  color: #666;
+  font-size: 14px;
+  font-style: italic;
+}
+
+/* ✅ ZACHOWANA NAZWA z MapBoxMap.module.css */
+.infoSection {
+  margin-bottom: 2rem;
+  padding: 0 1.5rem;
+}
+
+.infoSection:last-child {
+  margin-bottom: 1rem;
+}
+
+.infoSection p {
+  margin: 0;
+  font-size: 1rem;
+  line-height: 1.6;
+  color: #343a40;
+}
+
+/* ✅ ZACHOWANE STYLE description */
+.description {
+  font-size: 1rem;
+  line-height: 1.6;
+  color: #343a40;
+}
+
+.description h1,
+.description h2,
+.description h3 {
+  color: #2c3e50;
+  margin-top: 1rem;
+  margin-bottom: 0.5rem;
+}
+
+.description p {
+  margin-bottom: 1rem;
+}
+
+.description ul,
+.description ol {
+  margin-bottom: 1rem;
+  padding-left: 1.5rem;
+}
+
+.description strong {
+  font-weight: 600;
+  color: #2c3e50;
+}
+
+/* ✅ ZACHOWANE STYLE externalLink */
+.externalLink {
+  display: inline-block;
+  margin: 0 auto;
+  padding: 0.75rem 1.5rem;
+  background: rgba(252, 108, 20, 1);
+  color: white;
+  text-decoration: none;
+  border-radius: 6px;
+  font-weight: 500;
+  transition: all 0.2s ease;
+  box-shadow: 0 2px 4px rgba(252, 108, 20, 0.3);
+}
+
+.externalLink:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 8px rgba(252, 108, 20, 0.4);
+  text-decoration: none;
+  color: white;
+}
+
+/* ✅ POPRAWIONA galeria w panelu - więcej miejsca od dołu */
+.gallery {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+  gap: 0.75rem;
+  margin-top: 0.5rem;
+  margin-bottom: 2rem; /* ✅ DODANE: odstęp od dołu */
+}
+
+.galleryImageWrapper {
+  position: relative;
+  aspect-ratio: 1;
+  border-radius: 6px;
+  overflow: hidden;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  transition: transform 0.2s ease;
+}
+
+.galleryImageWrapper:hover {
+  transform: scale(1.02);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+}
+
+.galleryImage {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  cursor: pointer;
+  transition: opacity 0.2s ease;
+}
+
+.galleryImage:hover {
+  opacity: 0.9;
+}
+
+/* ✅ DODANE: Gładkie przejścia dla wszystkich elementów panelu */
+.panelContent * {
+  transition: opacity 0.3s ease, transform 0.3s ease;
+}
+
+/* Audio player specyficzne transitions */
+.audioSection .audioPlayer {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.audioSection .audioControls button {
+  transition: all 0.2s ease;
+}
+
+.audioSection .progressContainer {
+  transition: all 0.3s ease;
+}
+.emptyState {
+  padding: 2rem 1.5rem;
+  text-align: center;
+  color: #6c757d;
+}
+
+.emptyState h2 {
+  font-size: 1.5rem;
+  margin-bottom: 1rem;
+  color: #495057;
+}
+
+.emptyState p {
+  font-size: 1rem;
+  line-height: 1.5;
+}
+
+/* ✅ IDENTYCZNA RESPONSYWNOŚĆ jak w MapBoxMap.module.css */
+@media (max-width: 768px) {
+  .infoPanel {
+    top: auto;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 70%;
+    transform: translateY(100%);
+    border-left: none;
+    border-top: 1px solid #e9ecef;
+  }
+
+  .infoPanel.open {
+    transform: translateY(0);
+  }
+
+  .panelBackdrop {
+    background: rgba(0, 0, 0, 0.5);
+  }
+
+  .mainImage {
+    height: 200px;
+  }
+
+  .placeName {
+    font-size: 1.5rem;
+  }
+
+  .gallery {
+    grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+    gap: 0.5rem;
+  }
+}
+
+@media (min-width: 1200px) {
+  .infoPanel {
+    width: 450px;
+  }
+}
+
+@media (max-width: 480px) {
+  .infoPanel {
+    height: 75%;
+  }
+
+  .placeName {
+    font-size: 1.3rem;
+  }
+
+  .gallery {
+    grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
+    gap: 0.5rem;
+  }
+
+  .externalLink {
+    padding: 0.5rem 1rem;
+    font-size: 0.9rem;
+  }
+}
