@@ -1,4 +1,4 @@
-// app/api/partner-application/route.ts
+// app/api/partner-application/route.ts - POPRAWIONA WERSJA
 import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@supabase/supabase-js";
 import type { PartnerSubmissionData } from "@/types";
@@ -62,13 +62,21 @@ async function saveToDirectus(
       body: JSON.stringify(data),
     });
 
-    if (!response.ok) {
+    // Directus może zwracać 204 (sukces bez treści) lub 200/201
+    if (response.ok) {
+      // Próbuj sparsować JSON, ale nie rzucaj błędem jeśli nie ma treści
+      try {
+        const result = await response.json();
+        return result;
+      } catch {
+        // 204 No Content - to też sukces
+        return { success: true, id: "created" };
+      }
+    } else {
       const errorData = await response.text();
       console.error("Directus save error:", errorData);
       throw new Error(`Błąd zapisu do bazy danych: ${response.status}`);
     }
-
-    return await response.json();
   } catch (error) {
     console.error("Error saving to Directus:", error);
     throw error;
@@ -178,17 +186,21 @@ export async function POST(request: NextRequest) {
       submissionData as PartnerSubmissionData
     );
 
-    return NextResponse.json({
-      success: true,
-      message: "Aplikacja została wysłana pomyślnie",
-      data: savedData,
-    });
+    // POPRAWIONA ODPOWIEDŹ - zawsze zwracaj sukces jeśli dotarło tutaj
+    return NextResponse.json(
+      {
+        success: true,
+        message: "Die Bewerbung wurde erfolgreich gesendet", // NIEMIECKA WIADOMOŚĆ
+        data: savedData,
+      },
+      { status: 200 }
+    );
   } catch (error) {
     console.error("API Error:", error);
     return NextResponse.json(
       {
-        error: "Wystąpił błąd podczas przetwarzania aplikacji",
-        details: error instanceof Error ? error.message : "Nieznany błąd",
+        error: "Ein Fehler ist beim Verarbeiten der Bewerbung aufgetreten", // NIEMIECKA WIADOMOŚĆ
+        details: error instanceof Error ? error.message : "Unbekannter Fehler",
       },
       { status: 500 }
     );
