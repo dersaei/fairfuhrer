@@ -1,7 +1,6 @@
-// components/PlaceInfoPanel.tsx
 "use client";
 
-import { useRef, useEffect } from "react";
+import { useRef, useEffect, useState, useCallback } from "react";
 import { AudioPlayer, ImageGallery, PlaceImage } from "./MediaComponents";
 import type { Place } from "../types";
 import styles from "./PlaceInfoPanel.module.css";
@@ -12,7 +11,6 @@ interface PlaceInfoPanelProps {
   isVisible: boolean;
   onCloseAction: () => void;
   onImageClickAction?: (imagePath: string, index: number) => void;
-  onTransitionEndAction?: (e: React.TransitionEvent<HTMLDivElement>) => void;
 }
 
 export default function PlaceInfoPanel({
@@ -21,21 +19,32 @@ export default function PlaceInfoPanel({
   isVisible,
   onCloseAction,
   onImageClickAction,
-  onTransitionEndAction,
 }: PlaceInfoPanelProps) {
   const panelRef = useRef<HTMLDivElement>(null);
   const backdropRef = useRef<HTMLDivElement>(null);
+  const [isClosing, setIsClosing] = useState(false);
+
+  // ✅ POPRAWIONA FUNKCJA ZAMYKANIA z płynną animacją
+  const handleClose = useCallback(() => {
+    setIsClosing(true);
+
+    // Rozpocznij animację zamykania
+    setTimeout(() => {
+      onCloseAction();
+      setIsClosing(false);
+    }, 500); // Dopasowane do czasu animacji CSS (0.5s)
+  }, [onCloseAction]);
 
   // Poprawiona obsługa kliknięć poza panelem
   useEffect(() => {
-    if (!isOpen || !isVisible) return;
+    if (!isOpen || !isVisible || isClosing) return;
 
     const handleClickOutside = (e: MouseEvent | TouchEvent) => {
       const target = e.target as HTMLElement;
 
       // 1. Sprawdź czy kliknięto w backdrop
       if (backdropRef.current && backdropRef.current.contains(target)) {
-        onCloseAction();
+        handleClose();
         return;
       }
 
@@ -54,7 +63,7 @@ export default function PlaceInfoPanel({
       }
 
       // 3. Zamknij w pozostałych przypadkach
-      onCloseAction();
+      handleClose();
     };
 
     document.addEventListener("click", handleClickOutside);
@@ -64,57 +73,75 @@ export default function PlaceInfoPanel({
       document.removeEventListener("click", handleClickOutside);
       document.removeEventListener("touchend", handleClickOutside);
     };
-  }, [isOpen, isVisible, onCloseAction]);
+  }, [isOpen, isVisible, isClosing, handleClose]);
 
   // Handle escape key
   useEffect(() => {
-    if (!isOpen) return;
+    if (!isOpen || isClosing) return;
 
     const handleEscape = (e: KeyboardEvent) => {
       if (e.key === "Escape") {
-        onCloseAction();
+        handleClose();
       }
     };
 
     document.addEventListener("keydown", handleEscape);
     return () => document.removeEventListener("keydown", handleEscape);
-  }, [isOpen, onCloseAction]);
+  }, [isOpen, isClosing, handleClose]);
 
-  // Force reflow dla płynnej animacji przy pierwszym otwarciu
+  // ✅ POPRAWIONA ANIMACJA OTWIERANIA
   useEffect(() => {
-    if (isOpen && isVisible) {
+    if (isOpen && isVisible && !isClosing) {
       const panel = panelRef.current;
       if (panel) {
-        // Force reflow
+        // Force reflow dla gładkiej animacji
         void panel.offsetHeight;
-        // Trigger transition
+
+        // Małe opóźnienie dla lepszego efektu
         requestAnimationFrame(() => {
-          panel.style.transform = "translateX(0)";
+          requestAnimationFrame(() => {
+            panel.style.transform =
+              window.innerWidth <= 768 ? "translateY(0)" : "translateX(0)";
+          });
         });
       }
     }
-  }, [isOpen, isVisible]);
+  }, [isOpen, isVisible, isClosing]);
+
+  // ✅ RESET STYLI przy zamykaniu
+  useEffect(() => {
+    if (isClosing && panelRef.current) {
+      const panel = panelRef.current;
+      panel.style.transform =
+        window.innerWidth <= 768 ? "translateY(100%)" : "translateX(100%)";
+    }
+  }, [isClosing]);
 
   return (
     <>
-      {/* Backdrop */}
+      {/* Backdrop z płynną animacją */}
       <div
         ref={backdropRef}
-        className={`${styles.panelBackdrop} ${isVisible ? styles.visible : ""}`}
+        className={`${styles.panelBackdrop} ${
+          isVisible && !isClosing ? styles.visible : ""
+        }`}
       />
 
-      {/* Panel informacyjny - KLUCZOWA ZMIANA: renderuj tylko gdy isOpen */}
+      {/* Panel informacyjny */}
       {isOpen && (
         <div
           ref={panelRef}
-          className={`${styles.infoPanel} ${isVisible ? styles.open : ""}`}
-          onTransitionEnd={onTransitionEndAction}
+          className={`${styles.infoPanel} ${
+            isVisible && !isClosing ? styles.open : ""
+          }`}
           role="dialog"
           aria-modal="true"
           aria-labelledby={place ? `place-title-${place.id}` : undefined}
         >
+          {/* ✅ NOWOCZESNY PRZYCISK ZAMYKANIA */}
+          <CloseButton onClick={handleClose} />
+
           <div className={styles.panelContent}>
-            {/* KLUCZOWA ZMIANA: nie resetuj place podczas animacji */}
             {place ? (
               <PlaceContent
                 place={place}
@@ -127,6 +154,35 @@ export default function PlaceInfoPanel({
         </div>
       )}
     </>
+  );
+}
+
+// ✅ KOMPONENT PRZYCISKU ZAMYKANIA
+function CloseButton({ onClick }: { onClick: () => void }) {
+  // Zmień na true jeśli wolisz prostszy design
+  const useMinimalStyle = false;
+
+  return (
+    <button
+      className={
+        useMinimalStyle ? styles.closeButtonMinimal : styles.closeButton
+      }
+      onClick={onClick}
+      aria-label="Schließen"
+    >
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="2"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      >
+        <line x1="18" y1="6" x2="6" y2="18" />
+        <line x1="6" y1="6" x2="18" y2="18" />
+      </svg>
+    </button>
   );
 }
 

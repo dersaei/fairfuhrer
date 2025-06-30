@@ -1,4 +1,3 @@
-// components/MapBoxMap.tsx - POPRAWIONY z pulsującym markerem
 "use client";
 
 import {
@@ -14,7 +13,7 @@ import "mapbox-gl/dist/mapbox-gl.css";
 import styles from "./MapBoxMap.module.css";
 import type { Place } from "../types";
 
-// ✅ LAZY LOADING komponentów
+// LAZY LOADING komponentów
 const PlaceInfoPanel = lazy(() => import("./PlaceInfoPanel"));
 const FullscreenGallery = lazy(() => import("./FullscreenGallery"));
 
@@ -87,7 +86,6 @@ export default function MapBoxMap({ places }: MapBoxMapProps) {
 
         if (!map || !map.loaded()) return;
 
-        // ✅ DODAJ STYLE CSS dla pulsującego markera
         if (!document.head.querySelector("#user-location-styles")) {
           const style = document.createElement("style");
           style.id = "user-location-styles";
@@ -130,7 +128,6 @@ export default function MapBoxMap({ places }: MapBoxMapProps) {
           document.head.appendChild(style);
         }
 
-        // ✅ UTWÓRZ pulsujący marker element
         const userMarkerElement = document.createElement("div");
         userMarkerElement.className = "user-location-marker";
         userMarkerElement.innerHTML = `
@@ -154,7 +151,6 @@ export default function MapBoxMap({ places }: MapBoxMapProps) {
           .setPopup(popup)
           .addTo(map);
 
-        // ✅ HOVER events dla popup
         userMarkerElement.addEventListener("mouseenter", () => {
           if (userMarker.getPopup()) userMarker.togglePopup();
         });
@@ -166,8 +162,6 @@ export default function MapBoxMap({ places }: MapBoxMapProps) {
         });
 
         userLocationMarkerRef.current = userMarker;
-
-        console.log("✅ PULSUJĄCY MARKER DODANY!", location); // DEBUG
       } catch (error) {
         console.warn("Błąd podczas dodawania markera użytkownika:", error);
       }
@@ -184,12 +178,10 @@ export default function MapBoxMap({ places }: MapBoxMapProps) {
       setSelectedPlace(place);
       setIsPanelOpen(true);
 
-      // Animate panel
       requestAnimationFrame(() => {
         requestAnimationFrame(() => {
           setIsPanelVisible(true);
 
-          // Animate map to place location
           if (mapRef.current) {
             const currentZoom = mapRef.current.getZoom();
             setTimeout(() => {
@@ -213,9 +205,7 @@ export default function MapBoxMap({ places }: MapBoxMapProps) {
 
     setTimeout(() => {
       setIsPanelOpen(false);
-      setSelectedPlace(null); // ✅ PRZYWRÓCONE: resetuj place po animacji
 
-      // Optional: return to user location
       if (mapRef.current && userLocation) {
         animateToLocation(userLocation, 14, 1800);
       }
@@ -245,11 +235,9 @@ export default function MapBoxMap({ places }: MapBoxMapProps) {
     );
   }, [selectedPlace?.Galerie_Bilder]);
 
-  // ✅ NOWA funkcja - zamyka TYLKO galerię, nie panel
   const closeGalleryOnly = useCallback(() => {
     setSelectedGalleryImage(null);
     setCurrentImageIndex(0);
-    // NIE ZAMYKAJ panelu!
   }, []);
 
   // ========================================
@@ -271,12 +259,10 @@ export default function MapBoxMap({ places }: MapBoxMapProps) {
         setUserLocation(newLocation);
         setLocationError(null);
 
-        console.log("📍 LOKALIZACJA ZNALEZIONA:", newLocation); // DEBUG
-
         if (mapRef.current) {
           setTimeout(() => {
             animateToLocation(newLocation, 14, 1800);
-            addUserLocationMarker(mapRef.current!, newLocation); // ✅ DODAJ MARKER!
+            addUserLocationMarker(mapRef.current!, newLocation);
           }, 100);
         }
       },
@@ -332,7 +318,6 @@ export default function MapBoxMap({ places }: MapBoxMapProps) {
       map.on("load", () => {
         setMapLoadingState("success");
 
-        // Add controls
         map.addControl(new mapboxgl.NavigationControl(), "top-left");
 
         const geolocateControl = new mapboxgl.GeolocateControl({
@@ -344,16 +329,12 @@ export default function MapBoxMap({ places }: MapBoxMapProps) {
 
         map.addControl(geolocateControl, "top-left");
 
-        // ✅ WAŻNE: Event listener dla przycisku geolokalizacji
         geolocateControl.on("geolocate", (e) => {
           userLocationRequestedRef.current = true;
           const { longitude, latitude } = e.coords;
           const location: [number, number] = [longitude, latitude];
           setUserLocation(location);
 
-          console.log("🎯 GEOLOCATE EVENT:", location); // DEBUG
-
-          // ✅ DODAJ PULSUJĄCY MARKER natychmiast
           addUserLocationMarker(map, location);
 
           setTimeout(() => {
@@ -361,12 +342,7 @@ export default function MapBoxMap({ places }: MapBoxMapProps) {
           }, 150);
         });
 
-        // ✅ JEŚLI już mamy lokalizację, dodaj marker
         if (userLocation) {
-          console.log(
-            "🔄 DODANIE MARKERA dla istniejącej lokalizacji:",
-            userLocation
-          );
           addUserLocationMarker(map, userLocation);
         }
       });
@@ -392,11 +368,9 @@ export default function MapBoxMap({ places }: MapBoxMapProps) {
     if (!map || !map.loaded()) return;
 
     try {
-      // Clear existing markers
       markersRef.current.forEach((marker) => marker.remove());
       markersRef.current = [];
 
-      // Add new markers
       places.forEach((place) => {
         if (!place.Breite || !place.Lange) return;
 
@@ -431,7 +405,6 @@ export default function MapBoxMap({ places }: MapBoxMapProps) {
         const markerElement = marker.getElement();
         markerElement.style.cursor = "pointer";
 
-        // Hover events
         let popupTimeout: NodeJS.Timeout;
         markerElement.addEventListener("mouseenter", () => {
           clearTimeout(popupTimeout);
@@ -444,7 +417,6 @@ export default function MapBoxMap({ places }: MapBoxMapProps) {
           }, 300);
         });
 
-        // Click event - open panel
         markerElement.addEventListener("click", (e) => {
           e.stopPropagation();
           if (marker.getPopup()?.isOpen()) marker.togglePopup();
@@ -454,7 +426,6 @@ export default function MapBoxMap({ places }: MapBoxMapProps) {
         markersRef.current.push(marker);
       });
 
-      // Fit bounds if no user location requested
       if (
         places.length > 0 &&
         !isPanelOpen &&
@@ -482,7 +453,6 @@ export default function MapBoxMap({ places }: MapBoxMapProps) {
     initializeMap();
 
     return () => {
-      // Cleanup
       markersRef.current.forEach((marker) => marker.remove());
       if (userLocationMarkerRef.current) {
         userLocationMarkerRef.current.remove();
@@ -505,6 +475,12 @@ export default function MapBoxMap({ places }: MapBoxMapProps) {
     }
   }, [updateMarkers]);
 
+  useEffect(() => {
+    if (!isPanelOpen && selectedPlace) {
+      setSelectedPlace(null);
+    }
+  }, [isPanelOpen, selectedPlace]);
+
   // ========================================
   // RENDER
   // ========================================
@@ -522,14 +498,12 @@ export default function MapBoxMap({ places }: MapBoxMapProps) {
 
   return (
     <div className={styles.mapContainerWrapper}>
-      {/* Loading state */}
       {mapLoadingState === "loading" && (
         <div className={styles.loadingOverlay}>
           <div className={styles.loadingSpinner}>Karte wird geladen...</div>
         </div>
       )}
 
-      {/* Error state */}
       {mapLoadingState === "error" && (
         <div className={styles.errorOverlay}>
           <div className={styles.errorContainer}>
@@ -542,10 +516,8 @@ export default function MapBoxMap({ places }: MapBoxMapProps) {
         </div>
       )}
 
-      {/* Map */}
       <div ref={containerRef} className={styles.mapContainer} />
 
-      {/* Location error */}
       {locationError && (
         <div className={styles.locationError}>
           <p>{locationError}</p>
@@ -555,7 +527,6 @@ export default function MapBoxMap({ places }: MapBoxMapProps) {
         </div>
       )}
 
-      {/* ✅ ZAWSZE RENDERUJ panel - gładkie animacje */}
       <Suspense
         fallback={
           <div className={styles.loadingOverlay}>
@@ -572,7 +543,6 @@ export default function MapBoxMap({ places }: MapBoxMapProps) {
         />
       </Suspense>
 
-      {/* ✅ LAZY LOADING: Fullscreen Gallery */}
       {selectedGalleryImage && selectedPlace?.Galerie_Bilder && (
         <Suspense
           fallback={

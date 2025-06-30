@@ -1,49 +1,167 @@
 /* components/MediaComponents.module.css */
+/* ✅ POPRAWIONE ANIMACJE AUDIO z ease-in-out */
 
-/* Audio Player */
+/* Audio Player z nowoczesnymi animacjami */
 .audioPlayer {
-  background: #f8f9fa;
+  background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
   opacity: 1;
-  padding: 1rem;
-  border-radius: 10px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  padding: 1.2rem;
+  border-radius: 16px; /* ✅ Bardziej zaokrąglone */
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1), 0 2px 8px rgba(0, 0, 0, 0.06);
   display: block;
   align-content: center;
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+.audioPlayer:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15), 0 4px 12px rgba(0, 0, 0, 0.1);
 }
 
 .audioControls {
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 1rem;
+  gap: 1.2rem;
 }
 
+/* ✅ POPRAWIONY PLAY BUTTON z płynnymi animacjami */
 .playButton {
-  background: rgba(252, 108, 20, 1);
+  background: linear-gradient(
+    135deg,
+    rgba(252, 108, 20, 1) 0%,
+    rgba(252, 108, 20, 0.9) 100%
+  );
   border: none;
   border-radius: 50%;
-  width: 50px;
-  height: 50px;
+  width: 56px; /* ✅ Nieco większy */
+  height: 56px;
   display: flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  transition: all 0.2s ease;
-  box-shadow: 0 2px 4px rgba(0, 123, 255, 0.3);
+  transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94); /* ✅ Płynne ease-in-out */
+  box-shadow: 0 4px 16px rgba(252, 108, 20, 0.3),
+    0 2px 8px rgba(252, 108, 20, 0.2);
+  position: relative;
+  overflow: hidden;
+}
+
+.playButton::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: radial-gradient(
+    circle,
+    rgba(255, 255, 255, 0.3) 0%,
+    transparent 70%
+  );
+  opacity: 0;
+  transition: opacity 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  border-radius: 50%;
+}
+
+.playButton:hover::before {
+  opacity: 1;
 }
 
 .playButton:hover {
-  background: firebrick;
-  transform: scale(1.05);
+  background: linear-gradient(135deg, rgba(252, 108, 20, 1) 0%, #d63384 100%);
+  transform: scale(1.08) rotate(5deg); /* ✅ Subtelny obrót */
+  box-shadow: 0 8px 24px rgba(252, 108, 20, 0.4),
+    0 4px 12px rgba(252, 108, 20, 0.3);
+}
+
+.playButton:active {
+  transform: scale(0.95) rotate(0deg);
+  transition: transform 0.1s cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 
 .playButton.playing {
-  background: #dc3545;
-  box-shadow: 0 2px 4px rgba(220, 53, 69, 0.3);
+  background: linear-gradient(135deg, #dc3545 0%, #c82333 100%);
+  box-shadow: 0 4px 16px rgba(220, 53, 69, 0.3),
+    0 2px 8px rgba(220, 53, 69, 0.2);
+  animation: pulse 2s cubic-bezier(0.25, 0.46, 0.45, 0.94) infinite;
+}
+
+@keyframes pulse {
+  0%,
+  100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.05);
+  }
 }
 
 .playButton.playing:hover {
-  background: #c82333;
+  background: linear-gradient(135deg, #c82333 0%, #a71e2a 100%);
+  transform: scale(1.08);
+  animation: none; /* Stop pulse on hover */
+}
+
+/* ✅ POPRAWIONE SKIP BUTTONS z płynnymi animacjami */
+.audioControls button {
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94); /* ✅ Płynne przejście */
+  padding: 8px;
+  border-radius: 50%;
+  position: relative;
+}
+
+.audioControls button:hover {
+  transform: scale(1.15); /* ✅ Większy zoom */
+  background: rgba(252, 108, 20, 0.1);
+}
+
+.audioControls button:active {
+  transform: scale(0.9);
+  transition: transform 0.1s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.skipButton {
+  margin: 0 6px;
+  width: 48px;
+  height: 48px;
+  background: rgba(255, 255, 255, 0.8);
+  border-radius: 50%;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  backdrop-filter: blur(10px);
+}
+
+.skipButton:hover {
+  background: rgba(252, 108, 20, 0.9);
+  box-shadow: 0 4px 16px rgba(252, 108, 20, 0.3);
+  transform: scale(1.1) rotate(-5deg);
+}
+
+.skipButton:active {
+  transform: scale(0.95) rotate(0deg);
+}
+
+/* ✅ Lepsze animacje dla ikon audio */
+.audioControls svg {
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.2));
+  transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+.audioControls button:hover svg {
+  filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.3));
+}
+
+.skipButton:hover svg {
+  filter: drop-shadow(0 2px 6px rgba(255, 255, 255, 0.8));
 }
 
 .progressContainer {
@@ -53,6 +171,20 @@
   flex: 1;
   min-width: 0;
   padding-top: 2vh;
+  opacity: 0;
+  transform: translateY(10px);
+  animation: fadeSlideUp 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94) 0.3s forwards;
+}
+
+@keyframes fadeSlideUp {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 .currentTime,
@@ -61,47 +193,76 @@
   font-weight: 500;
   color: #495057;
   white-space: nowrap;
+  transition: color 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
 }
 
+/* ✅ POPRAWIONY PROGRESS BAR z nowoczesnymi efektami */
 .progressBar {
   flex: 1;
-  height: 6px;
-  border-radius: 3px;
-  background: #dee2e6;
+  height: 8px; /* ✅ Nieco grubszy */
+  border-radius: 4px;
+  background: linear-gradient(90deg, #dee2e6 0%, #ced4da 100%);
   outline: none;
   cursor: pointer;
   -webkit-appearance: none;
   appearance: none;
+  transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.progressBar:hover {
+  height: 10px;
+  box-shadow: 0 2px 8px rgba(252, 108, 20, 0.3);
 }
 
 .progressBar::-webkit-slider-thumb {
   -webkit-appearance: none;
   appearance: none;
-  width: 16px;
-  height: 16px;
+  width: 20px;
+  height: 20px;
   border-radius: 50%;
-  background: rgba(252, 108, 20, 1);
+  background: linear-gradient(
+    135deg,
+    rgba(252, 108, 20, 1) 0%,
+    rgba(252, 108, 20, 0.8) 100%
+  );
   cursor: pointer;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-  transition: all 0.2s ease;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2), 0 0 0 2px rgba(255, 255, 255, 0.8);
+  transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
 }
 
 .progressBar::-webkit-slider-thumb:hover {
-  background: firebrick;
+  background: linear-gradient(135deg, rgba(252, 108, 20, 1) 0%, #d63384 100%);
+  transform: scale(1.2);
+  box-shadow: 0 4px 12px rgba(252, 108, 20, 0.4),
+    0 0 0 3px rgba(255, 255, 255, 0.9);
+}
+
+.progressBar::-webkit-slider-thumb:active {
   transform: scale(1.1);
 }
 
 .progressBar::-moz-range-thumb {
-  width: 16px;
-  height: 16px;
+  width: 20px;
+  height: 20px;
   border-radius: 50%;
-  background: rgba(252, 108, 20, 1);
+  background: linear-gradient(
+    135deg,
+    rgba(252, 108, 20, 1) 0%,
+    rgba(252, 108, 20, 0.8) 100%
+  );
   cursor: pointer;
-  border: none;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  border: 2px solid rgba(255, 255, 255, 0.8);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+  transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
 }
 
-/* Image Gallery */
+.progressBar::-moz-range-thumb:hover {
+  background: linear-gradient(135deg, rgba(252, 108, 20, 1) 0%, #d63384 100%);
+  transform: scale(1.2);
+}
+
+/* Image Gallery z poprawionymi animacjami */
 .gallery {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
@@ -114,12 +275,13 @@
   aspect-ratio: 1;
   overflow: hidden;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-  transition: all 0.2s ease;
+  transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  border-radius: 12px;
 }
 
 .galleryItem:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  transform: translateY(-4px) scale(1.02);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
 }
 
 .galleryImage {
@@ -127,312 +289,15 @@
   height: 100%;
   object-fit: cover;
   cursor: pointer;
-  transition: opacity 0.2s ease;
+  transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
 }
 
 .galleryImage:hover {
   opacity: 0.9;
-}
-
-/* Dodaj te style do istniejącego pliku MediaComponents.module.css */
-
-.audioControls button {
-  background: transparent;
-  border: none;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: transform 0.2s ease, opacity 0.2s ease;
-  padding: 4px;
-}
-
-.audioControls button:hover {
-  transform: scale(1.1);
-  opacity: 0.8;
-}
-
-.audioControls button:active {
-  transform: scale(0.95);
-}
-
-.playButton {
-  margin: 0 12px;
-}
-
-.skipButton {
-  margin: 0 4px;
-}
-
-/* Dla lepszego wyglądu ikon */
-.audioControls svg {
-  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.2));
-}
-
-.audioControls button:hover svg {
-  filter: drop-shadow(0 2px 6px rgba(0, 0, 0, 0.3));
-}
-
-/* Gallery Modal - Nowy pełnoekranowy modal */
-.galleryModal {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100vw;
-  height: 100vh;
-  background: rgba(0, 0, 0, 0.95);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 9999;
-  cursor: pointer;
-  animation: fadeIn 0.3s ease;
-}
-
-.galleryModalContent {
-  position: relative;
-  width: 100%;
-  height: 100%;
-  display: flex;
-  flex-direction: column;
-  cursor: default;
-}
-
-/* Przycisk zamknięcia */
-.galleryModalClose {
-  position: absolute;
-  top: 20px;
-  right: 20px;
-  background: rgba(255, 255, 255, 0.9);
-  border: none;
-  border-radius: 50%;
-  width: 50px;
-  height: 50px;
-  font-size: 2rem;
-  font-weight: bold;
-  color: #333;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: all 0.2s ease;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
-  z-index: 10;
-}
-
-.galleryModalClose:hover {
-  background: white;
   transform: scale(1.1);
 }
 
-/* Licznik zdjęć */
-.imageCounter {
-  position: absolute;
-  top: 20px;
-  left: 20px;
-  background: rgba(0, 0, 0, 0.7);
-  color: white;
-  padding: 8px 16px;
-  border-radius: 20px;
-  font-size: 0.9rem;
-  font-weight: 500;
-  z-index: 10;
-}
-
-/* Kontener głównego zdjęcia */
-.mainImageContainer {
-  flex: 1;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.galleryModalImage {
-  max-width: 100%;
-  max-height: 100%;
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
-  border-radius: 8px;
-}
-
-/* Przyciski nawigacji */
-.navButton {
-  position: absolute;
-  top: 50%;
-  transform: translateY(-50%);
-  background: rgba(255, 255, 255, 0.9);
-  border: none;
-  border-radius: 50%;
-  width: 60px;
-  height: 60px;
-  font-size: 2rem;
-  font-weight: bold;
-  color: #333;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: all 0.2s ease;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
-  z-index: 10;
-}
-
-.navButton:hover {
-  background: white;
-  transform: translateY(-50%) scale(1.1);
-}
-
-.prevButton {
-  left: 20px;
-}
-
-.nextButton {
-  right: 20px;
-}
-
-/* Slider miniaturek */
-.thumbnailSlider {
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  background: rgba(0, 0, 0, 0.8);
-  padding: 20px;
-  z-index: 10;
-}
-
-.thumbnailContainer {
-  display: flex;
-  gap: 10px;
-  overflow-x: auto;
-  scroll-behavior: smooth;
-  padding: 10px 0;
-  justify-content: center;
-  scrollbar-width: thin;
-  scrollbar-color: rgba(255, 255, 255, 0.5) transparent;
-}
-
-.thumbnailContainer::-webkit-scrollbar {
-  height: 6px;
-}
-
-.thumbnailContainer::-webkit-scrollbar-track {
-  background: transparent;
-}
-
-.thumbnailContainer::-webkit-scrollbar-thumb {
-  background: rgba(255, 255, 255, 0.5);
-  border-radius: 3px;
-}
-
-.thumbnailContainer::-webkit-scrollbar-thumb:hover {
-  background: rgba(255, 255, 255, 0.7);
-}
-
-.thumbnail {
-  flex-shrink: 0;
-  width: 80px;
-  height: 60px;
-  border-radius: 6px;
-  overflow: hidden;
-  cursor: pointer;
-  border: 3px solid transparent;
-  transition: all 0.2s ease;
-  opacity: 0.7;
-}
-
-.thumbnail:hover {
-  opacity: 1;
-  transform: scale(1.05);
-}
-
-.activeThumbnail {
-  border-color: #007bff;
-  opacity: 1;
-  box-shadow: 0 0 10px rgba(0, 123, 255, 0.5);
-}
-
-.thumbnailImage {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-}
-
-/* Animacje */
-@keyframes fadeIn {
-  from {
-    opacity: 0;
-  }
-  to {
-    opacity: 1;
-  }
-}
-
-/* Stary modal (zachowany dla kompatybilności) */
-.imageModal {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: rgba(0, 0, 0, 0.9);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 2000;
-  cursor: pointer;
-  animation: fadeIn 0.3s ease;
-}
-
-.modalContent {
-  position: relative;
-  max-width: 90vw;
-  max-height: 90vh;
-  animation: scaleIn 0.3s ease;
-}
-
-@keyframes scaleIn {
-  from {
-    transform: scale(0.8);
-    opacity: 0;
-  }
-  to {
-    transform: scale(1);
-    opacity: 1;
-  }
-}
-
-.modalImage {
-  max-width: 100%;
-  max-height: 100%;
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
-}
-
-.modalClose {
-  position: absolute;
-  top: -15px;
-  right: -15px;
-  background: rgba(255, 255, 255, 0.95);
-  border: none;
-  border-radius: 50%;
-  width: 40px;
-  height: 40px;
-  font-size: 1.5rem;
-  font-weight: bold;
-  color: #333;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: all 0.2s ease;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
-}
-
-.modalClose:hover {
-  background: white;
-  transform: scale(1.1);
-}
-
-/* Place Image */
+/* Reszta stylów pozostaje bez zmian... */
 .imageContainer {
   position: relative;
   overflow: hidden;
@@ -483,16 +348,20 @@
   }
 
   .audioControls {
-    gap: 0.75rem;
+    gap: 0.9rem;
   }
 
   .playButton {
-    width: 45px;
-    height: 45px;
-    font-size: 1.1rem;
+    width: 50px;
+    height: 50px;
   }
 
-  .timeInfo {
+  .skipButton {
+    width: 44px;
+    height: 44px;
+  }
+
+  .progressContainer {
     gap: 0.5rem;
   }
 
@@ -503,49 +372,6 @@
 
   .embeddedMap iframe {
     height: 150px;
-  }
-
-  /* Modal responsywny */
-  .galleryModalClose {
-    width: 45px;
-    height: 45px;
-    font-size: 1.5rem;
-    top: 15px;
-    right: 15px;
-  }
-
-  .imageCounter {
-    top: 15px;
-    left: 15px;
-    font-size: 0.8rem;
-    padding: 6px 12px;
-  }
-
-  .navButton {
-    width: 50px;
-    height: 50px;
-    font-size: 1.5rem;
-  }
-
-  .prevButton {
-    left: 15px;
-  }
-
-  .nextButton {
-    right: 15px;
-  }
-
-  .mainImageContainer {
-    padding: 70px 15px 110px 15px;
-  }
-
-  .thumbnailSlider {
-    padding: 15px;
-  }
-
-  .thumbnail {
-    width: 70px;
-    height: 52px;
   }
 }
 
@@ -560,63 +386,17 @@
     gap: 0.75rem;
   }
 
-  .timeInfo {
-    justify-content: center;
+  .playButton {
+    width: 46px;
+    height: 46px;
   }
 
-  .modalContent {
-    max-width: 95vw;
-    max-height: 95vh;
-  }
-
-  .modalClose {
-    top: -10px;
-    right: -10px;
-    width: 35px;
-    height: 35px;
-    font-size: 1.3rem;
-  }
-
-  /* Modal bardzo małe ekrany */
-  .galleryModalClose {
+  .skipButton {
     width: 40px;
     height: 40px;
-    font-size: 1.3rem;
-    top: 10px;
-    right: 10px;
   }
 
-  .imageCounter {
-    top: 10px;
-    left: 10px;
-    font-size: 0.75rem;
-    padding: 4px 8px;
-  }
-
-  .navButton {
-    width: 45px;
-    height: 45px;
-    font-size: 1.3rem;
-  }
-
-  .prevButton {
-    left: 10px;
-  }
-
-  .nextButton {
-    right: 10px;
-  }
-
-  .mainImageContainer {
-    padding: 60px 10px 100px 10px;
-  }
-
-  .thumbnailSlider {
-    padding: 10px;
-  }
-
-  .thumbnail {
-    width: 60px;
-    height: 45px;
+  .progressContainer {
+    justify-content: center;
   }
 }
