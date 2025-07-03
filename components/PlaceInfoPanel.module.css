@@ -164,7 +164,6 @@
   padding: 0;
   position: relative;
   overflow: hidden;
-  border-radius: 0 0 16px 16px; /* ✅ Zaokrąglone dolne rogi */
 }
 
 .mainImage {

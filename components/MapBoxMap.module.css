@@ -70,7 +70,23 @@
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
 }
 
-/* Location error */
+.retryButton {
+  background: white;
+  color: #ff4444;
+  border: none;
+  padding: 5px 10px;
+  border-radius: 3px;
+  cursor: pointer;
+  font-size: 12px;
+  font-weight: bold;
+  transition: background-color 0.2s ease;
+}
+
+.retryButton:hover {
+  background: #f0f0f0;
+}
+
+/* ❌ USUNIĘTE: Style dla czerwonego komunikatu błędu lokalizacji
 .locationError {
   position: absolute;
   top: 10px;
@@ -90,22 +106,7 @@
   margin: 0 0 10px 0;
   font-size: 14px;
 }
-
-.retryButton {
-  background: white;
-  color: #ff4444;
-  border: none;
-  padding: 5px 10px;
-  border-radius: 3px;
-  cursor: pointer;
-  font-size: 12px;
-  font-weight: bold;
-  transition: background-color 0.2s ease;
-}
-
-.retryButton:hover {
-  background: #f0f0f0;
-}
+*/
 
 /* Popup content dla markerów */
 .popupContent {

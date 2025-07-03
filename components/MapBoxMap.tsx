@@ -43,7 +43,7 @@ export default function MapBoxMap({ places }: MapBoxMapProps) {
   const [userLocation, setUserLocation] = useState<[number, number] | null>(
     null
   );
-  const [locationError, setLocationError] = useState<string | null>(null);
+  // ❌ USUNIĘTE: locationError state
   const [mapLoadingState, setMapLoadingState] = useState<
     "idle" | "loading" | "success" | "error"
   >("idle");
@@ -248,7 +248,7 @@ export default function MapBoxMap({ places }: MapBoxMapProps) {
     userLocationRequestedRef.current = true;
 
     if (!navigator.geolocation) {
-      setLocationError("Geolocation wird von diesem Browser nicht unterstützt");
+      console.warn("Geolocation wird von diesem Browser nicht unterstützt");
       return;
     }
 
@@ -257,7 +257,6 @@ export default function MapBoxMap({ places }: MapBoxMapProps) {
         const { latitude, longitude } = position.coords;
         const newLocation: [number, number] = [longitude, latitude];
         setUserLocation(newLocation);
-        setLocationError(null);
 
         if (mapRef.current) {
           setTimeout(() => {
@@ -270,22 +269,23 @@ export default function MapBoxMap({ places }: MapBoxMapProps) {
         console.error("Geolocation-Fehler:", error);
         switch (error.code) {
           case error.PERMISSION_DENIED:
-            setLocationError(
+            console.warn(
               "Benutzer hat den Zugriff auf die Position verweigert"
             );
             break;
           case error.POSITION_UNAVAILABLE:
-            setLocationError("Positionsinformationen sind nicht verfügbar");
+            console.warn("Positionsinformationen sind nicht verfügbar");
             break;
           case error.TIMEOUT:
-            setLocationError("Zeitüberschreitung beim Abrufen der Position");
+            console.warn("Zeitüberschreitung beim Abrufen der Position");
             break;
           default:
-            setLocationError(
+            console.warn(
               "Ein unbekannter Fehler beim Abrufen der Position ist aufgetreten"
             );
             break;
         }
+        // ❌ USUNIĘTE: setLocationError - błędy tylko w konsoli
       },
       { enableHighAccuracy: true, timeout: 10000, maximumAge: 300000 }
     );
@@ -518,14 +518,7 @@ export default function MapBoxMap({ places }: MapBoxMapProps) {
 
       <div ref={containerRef} className={styles.mapContainer} />
 
-      {locationError && (
-        <div className={styles.locationError}>
-          <p>{locationError}</p>
-          <button onClick={getUserLocation} className={styles.retryButton}>
-            Erneut versuchen
-          </button>
-        </div>
-      )}
+      {/* ❌ USUNIĘTE: Czerwony komunikat błędu lokalizacji */}
 
       <Suspense
         fallback={
