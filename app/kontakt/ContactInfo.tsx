@@ -1,4 +1,5 @@
 // app/kontakt/ContactInfo.tsx
+import { Mail, Phone, MapPin } from "lucide-react";
 import styles from "./ContactInfo.module.css";
 
 export default function ContactInfo() {
@@ -12,19 +13,22 @@ export default function ContactInfo() {
 
       <div className={styles.contactMethods}>
         <div className={styles.contactMethod}>
-          <div className={styles.methodIcon}>📧</div>
+          <div className={styles.methodIcon}>
+            <Mail size={24} />
+          </div>
           <div className={styles.methodContent}>
             <h3>Email</h3>
             <p>frank.gebhard@seenergien.com</p>
             <span className={styles.responseTime}>
-              {" "}
               Wir antworten innerhalb von 48 Stunden.
             </span>
           </div>
         </div>
 
         <div className={styles.contactMethod}>
-          <div className={styles.methodIcon}>📞</div>
+          <div className={styles.methodIcon}>
+            <Phone size={24} />
+          </div>
           <div className={styles.methodContent}>
             <h3>Telefon</h3>
             <p>+49 1512 3576161</p>
@@ -33,7 +37,9 @@ export default function ContactInfo() {
         </div>
 
         <div className={styles.contactMethod}>
-          <div className={styles.methodIcon}>📍</div>
+          <div className={styles.methodIcon}>
+            <MapPin size={24} />
+          </div>
           <div className={styles.methodContent}>
             <h3>Adresse</h3>
             <p>

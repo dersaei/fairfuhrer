@@ -19,7 +19,7 @@
 
 .intro {
   color: black;
-  margin-bottom: 1rem;
+  margin-bottom: 2rem;
   line-height: 1.6;
   font-size: 1.15rem;
   font-weight: 400;
@@ -30,61 +30,114 @@
 
 .contactMethods {
   display: flex;
-  flex-direction: column;
-  gap: 1.3rem;
-  width: 50%;
+  flex-direction: row;
+  gap: 1.5rem;
+  width: 90%;
   margin: 0 auto;
+  justify-content: center;
 }
 
 .contactMethod {
   display: flex;
+  flex-direction: column;
   align-items: center;
+  text-align: center;
   gap: 1rem;
-  padding: 1rem;
-  border-radius: 8px;
+  padding: 1.5rem 1rem;
+  border-radius: 12px;
   background: aliceblue;
   transition: all 0.3s ease-in-out;
   box-shadow: rgba(0, 0, 0, 0.4) 0px 2px 4px,
     rgba(0, 0, 0, 0.3) 0px 7px 13px -3px, rgba(0, 0, 0, 0.2) 0px -3px 0px inset;
+  flex: 1;
+  max-width: 300px;
 }
 
 .contactMethod:hover {
   background: #e2e8f0;
   box-shadow: none;
+  transform: translateY(-5px);
 }
 
 .methodIcon {
   font-size: 1.5rem;
   flex-shrink: 0;
+  color: #3b82f6;
+  background: rgba(59, 130, 246, 0.1);
+  padding: 1rem;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.methodContent {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 
 .methodContent h3 {
   font-weight: 600;
   color: #1e293b;
-  margin-bottom: 0.25rem;
+  margin-bottom: 0.5rem;
   font-size: 1.2rem;
 }
 
 .methodContent p {
   color: #374151;
-  margin-bottom: 0.25rem;
+  margin-bottom: 0.5rem;
   font-size: 1rem;
+  line-height: 1.4;
 }
 
 .responseTime {
   font-size: 0.875rem;
   color: #6b7280;
+  font-style: italic;
 }
+
+/* Responsive Design */
+@media (max-width: 950px) {
+  .contactMethods {
+    flex-direction: column;
+    width: 60%;
+  }
+
+  .contactMethod {
+    flex-direction: row;
+    text-align: left;
+    max-width: none;
+  }
+
+  .methodContent {
+    align-items: flex-start;
+  }
+
+  .methodIcon {
+    padding: 0.75rem;
+  }
+}
+
 @media (max-width: 750px) {
   .contactMethods {
     width: 80%;
   }
 }
+
 @media (max-width: 600px) {
   .contactInfo h2 {
     font-size: 6vw;
   }
   .contactMethods {
     width: 90%;
+  }
+
+  .contactMethod {
+    padding: 1rem;
+  }
+
+  .methodIcon {
+    padding: 0.5rem;
   }
 }

@@ -2,6 +2,7 @@
 import { Metadata } from "next";
 import ContactForm from "./ContactForm";
 import ContactInfo from "./ContactInfo";
+import SupportSection from "./SupportSection";
 import styles from "./kontakt.module.css";
 
 export const metadata: Metadata = {
@@ -14,6 +15,7 @@ export default function KontaktPage() {
     <div className={styles.contactPage}>
       <div className={styles.contactContent}>
         <ContactInfo />
+        <SupportSection />
         <ContactForm />
       </div>
     </div>

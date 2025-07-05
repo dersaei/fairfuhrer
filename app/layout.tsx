@@ -1,6 +1,7 @@
 // app/layout.tsx
 import type { Metadata } from "next";
 import { Lato, Montserrat, Staatliches, Oxanium } from "next/font/google";
+import Script from "next/script";
 import "../styles/reset.css";
 
 import Header from "../components/Header";
@@ -95,6 +96,9 @@ export const metadata: Metadata = {
   other: {
     "msapplication-TileColor": "#2e7d32",
     "theme-color": "#2e7d32",
+    // Przenieś preconnect do other metadata
+    "preconnect-fonts": "https://fonts.googleapis.com",
+    "preconnect-gstatic": "https://fonts.gstatic.com",
   },
   icons: {
     icon: [
@@ -113,17 +117,21 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="de">
-      <head>
-        {/* Preconnect dla lepszej wydajności */}
-        <link rel="preconnect" href="https://fonts.googleapis.com" />
-        <link
-          rel="preconnect"
-          href="https://fonts.gstatic.com"
-          crossOrigin="anonymous"
-        />
+      <body
+        className={`
+          ${lato.variable}
+          ${staatliches.variable}
+          ${oxanium.variable}
+          ${montserrat.variable}
+        `}
+      >
+        <Header />
+        <main>{children}</main>
+        <Footer />
 
-        {/* Structured Data dla organizacji */}
-        <script
+        {/* Structured Data dla organizacji - używamy Next.js Script */}
+        <Script
+          id="structured-data"
           type="application/ld+json"
           dangerouslySetInnerHTML={{
             __html: JSON.stringify({
@@ -141,20 +149,11 @@ export default function RootLayout({
             }),
           }}
         />
-      </head>
-      <body
-        className={`
-          ${lato.variable}
-          ${staatliches.variable}
-          ${oxanium.variable}
-          ${montserrat.variable}
-        `}
-      >
-        <Header />
-        <main>{children}</main>
-        <Footer />
 
-        <script
+        {/* Viewport height fix script */}
+        <Script
+          id="viewport-fix"
+          strategy="afterInteractive"
           dangerouslySetInnerHTML={{
             __html: `
               // Fix dla paska adresu na mobile

@@ -6,6 +6,7 @@ import "mapbox-gl/dist/mapbox-gl.css";
 import Link from "next/link";
 import type { StyleSpecification } from "mapbox-gl";
 import styles from "./page.module.css";
+import { Heart, Sparkles } from "lucide-react";
 
 // Typ dla naszego stylu atmosfery
 interface AtmosphereStyle extends StyleSpecification {
@@ -169,6 +170,18 @@ export default function HomePage() {
   return (
     <>
       <main className={styles.main}>
+        {/* Przycisk Sparschwein - FIXED POSITION */}
+        <Link href="/sparschwein" className={styles.sparschweineButton}>
+          <div className={styles.iconContainer}>
+            <Heart size={20} className={styles.heartIcon} />
+            <Sparkles size={12} className={styles.sparkleIcon} />
+          </div>
+          <div className={styles.sparschweineTitle}>Sparschwein</div>
+          <div className={styles.sparschweineSubtitle}>
+            Unterstütze unser Netzwerk
+          </div>
+        </Link>
+
         {/* Sekcja 1: Mapa */}
         <div className={styles.container}>
           <Map
@@ -209,7 +222,7 @@ export default function HomePage() {
         </div>
 
         {/* Pozostałe sekcje bez zmian */}
-        <section className={styles.section}>
+        <section className={styles.section2}>
           <div className={styles.sectionContent}>
             <h2 className={styles.sectionTitle}>
               Hunderte Gute Geschichten vom Bodensee, Aus Dem Allgäu Und Aus
@@ -227,7 +240,7 @@ export default function HomePage() {
           </div>
         </section>
 
-        <section className={styles.section}>
+        <section className={styles.section3}>
           <div className={styles.sectionContent}>
             <h2 className={styles.sectionTitle}>
               Interessantes, Informatives, Inspirierendes Entdecken
@@ -240,7 +253,7 @@ export default function HomePage() {
           </div>
         </section>
 
-        <section className={styles.section}>
+        <section className={styles.section2}>
           <div className={styles.sectionContent}>
             <h2 className={styles.sectionTitle}>
               Lassen Sie Uns Gemeinsam Ihre Gute Geschichte Erzählen!

@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, FormEvent } from "react";
+import { Mail } from "lucide-react";
 import styles from "./ContactForm.module.css";
 
 interface FormData {
@@ -83,7 +84,10 @@ export default function ContactForm() {
 
   return (
     <div className={styles.contactForm}>
-      <h2>Senden Sie uns eine Nachricht</h2>
+      <div className={styles.headerContainer}>
+        <Mail size={48} className={styles.headerIcon} />
+        <h2>Senden Sie uns eine Nachricht</h2>
+      </div>
 
       {submitStatus === "success" && (
         <div className={styles.successMessage}>

@@ -1,0 +1,138 @@
+/* app/kontakt/SupportSection.module.css */
+.supportSection {
+  background: linear-gradient(135deg, #ecfdf5 0%, #dbeafe 100%);
+  padding: 4rem 2rem;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+}
+
+.supportSection::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(
+    135deg,
+    rgba(16, 185, 129, 0.05) 0%,
+    rgba(59, 130, 246, 0.05) 100%
+  );
+  pointer-events: none;
+}
+
+.supportContent {
+  position: relative;
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+.iconContainer {
+  position: relative;
+  display: inline-block;
+  margin-bottom: 1.5rem;
+}
+
+.heartIcon {
+  color: #10b981;
+  display: block;
+}
+
+.sparkleIcon {
+  position: absolute;
+  top: -8px;
+  right: -8px;
+  color: #3b82f6;
+  animation: sparkle 2s ease-in-out infinite;
+}
+
+@keyframes sparkle {
+  0%,
+  100% {
+    transform: rotate(0deg) scale(1);
+    opacity: 1;
+  }
+  50% {
+    transform: rotate(180deg) scale(1.2);
+    opacity: 0.8;
+  }
+}
+
+.supportTitle {
+  font-size: 2rem;
+  font-weight: 700;
+  color: #111827;
+  margin-bottom: 1rem;
+  font-family: "Montserrat", sans-serif;
+}
+
+.supportText {
+  font-size: 1.125rem;
+  color: #6b7280;
+  line-height: 1.7;
+  margin-bottom: 2rem;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto",
+    sans-serif;
+}
+
+.supportButton {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: linear-gradient(135deg, #10b981 0%, #3b82f6 100%);
+  color: white;
+  text-decoration: none;
+  padding: 1rem 2rem;
+  border-radius: 50px;
+  font-weight: 600;
+  font-size: 1.1rem;
+  box-shadow: 0 8px 25px rgba(16, 185, 129, 0.3);
+  transition: all 0.3s ease-in-out;
+  font-family: inherit;
+}
+
+.supportButton:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 12px 35px rgba(16, 185, 129, 0.4);
+  background: linear-gradient(135deg, #059669 0%, #2563eb 100%);
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .supportSection {
+    padding: 3rem 1.5rem;
+  }
+
+  .supportTitle {
+    font-size: 1.75rem;
+  }
+
+  .supportText {
+    font-size: 1rem;
+  }
+
+  .supportButton {
+    padding: 0.875rem 1.75rem;
+    font-size: 1rem;
+  }
+}
+
+@media (max-width: 600px) {
+  .supportSection {
+    padding: 2.5rem 1rem;
+  }
+
+  .supportTitle {
+    font-size: 1.5rem;
+  }
+
+  .supportText {
+    font-size: 0.95rem;
+  }
+
+  .supportButton {
+    padding: 0.75rem 1.5rem;
+    font-size: 0.95rem;
+  }
+}

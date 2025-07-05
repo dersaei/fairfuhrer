@@ -87,8 +87,95 @@
   font-family: "Oxanium", sans-serif;
 }
 
+/* Przycisk Sparschwein */
+.sparschweineButton {
+  position: fixed;
+  bottom: 3rem;
+  right: 3rem;
+  background: rgb(0, 0, 0, 0.8);
+  border: 1px solid white;
+  color: white;
+  padding: 1rem 1.5rem;
+  border-radius: 1rem;
+  cursor: pointer;
+  font-family: inherit;
+  text-decoration: none;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  box-shadow: 0 8px 25px rgba(16, 185, 129, 0.3);
+  transition: all 0.5s ease-in-out;
+  z-index: 1000;
+  backdrop-filter: blur(10px);
+}
+
+.sparschweineButton:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 12px 35px rgba(16, 185, 129, 0.4);
+  background: linear-gradient(135deg, #d1fae5 0%, #bfdbfe 100%);
+  border-color: rgba(16, 185, 129, 0.4);
+}
+
+.iconContainer {
+  position: relative;
+  display: inline-block;
+  margin-bottom: 0.5rem;
+}
+
+.heartIcon {
+  color: white;
+  display: block;
+}
+
+.sparkleIcon {
+  position: absolute;
+  top: -4px;
+  right: -4px;
+  color: #3b82f6;
+  animation: sparkle 2s ease-in-out infinite;
+}
+
+@keyframes sparkle {
+  0%,
+  100% {
+    transform: rotate(0deg) scale(1);
+    opacity: 1;
+  }
+  50% {
+    transform: rotate(180deg) scale(1.2);
+    opacity: 0.8;
+  }
+}
+
+.sparschweineTitle {
+  font-size: 1.1rem;
+  font-weight: 700;
+  margin-bottom: 0.25rem;
+  color: white;
+}
+
+.sparschweineSubtitle {
+  font-size: 0.85rem;
+  font-weight: 400;
+  opacity: 0.9;
+  color: white;
+}
+.sparschweineButton:hover .heartIcon {
+  color: #047857;
+}
+
+.sparschweineButton:hover .sparschweineTitle {
+  color: #047857;
+}
+
+.sparschweineButton:hover .sparschweineSubtitle {
+  color: #047857;
+}
+
 /* Podstawowy styl sekcji */
-.section {
+.section2,
+.section3 {
   width: 100%;
   height: calc(100vh - 90px);
   display: flex;
@@ -100,17 +187,12 @@
 }
 
 /* Alternatywne kolory tła dla sekcji */
-.section:nth-child(2) {
-  background-color: rgb(252, 108, 20);
+.section2 {
+  background-color: aliceblue;
 }
 
-.section:nth-child(3) {
+.section3 {
   background-color: rgb(191, 191, 191);
-}
-
-.section:nth-child(4) {
-  background-color: #2c3e50;
-  color: white;
 }
 
 /* Zawartość sekcji */
@@ -133,13 +215,13 @@
 }
 
 .section1Title {
-  font-size: 4vw;
+  font-size: 4.1vw;
   font-weight: 300;
   color: black;
   line-height: 1.4;
-  font-family: "Montserrat", sans-serif;
-  font-optical-sizing: auto;
+  font-family: "Staatliches", sans-serif;
   font-weight: 400;
+  font-style: normal;
   font-style: normal;
   color: white;
   -webkit-text-stroke: 0.5px black;
@@ -241,6 +323,20 @@
   .section1Subtitle {
     font-size: 3vw;
   }
+  .sparschweineButton {
+    top: 7rem;
+    right: 2rem;
+    bottom: auto;
+    padding: 0.8rem 1.2rem;
+  }
+
+  .sparschweineTitle {
+    font-size: 1rem;
+  }
+
+  .sparschweineSubtitle {
+    font-size: 0.8rem;
+  }
 }
 
 /* Responsywność dla telefonów */
@@ -273,6 +369,16 @@
     font-size: 1.1rem;
   }
 }
+
+@media (max-width: 480px) {
+  .sparschweineButton {
+    top: 7rem;
+    left: 50%;
+    transform: translateX(-50%);
+    padding: 0.7rem 1rem;
+  }
+}
+
 /* Fallback dla starszych przeglądarek */
 @supports not (height: 100svh) {
   @media screen and (max-width: 768px) {

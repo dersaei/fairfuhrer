@@ -1,6 +1,6 @@
 {
   "name": "fairguide",
-  "version": "0.9.2",
+  "version": "0.9.8",
   "private": true,
   "scripts": {
     "dev": "next dev",
@@ -11,8 +11,11 @@
   "dependencies": {
     "@directus/sdk": "^19.1.0",
     "@mapbox/mapbox-gl-language": "^1.0.1",
+    "@paypal/paypal-js": "^8.2.0",
+    "@paypal/react-paypal-js": "^8.8.3",
     "@supabase/supabase-js": "^2.49.4",
     "dompurify": "^3.2.6",
+    "lucide-react": "^0.525.0",
     "mapbox-gl": "^3.12.0",
     "next": "15.3.2",
     "react": "^19.0.0",
