@@ -189,10 +189,10 @@ export default function PartnerForm() {
   const handleAdditionalImagesChange = (e: ChangeEvent<HTMLInputElement>) => {
     const files = Array.from(e.target.files || []);
 
-    if (files.length > 3) {
+    if (files.length > 6) {
       setErrors((prev) => ({
         ...prev,
-        additionalImages: "Maximal 3 zusätzliche Bilder",
+        additionalImages: "Maximal 6 zusätzliche Bilder",
       }));
       return;
     }
@@ -605,7 +605,7 @@ export default function PartnerForm() {
 
         <div className={styles.field}>
           <label htmlFor="additionalImages">
-            Zusätzliche Bilder (max. 3, je max. 500KB)
+            Zusätzliche Bilder (max. 6, je max. 500KB)
           </label>
           <div className={styles.fileInputWrapper}>
             {/* Ukryty domyślny input */}

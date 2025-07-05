@@ -144,7 +144,7 @@ export async function POST(request: NextRequest) {
 
     // Dodatkowe zdjęcia
     const additionalImages: string[] = [];
-    for (let i = 0; i < 3; i++) {
+    for (let i = 0; i < 6; i++) {
       const additionalImage = formData.get(`additionalImage${i}`) as File;
       if (additionalImage && additionalImage.size > 0) {
         const uploadResult = await uploadFileToSupabase(
