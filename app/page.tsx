@@ -2,11 +2,12 @@
 import React, { useRef, useEffect, useState } from "react";
 import Map, { type MapRef } from "react-map-gl/mapbox";
 import "mapbox-gl/dist/mapbox-gl.css";
-
+import Image from "next/image";
+import { getPageAssetUrl } from "@/lib/supabase";
 import Link from "next/link";
 import type { StyleSpecification } from "mapbox-gl";
 import styles from "./page.module.css";
-import { Heart, Sparkles } from "lucide-react";
+import { Heart, Sparkles, Star, Users, Headphones, MapPin } from "lucide-react";
 
 // Typ dla naszego stylu atmosfery
 interface AtmosphereStyle extends StyleSpecification {
@@ -172,11 +173,22 @@ export default function HomePage() {
       <main className={styles.main}>
         {/* Przycisk Sparschwein - FIXED POSITION */}
         <Link href="/sparschwein" className={styles.sparschweineButton}>
-          <div className={styles.iconContainer}>
-            <Heart size={20} className={styles.heartIcon} />
-            <Sparkles size={12} className={styles.sparkleIcon} />
+          <div className={styles.titleWithIcon}>
+            <div>
+              <Image
+                src={getPageAssetUrl("sparschwein-small.png")}
+                alt="Sparschwein"
+                width={40}
+                height={40}
+                style={{ objectFit: "contain" }}
+                unoptimized
+              />
+            </div>
+            <div className={styles.iconContainer}>
+              <Heart size={20} className={styles.heartIcon} />
+              <Sparkles size={12} className={styles.sparkleIcon} />
+            </div>
           </div>
-          <div className={styles.sparschweineTitle}>Sparschwein</div>
           <div className={styles.sparschweineSubtitle}>
             Unterstütze unser Netzwerk
           </div>
@@ -221,53 +233,114 @@ export default function HomePage() {
           </Link>
         </div>
 
-        {/* Pozostałe sekcje bez zmian */}
+        {/* SEKCJA 2: Gute Geschichten */}
         <section className={styles.section2}>
-          <div className={styles.sectionContent}>
-            <h2 className={styles.sectionTitle}>
-              Hunderte Gute Geschichten vom Bodensee, Aus Dem Allgäu Und Aus
-              Aller Welt
+          <div className={styles.section2Content}>
+            <h2 className={styles.section2Title}>
+              Hunderte{" "}
+              <span className={styles.section2TitleGradient}>
+                Gute Geschichten
+              </span>{" "}
+              vom Bodensee, Aus Dem Allgäu Und Aus Aller Welt
             </h2>
-            <ul className={styles.sectionText}>
-              <li>
-                jede Stecknadel erzählt über ein einzigartiges Highlight / einen
-                Insidertipp / ein heimisches Angebot / eine regionale Anekdote
-              </li>
-              <li>über 10 Stunden Hörerlebnis</li>
-              <li>spannend, interessant und unterhaltsam</li>
-              <li>basierend auf dem Augenmerk Nachhaltigkeit und Innovation</li>
-            </ul>
+
+            <div className={styles.featuresGrid}>
+              <div className={styles.featureCard}>
+                <div className={styles.featureIcon}>
+                  <MapPin size={24} />
+                </div>
+                <h3 className={styles.featureTitle}>Einzigartige Highlights</h3>
+                <p className={styles.featureDescription}>
+                  Jede Stecknadel erzählt über ein einzigartiges Highlight,
+                  einen Insidertipp oder eine regionale Anekdote
+                </p>
+              </div>
+
+              <div className={styles.featureCard}>
+                <div className={styles.featureIcon}>
+                  <Headphones size={24} />
+                </div>
+                <h3 className={styles.featureTitle}>
+                  Über 10 Stunden Hörerlebnis
+                </h3>
+                <p className={styles.featureDescription}>
+                  Spannend, interessant und unterhaltsam - ein umfassendes
+                  Audioerlebnis für Ihre Entdeckungsreise
+                </p>
+              </div>
+
+              <div className={styles.featureCard}>
+                <div className={styles.featureIcon}>
+                  <Star size={24} />
+                </div>
+                <h3 className={styles.featureTitle}>
+                  Nachhaltigkeit & Innovation
+                </h3>
+                <p className={styles.featureDescription}>
+                  Basierend auf dem Augenmerk für Nachhaltigkeit und Innovation
+                  in unserer wunderschönen Region
+                </p>
+              </div>
+
+              <div className={styles.featureCard}>
+                <div className={styles.featureIcon}>
+                  <Users size={24} />
+                </div>
+                <h3 className={styles.featureTitle}>Heimische Angebote</h3>
+                <p className={styles.featureDescription}>
+                  Entdecken Sie lokale Unternehmen und Initiativen, die unsere
+                  Region zu etwas Besonderem machen
+                </p>
+              </div>
+            </div>
           </div>
         </section>
 
+        {/* SEKCJA 3: Inspirierendes Entdecken */}
         <section className={styles.section3}>
-          <div className={styles.sectionContent}>
-            <h2 className={styles.sectionTitle}>
-              Interessantes, Informatives, Inspirierendes Entdecken
-            </h2>
-            <p className={styles.sectionText}>
-              Staunen Sie über die innovativen & nachhaltigen Angebote unserer
-              Region! Hören Sie ihrer Geschichte zu und werden Sie zu ihrem
-              Besucher...
-            </p>
+          <div className={styles.section3Content}>
+            <div className={styles.section3TextSide}>
+              <h2 className={styles.section3Title}>
+                Interessantes, Informatives, Inspirierendes Entdecken
+              </h2>
+              <p className={styles.section3Text}>
+                Staunen Sie über die innovativen & nachhaltigen Angebote unserer
+                Region! Hören Sie ihrer Geschichte zu und werden Sie zu ihrem
+                Besucher. Entdecken Sie die verborgenen Schätze rund um den
+                Bodensee und im Allgäu.
+              </p>
+            </div>
+
+            <div className={styles.section3ImageSide}>
+              {/* Tutaj możesz dodać obraz lub pozostawić jako placeholder */}
+              <span>🎧 Audio-Guides</span>
+            </div>
           </div>
         </section>
 
-        <section className={styles.section2}>
-          <div className={styles.sectionContent}>
-            <h2 className={styles.sectionTitle}>
+        {/* SEKCJA 4: Partner werden */}
+        <section className={styles.section4}>
+          <div className={styles.section4Content}>
+            <div className={styles.section4Badge}>
+              <Heart size={16} />
+              Partner werden
+            </div>
+
+            <h2 className={styles.section4Title}>
               Lassen Sie Uns Gemeinsam Ihre Gute Geschichte Erzählen!
             </h2>
-            <p className={styles.sectionText}>
+
+            <p className={styles.section4Text}>
               Ihr Betrieb, Ihr Verein o.ä. handelt im Sinne der 17 Ziele für
               nachhaltige Entwicklung (SDGs)? Ihr sinnstiftendes Tun und Ihr
-              Beitrag zu einer besseren und gerechteren Welt / Umwelt hat mehr
+              Beitrag zu einer besseren und gerechteren Welt hat mehr
               Aufmerksamkeit verdient? Dann freuen wir uns, wenn Sie Partner
               unseres Netzwerkes werden und der FAIRFÜHRER Ihr Angebot
               &quot;fairmarkten&quot; darf.
             </p>
-            {/* PRZYCISK PARTNER ZAMIENIONY NA LINK */}
+
             <Link href="/partner-werden" className={styles.partnerButton}>
+              <Users size={20} />
               Partner werden
             </Link>
           </div>
