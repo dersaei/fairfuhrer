@@ -173,24 +173,22 @@ export default function HomePage() {
       <main className={styles.main}>
         {/* Przycisk Sparschwein - FIXED POSITION */}
         <Link href="/sparschwein" className={styles.sparschweineButton}>
+          <div>
+            <Image
+              src={getPageAssetUrl("sparschwein-small.png")}
+              alt="Sparschwein"
+              width={40}
+              height={40}
+              style={{ objectFit: "contain" }}
+              unoptimized
+            />
+          </div>
           <div className={styles.titleWithIcon}>
-            <div>
-              <Image
-                src={getPageAssetUrl("sparschwein-small.png")}
-                alt="Sparschwein"
-                width={40}
-                height={40}
-                style={{ objectFit: "contain" }}
-                unoptimized
-              />
-            </div>
+            <div className={styles.sparschweineSubtitle}>Danke</div>
             <div className={styles.iconContainer}>
               <Heart size={20} className={styles.heartIcon} />
               <Sparkles size={12} className={styles.sparkleIcon} />
             </div>
-          </div>
-          <div className={styles.sparschweineSubtitle}>
-            Unterstütze unser Netzwerk
           </div>
         </Link>
 
