@@ -7,7 +7,7 @@ import { getPageAssetUrl } from "@/lib/supabase";
 import Link from "next/link";
 import type { StyleSpecification } from "mapbox-gl";
 import styles from "./page.module.css";
-import { Heart, Sparkles, Star, Users, Headphones, MapPin } from "lucide-react";
+import { Heart, Star, Users, Headphones, MapPin } from "lucide-react";
 
 // Typ dla naszego stylu atmosfery
 interface AtmosphereStyle extends StyleSpecification {
@@ -175,21 +175,15 @@ export default function HomePage() {
         <Link href="/sparschwein" className={styles.sparschweineButton}>
           <div>
             <Image
-              src={getPageAssetUrl("sparschwein-small.png")}
+              src={getPageAssetUrl("sparschwein-ff.png")}
               alt="Sparschwein"
-              width={40}
-              height={40}
+              width={100}
+              height={100}
               style={{ objectFit: "contain" }}
               unoptimized
             />
           </div>
-          <div className={styles.titleWithIcon}>
-            <div className={styles.sparschweineSubtitle}>Danke</div>
-            <div className={styles.iconContainer}>
-              <Heart size={20} className={styles.heartIcon} />
-              <Sparkles size={12} className={styles.sparkleIcon} />
-            </div>
-          </div>
+          <div className={styles.sparschweineSubtitle}>Danke</div>
         </Link>
 
         {/* Sekcja 1: Mapa */}

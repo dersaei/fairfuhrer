@@ -92,8 +92,6 @@
   position: fixed;
   bottom: 3rem;
   right: 3rem;
-  background-color: rgb(0, 0, 0, 0.7);
-  border: 2px solid white;
   color: white;
   padding: 10px 5px;
   border-radius: 1rem;
@@ -104,10 +102,8 @@
   flex-direction: column;
   align-items: center;
   text-align: center;
-  box-shadow: 0 8px 25px rgba(16, 185, 129, 0.3);
   transition: all 0.5s ease-in-out;
   z-index: 1000;
-  backdrop-filter: blur(10px);
   width: 100px;
 }
 
@@ -118,47 +114,12 @@
   border-color: rgba(16, 185, 129, 0.4);
 }
 
-.iconContainer {
-  position: relative;
-  display: inline-block;
-}
-
-.heartIcon {
-  color: white;
-  display: block;
-}
-
-.sparkleIcon {
-  position: absolute;
-  top: -4px;
-  right: -4px;
-  color: #3b82f6;
-  animation: sparkle 2s ease-in-out infinite;
-}
-
-@keyframes sparkle {
-  0%,
-  100% {
-    transform: rotate(0deg) scale(1);
-    opacity: 1;
-  }
-  50% {
-    transform: rotate(180deg) scale(1.2);
-    opacity: 0.8;
-  }
-}
-
-.titleWithIcon {
-  display: flex;
-  align-items: self-start;
-  gap: 4px;
-}
-
 .sparschweineSubtitle {
   font-size: 1rem;
   font-weight: 400;
   opacity: 1;
   color: white;
+  font-family: "Montserrat", sans-serif;
 }
 
 .sparschweineButton:hover .heartIcon {
