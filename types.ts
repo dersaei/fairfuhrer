@@ -518,3 +518,292 @@ export type {
   ChangeEvent,
   FormEvent,
 } from "react";
+
+// ========================================
+// TYPY DLA PAYPAL PŁATNOŚCI
+// ========================================
+
+// Podstawowe typy dla PayPal donacji
+export interface PayPalDonation {
+  id: string; // UUID w Directus
+  amount: number; // Kwota w centach (np. 1000 = 10.00 EUR)
+  currency: string; // 'EUR' dla niemieckiego rynku
+  paypal_order_id: string; // ID zamówienia z PayPal
+  paypal_payment_id?: string; // ID płatności po capture
+  donor_email?: string; // Email darczyńcy (opcjonalny)
+  donor_name?: string; // Imię darczyńcy (opcjonalny)
+  donor_message?: string; // Wiadomość od darczyńcy
+  status: PayPalDonationStatus;
+  created_at: string; // ISO date string
+  completed_at?: string; // Kiedy płatność została zakończona
+  failed_at?: string; // Kiedy płatność nie powiodła się
+  webhook_verified: boolean; // Czy webhook został zweryfikowany
+  refunded_amount?: number; // Kwota zwrotu (jeśli była)
+  fees_amount?: number; // Opłaty PayPal
+  net_amount?: number; // Kwota netto po opłatach
+}
+
+export type PayPalDonationStatus =
+  | "pending" // Zamówienie utworzone, czeka na płatność
+  | "processing" // Płatność w trakcie przetwarzania
+  | "completed" // Płatność zakończona pomyślnie
+  | "failed" // Płatność nie powiodła się
+  | "cancelled" // Płatność anulowana przez użytkownika
+  | "refunded" // Płatność zwrócona
+  | "disputed"; // Płatność zakwestionowana
+
+// Typy dla PayPal API requests/responses
+export interface PayPalOrderRequest {
+  amount: number; // Kwota w centach
+  currency: string; // Domyślnie 'EUR'
+  donor_email?: string;
+  donor_name?: string;
+  donor_message?: string;
+  return_url?: string; // URL powrotu po płatności
+  cancel_url?: string; // URL anulowania
+}
+
+export interface PayPalOrderResponse {
+  order_id: string;
+  status: string;
+  approval_url?: string; // Link do płatności dla użytkownika
+  donation_id: string; // Nasze ID w Directus
+}
+
+export interface PayPalCaptureRequest {
+  order_id: string;
+  donation_id: string;
+}
+
+export interface PayPalCaptureResponse {
+  payment_id: string;
+  status: string;
+  amount: {
+    value: string;
+    currency_code: string;
+  };
+  fees?: {
+    value: string;
+    currency_code: string;
+  };
+  net_amount?: {
+    value: string;
+    currency_code: string;
+  };
+}
+
+// Typy dla PayPal webhooks
+export interface PayPalWebhookEvent {
+  id: string;
+  event_version: string;
+  create_time: string;
+  resource_type: string;
+  event_type: PayPalWebhookEventType;
+  summary: string;
+  resource: PayPalWebhookResource;
+  links: PayPalLink[];
+}
+
+export type PayPalWebhookEventType =
+  | "CHECKOUT.ORDER.APPROVED" // Zamówienie zatwierdzone
+  | "PAYMENT.CAPTURE.COMPLETED" // Płatność captured
+  | "PAYMENT.CAPTURE.DENIED" // Płatność odrzucona
+  | "PAYMENT.CAPTURE.PENDING" // Płatność pending
+  | "PAYMENT.CAPTURE.REFUNDED" // Płatność zwrócona
+  | "PAYMENT.CAPTURE.REVERSED" // Płatność cofnięta
+  | "CHECKOUT.ORDER.COMPLETED" // Zamówienie zakończone
+  | "CHECKOUT.ORDER.CANCELLED" // Zamówienie anulowane
+  | "PAYMENT.AUTHORIZATION.CREATED" // Autoryzacja utworzona
+  | "PAYMENT.AUTHORIZATION.VOIDED"; // Autoryzacja anulowana
+
+export interface PayPalWebhookResource {
+  id: string;
+  status: string;
+  amount?: {
+    currency_code: string;
+    value: string;
+  };
+  seller_protection?: {
+    status: string;
+    dispute_categories: string[];
+  };
+  final_capture?: boolean;
+  disbursement_mode?: string;
+  links: PayPalLink[];
+  create_time?: string;
+  update_time?: string;
+  // Dodatkowe pola w zależności od typu eventu
+  [key: string]: unknown;
+}
+
+export interface PayPalLink {
+  href: string;
+  rel: string;
+  method: string;
+}
+
+// Typy dla webhook verification
+export interface PayPalWebhookVerificationRequest {
+  auth_algo: string;
+  cert_id: string;
+  transmission_id: string;
+  transmission_sig: string;
+  transmission_time: string;
+  webhook_id: string;
+  webhook_event: PayPalWebhookEvent;
+}
+
+export interface PayPalWebhookVerificationResponse {
+  verification_status: "SUCCESS" | "FAILURE";
+}
+
+// Typy dla webhook processing
+export interface WebhookProcessingResult {
+  success: boolean;
+  donation_id?: string;
+  action_taken: WebhookAction;
+  error_message?: string;
+  processed_at: string;
+}
+
+export type WebhookAction =
+  | "donation_completed"
+  | "donation_failed"
+  | "donation_refunded"
+  | "donation_cancelled"
+  | "status_updated"
+  | "no_action_needed"
+  | "error_processing";
+
+// Typy dla UI komponentów
+export interface PayPalDonationFormData {
+  amount: number; // W EUR (np. 10.50)
+  donor_email?: string;
+  donor_name?: string;
+  donor_message?: string;
+}
+
+export interface PayPalDonationFormErrors {
+  amount?: string;
+  donor_email?: string;
+  donor_name?: string;
+  donor_message?: string;
+  general?: string;
+}
+
+// ✅ POPRAWIONE: PayPalButtonsProps z donorData i onApprove
+export interface PayPalButtonsProps {
+  amount: number; // W centach
+  donorData?: {
+    email?: string;
+    name?: string;
+    message?: string;
+  };
+  onSuccess?: (donation: PayPalDonation) => void;
+  onError?: (error: PayPalError) => void;
+  onCancel?: () => void;
+  onApprove?: () => boolean; // return false to cancel validation
+  disabled?: boolean;
+  style?: PayPalButtonStyle;
+}
+
+export interface PayPalButtonStyle {
+  layout?: "vertical" | "horizontal";
+  color?: "gold" | "blue" | "silver" | "white" | "black";
+  shape?: "rect" | "pill";
+  label?: "paypal" | "checkout" | "buynow" | "pay" | "donate";
+  tagline?: boolean;
+  height?: number;
+}
+
+// Typy dla error handling
+export interface PayPalError {
+  code: PayPalErrorCode;
+  message: string;
+  details?: string;
+  donation_id?: string;
+  original_error?: unknown;
+}
+
+export type PayPalErrorCode =
+  | "INVALID_AMOUNT"
+  | "ORDER_CREATION_FAILED"
+  | "PAYMENT_CAPTURE_FAILED"
+  | "WEBHOOK_VERIFICATION_FAILED"
+  | "DONATION_NOT_FOUND"
+  | "PAYPAL_API_ERROR"
+  | "NETWORK_ERROR"
+  | "VALIDATION_ERROR"
+  | "CONFIGURATION_ERROR"
+  | "RATE_LIMIT_EXCEEDED";
+
+// Typy dla konfiguracji
+export interface PayPalConfig {
+  client_id: string;
+  client_secret: string;
+  mode: "sandbox" | "production";
+  webhook_id: string;
+  currency: string; // Domyślnie 'EUR'
+  min_amount: number; // Minimalna kwota w centach (np. 100 = 1 EUR)
+  max_amount: number; // Maksymalna kwota w centach (np. 100000 = 1000 EUR)
+  return_url: string;
+  cancel_url: string;
+}
+
+// Typy dla Directus integration
+export interface DirectusPayPalDonation {
+  id: string;
+  amount: number;
+  currency: string;
+  paypal_order_id: string;
+  paypal_payment_id?: string;
+  donor_email?: string;
+  donor_name?: string;
+  donor_message?: string;
+  status: PayPalDonationStatus;
+  created_at: string;
+  completed_at?: string;
+  failed_at?: string;
+  webhook_verified: boolean;
+  refunded_amount?: number;
+  fees_amount?: number;
+  net_amount?: number;
+  // Pola audytowe
+  user_created?: string;
+  date_created: string;
+  user_updated?: string;
+  date_updated: string;
+}
+
+// Utility typy
+export type AmountInCents = number;
+export type AmountInEUR = number;
+
+// Typ dla logów webhook
+export interface WebhookLog {
+  id: string;
+  webhook_id: string;
+  event_type: PayPalWebhookEventType;
+  resource_id: string;
+  verification_status: "SUCCESS" | "FAILURE" | "NOT_VERIFIED";
+  processing_result: WebhookProcessingResult;
+  raw_payload: string; // JSON string
+  headers: Record<string, string>;
+  received_at: string;
+  processed_at?: string;
+}
+
+// Typ dla statystyk donacji
+export interface DonationStats {
+  total_amount: number; // W centach
+  total_count: number;
+  successful_count: number;
+  failed_count: number;
+  average_amount: number;
+  currency: string;
+  period_start: string;
+  period_end: string;
+}
+
+// Type guard type
+export type PayPalTypeGuard<T> = (value: unknown) => value is T;

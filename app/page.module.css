@@ -90,10 +90,11 @@
 /* Przycisk Sparschwein */
 .sparschweineButton {
   position: fixed;
-  bottom: 3rem;
-  right: 3rem;
+  top: 7rem;
+  right: 2rem;
+  bottom: auto;
+  padding: 0.8rem 1.2rem;
   color: white;
-  padding: 10px 5px;
   border-radius: 1rem;
   cursor: pointer;
   font-family: inherit;
@@ -435,12 +436,6 @@
   .section1Subtitle {
     font-size: 3vw;
   }
-  .sparschweineButton {
-    top: 7rem;
-    right: 2rem;
-    bottom: auto;
-    padding: 0.8rem 1.2rem;
-  }
 
   .sparschweineSubtitle {
     font-size: 0.8rem;
@@ -474,15 +469,6 @@
   .partnerButton {
     padding: 1rem 2rem;
     font-size: 1.1rem;
-  }
-}
-
-@media (max-width: 480px) {
-  .sparschweineButton {
-    top: 7rem;
-    left: 50%;
-    transform: translateX(-50%);
-    padding: 0.7rem 1rem;
   }
 }
 

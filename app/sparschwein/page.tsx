@@ -1,3 +1,4 @@
+// app/sparschwein/page.tsx - UPROSZCZONA WERSJA
 "use client";
 
 import { useState, useEffect } from "react";
@@ -10,12 +11,20 @@ import {
   Copy,
   CheckCircle,
   CreditCard,
+  CheckCircle2,
+  AlertCircle,
 } from "lucide-react";
+import { PayPalDonationForm } from "@/components/PayPalDonationForm";
+import type { PayPalDonation } from "@/types";
 import styles from "./sparschwein.module.css";
 
 export default function SparschweinsPage() {
   const [isClient, setIsClient] = useState(false);
   const [copiedField, setCopiedField] = useState<string>("");
+  const [donationSuccess, setDonationSuccess] = useState<PayPalDonation | null>(
+    null
+  );
+  const [donationError, setDonationError] = useState<string>("");
 
   useEffect(() => {
     setIsClient(true);
@@ -32,6 +41,32 @@ export default function SparschweinsPage() {
       setCopiedField(field);
       setTimeout(() => setCopiedField(""), 2000);
     });
+  };
+
+  const handleDonationSuccess = (donation: PayPalDonation) => {
+    setDonationSuccess(donation);
+    setDonationError("");
+
+    // Scroll to success message
+    setTimeout(() => {
+      document.getElementById("donation-result")?.scrollIntoView({
+        behavior: "smooth",
+        block: "center",
+      });
+    }, 100);
+  };
+
+  const handleDonationError = (error: string) => {
+    setDonationError(error);
+    setDonationSuccess(null);
+
+    // Scroll to error message
+    setTimeout(() => {
+      document.getElementById("donation-result")?.scrollIntoView({
+        behavior: "smooth",
+        block: "center",
+      });
+    }, 100);
   };
 
   if (!isClient) {
@@ -110,16 +145,68 @@ export default function SparschweinsPage() {
         </div>
       </div>
 
-      {/* Donation Form */}
+      {/* Success/Error Messages */}
+      {(donationSuccess || donationError) && (
+        <div id="donation-result" className={styles.donationResult}>
+          {donationSuccess && (
+            <div className={styles.successMessage}>
+              <CheckCircle2 size={24} />
+              <div>
+                <h3>Vielen Dank für Ihre Spende!</h3>
+                <p>
+                  {/* ✅ POPRAWKA: Wyświetl kwotę w EUR poprawnie */}
+                  Ihre Spende von {(donationSuccess.amount / 100).toFixed(
+                    2
+                  )}{" "}
+                  EUR wurde erfolgreich verarbeitet.
+                </p>
+                {donationSuccess.donor_name && (
+                  <p>Liebe/r {donationSuccess.donor_name}, herzlichen Dank!</p>
+                )}
+              </div>
+            </div>
+          )}
+
+          {donationError && (
+            <div className={styles.errorMessage}>
+              <AlertCircle size={24} />
+              <div>
+                <h3>Fehler bei der Zahlung</h3>
+                <p>{donationError}</p>
+                <p>
+                  Bitte versuchen Sie es erneut oder nutzen Sie die
+                  Banküberweisung.
+                </p>
+              </div>
+            </div>
+          )}
+        </div>
+      )}
+
+      {/* PayPal Donation Section */}
       <div className={styles.donationForm}>
+        <div className={styles.paypalSection}>
+          <PayPalDonationForm
+            onSuccess={handleDonationSuccess}
+            onError={handleDonationError}
+            className={styles.paypalForm}
+          />
+        </div>
+
+        {/* Divider */}
+        <div className={styles.divider}>
+          <span>oder</span>
+        </div>
+
+        {/* Bank Transfer Section */}
         <div className={styles.formCard}>
           <div className={styles.formHeader}>
             <div className={styles.formIcon}>
               <Heart size={32} />
             </div>
-            <h2 className={styles.formTitle}>Werden Sie Teil der Bewegung</h2>
+            <h2 className={styles.formTitle}>Spende per Banküberweisung</h2>
             <p className={styles.formSubtitle}>
-              Jede Spende hilft uns dabei, mehr faire Geschäfte zu vernetzen
+              Traditionelle Überweisung auf unser Konto
             </p>
           </div>
 
@@ -202,12 +289,16 @@ export default function SparschweinsPage() {
         {/* Trust Indicators */}
         <div className={styles.trustIndicators}>
           <p className={styles.trustMessage}>
-            Ihre Spende wird per Banküberweisung verarbeitet
+            Beide Zahlungsmethoden sind sicher und werden vertraulich behandelt
           </p>
           <div className={styles.trustRow}>
             <div className={styles.trustItem}>
               <Heart size={12} />
               <span>100% für den guten Zweck</span>
+            </div>
+            <div className={styles.trustItem}>
+              <Shield size={12} />
+              <span>Sicher & verschlüsselt</span>
             </div>
           </div>
         </div>

@@ -233,7 +233,7 @@ export default function HomePage() {
               <span className={styles.section2TitleGradient}>
                 Gute Geschichten
               </span>{" "}
-              vom Bodensee, Aus Dem Allgäu Und Aus Aller Welt
+              vom Bodensee, aus dem Allgäu und aus aller Welt
             </h2>
 
             <div className={styles.featuresGrid}>

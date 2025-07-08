@@ -6,6 +6,7 @@ import "../styles/reset.css";
 
 import Header from "../components/Header";
 import Footer from "../components/Footer";
+import { PayPalProvider } from "../components/PayPalProvider";
 
 // pozostałe fonty
 const lato = Lato({
@@ -125,9 +126,11 @@ export default function RootLayout({
           ${montserrat.variable}
         `}
       >
-        <Header />
-        <main>{children}</main>
-        <Footer />
+        <PayPalProvider>
+          <Header />
+          <main>{children}</main>
+          <Footer />
+        </PayPalProvider>
 
         {/* Structured Data dla organizacji - używamy Next.js Script */}
         <Script

@@ -40,7 +40,7 @@
 .hero {
   position: relative;
   overflow: hidden;
-  padding: 4rem 1rem 6rem;
+  padding: 4rem 1rem 3rem;
 }
 
 .heroBackground {
@@ -101,7 +101,7 @@
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
   gap: 1.5rem;
-  margin-bottom: 4rem;
+  margin-bottom: 3rem;
 }
 
 .featureCard {
@@ -351,6 +351,117 @@
   align-items: center;
   gap: 0.25rem;
 }
+/* Focus styles for accessibility */
+.copyButton:focus {
+  outline: 2px solid #10b981;
+  outline-offset: 2px;
+}
+/* Dodaj na końcu istniejącego pliku sparschwein.module.css */
+
+/* PayPal Integration Styles */
+.donationResult {
+  max-width: 32rem;
+  margin: 0 auto 2rem;
+  padding: 0 1rem;
+}
+
+.successMessage,
+.errorMessage {
+  display: flex;
+  align-items: flex-start;
+  gap: 1rem;
+  padding: 1.5rem;
+  border-radius: 0.75rem;
+  margin-bottom: 2rem;
+}
+
+.successMessage {
+  background: #ecfdf5;
+  border: 1px solid #a7f3d0;
+  color: #047857;
+}
+
+.errorMessage {
+  background: #fef2f2;
+  border: 1px solid #fecaca;
+  color: #dc2626;
+}
+
+.successMessage h3,
+.errorMessage h3 {
+  margin: 0 0 0.5rem 0;
+  font-size: 1.125rem;
+  font-weight: 600;
+}
+
+.successMessage p,
+.errorMessage p {
+  margin: 0.25rem 0;
+  font-size: 0.875rem;
+  line-height: 1.5;
+}
+
+.paypalSection {
+  background: white;
+  border-radius: 1.5rem;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+  padding: 2rem;
+  border: 1px solid #f3f4f6;
+  margin-bottom: 2rem;
+}
+
+.sectionHeader {
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+.sectionTitle {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #111827;
+  margin-bottom: 0.5rem;
+}
+
+.sectionSubtitle {
+  color: #6b7280;
+  margin: 0;
+  font-size: 0.875rem;
+}
+
+.paypalForm {
+  max-width: 100%;
+}
+
+.divider {
+  text-align: center;
+  margin: 2rem 0;
+  position: relative;
+}
+
+.divider::before {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: #e5e7eb;
+  z-index: 1;
+}
+
+.divider span {
+  background: linear-gradient(135deg, #ecfdf5 0%, #dbeafe 100%);
+  padding: 0 1.5rem;
+  color: #6b7280;
+  font-size: 0.875rem;
+  font-weight: 500;
+  position: relative;
+  z-index: 2;
+}
 
 /* Responsive Design */
 @media (max-width: 768px) {
@@ -362,6 +473,7 @@
     grid-template-columns: 1fr;
     gap: 1rem;
     margin-bottom: 2rem;
+    padding: 0 3vw;
   }
 
   .formCard {
@@ -395,6 +507,27 @@
   .copyButton {
     align-self: flex-end;
   }
+  .paypalSection {
+    padding: 1.5rem;
+    margin: 0 1rem 2rem;
+  }
+
+  .sectionTitle {
+    font-size: 1.25rem;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .successMessage,
+  .errorMessage {
+    flex-direction: column;
+    text-align: center;
+    padding: 1rem;
+  }
+
+  .donationResult {
+    padding: 0 0.5rem;
+  }
 }
 
 @media (max-width: 480px) {
@@ -411,10 +544,11 @@
     text-align: center;
     gap: 0.5rem;
   }
-}
+  .paypalSection {
+    padding: 1rem;
+  }
 
-/* Focus styles for accessibility */
-.copyButton:focus {
-  outline: 2px solid #10b981;
-  outline-offset: 2px;
+  .divider {
+    margin: 1.5rem 0;
+  }
 }
