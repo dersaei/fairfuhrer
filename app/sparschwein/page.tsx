@@ -97,9 +97,10 @@ export default function SparschweinsPage() {
           </h1>
 
           <p className={styles.subtitle}>
-            Wenn Ihnen gefällt, was wir tun, und Sie auch faire Geschäfte
-            unterstützen möchten, helfen Sie uns dabei, ein Netzwerk aufzubauen,
-            das Orte und Menschen verbindet, die mehr erleben wollen.
+            Herzlichen Dank für Deinen / Ihren Beitrag zur Deckung unserer
+            Kosten für: Softwareentwicklung Lizenzen, Hosting, Updates Redaktion
+            und IT. Wir hoffen auf diesem Weg unser Projekt mit Eurer / Ihrer
+            Unterstützung in die Zukunft zu führen &#8211; Danke schön!
           </p>
 
           {/* Feature Cards */}
