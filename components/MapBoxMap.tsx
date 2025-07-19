@@ -205,12 +205,8 @@ export default function MapBoxMap({ places }: MapBoxMapProps) {
 
     setTimeout(() => {
       setIsPanelOpen(false);
-
-      if (mapRef.current && userLocation) {
-        animateToLocation(userLocation, 14, 1800);
-      }
     }, 600);
-  }, [userLocation, animateToLocation]);
+  }, []);
 
   // ========================================
   // GALLERY FUNCTIONS
