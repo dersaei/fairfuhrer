@@ -1,4 +1,4 @@
-// components/PartnerForm.tsx - z nowymi opisami i poprawioną kolejnością sekcji
+// components/PartnerForm.tsx - z dodanym debugowaniem
 "use client";
 
 import { useState, useRef, ChangeEvent, FormEvent } from "react";
@@ -166,6 +166,13 @@ export default function PartnerForm() {
       newErrors.websiteUrl = "Ungültiges Website-Adressformat";
     }
 
+    console.log("Validation results:", {
+      hasErrors: Object.keys(newErrors).length > 0,
+      errors: newErrors,
+      sustainabilityGoalsCount: formData.sustainabilityGoals.length,
+      sustainabilityGoals: formData.sustainabilityGoals,
+    });
+
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
@@ -188,14 +195,26 @@ export default function PartnerForm() {
     }
   };
 
-  // NOWA FUNKCJA do obsługi checkboxów dla celów zrównoważonego rozwoju
+  // POPRAWIONA FUNKCJA do obsługi checkboxów dla celów zrównoważonego rozwoju
   const handleSustainabilityGoalChange = (goalId: number, checked: boolean) => {
-    setFormData((prev) => ({
-      ...prev,
-      sustainabilityGoals: checked
+    console.log(`Sustainability goal ${goalId} changed to ${checked}`);
+
+    setFormData((prev) => {
+      const newGoals = checked
         ? [...prev.sustainabilityGoals, goalId]
-        : prev.sustainabilityGoals.filter((id) => id !== goalId),
-    }));
+        : prev.sustainabilityGoals.filter((id) => id !== goalId);
+
+      console.log("Updated sustainabilityGoals:", newGoals);
+      console.log(
+        "Updated sustainabilityGoals type check:",
+        newGoals.map((id) => typeof id)
+      );
+
+      return {
+        ...prev,
+        sustainabilityGoals: newGoals,
+      };
+    });
 
     // Usuń błąd jeśli wybrano przynajmniej jeden cel
     if (errors.sustainabilityGoals && checked) {
@@ -332,7 +351,16 @@ export default function PartnerForm() {
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
 
+    console.log("Form data before validation:", {
+      sustainabilityGoals: formData.sustainabilityGoals,
+      sustainabilityGoalsLength: formData.sustainabilityGoals.length,
+      sustainabilityGoalsTypes: formData.sustainabilityGoals.map(
+        (id) => typeof id
+      ),
+    });
+
     if (!validateForm()) {
+      console.log("Form validation failed, errors:", errors);
       return;
     }
 
@@ -356,12 +384,30 @@ export default function PartnerForm() {
       submitFormData.append("websiteUrl", formData.websiteUrl);
       submitFormData.append("message", formData.message);
 
-      // NOWE POLA
+      // NOWE POLA z debugowaniem
       submitFormData.append("certificate", formData.certificate);
+
+      console.log(
+        "sustainabilityGoals being sent:",
+        formData.sustainabilityGoals
+      );
+      console.log(
+        "sustainabilityGoals JSON string:",
+        JSON.stringify(formData.sustainabilityGoals)
+      );
+
       submitFormData.append(
         "sustainabilityGoals",
         JSON.stringify(formData.sustainabilityGoals)
       );
+
+      // Sprawdź co faktycznie jest w FormData
+      console.log("FormData entries:");
+      for (const [key, value] of submitFormData.entries()) {
+        if (key === "sustainabilityGoals") {
+          console.log(`${key}:`, value, typeof value);
+        }
+      }
 
       // Dodaj pliki
       if (formData.mainImage) {
@@ -376,18 +422,33 @@ export default function PartnerForm() {
         submitFormData.append("audioFile", formData.audioFile);
       }
 
-      // Wyślij do API
+      // Wyślij do API z timeout
       const response = await fetch("/api/partner-application", {
         method: "POST",
         body: submitFormData,
+        signal: AbortSignal.timeout(30000), // 30 sekund timeout
       });
 
-      const result = await response.json();
+      let result;
+      try {
+        result = await response.json();
+      } catch {
+        // Jeśli nie można sparsować JSON, może to być sukces bez treści
+        if (response.ok) {
+          result = { success: true };
+        } else {
+          throw new Error("Nieprawidłowa odpowiedź serwera");
+        }
+      }
+
+      console.log("Server response:", {
+        status: response.status,
+        ok: response.ok,
+        result: result,
+      });
 
       if (!response.ok) {
-        throw new Error(
-          result.error || "Ein Fehler ist beim Senden aufgetreten"
-        );
+        throw new Error(result?.error || `Błąd serwera: ${response.status}`);
       }
 
       setSubmitSuccess(true);
@@ -418,12 +479,27 @@ export default function PartnerForm() {
       if (audioFileRef.current) audioFileRef.current.value = "";
     } catch (error) {
       console.error("Błąd wysyłania formularza:", error);
-      setErrors({
-        general:
-          error instanceof Error
-            ? error.message
-            : "Ein Fehler ist beim Senden des Formulars aufgetreten. Bitte versuchen Sie es erneut.",
-      });
+
+      // Różne typy błędów
+      if (error instanceof Error) {
+        if (error.name === "TimeoutError") {
+          setErrors({
+            general: "Przekroczono limit czasu. Spróbuj ponownie.",
+          });
+        } else if (error.message.includes("NetworkError")) {
+          setErrors({
+            general: "Błąd połączenia. Sprawdź internet i spróbuj ponownie.",
+          });
+        } else {
+          setErrors({
+            general: error.message,
+          });
+        }
+      } else {
+        setErrors({
+          general: "Nieoczekiwany błąd. Spróbuj ponownie.",
+        });
+      }
     } finally {
       setIsSubmitting(false);
     }
@@ -461,7 +537,7 @@ export default function PartnerForm() {
         <div className={styles.errorGeneral}>{errors.general}</div>
       )}
 
-      {/* 1. ZMIENIONO: "Persönliche Daten" na "Ansprechpartner" */}
+      {/* 1. ANSPRECHPARTNER */}
       <section className={styles.section}>
         <h4>Ansprechpartner</h4>
 
@@ -535,7 +611,7 @@ export default function PartnerForm() {
         </div>
       </section>
 
-      {/* 2. ZMIENIONO: "Informationen zum Ort" na "Informationen des Pins" i "Ortsname" na "Name des Pins" */}
+      {/* 2. INFORMATIONEN DES PINS */}
       <section className={styles.section}>
         <h4>Informationen des Pins</h4>
 
@@ -555,7 +631,6 @@ export default function PartnerForm() {
           )}
         </div>
 
-        {/* 3. ZMIENIONO: "Physische Adresse" na "Adresse" */}
         <div className={styles.field}>
           <label htmlFor="address">Adresse *</label>
           <input
@@ -615,7 +690,7 @@ export default function PartnerForm() {
         </div>
       </section>
 
-      {/* Zdjęcia */}
+      {/* 3. BILDER */}
       <section className={styles.section}>
         <h4>Bilder</h4>
 
@@ -711,7 +786,7 @@ export default function PartnerForm() {
         </div>
       </section>
 
-      {/* 4. ZMIENIONO: "Ortsbeschreibung" na "Beschreibung des Pins" i opis */}
+      {/* 4. BESCHREIBUNG DES PINS */}
       <section className={styles.section}>
         <h4>Beschreibung des Pins *</h4>
 
@@ -736,7 +811,7 @@ export default function PartnerForm() {
         </div>
       </section>
 
-      {/* 5. ZMIENIONO: "Zusätzliche Materialien" na "Audioaufnahme" */}
+      {/* 5. AUDIOAUFNAHME */}
       <section className={styles.section}>
         <h4>Audioaufnahme (optional)</h4>
 
@@ -817,7 +892,7 @@ export default function PartnerForm() {
         </div>
       </section>
 
-      {/* NOWA SEKCJA - Teilnahmebedingungen PRZENIESIONA NA KONIEC */}
+      {/* 6. TEILNAHMEBEDINGUNGEN */}
       <section className={styles.section}>
         <h4>Teilnahmebedingungen</h4>
 
@@ -855,15 +930,20 @@ export default function PartnerForm() {
           <div className={styles.checkboxGrid}>
             {SUSTAINABILITY_GOALS.map((goal) => (
               <div key={goal.id} className={styles.checkboxItem}>
-                <input
-                  type="checkbox"
-                  id={`goal-${goal.id}`}
-                  checked={formData.sustainabilityGoals.includes(goal.id)}
-                  onChange={(e) =>
-                    handleSustainabilityGoalChange(goal.id, e.target.checked)
-                  }
-                  className={styles.checkbox}
-                />
+                <div className={styles.checkboxWrapper}>
+                  <input
+                    type="checkbox"
+                    id={`goal-${goal.id}`}
+                    checked={formData.sustainabilityGoals.includes(goal.id)}
+                    onChange={(e) => {
+                      console.log(
+                        `Checkbox ${goal.id} clicked, checked: ${e.target.checked}`
+                      );
+                      handleSustainabilityGoalChange(goal.id, e.target.checked);
+                    }}
+                    className={styles.checkbox}
+                  />
+                </div>
                 <span className={styles.checkboxNumber}>{goal.id}</span>
                 <label
                   htmlFor={`goal-${goal.id}`}

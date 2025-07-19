@@ -1,4 +1,4 @@
-// app/api/partner-application/route.ts - ZAKTUALIZOWANA WERSJA z nowymi polami
+// app/api/partner-application/route.ts - POPRAWIONA WERSJA
 import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@supabase/supabase-js";
 import type { PartnerSubmissionData } from "@/types";
@@ -54,6 +54,9 @@ async function saveToDirectus(
   data: Partial<PartnerSubmissionData> & { main_image_url: string }
 ) {
   try {
+    // DODAJ LOGOWANIE dla debugowania
+    console.log("Sending to Directus:", JSON.stringify(data, null, 2));
+
     const response = await fetch(`${directusUrl}/items/partner_applications`, {
       method: "POST",
       headers: {
@@ -62,11 +65,13 @@ async function saveToDirectus(
       body: JSON.stringify(data),
     });
 
+    console.log("Directus response status:", response.status);
+
     // Directus może zwracać 204 (sukces bez treści) lub 200/201
     if (response.ok) {
-      // Próbuj sparsować JSON, ale nie rzucaj błędem jeśli nie ma treści
       try {
         const result = await response.json();
+        console.log("Directus response data:", result);
         return result;
       } catch {
         // 204 No Content - to też sukces
@@ -87,6 +92,31 @@ export async function POST(request: NextRequest) {
   try {
     const formData = await request.formData();
 
+    // POPRAWIONE PARSOWANIE sustainability_goals
+    let sustainabilityGoals: number[] = [];
+    const sustainabilityGoalsRaw = formData.get("sustainabilityGoals");
+
+    console.log("Raw sustainabilityGoals from form:", sustainabilityGoalsRaw);
+
+    if (sustainabilityGoalsRaw) {
+      try {
+        const parsed = JSON.parse(sustainabilityGoalsRaw as string);
+        if (Array.isArray(parsed)) {
+          sustainabilityGoals = parsed.filter(
+            (id) => typeof id === "number" && id > 0
+          );
+        }
+      } catch (error) {
+        console.error("Error parsing sustainabilityGoals:", error);
+        return NextResponse.json(
+          { error: "Błąd parsowania celów zrównoważonego rozwoju" },
+          { status: 400 }
+        );
+      }
+    }
+
+    console.log("Parsed sustainabilityGoals:", sustainabilityGoals);
+
     // Wyciągnij dane tekstowe z formularza
     const submissionData: Partial<PartnerSubmissionData> = {
       first_name: formData.get("firstName") as string,
@@ -101,11 +131,9 @@ export async function POST(request: NextRequest) {
       website_url: (formData.get("websiteUrl") as string) || undefined,
       message: (formData.get("message") as string) || undefined,
 
-      // NOWE POLA
+      // POPRAWIONE POLA
       certificate: formData.get("certificate") as string,
-      sustainability_goals: JSON.parse(
-        (formData.get("sustainabilityGoals") as string) || "[]"
-      ),
+      sustainability_goals: sustainabilityGoals,
 
       status: "new" as const,
       created_at: new Date().toISOString(),
@@ -119,11 +147,23 @@ export async function POST(request: NextRequest) {
       !submissionData.place_name ||
       !submissionData.text_content ||
       !submissionData.certificate ||
-      !submissionData.sustainability_goals ||
-      submissionData.sustainability_goals.length === 0
+      !sustainabilityGoals.length
     ) {
+      console.error("Validation failed:", {
+        first_name: !!submissionData.first_name,
+        last_name: !!submissionData.last_name,
+        email: !!submissionData.email,
+        place_name: !!submissionData.place_name,
+        text_content: !!submissionData.text_content,
+        certificate: !!submissionData.certificate,
+        sustainabilityGoals: sustainabilityGoals.length,
+      });
+
       return NextResponse.json(
-        { error: "Brakuje wymaganych pól" },
+        {
+          error:
+            "Brakuje wymaganych pól lub nie wybrano celów zrównoważonego rozwoju",
+        },
         { status: 400 }
       );
     }
@@ -191,16 +231,15 @@ export async function POST(request: NextRequest) {
       }
     }
 
-    // Zapisz do Directus (teraz submissionData ma wszystkie wymagane pola)
+    // Zapisz do Directus
     const savedData = await saveToDirectus(
       submissionData as PartnerSubmissionData
     );
 
-    // POPRAWIONA ODPOWIEDŹ - zawsze zwracaj sukces jeśli dotarło tutaj
     return NextResponse.json(
       {
         success: true,
-        message: "Die Bewerbung wurde erfolgreich gesendet", // NIEMIECKA WIADOMOŚĆ
+        message: "Die Bewerbung wurde erfolgreich gesendet",
         data: savedData,
       },
       { status: 200 }
@@ -209,7 +248,7 @@ export async function POST(request: NextRequest) {
     console.error("API Error:", error);
     return NextResponse.json(
       {
-        error: "Ein Fehler ist beim Verarbeiten der Bewerbung aufgetreten", // NIEMIECKA WIADOMOŚĆ
+        error: "Ein Fehler ist beim Verarbeiten der Bewerbung aufgetreten",
         details: error instanceof Error ? error.message : "Unbekannter Fehler",
       },
       { status: 500 }
