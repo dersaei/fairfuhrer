@@ -2,6 +2,7 @@
 
 import { useRef, useEffect, useState, useCallback } from "react";
 import { AudioPlayer, ImageGallery, PlaceImage } from "./MediaComponents";
+import ExpandableDescription from "./ExpandableDescription"; // ✅ NOWY IMPORT
 import type { Place } from "../types";
 import styles from "./PlaceInfoPanel.module.css";
 
@@ -222,13 +223,13 @@ function PlaceContent({
         <p className={styles.placeAddress}>{place.Adresse}</p>
       </div>
 
+      {/* ✅ ZASTĄPIONE: Stary opis przez nowy komponent ExpandableDescription */}
       {place.Vollbeschreibung && (
         <div className={styles.infoSection}>
-          <div
+          <ExpandableDescription
+            content={place.Vollbeschreibung}
+            maxLines={6}
             className={styles.description}
-            dangerouslySetInnerHTML={{
-              __html: place.Vollbeschreibung,
-            }}
           />
         </div>
       )}
