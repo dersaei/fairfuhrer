@@ -11,6 +11,7 @@ import {
 import mapboxgl from "mapbox-gl";
 import "mapbox-gl/dist/mapbox-gl.css";
 import styles from "./MapBoxMap.module.css";
+import MapSearch from "./MapSearch"; // ✅ IMPORT
 import type { Place } from "../types";
 
 // LAZY LOADING komponentów
@@ -43,7 +44,6 @@ export default function MapBoxMap({ places }: MapBoxMapProps) {
   const [userLocation, setUserLocation] = useState<[number, number] | null>(
     null
   );
-  // ❌ USUNIĘTE: locationError state
   const [mapLoadingState, setMapLoadingState] = useState<
     "idle" | "loading" | "success" | "error"
   >("idle");
@@ -208,6 +208,20 @@ export default function MapBoxMap({ places }: MapBoxMapProps) {
     }, 600);
   }, []);
 
+  // ✅ POPRAWIONY HANDLER DLA WYSZUKIWARKI
+  const handleSearchPlaceSelect = useCallback(
+    (place: Place) => {
+      // Najpierw otwórz panel
+      openPanel(place);
+
+      // Następnie animuj do miejsca (po krótkim opóźnieniu)
+      setTimeout(() => {
+        animateToLocation([place.Lange, place.Breite], 14, 1200);
+      }, 100);
+    },
+    [openPanel, animateToLocation]
+  );
+
   // ========================================
   // GALLERY FUNCTIONS
   // ========================================
@@ -281,7 +295,6 @@ export default function MapBoxMap({ places }: MapBoxMapProps) {
             );
             break;
         }
-        // ❌ USUNIĘTE: setLocationError - błędy tylko w konsoli
       },
       { enableHighAccuracy: true, timeout: 10000, maximumAge: 300000 }
     );
@@ -514,7 +527,12 @@ export default function MapBoxMap({ places }: MapBoxMapProps) {
 
       <div ref={containerRef} className={styles.mapContainer} />
 
-      {/* ❌ USUNIĘTE: Czerwony komunikat błędu lokalizacji */}
+      {/* ✅ WYSZUKIWARKA Z POPRAWNYM HANDLEREM */}
+      <MapSearch
+        places={places}
+        onPlaceSelectAction={handleSearchPlaceSelect}
+        disabled={mapLoadingState !== "success"}
+      />
 
       <Suspense
         fallback={
