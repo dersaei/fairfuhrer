@@ -439,6 +439,11 @@
     font-size: 2rem;
   }
 }
+@media (max-width: 790px) {
+  .section4Subtitle {
+    width: 90%;
+  }
+}
 
 @media (max-width: 640px) {
   .section1Left,
@@ -464,6 +469,10 @@
   .section4Subtitle {
     font-size: 1.1rem;
     margin-bottom: 2rem;
+    width: 95%;
+  }
+  .section4Subtitle h2 {
+    font-size: 1.6rem;
   }
 
   .partnerFormContainer {
