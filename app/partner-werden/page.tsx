@@ -218,9 +218,10 @@ export default async function PartnerWerdenPage() {
           <h2 className={styles.section4Title}>{pageData.section4_title}</h2>
         )}
         {pageData.section4_subtitle && (
-          <p className={styles.section4Subtitle}>
-            {pageData.section4_subtitle}
-          </p>
+          <div
+            className={styles.section4Subtitle}
+            dangerouslySetInnerHTML={{ __html: pageData.section4_subtitle }}
+          />
         )}
 
         <div className={styles.partnerFormContainer}>

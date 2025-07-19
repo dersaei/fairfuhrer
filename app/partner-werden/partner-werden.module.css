@@ -257,11 +257,54 @@
 
 .section4Subtitle {
   font-size: 1.25rem;
-  opacity: 0.9;
   font-family: "Lato", sans-serif;
   font-weight: 400;
   font-style: normal;
-  margin-bottom: 3rem;
+  margin: 5vh auto;
+  width: 70%;
+  background-color: lightcyan;
+  border: 4px dashed black;
+  border-radius: 20px;
+  padding: 4vh 3vw;
+}
+
+/* Style dla WYSIWYG content w section4Subtitle */
+.section4Subtitle p {
+  margin-bottom: 1.2rem;
+  text-align: justify;
+}
+.section4Subtitle h2 {
+  font-size: 2rem;
+  margin-bottom: 2vh;
+}
+
+.section4Subtitle ul,
+.section4Subtitle ol {
+  margin: 1rem auto;
+  width: 90%;
+  text-align: left;
+}
+
+.section4Subtitle li {
+  margin-bottom: 0.5rem;
+}
+
+.section4Subtitle strong {
+  font-weight: 700;
+  text-align: center !important;
+}
+
+.section4Subtitle em {
+  font-style: italic;
+}
+
+.section4Subtitle a {
+  color: rgba(252, 108, 20, 1);
+  text-decoration: underline;
+}
+
+.section4Subtitle a:hover {
+  color: rgba(61, 209, 231, 1);
 }
 
 /* NOWY KONTENER dla formularza partnerskiego */
