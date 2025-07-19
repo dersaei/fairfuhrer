@@ -1,4 +1,4 @@
-// app/api/partner-application/route.ts - POPRAWIONA WERSJA
+// app/api/partner-application/route.ts - ZAKTUALIZOWANA WERSJA z nowymi polami
 import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@supabase/supabase-js";
 import type { PartnerSubmissionData } from "@/types";
@@ -100,17 +100,27 @@ export async function POST(request: NextRequest) {
       text_content: formData.get("textContent") as string,
       website_url: (formData.get("websiteUrl") as string) || undefined,
       message: (formData.get("message") as string) || undefined,
+
+      // NOWE POLA
+      certificate: formData.get("certificate") as string,
+      sustainability_goals: JSON.parse(
+        (formData.get("sustainabilityGoals") as string) || "[]"
+      ),
+
       status: "new" as const,
       created_at: new Date().toISOString(),
     };
 
-    // Walidacja podstawowych danych
+    // Walidacja podstawowych danych (w tym nowe pola)
     if (
       !submissionData.first_name ||
       !submissionData.last_name ||
       !submissionData.email ||
       !submissionData.place_name ||
-      !submissionData.text_content
+      !submissionData.text_content ||
+      !submissionData.certificate ||
+      !submissionData.sustainability_goals ||
+      submissionData.sustainability_goals.length === 0
     ) {
       return NextResponse.json(
         { error: "Brakuje wymaganych pól" },

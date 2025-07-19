@@ -1,4 +1,4 @@
-// components/PartnerForm.tsx - z poprawionymi limitami
+// components/PartnerForm.tsx - z nowymi opisami i poprawioną kolejnością sekcji
 "use client";
 
 import { useState, useRef, ChangeEvent, FormEvent } from "react";
@@ -6,9 +6,9 @@ import type { PartnerFormData, PartnerFormErrors } from "../types";
 import styles from "./PartnerForm.module.css";
 
 // POPRAWIONE LIMITY
-const MAX_MAIN_IMAGE_SIZE = 500 * 1024; // 500KB (było 500MB)
-const MAX_ADDITIONAL_IMAGE_SIZE = 500 * 1024; // 500KB (było 500MB)
-const MAX_AUDIO_SIZE = 1 * 1024 * 1024; // 1MB (było 1GB)
+const MAX_MAIN_IMAGE_SIZE = 500 * 1024; // 500KB
+const MAX_ADDITIONAL_IMAGE_SIZE = 500 * 1024; // 500KB
+const MAX_AUDIO_SIZE = 2 * 1024 * 1024; // 2MB (zwiększone z 1MB)
 const ALLOWED_IMAGE_TYPES = [
   "image/jpeg",
   "image/jpg",
@@ -16,6 +16,27 @@ const ALLOWED_IMAGE_TYPES = [
   "image/webp",
 ];
 const ALLOWED_AUDIO_TYPES = ["audio/mpeg", "audio/mp3"];
+
+// 17 globalnych celów zrównoważonego rozwoju (SDGs)
+const SUSTAINABILITY_GOALS = [
+  { id: 1, name: "Keine Armut" },
+  { id: 2, name: "Kein Hunger" },
+  { id: 3, name: "Gesundheit und Wohlergehen" },
+  { id: 4, name: "Hochwertige Bildung" },
+  { id: 5, name: "Geschlechtergleichstellung" },
+  { id: 6, name: "Sauberes Wasser und Sanitäreinrichtungen" },
+  { id: 7, name: "Bezahlbare und saubere Energie" },
+  { id: 8, name: "Menschenwürdige Arbeit und Wirtschaftswachstum" },
+  { id: 9, name: "Industrie, Innovation und Infrastruktur" },
+  { id: 10, name: "Weniger Ungleichheiten" },
+  { id: 11, name: "Nachhaltige Städte und Gemeinden" },
+  { id: 12, name: "Nachhaltige/r Konsum und Produktion" },
+  { id: 13, name: "Maßnahmen zum Klimaschutz" },
+  { id: 14, name: "Leben unter Wasser" },
+  { id: 15, name: "Leben an Land" },
+  { id: 16, name: "Frieden, Gerechtigkeit und starke Institutionen" },
+  { id: 17, name: "Partnerschaften zur Erreichung der Ziele" },
+];
 
 export default function PartnerForm() {
   const [formData, setFormData] = useState<PartnerFormData>({
@@ -33,6 +54,9 @@ export default function PartnerForm() {
     audioFile: null,
     websiteUrl: "",
     message: "",
+    // NOWE POLA
+    certificate: "",
+    sustainabilityGoals: [],
   });
 
   const [errors, setErrors] = useState<PartnerFormErrors>({});
@@ -100,7 +124,7 @@ export default function PartnerForm() {
     }
 
     if (!formData.placeName.trim()) {
-      newErrors.placeName = "Ortsname ist erforderlich";
+      newErrors.placeName = "Name des Pins ist erforderlich";
     }
 
     if (!formData.address.trim()) {
@@ -123,9 +147,18 @@ export default function PartnerForm() {
       newErrors.mainImage = "Hauptbild ist erforderlich";
     }
 
-    // Sprawdzenie zawartości tekstowej (TERAZ WYMAGANE)
     if (!formData.textContent.trim()) {
-      newErrors.textContent = "Ortsbeschreibung ist erforderlich";
+      newErrors.textContent = "Beschreibung des Pins ist erforderlich";
+    }
+
+    // NOWE WALIDACJE
+    if (!formData.certificate.trim()) {
+      newErrors.certificate = "Zertifikat ist erforderlich";
+    }
+
+    if (formData.sustainabilityGoals.length === 0) {
+      newErrors.sustainabilityGoals =
+        "Mindestens ein Nachhaltigkeitsziel muss ausgewählt werden";
     }
 
     // Sprawdzenie URL (jeśli podany)
@@ -151,6 +184,24 @@ export default function PartnerForm() {
       setErrors((prev) => ({
         ...prev,
         [name]: undefined,
+      }));
+    }
+  };
+
+  // NOWA FUNKCJA do obsługi checkboxów dla celów zrównoważonego rozwoju
+  const handleSustainabilityGoalChange = (goalId: number, checked: boolean) => {
+    setFormData((prev) => ({
+      ...prev,
+      sustainabilityGoals: checked
+        ? [...prev.sustainabilityGoals, goalId]
+        : prev.sustainabilityGoals.filter((id) => id !== goalId),
+    }));
+
+    // Usuń błąd jeśli wybrano przynajmniej jeden cel
+    if (errors.sustainabilityGoals && checked) {
+      setErrors((prev) => ({
+        ...prev,
+        sustainabilityGoals: undefined,
       }));
     }
   };
@@ -241,7 +292,7 @@ export default function PartnerForm() {
     if (file.size > MAX_AUDIO_SIZE) {
       setErrors((prev) => ({
         ...prev,
-        audioFile: "Datei ist zu groß (maximal 1MB)",
+        audioFile: "Datei ist zu groß (maximal 2MB)",
       }));
       return;
     }
@@ -305,6 +356,13 @@ export default function PartnerForm() {
       submitFormData.append("websiteUrl", formData.websiteUrl);
       submitFormData.append("message", formData.message);
 
+      // NOWE POLA
+      submitFormData.append("certificate", formData.certificate);
+      submitFormData.append(
+        "sustainabilityGoals",
+        JSON.stringify(formData.sustainabilityGoals)
+      );
+
       // Dodaj pliki
       if (formData.mainImage) {
         submitFormData.append("mainImage", formData.mainImage);
@@ -350,6 +408,8 @@ export default function PartnerForm() {
         audioFile: null,
         websiteUrl: "",
         message: "",
+        certificate: "",
+        sustainabilityGoals: [],
       });
 
       // Reset file inputs
@@ -401,9 +461,9 @@ export default function PartnerForm() {
         <div className={styles.errorGeneral}>{errors.general}</div>
       )}
 
-      {/* Dane osobowe */}
+      {/* 1. ZMIENIONO: "Persönliche Daten" na "Ansprechpartner" */}
       <section className={styles.section}>
-        <h4>Persönliche Daten</h4>
+        <h4>Ansprechpartner</h4>
 
         <div className={styles.row}>
           <div className={styles.field}>
@@ -475,12 +535,12 @@ export default function PartnerForm() {
         </div>
       </section>
 
-      {/* Dane miejsca */}
+      {/* 2. ZMIENIONO: "Informationen zum Ort" na "Informationen des Pins" i "Ortsname" na "Name des Pins" */}
       <section className={styles.section}>
-        <h4>Informationen zum Ort</h4>
+        <h4>Informationen des Pins</h4>
 
         <div className={styles.field}>
-          <label htmlFor="placeName">Ortsname *</label>
+          <label htmlFor="placeName">Name des Pins *</label>
           <input
             type="text"
             id="placeName"
@@ -495,8 +555,9 @@ export default function PartnerForm() {
           )}
         </div>
 
+        {/* 3. ZMIENIONO: "Physische Adresse" na "Adresse" */}
         <div className={styles.field}>
-          <label htmlFor="address">Physische Adresse *</label>
+          <label htmlFor="address">Adresse *</label>
           <input
             type="text"
             id="address"
@@ -554,14 +615,13 @@ export default function PartnerForm() {
         </div>
       </section>
 
-      {/* Zdjęcia - CUSTOM FILE INPUTS z poprawionymi limitami */}
+      {/* Zdjęcia */}
       <section className={styles.section}>
         <h4>Bilder</h4>
 
         <div className={styles.field}>
           <label htmlFor="mainImage">Hauptbild * (max. 500KB)</label>
           <div className={styles.fileInputWrapper}>
-            {/* Ukryty domyślny input */}
             <input
               type="file"
               id="mainImage"
@@ -571,7 +631,6 @@ export default function PartnerForm() {
               className={styles.hiddenFileInput}
             />
 
-            {/* Custom przycisk */}
             <button
               type="button"
               onClick={() => mainImageRef.current?.click()}
@@ -608,7 +667,6 @@ export default function PartnerForm() {
             Zusätzliche Bilder (max. 6, je max. 500KB)
           </label>
           <div className={styles.fileInputWrapper}>
-            {/* Ukryty domyślny input */}
             <input
               type="file"
               id="additionalImages"
@@ -619,7 +677,6 @@ export default function PartnerForm() {
               className={styles.hiddenFileInput}
             />
 
-            {/* Custom przycisk */}
             <button
               type="button"
               onClick={() => additionalImagesRef.current?.click()}
@@ -654,12 +711,12 @@ export default function PartnerForm() {
         </div>
       </section>
 
-      {/* Zawartość tekstowa */}
+      {/* 4. ZMIENIONO: "Ortsbeschreibung" na "Beschreibung des Pins" i opis */}
       <section className={styles.section}>
-        <h4>Ortsbeschreibung *</h4>
+        <h4>Beschreibung des Pins *</h4>
 
         <div className={styles.field}>
-          <label htmlFor="textContent">Beschreiben Sie Ihren Ort</label>
+          <label htmlFor="textContent">Beschreiben Sie Ihren Pin</label>
           <textarea
             id="textContent"
             name="textContent"
@@ -667,7 +724,7 @@ export default function PartnerForm() {
             onChange={handleInputChange}
             rows={6}
             className={errors.textContent ? styles.inputError : ""}
-            placeholder="Beschreiben Sie Ihren Ort, seine Geschichte, Attraktionen, was ihn besonders macht..."
+            placeholder="Beschreiben Sie Ihren Pin, seine Geschichte, Attraktionen, was ihn besonders macht..."
             maxLength={2000}
           />
           <div className={styles.charCounter}>
@@ -679,14 +736,13 @@ export default function PartnerForm() {
         </div>
       </section>
 
-      {/* Opcjonalne pliki - CUSTOM AUDIO INPUT z poprawionym limitem */}
+      {/* 5. ZMIENIONO: "Zusätzliche Materialien" na "Audioaufnahme" */}
       <section className={styles.section}>
-        <h4>Zusätzliche Materialien (optional)</h4>
+        <h4>Audioaufnahme (optional)</h4>
 
         <div className={styles.field}>
-          <label htmlFor="audioFile">Audio-Datei (MP3, max. 1MB)</label>
+          <label htmlFor="audioFile">Audio-Datei (MP3, max. 2MB)</label>
           <div className={styles.fileInputWrapper}>
-            {/* Ukryty domyślny input */}
             <input
               type="file"
               id="audioFile"
@@ -696,7 +752,6 @@ export default function PartnerForm() {
               className={styles.hiddenFileInput}
             />
 
-            {/* Custom przycisk */}
             <button
               type="button"
               onClick={() => audioFileRef.current?.click()}
@@ -759,6 +814,69 @@ export default function PartnerForm() {
           <div className={styles.charCounter}>
             {formData.message.length}/1000 Zeichen
           </div>
+        </div>
+      </section>
+
+      {/* NOWA SEKCJA - Teilnahmebedingungen PRZENIESIONA NA KONIEC */}
+      <section className={styles.section}>
+        <h4>Teilnahmebedingungen</h4>
+
+        <div className={styles.field}>
+          <label htmlFor="certificate">
+            Bitte geben Sie an, über welche Zertifikate Sie verfügen. *
+          </label>
+          <textarea
+            id="certificate"
+            name="certificate"
+            value={formData.certificate}
+            onChange={handleInputChange}
+            rows={3}
+            className={errors.certificate ? styles.inputError : ""}
+            placeholder="Geben Sie mehrere Zertifikate durch Kommas oder neue Zeilen getrennt ein."
+            maxLength={500}
+          />
+          <div className={styles.charCounter}>
+            {formData.certificate.length}/500 Zeichen
+          </div>
+          {errors.certificate && (
+            <span className={styles.error}>{errors.certificate}</span>
+          )}
+        </div>
+
+        <div className={styles.field}>
+          <label className={styles.checkboxGroupLabel}>
+            Die 17 globalen Nachhaltigkeitsziele *
+          </label>
+          <p className={styles.checkboxGroupSubtitle}>
+            Markieren Sie, welche davon Ihre Tätigkeit bereits erfüllt oder sich
+            darauf vorbereitet, in naher Zukunft zu erfüllen.
+          </p>
+
+          <div className={styles.checkboxGrid}>
+            {SUSTAINABILITY_GOALS.map((goal) => (
+              <div key={goal.id} className={styles.checkboxItem}>
+                <input
+                  type="checkbox"
+                  id={`goal-${goal.id}`}
+                  checked={formData.sustainabilityGoals.includes(goal.id)}
+                  onChange={(e) =>
+                    handleSustainabilityGoalChange(goal.id, e.target.checked)
+                  }
+                  className={styles.checkbox}
+                />
+                <span className={styles.checkboxNumber}>{goal.id}</span>
+                <label
+                  htmlFor={`goal-${goal.id}`}
+                  className={styles.checkboxLabel}
+                >
+                  {goal.name}
+                </label>
+              </div>
+            ))}
+          </div>
+          {errors.sustainabilityGoals && (
+            <span className={styles.error}>{errors.sustainabilityGoals}</span>
+          )}
         </div>
       </section>
 

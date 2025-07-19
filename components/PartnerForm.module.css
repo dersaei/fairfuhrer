@@ -1,4 +1,4 @@
-/* components/PartnerForm.module.css - z custom file inputs */
+/* components/PartnerForm.module.css - z prostymi checkboxami */
 
 .form {
   max-width: 800px;
@@ -80,7 +80,7 @@
   font-size: 0.95rem;
 }
 
-.field input,
+.field input:not([type="checkbox"]),
 .field textarea {
   width: 100%;
   padding: 0.75rem;
@@ -126,7 +126,7 @@
   position: relative;
 }
 
-/* NOWE STYLE DLA CUSTOM FILE INPUTS */
+/* CUSTOM FILE INPUTS */
 
 /* Ukryj domyślny file input */
 .hiddenFileInput {
@@ -223,8 +223,6 @@
   background: #dc2626;
 }
 
-/* POZOSTAŁE STYLE BEZ ZMIAN */
-
 .charCounter {
   text-align: right;
   font-family: "Lato", sans-serif;
@@ -242,6 +240,118 @@
   font-family: "Lato", sans-serif;
   font-size: 0.9rem;
   color: #0369a1;
+}
+
+/* NOWE PROSTE STYLE dla checkboxów */
+
+.checkboxGroupLabel {
+  display: block;
+  font-family: "Lato", sans-serif;
+  font-weight: 600;
+  color: #374151;
+  margin-bottom: 0.5rem;
+  font-size: 0.95rem;
+}
+
+.checkboxGroupSubtitle {
+  font-family: "Lato", sans-serif;
+  font-size: 0.9rem;
+  color: #6b7280;
+  margin-bottom: 1.5rem;
+  font-style: italic;
+  line-height: 1.4;
+}
+
+/* LISTA CHECKBOXÓW - PIONOWA LISTA */
+.checkboxGrid {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+/* CHECKBOX ITEM - WRAPPER Z DWOMA SEKCJAMI */
+.checkboxItem {
+  display: grid;
+  grid-template-columns: 40px 40px 1fr;
+  align-items: center;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  overflow: hidden;
+  min-height: 50px;
+  padding: 5px;
+}
+
+/* SEKCJA CHECKBOX - STAŁA SZEROKOŚĆ */
+.checkboxWrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #f8fafc;
+  height: 100%;
+  padding: 0.5rem;
+}
+
+.checkbox {
+  width: 18px;
+  height: 18px;
+  border: 2px solid #d1d5db;
+  border-radius: 4px;
+  cursor: pointer;
+  position: relative;
+  margin: 0;
+  padding: 0;
+}
+
+.checkbox:focus {
+  outline: none;
+  border-color: rgba(252, 108, 20, 1);
+  box-shadow: 0 0 0 2px rgba(252, 108, 20, 0.2);
+}
+
+.checkbox:checked {
+  background-color: rgba(252, 108, 20, 1);
+  border-color: rgba(252, 108, 20, 1);
+}
+
+.checkbox:checked::after {
+  content: "✓";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  color: white;
+  font-size: 10px;
+  font-weight: bold;
+}
+
+/* CHECKBOX - MAŁY */
+.checkboxNumber {
+  width: 24px;
+  height: 24px;
+  background: rgba(252, 108, 20, 0.1);
+  color: rgba(252, 108, 20, 1);
+  border-radius: 50%;
+  font-weight: 600;
+  font-size: 0.8rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.checkboxItem:has(.checkbox:checked) .checkboxNumber {
+  background: rgba(252, 108, 20, 1);
+  color: white;
+}
+
+/* LABEL - PROSTA NAZWA */
+.checkboxLabel {
+  font-family: "Lato", sans-serif;
+  font-size: 0.9rem;
+  color: #374151;
+  cursor: pointer;
+  margin: 0 !important;
+  line-height: 1.4;
 }
 
 .submitSection {

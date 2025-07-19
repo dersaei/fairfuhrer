@@ -170,7 +170,7 @@ export interface FormValidationErrors {
 }
 
 // ========================================
-// TYPY DLA FORMULARZA PARTNERSKIEGO
+// TYPY DLA FORMULARZA PARTNERSKIEGO - ZAKTUALIZOWANE
 // ========================================
 
 export interface PartnerFormData {
@@ -188,15 +188,19 @@ export interface PartnerFormData {
 
   // Pliki (główne zdjęcie wymagane)
   mainImage: File | null;
-  additionalImages: File[]; // maksymalnie 3
+  additionalImages: File[]; // maksymalnie 6
 
-  // Tekst (wymagany - TYLKO tekst, bez pliku)
+  // Tekst (wymagany)
   textContent: string;
 
   // Opcjonalne
   audioFile: File | null;
   websiteUrl: string;
   message: string;
+
+  // NOWE POLA - Teilnahmebedingungen
+  certificate: string; // Certyfikaty - wymagany (textarea)
+  sustainabilityGoals: number[]; // Wybrane cele zrównoważonego rozwoju - wymagane (min 1)
 }
 
 export interface PartnerFormErrors {
@@ -214,6 +218,9 @@ export interface PartnerFormErrors {
   audioFile?: string;
   websiteUrl?: string;
   message?: string;
+  // NOWE POLA
+  certificate?: string;
+  sustainabilityGoals?: string;
   general?: string;
 }
 
@@ -236,6 +243,10 @@ export interface PartnerSubmissionData {
   // Opcjonalne pola tekstowe
   website_url?: string;
   message?: string;
+
+  // NOWE POLA
+  certificate: string; // Certyfikaty (textarea)
+  sustainability_goals: number[]; // Cele zrównoważonego rozwoju (checkboxes)
 
   // Status
   status: "new" | "review" | "approved" | "rejected";
@@ -263,6 +274,11 @@ export interface PartnerApplication {
   audio_file_url?: string;
   website_url?: string;
   message?: string;
+
+  // NOWE POLA
+  certificate: string; // Certyfikaty
+  sustainability_goals: number[]; // JSON array w Directus
+
   status: "new" | "review" | "approved" | "rejected";
   created_at: string;
   updated_at: string;
