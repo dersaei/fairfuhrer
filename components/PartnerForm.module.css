@@ -1,4 +1,4 @@
-/* components/PartnerForm.module.css - z prostymi checkboxami */
+/* components/PartnerForm.module.css - z nowymi stylami dla radio buttonów */
 
 .form {
   max-width: 800px;
@@ -80,7 +80,7 @@
   font-size: 0.95rem;
 }
 
-.field input:not([type="checkbox"]),
+.field input:not([type="checkbox"]):not([type="radio"]),
 .field textarea {
   width: 100%;
   padding: 0.75rem;
@@ -242,7 +242,7 @@
   color: #0369a1;
 }
 
-/* NOWE PROSTE STYLE dla checkboxów */
+/* STYLE dla checkboxów (istniejące) */
 
 .checkboxGroupLabel {
   display: block;
@@ -352,6 +352,131 @@
   cursor: pointer;
   margin: 0 !important;
   line-height: 1.4;
+}
+
+/* NOWE STYLE dla RADIO BUTTONÓW */
+
+.radioGroupLabel {
+  display: block;
+  font-family: "Lato", sans-serif;
+  font-weight: 600;
+  color: #374151;
+  margin-bottom: 0.5rem;
+  font-size: 0.95rem;
+}
+
+.radioGroupSubtitle {
+  font-family: "Lato", sans-serif;
+  font-size: 0.9rem;
+  color: #6b7280;
+  margin-bottom: 1.5rem;
+  font-style: italic;
+  line-height: 1.4;
+}
+
+/* GRUPA RADIO BUTTONÓW */
+.radioGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+/* RADIO ITEM - POJEDYNCZY ELEMENT */
+.radioItem {
+  display: grid;
+  grid-template-columns: 50px 1fr;
+  align-items: flex-start;
+  border: 2px solid #e5e7eb;
+  border-radius: 12px;
+  padding: 1rem;
+  transition: all 0.2s ease;
+  cursor: pointer;
+}
+
+.radioItem:hover {
+  border-color: rgba(252, 108, 20, 0.3);
+  background-color: #fafafa;
+}
+
+.radioItem:has(.radio:checked) {
+  border-color: rgba(252, 108, 20, 1);
+  background-color: rgba(252, 108, 20, 0.05);
+}
+
+/* RADIO WRAPPER - KONTENER DLA RADIO BUTTON */
+.radioWrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding-top: 0.25rem;
+}
+
+/* RADIO BUTTON */
+.radio {
+  width: 20px;
+  height: 20px;
+  border: 2px solid #d1d5db;
+  border-radius: 50%;
+  cursor: pointer;
+  position: relative;
+  margin: 0;
+  background: white;
+  transition: all 0.2s ease;
+}
+
+.radio:focus {
+  outline: none;
+  border-color: rgba(252, 108, 20, 1);
+  box-shadow: 0 0 0 3px rgba(252, 108, 20, 0.2);
+}
+
+.radio:checked {
+  border-color: rgba(252, 108, 20, 1);
+  background-color: white;
+}
+
+.radio:checked::after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 10px;
+  height: 10px;
+  background: rgba(252, 108, 20, 1);
+  border-radius: 50%;
+}
+
+/* RADIO CONTENT - TEKSTY */
+.radioContent {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.radioLabel {
+  font-family: "Lato", sans-serif;
+  font-size: 1rem;
+  color: #1f2937;
+  cursor: pointer;
+  margin: 0 !important;
+  font-weight: 600;
+}
+
+.radioDescription {
+  font-family: "Lato", sans-serif;
+  font-size: 0.9rem;
+  color: #6b7280;
+  line-height: 1.5;
+  margin: 0;
+}
+
+.radioPrice {
+  font-family: "Montserrat", sans-serif;
+  font-size: 1.1rem;
+  color: rgba(252, 108, 20, 1);
+  font-weight: 700;
+  margin: 0;
 }
 
 .submitSection {
@@ -494,6 +619,34 @@
   .successMessage h3 {
     font-size: 1.5rem;
   }
+
+  /* Radio buttons responsive */
+  .radioItem {
+    grid-template-columns: 40px 1fr;
+    padding: 0.875rem;
+  }
+
+  .radio {
+    width: 18px;
+    height: 18px;
+  }
+
+  .radio:checked::after {
+    width: 8px;
+    height: 8px;
+  }
+
+  .radioLabel {
+    font-size: 0.9rem;
+  }
+
+  .radioDescription {
+    font-size: 0.85rem;
+  }
+
+  .radioPrice {
+    font-size: 1rem;
+  }
 }
 
 @media (max-width: 480px) {
@@ -550,5 +703,34 @@
   .coordinatesHelp {
     font-size: 0.85rem;
     padding: 0.5rem;
+  }
+
+  /* Radio buttons mobile */
+  .radioItem {
+    grid-template-columns: 1fr;
+    gap: 0.75rem;
+    padding: 0.75rem;
+  }
+
+  .radioWrapper {
+    justify-content: flex-start;
+    padding-top: 0;
+  }
+
+  .radioContent {
+    gap: 0.25rem;
+  }
+
+  .radioLabel {
+    font-size: 0.85rem;
+  }
+
+  .radioDescription {
+    font-size: 0.8rem;
+    line-height: 1.4;
+  }
+
+  .radioPrice {
+    font-size: 0.9rem;
   }
 }

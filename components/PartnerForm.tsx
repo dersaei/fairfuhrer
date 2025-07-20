@@ -1,8 +1,13 @@
-// components/PartnerForm.tsx - z dodanym debugowaniem
+// components/PartnerForm.tsx - kompletna wersja z nowymi polami radio button
 "use client";
 
 import { useState, useRef, ChangeEvent, FormEvent } from "react";
-import type { PartnerFormData, PartnerFormErrors } from "../types";
+import type {
+  PartnerFormData,
+  PartnerFormErrors,
+  CertificationStatusOption,
+  CompanySizeOption,
+} from "../types";
 import styles from "./PartnerForm.module.css";
 
 // POPRAWIONE LIMITY
@@ -38,6 +43,52 @@ const SUSTAINABILITY_GOALS = [
   { id: 17, name: "Partnerschaften zur Erreichung der Ziele" },
 ];
 
+// NOWE OPCJE dla statusu certyfikacji
+const CERTIFICATION_STATUS_OPTIONS: CertificationStatusOption[] = [
+  {
+    value: "A",
+    label: "Option A",
+    description:
+      "Das Unternehmen verfügt über ein anerkanntes regionales oder überregionales Zertifikat im Bereich Nachhaltigkeit, Regionalität oder soziale Verantwortung.",
+  },
+  {
+    value: "B",
+    label: "Option B",
+    description:
+      "Es verfolgt nachweislich Ziele wie Nachhaltigkeit, faire Lieferketten oder Regionalität und beabsichtigt, innerhalb von sechs Monaten eine entsprechende Zertifizierung anzustreben.",
+  },
+  {
+    value: "C",
+    label: "Option C",
+    description:
+      "Es ist ein Kleinstbetrieb mit weniger als fünf Mitarbeitenden, der von unserem Team oder unseren regionalen Partner:innen empfohlen wurde.",
+  },
+];
+
+// NOWE OPCJE dla wielkości firmy
+const COMPANY_SIZE_OPTIONS: CompanySizeOption[] = [
+  {
+    value: "micro",
+    label: "Kleinstunternehmen (bis 5 Mitarbeitende)",
+    price: "100 €",
+  },
+  {
+    value: "small",
+    label: "Kleine Unternehmen (bis 50 Mitarbeitende)",
+    price: "200 €",
+  },
+  {
+    value: "medium",
+    label: "Mittlere Unternehmen (bis 500 Mitarbeitende)",
+    price: "300 €",
+  },
+  {
+    value: "ngo",
+    label: "NGOs und gemeinnützige Organisationen",
+    price: "Kostenlos",
+  },
+];
+
 export default function PartnerForm() {
   const [formData, setFormData] = useState<PartnerFormData>({
     firstName: "",
@@ -54,9 +105,12 @@ export default function PartnerForm() {
     audioFile: null,
     websiteUrl: "",
     message: "",
-    // NOWE POLA
+    // ISTNIEJĄCE POLA
     certificate: "",
     sustainabilityGoals: [],
+    // NOWE POLA
+    certificationStatus: "",
+    companySize: "",
   });
 
   const [errors, setErrors] = useState<PartnerFormErrors>({});
@@ -151,7 +205,7 @@ export default function PartnerForm() {
       newErrors.textContent = "Beschreibung des Pins ist erforderlich";
     }
 
-    // NOWE WALIDACJE
+    // ISTNIEJĄCE WALIDACJE
     if (!formData.certificate.trim()) {
       newErrors.certificate = "Zertifikat ist erforderlich";
     }
@@ -159,6 +213,15 @@ export default function PartnerForm() {
     if (formData.sustainabilityGoals.length === 0) {
       newErrors.sustainabilityGoals =
         "Mindestens ein Nachhaltigkeitsziel muss ausgewählt werden";
+    }
+
+    // NOWE WALIDACJE
+    if (!formData.certificationStatus) {
+      newErrors.certificationStatus = "Bitte wählen Sie eine Option aus";
+    }
+
+    if (!formData.companySize) {
+      newErrors.companySize = "Bitte wählen Sie eine Unternehmensgröße aus";
     }
 
     // Sprawdzenie URL (jeśli podany)
@@ -171,6 +234,8 @@ export default function PartnerForm() {
       errors: newErrors,
       sustainabilityGoalsCount: formData.sustainabilityGoals.length,
       sustainabilityGoals: formData.sustainabilityGoals,
+      certificationStatus: formData.certificationStatus,
+      companySize: formData.companySize,
     });
 
     setErrors(newErrors);
@@ -191,6 +256,39 @@ export default function PartnerForm() {
       setErrors((prev) => ({
         ...prev,
         [name]: undefined,
+      }));
+    }
+  };
+
+  // NOWE FUNKCJE dla radio buttons
+  const handleCertificationStatusChange = (value: "A" | "B" | "C") => {
+    setFormData((prev) => ({
+      ...prev,
+      certificationStatus: value,
+    }));
+
+    // Usuń błąd
+    if (errors.certificationStatus) {
+      setErrors((prev) => ({
+        ...prev,
+        certificationStatus: undefined,
+      }));
+    }
+  };
+
+  const handleCompanySizeChange = (
+    value: "micro" | "small" | "medium" | "ngo"
+  ) => {
+    setFormData((prev) => ({
+      ...prev,
+      companySize: value,
+    }));
+
+    // Usuń błąd
+    if (errors.companySize) {
+      setErrors((prev) => ({
+        ...prev,
+        companySize: undefined,
       }));
     }
   };
@@ -357,6 +455,8 @@ export default function PartnerForm() {
       sustainabilityGoalsTypes: formData.sustainabilityGoals.map(
         (id) => typeof id
       ),
+      certificationStatus: formData.certificationStatus,
+      companySize: formData.companySize,
     });
 
     if (!validateForm()) {
@@ -384,7 +484,7 @@ export default function PartnerForm() {
       submitFormData.append("websiteUrl", formData.websiteUrl);
       submitFormData.append("message", formData.message);
 
-      // NOWE POLA z debugowaniem
+      // ISTNIEJĄCE POLA z debugowaniem
       submitFormData.append("certificate", formData.certificate);
 
       console.log(
@@ -401,10 +501,21 @@ export default function PartnerForm() {
         JSON.stringify(formData.sustainabilityGoals)
       );
 
+      // NOWE POLA
+      submitFormData.append(
+        "certificationStatus",
+        formData.certificationStatus
+      );
+      submitFormData.append("companySize", formData.companySize);
+
       // Sprawdź co faktycznie jest w FormData
       console.log("FormData entries:");
       for (const [key, value] of submitFormData.entries()) {
-        if (key === "sustainabilityGoals") {
+        if (
+          key === "sustainabilityGoals" ||
+          key === "certificationStatus" ||
+          key === "companySize"
+        ) {
           console.log(`${key}:`, value, typeof value);
         }
       }
@@ -471,6 +582,9 @@ export default function PartnerForm() {
         message: "",
         certificate: "",
         sustainabilityGoals: [],
+        // NOWE POLA
+        certificationStatus: "",
+        companySize: "",
       });
 
       // Reset file inputs
@@ -918,6 +1032,50 @@ export default function PartnerForm() {
           )}
         </div>
 
+        {/* NOWE POLE 1 - Status certyfikacji */}
+        <div className={styles.field}>
+          <label className={styles.radioGroupLabel}>
+            Zertifizierungsstatus *
+          </label>
+          <p className={styles.radioGroupSubtitle}>
+            Bitte wählen Sie eine Option aus:
+          </p>
+
+          <div className={styles.radioGroup}>
+            {CERTIFICATION_STATUS_OPTIONS.map((option) => (
+              <div key={option.value} className={styles.radioItem}>
+                <div className={styles.radioWrapper}>
+                  <input
+                    type="radio"
+                    id={`cert-${option.value}`}
+                    name="certificationStatus"
+                    value={option.value}
+                    checked={formData.certificationStatus === option.value}
+                    onChange={() =>
+                      handleCertificationStatusChange(option.value)
+                    }
+                    className={styles.radio}
+                  />
+                </div>
+                <div className={styles.radioContent}>
+                  <label
+                    htmlFor={`cert-${option.value}`}
+                    className={styles.radioLabel}
+                  >
+                    <strong>{option.label}</strong>
+                  </label>
+                  <p className={styles.radioDescription}>
+                    {option.description}
+                  </p>
+                </div>
+              </div>
+            ))}
+          </div>
+          {errors.certificationStatus && (
+            <span className={styles.error}>{errors.certificationStatus}</span>
+          )}
+        </div>
+
         <div className={styles.field}>
           <label className={styles.checkboxGroupLabel}>
             Die 17 globalen Nachhaltigkeitsziele *
@@ -956,6 +1114,44 @@ export default function PartnerForm() {
           </div>
           {errors.sustainabilityGoals && (
             <span className={styles.error}>{errors.sustainabilityGoals}</span>
+          )}
+        </div>
+
+        {/* NOWE POLE 2 - Wielkość firmy */}
+        <div className={styles.field}>
+          <label className={styles.radioGroupLabel}>Unternehmensgröße *</label>
+          <p className={styles.radioGroupSubtitle}>
+            Bitte wählen Sie die passende Kategorie für Ihr Unternehmen:
+          </p>
+
+          <div className={styles.radioGroup}>
+            {COMPANY_SIZE_OPTIONS.map((option) => (
+              <div key={option.value} className={styles.radioItem}>
+                <div className={styles.radioWrapper}>
+                  <input
+                    type="radio"
+                    id={`size-${option.value}`}
+                    name="companySize"
+                    value={option.value}
+                    checked={formData.companySize === option.value}
+                    onChange={() => handleCompanySizeChange(option.value)}
+                    className={styles.radio}
+                  />
+                </div>
+                <div className={styles.radioContent}>
+                  <label
+                    htmlFor={`size-${option.value}`}
+                    className={styles.radioLabel}
+                  >
+                    <strong>{option.label}</strong>
+                  </label>
+                  <p className={styles.radioPrice}>{option.price}</p>
+                </div>
+              </div>
+            ))}
+          </div>
+          {errors.companySize && (
+            <span className={styles.error}>{errors.companySize}</span>
           )}
         </div>
       </section>

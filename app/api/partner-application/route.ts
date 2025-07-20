@@ -1,4 +1,4 @@
-// app/api/partner-application/route.ts - POPRAWIONA WERSJA
+// app/api/partner-application/route.ts - POPRAWIONA WERSJA z nowymi polami
 import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@supabase/supabase-js";
 import type { PartnerSubmissionData } from "@/types";
@@ -117,6 +117,36 @@ export async function POST(request: NextRequest) {
 
     console.log("Parsed sustainabilityGoals:", sustainabilityGoals);
 
+    // NOWE POLA - walidacja
+    const certificationStatus = formData.get("certificationStatus") as string;
+    const companySize = formData.get("companySize") as string;
+
+    console.log("New fields:", {
+      certificationStatus,
+      companySize,
+    });
+
+    // Walidacja nowych pól
+    if (
+      !certificationStatus ||
+      !["A", "B", "C"].includes(certificationStatus)
+    ) {
+      return NextResponse.json(
+        { error: "Nieprawidłowy status certyfikacji" },
+        { status: 400 }
+      );
+    }
+
+    if (
+      !companySize ||
+      !["micro", "small", "medium", "ngo"].includes(companySize)
+    ) {
+      return NextResponse.json(
+        { error: "Nieprawidłowa wielkość firmy" },
+        { status: 400 }
+      );
+    }
+
     // Wyciągnij dane tekstowe z formularza
     const submissionData: Partial<PartnerSubmissionData> = {
       first_name: formData.get("firstName") as string,
@@ -131,9 +161,13 @@ export async function POST(request: NextRequest) {
       website_url: (formData.get("websiteUrl") as string) || undefined,
       message: (formData.get("message") as string) || undefined,
 
-      // POPRAWIONE POLA
+      // ISTNIEJĄCE POLA
       certificate: formData.get("certificate") as string,
       sustainability_goals: sustainabilityGoals,
+
+      // NOWE POLA
+      certification_status: certificationStatus as "A" | "B" | "C",
+      company_size: companySize as "micro" | "small" | "medium" | "ngo",
 
       status: "new" as const,
       created_at: new Date().toISOString(),
@@ -147,7 +181,9 @@ export async function POST(request: NextRequest) {
       !submissionData.place_name ||
       !submissionData.text_content ||
       !submissionData.certificate ||
-      !sustainabilityGoals.length
+      !sustainabilityGoals.length ||
+      !submissionData.certification_status ||
+      !submissionData.company_size
     ) {
       console.error("Validation failed:", {
         first_name: !!submissionData.first_name,
@@ -157,12 +193,14 @@ export async function POST(request: NextRequest) {
         text_content: !!submissionData.text_content,
         certificate: !!submissionData.certificate,
         sustainabilityGoals: sustainabilityGoals.length,
+        certification_status: !!submissionData.certification_status,
+        company_size: !!submissionData.company_size,
       });
 
       return NextResponse.json(
         {
           error:
-            "Brakuje wymaganych pól lub nie wybrano celów zrównoważonego rozwoju",
+            "Brakuje wymaganych pól lub nie wybrano celów zrównoważonego rozwoju, lub nie wybrano opcji certyfikacji/wielkości firmy",
         },
         { status: 400 }
       );

@@ -1,4 +1,4 @@
-// types/index.ts - Poprawki dla pustych obiektów
+// types/index.ts - Kompletna wersja z nowymi polami dla formularza partnerskiego
 
 // ========================================
 // PODSTAWOWE TYPY DLA MAP I LOKALIZACJI
@@ -170,7 +170,7 @@ export interface FormValidationErrors {
 }
 
 // ========================================
-// TYPY DLA FORMULARZA PARTNERSKIEGO - ZAKTUALIZOWANE
+// TYPY DLA FORMULARZA PARTNERSKIEGO - ZAKTUALIZOWANE Z NOWYMI POLAMI
 // ========================================
 
 export interface PartnerFormData {
@@ -198,9 +198,13 @@ export interface PartnerFormData {
   websiteUrl: string;
   message: string;
 
-  // NOWE POLA - Teilnahmebedingungen
+  // Teilnahmebedingungen (wymagane)
   certificate: string; // Certyfikaty - wymagany (textarea)
   sustainabilityGoals: number[]; // Wybrane cele zrównoważonego rozwoju - wymagane (min 1)
+
+  // NOWE POLA (wymagane)
+  certificationStatus: "A" | "B" | "C" | ""; // Radio button - wymagane
+  companySize: "micro" | "small" | "medium" | "ngo" | ""; // Radio button - wymagane
 }
 
 export interface PartnerFormErrors {
@@ -218,9 +222,12 @@ export interface PartnerFormErrors {
   audioFile?: string;
   websiteUrl?: string;
   message?: string;
-  // NOWE POLA
+  // Teilnahmebedingungen
   certificate?: string;
   sustainabilityGoals?: string;
+  // NOWE POLA
+  certificationStatus?: string;
+  companySize?: string;
   general?: string;
 }
 
@@ -244,9 +251,13 @@ export interface PartnerSubmissionData {
   website_url?: string;
   message?: string;
 
-  // NOWE POLA
+  // Teilnahmebedingungen
   certificate: string; // Certyfikaty (textarea)
   sustainability_goals: number[]; // Cele zrównoważonego rozwoju (checkboxes)
+
+  // NOWE POLA
+  certification_status: "A" | "B" | "C"; // Status certyfikacji (radio)
+  company_size: "micro" | "small" | "medium" | "ngo"; // Wielkość firmy (radio)
 
   // Status
   status: "new" | "review" | "approved" | "rejected";
@@ -275,9 +286,13 @@ export interface PartnerApplication {
   website_url?: string;
   message?: string;
 
-  // NOWE POLA
+  // Teilnahmebedingungen
   certificate: string; // Certyfikaty
   sustainability_goals: number[]; // JSON array w Directus
+
+  // NOWE POLA
+  certification_status: "A" | "B" | "C"; // Status certyfikacji
+  company_size: "micro" | "small" | "medium" | "ngo"; // Wielkość firmy
 
   status: "new" | "review" | "approved" | "rejected";
   created_at: string;
@@ -285,6 +300,20 @@ export interface PartnerApplication {
   admin_notes?: string;
   reviewed_by?: string;
   reviewed_at?: string;
+}
+
+// NOWE TYPY dla opcji wyboru w formularzu
+
+export interface CertificationStatusOption {
+  value: "A" | "B" | "C";
+  label: string;
+  description: string;
+}
+
+export interface CompanySizeOption {
+  value: "micro" | "small" | "medium" | "ngo";
+  label: string;
+  price: string;
 }
 
 // ========================================
