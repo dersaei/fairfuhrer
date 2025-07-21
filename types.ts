@@ -360,11 +360,7 @@ export interface PartnerPageContent {
   id: number;
   page_slug: string;
 
-  // SEKCJA 1 - Grid dwukolumnowy + KOLORY
-  section1_left_title?: string;
-  section1_left_text?: string;
-  section1_left_background_color?: string;
-  section1_left_text_color?: string;
+  // SEKCJA 1
 
   section1_right_title?: string;
   section1_right_text?: string;
@@ -372,14 +368,6 @@ export interface PartnerPageContent {
   section1_right_background_color?: string;
   section1_right_text_color?: string;
   section1_right_title_color?: string;
-
-  // SEKCJA 2 - Tekst na tle obrazu + KOLORY
-  section2_title?: string;
-  section2_text?: string;
-  section2_background_image?: string;
-  section2_overlay_color?: string;
-  section2_overlay_opacity?: number; // 0-1
-  section2_text_color?: string;
 
   // SEKCJA 3 - Tekst + YouTube video + KOLORY
   section3_left_title?: string;

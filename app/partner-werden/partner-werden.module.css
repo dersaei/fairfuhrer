@@ -1,4 +1,4 @@
-/* app/partner-werden/partner-werden.module.css - zaktualizowana wersja */
+/* app/partner-werden/partner-werden.module.css - zmodyfikowana wersja */
 
 .container {
   min-height: 100vh;
@@ -13,31 +13,19 @@
   box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
 }
 
-/* SEKCJA 1 - Grid dwukolumnowy - USUNIĘTE stałe kolory */
+/* SEKCJA 1 - ZMODYFIKOWANA: Na całą szerokość, wyśrodkowana */
 .section1 {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
   min-height: 100vh;
-  gap: 0;
-}
-
-.section1Left {
-  padding: 4vh 4vw;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-}
-
-.section1Right {
-  padding: 4vh 4vw;
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
+  text-align: center;
+  padding: 4vh 4vw;
 }
 
 .section1Title {
-  font-size: 2rem;
+  font-size: 4rem;
   margin-bottom: 2rem;
   line-height: 1.2;
   font-family: "Montserrat", sans-serif;
@@ -47,53 +35,19 @@
 }
 
 .section1Text {
-  font-size: 1.125rem;
+  font-size: 2rem;
   line-height: 1.7;
   margin-bottom: 2rem;
   font-family: "Lato", sans-serif;
   font-weight: 400;
   font-style: normal;
-  text-align: justify;
-}
-
-.section1RightTitle {
-  font-size: 4vw;
-  margin-bottom: 1.5rem;
-  line-height: 1.2;
-  text-align: center;
-  font-family: "Montserrat", sans-serif;
-  font-optical-sizing: auto;
-  font-weight: 700;
-  font-style: normal;
-}
-
-.section1TextRight {
-  font-size: 3vw;
-  font-weight: 400;
+  max-width: 800px;
   text-transform: uppercase;
-  text-align: center;
 }
 
-/* Style dla WYSIWYG content */
+/* Style dla WYSIWYG content w sekcji 1 */
 .section1Text p {
   margin-bottom: 1rem;
-}
-
-.section1Text ul,
-.section1Text ol {
-  margin: 1rem 0;
-  padding-left: 1.5rem;
-  list-style: disc;
-  text-align: justify;
-}
-
-.section1Text ol {
-  list-style: decimal;
-}
-
-.section1Text li {
-  margin-bottom: 0.5rem;
-  display: list-item;
 }
 
 .section1Text strong {
@@ -108,78 +62,17 @@
   margin-top: 2rem;
 }
 
-.section1SmallImage {
+.section1Image {
   border-radius: 12px;
   width: 100%;
   height: auto;
   max-width: 300px;
 }
 
-/* SEKCJA 2 - Tekst na tle obrazu */
-.section2 {
-  min-height: 60vh;
-  background-size: cover;
-  background-position: center;
-  background-attachment: fixed;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  position: relative;
-}
+/* SEKCJA 2 - USUNIĘTA CAŁKOWICIE */
+/* Wszystkie style dla .section2* zostały usunięte */
 
-.section2Overlay {
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-}
-
-.section2Content {
-  position: relative;
-  z-index: 1;
-  text-align: center;
-  max-width: 800px;
-  padding: 3rem;
-}
-
-.section2Title {
-  font-size: 2.5rem;
-  font-weight: 700;
-  margin-bottom: 2rem;
-  font-family: "Montserrat", sans-serif;
-  font-optical-sizing: auto;
-  font-style: normal;
-}
-
-.section2Text {
-  font-size: 1.25rem;
-  line-height: 1.7;
-  font-family: "Lato", sans-serif;
-  font-weight: 400;
-  font-style: normal;
-}
-
-/* Style dla WYSIWYG w sekcji 2 */
-.section2Text p {
-  margin-bottom: 1rem;
-}
-
-.section2Text ul,
-.section2Text ol {
-  margin: 1rem 0;
-  padding-left: 1.5rem;
-}
-
-.section2Text li {
-  margin-bottom: 0.5rem;
-}
-
-.section2Text strong {
-  font-weight: 700;
-}
-
-/* SEKCJA 3 - Tekst + YouTube - USUNIĘTE stałe kolory */
+/* SEKCJA 3 - Tekst + YouTube (bez zmian w stylu) */
 .section3 {
   display: grid;
   grid-template-columns: 1fr 1.2fr;
@@ -240,7 +133,7 @@
   padding: 2rem;
 }
 
-/* SEKCJA 4 - NOWY FORMULARZ PARTNERSKI - USUNIĘTE stałe kolory */
+/* SEKCJA 4 - FORMULARZ PARTNERSKI (bez zmian) */
 .section4 {
   padding: 4rem 2rem;
   text-align: center;
@@ -307,14 +200,13 @@
   color: rgba(61, 209, 231, 1);
 }
 
-/* NOWY KONTENER dla formularza partnerskiego */
 .partnerFormContainer {
   max-width: 900px;
   margin: 0 auto;
-  text-align: left; /* Reset text-align dla formularza */
+  text-align: left;
 }
 
-/* SEKCJA 5 - Końcowa - USUNIĘTE stałe kolory */
+/* SEKCJA 5 - Końcowa (bez zmian) */
 .section5 {
   padding: 4rem 4rem 2rem 4rem;
   text-align: center;
@@ -377,20 +269,14 @@
   max-width: 300px;
 }
 
-/* RESPONSIVE DESIGN */
+/* RESPONSIVE DESIGN - ZMODYFIKOWANE */
 @media (max-width: 968px) {
-  .section1 {
-    grid-template-columns: 1fr;
-  }
-
-  .section1Left,
-  .section1Right {
-    padding: 3rem 2rem;
-    min-height: 50vh;
-  }
-
   .section1Title {
-    font-size: 2.5rem;
+    font-size: 3rem;
+  }
+
+  .section1Text {
+    font-size: 1.5rem;
   }
 
   .section3 {
@@ -400,14 +286,6 @@
   }
 
   .section3Title {
-    font-size: 2rem;
-  }
-
-  .section2Content {
-    padding: 2rem;
-  }
-
-  .section2Title {
     font-size: 2rem;
   }
 
@@ -430,15 +308,8 @@
   .section5Title {
     font-size: 2rem;
   }
-
-  .section1RightTitle {
-    font-size: 3rem;
-  }
-
-  .section1TextRight {
-    font-size: 2rem;
-  }
 }
+
 @media (max-width: 790px) {
   .section4Subtitle {
     width: 90%;
@@ -446,13 +317,16 @@
 }
 
 @media (max-width: 640px) {
-  .section1Left,
-  .section1Right {
+  .section1 {
     padding: 2rem 1rem;
   }
 
   .section1Title {
     font-size: 2rem;
+  }
+
+  .section1Text {
+    font-size: 1.2rem;
   }
 
   .section3,
@@ -471,6 +345,7 @@
     margin-bottom: 2rem;
     width: 95%;
   }
+
   .section4Subtitle h2 {
     font-size: 1.6rem;
   }

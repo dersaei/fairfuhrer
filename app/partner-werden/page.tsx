@@ -1,10 +1,10 @@
-// app/partner-werden/page.tsx - zaktualizowana wersja z nowym formularzem
+// app/partner-werden/page.tsx - zmodyfikowana wersja
 import { Metadata } from "next";
 import Image from "next/image";
 import type { PartnerPageContent } from "../../types";
 import { getPageAssetPath } from "../../lib/supabase";
 import YouTubeEmbed from "../../components/YouTubeEmbed";
-import PartnerForm from "../../components/PartnerForm"; // NOWY FORMULARZ
+import PartnerForm from "../../components/PartnerForm";
 import styles from "./partner-werden.module.css";
 
 export const revalidate = 86400;
@@ -62,110 +62,50 @@ export default async function PartnerWerdenPage() {
 
   return (
     <div className={styles.container}>
-      {/* SEKCJA 1 - Grid dwukolumnowy z dynamicznymi kolorami */}
-      <section className={styles.section1}>
-        <div
-          className={styles.section1Left}
-          style={{
-            backgroundColor:
-              pageData.section1_left_background_color || undefined,
-            color: pageData.section1_left_text_color || undefined,
-          }}
-        >
-          {pageData.section1_left_title && (
-            <h1 className={styles.section1Title}>
-              {pageData.section1_left_title}
-            </h1>
-          )}
-          {pageData.section1_left_text && (
-            <div
-              className={styles.section1Text}
-              dangerouslySetInnerHTML={{ __html: pageData.section1_left_text }}
-            />
-          )}
-        </div>
-
-        <div
-          className={styles.section1Right}
-          style={{
-            backgroundColor:
-              pageData.section1_right_background_color || undefined,
-            color: pageData.section1_right_text_color || undefined,
-          }}
-        >
-          {pageData.section1_right_title && (
-            <h2
-              className={styles.section1RightTitle}
-              style={{
-                color:
-                  pageData.section1_right_title_color ||
-                  pageData.section1_right_text_color ||
-                  undefined,
-              }}
-            >
-              {pageData.section1_right_title}
-            </h2>
-          )}
-          {pageData.section1_right_text && (
-            <div
-              className={styles.section1TextRight}
-              dangerouslySetInnerHTML={{ __html: pageData.section1_right_text }}
-            />
-          )}
-          {pageData.section1_right_image && (
-            <div className={styles.section1ImageContainer}>
-              <Image
-                src={getPageAssetPath(pageData.section1_right_image)}
-                alt="Partnerschaft"
-                width={300}
-                height={200}
-                className={styles.section1SmallImage}
-              />
-            </div>
-          )}
-        </div>
-      </section>
-
-      {/* SEKCJA 2 - Tekst na tle obrazu z dynamicznym overlay */}
-      {pageData.section2_background_image && (
-        <section
-          className={styles.section2}
-          style={{
-            backgroundImage: `url(${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/media-files/assets/pages/${pageData.section2_background_image})`,
-          }}
-        >
-          {/* Dynamiczny overlay */}
-          <div
-            className={styles.section2Overlay}
+      {/* SEKCJA 1 - ZMODYFIKOWANA: Teraz na całą szerokość */}
+      <section
+        className={styles.section1}
+        style={{
+          backgroundColor:
+            pageData.section1_right_background_color || undefined,
+          color: pageData.section1_right_text_color || undefined,
+        }}
+      >
+        {pageData.section1_right_title && (
+          <h1
+            className={styles.section1Title}
             style={{
-              backgroundColor:
-                pageData.section2_overlay_color || "rgba(0, 0, 0, 0.5)",
-              opacity: pageData.section2_overlay_opacity || 0.5,
-            }}
-          />
-
-          <div
-            className={styles.section2Content}
-            style={{
-              color: pageData.section2_text_color || undefined,
+              color:
+                pageData.section1_right_title_color ||
+                pageData.section1_right_text_color ||
+                undefined,
             }}
           >
-            {pageData.section2_title && (
-              <h2 className={styles.section2Title}>
-                {pageData.section2_title}
-              </h2>
-            )}
-            {pageData.section2_text && (
-              <div
-                className={styles.section2Text}
-                dangerouslySetInnerHTML={{ __html: pageData.section2_text }}
-              />
-            )}
+            {pageData.section1_right_title}
+          </h1>
+        )}
+        {pageData.section1_right_text && (
+          <div
+            className={styles.section1Text}
+            dangerouslySetInnerHTML={{ __html: pageData.section1_right_text }}
+          />
+        )}
+        {pageData.section1_right_image && (
+          <div className={styles.section1ImageContainer}>
+            <Image
+              src={getPageAssetPath(pageData.section1_right_image)}
+              alt="Partnerschaft"
+              width={300}
+              height={200}
+              className={styles.section1Image}
+            />
           </div>
-        </section>
-      )}
+        )}
+      </section>
 
-      {/* SEKCJA 3 - Tekst + YouTube z dynamicznymi kolorami */}
+      {/* SEKCJA 2 - USUNIĘTA CAŁKOWICIE */}
+
+      {/* SEKCJA 3 - Tekst + YouTube (bez zmian, ale numeracja przesunięta) */}
       <section
         className={styles.section3}
         style={{
@@ -206,7 +146,7 @@ export default async function PartnerWerdenPage() {
         </div>
       </section>
 
-      {/* SEKCJA 4 - NOWY FORMULARZ PARTNERSKI z dynamicznymi kolorami */}
+      {/* SEKCJA 4 - FORMULARZ PARTNERSKI (bez zmian) */}
       <section
         className={styles.section4}
         style={{
@@ -229,7 +169,7 @@ export default async function PartnerWerdenPage() {
         </div>
       </section>
 
-      {/* SEKCJA 5 - Końcowa z dynamicznymi kolorami */}
+      {/* SEKCJA 5 - Końcowa (bez zmian) */}
       {(pageData.section5_title || pageData.section5_text) && (
         <section
           className={styles.section5}
