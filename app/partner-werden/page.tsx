@@ -96,7 +96,7 @@ export default async function PartnerWerdenPage() {
               src={getPageAssetPath(pageData.section1_right_image)}
               alt="Partnerschaft"
               width={300}
-              height={200}
+              height={90}
               className={styles.section1Image}
             />
           </div>

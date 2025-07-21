@@ -155,8 +155,6 @@ export async function POST(request: NextRequest) {
       phone: formData.get("phone") as string,
       place_name: formData.get("placeName") as string,
       address: formData.get("address") as string,
-      latitude: parseFloat(formData.get("latitude") as string),
-      longitude: parseFloat(formData.get("longitude") as string),
       text_content: formData.get("textContent") as string,
       website_url: (formData.get("websiteUrl") as string) || undefined,
       message: (formData.get("message") as string) || undefined,

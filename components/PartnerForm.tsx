@@ -1,4 +1,4 @@
-// components/PartnerForm.tsx - kompletna wersja z nowymi polami radio button
+// components/PartnerForm.tsx - kompletna wersja BEZ pól współrzędnych
 "use client";
 
 import { useState, useRef, ChangeEvent, FormEvent } from "react";
@@ -13,7 +13,7 @@ import styles from "./PartnerForm.module.css";
 // POPRAWIONE LIMITY
 const MAX_MAIN_IMAGE_SIZE = 500 * 1024; // 500KB
 const MAX_ADDITIONAL_IMAGE_SIZE = 500 * 1024; // 500KB
-const MAX_AUDIO_SIZE = 2 * 1024 * 1024; // 2MB (zwiększone z 1MB)
+const MAX_AUDIO_SIZE = 2 * 1024 * 1024; // 2MB
 const ALLOWED_IMAGE_TYPES = [
   "image/jpeg",
   "image/jpg",
@@ -43,7 +43,7 @@ const SUSTAINABILITY_GOALS = [
   { id: 17, name: "Partnerschaften zur Erreichung der Ziele" },
 ];
 
-// NOWE OPCJE dla statusu certyfikacji
+// OPCJE dla statusu certyfikacji
 const CERTIFICATION_STATUS_OPTIONS: CertificationStatusOption[] = [
   {
     value: "A",
@@ -65,12 +65,12 @@ const CERTIFICATION_STATUS_OPTIONS: CertificationStatusOption[] = [
   },
 ];
 
-// NOWE OPCJE dla wielkości firmy
+// OPCJE dla wielkości firmy
 const COMPANY_SIZE_OPTIONS: CompanySizeOption[] = [
   {
     value: "micro",
     label: "Kleinstunternehmen (bis 5 Mitarbeitende)",
-    price: "100 €",
+    price: "50 €",
   },
   {
     value: "small",
@@ -85,7 +85,7 @@ const COMPANY_SIZE_OPTIONS: CompanySizeOption[] = [
   {
     value: "ngo",
     label: "NGOs und gemeinnützige Organisationen",
-    price: "Kostenlos",
+    price: "freiwillige Selbsteinstufung",
   },
 ];
 
@@ -97,8 +97,6 @@ export default function PartnerForm() {
     phone: "",
     placeName: "",
     address: "",
-    latitude: "",
-    longitude: "",
     mainImage: null,
     additionalImages: [],
     textContent: "",
@@ -130,17 +128,6 @@ export default function PartnerForm() {
   const validatePhone = (phone: string): boolean => {
     const phoneRegex = /^[\+]?[\d\s\-\(\)]{8,}$/;
     return phoneRegex.test(phone);
-  };
-
-  const validateCoordinate = (coord: string, type: "lat" | "lng"): boolean => {
-    const num = parseFloat(coord);
-    if (isNaN(num)) return false;
-
-    if (type === "lat") {
-      return num >= -90 && num <= 90;
-    } else {
-      return num >= -180 && num <= 180;
-    }
   };
 
   const validateUrl = (url: string): boolean => {
@@ -185,17 +172,7 @@ export default function PartnerForm() {
       newErrors.address = "Adresse ist erforderlich";
     }
 
-    if (!formData.latitude.trim()) {
-      newErrors.latitude = "Breitengrad ist erforderlich";
-    } else if (!validateCoordinate(formData.latitude, "lat")) {
-      newErrors.latitude = "Ungültiger Breitengrad (-90 bis 90)";
-    }
-
-    if (!formData.longitude.trim()) {
-      newErrors.longitude = "Längengrad ist erforderlich";
-    } else if (!validateCoordinate(formData.longitude, "lng")) {
-      newErrors.longitude = "Ungültiger Längengrad (-180 bis 180)";
-    }
+    // USUNIĘTA WALIDACJA WSPÓŁRZĘDNYCH
 
     if (!formData.mainImage) {
       newErrors.mainImage = "Hauptbild ist erforderlich";
@@ -260,7 +237,7 @@ export default function PartnerForm() {
     }
   };
 
-  // NOWE FUNKCJE dla radio buttons
+  // FUNKCJE dla radio buttons
   const handleCertificationStatusChange = (value: "A" | "B" | "C") => {
     setFormData((prev) => ({
       ...prev,
@@ -293,7 +270,7 @@ export default function PartnerForm() {
     }
   };
 
-  // POPRAWIONA FUNKCJA do obsługi checkboxów dla celów zrównoważonego rozwoju
+  // FUNKCJA do obsługi checkboxów dla celów zrównoważonego rozwoju
   const handleSustainabilityGoalChange = (goalId: number, checked: boolean) => {
     console.log(`Sustainability goal ${goalId} changed to ${checked}`);
 
@@ -471,15 +448,15 @@ export default function PartnerForm() {
       // Przygotuj FormData do wysłania
       const submitFormData = new FormData();
 
-      // Dodaj podstawowe dane
+      // Dodaj podstawowe dane (BEZ WSPÓŁRZĘDNYCH)
       submitFormData.append("firstName", formData.firstName);
       submitFormData.append("lastName", formData.lastName);
       submitFormData.append("email", formData.email);
       submitFormData.append("phone", formData.phone);
       submitFormData.append("placeName", formData.placeName);
       submitFormData.append("address", formData.address);
-      submitFormData.append("latitude", formData.latitude);
-      submitFormData.append("longitude", formData.longitude);
+      // USUNIĘTE: latitude i longitude
+
       submitFormData.append("textContent", formData.textContent);
       submitFormData.append("websiteUrl", formData.websiteUrl);
       submitFormData.append("message", formData.message);
@@ -572,8 +549,7 @@ export default function PartnerForm() {
         phone: "",
         placeName: "",
         address: "",
-        latitude: "",
-        longitude: "",
+        // USUNIĘTE: latitude: "", longitude: "",
         mainImage: null,
         additionalImages: [],
         textContent: "",
@@ -725,7 +701,7 @@ export default function PartnerForm() {
         </div>
       </section>
 
-      {/* 2. INFORMATIONEN DES PINS */}
+      {/* 2. INFORMATIONEN DES PINS - BEZ WSPÓŁRZĘDNYCH */}
       <section className={styles.section}>
         <h4>Informationen des Pins</h4>
 
@@ -762,46 +738,7 @@ export default function PartnerForm() {
           )}
         </div>
 
-        <div className={styles.row}>
-          <div className={styles.field}>
-            <label htmlFor="latitude">Breitengrad *</label>
-            <input
-              type="text"
-              id="latitude"
-              name="latitude"
-              value={formData.latitude}
-              onChange={handleInputChange}
-              className={errors.latitude ? styles.inputError : ""}
-              placeholder="z.B. 52.5200"
-              step="any"
-            />
-            {errors.latitude && (
-              <span className={styles.error}>{errors.latitude}</span>
-            )}
-          </div>
-
-          <div className={styles.field}>
-            <label htmlFor="longitude">Längengrad *</label>
-            <input
-              type="text"
-              id="longitude"
-              name="longitude"
-              value={formData.longitude}
-              onChange={handleInputChange}
-              className={errors.longitude ? styles.inputError : ""}
-              placeholder="z.B. 13.4050"
-              step="any"
-            />
-            {errors.longitude && (
-              <span className={styles.error}>{errors.longitude}</span>
-            )}
-          </div>
-        </div>
-
-        <div className={styles.coordinatesHelp}>
-          💡 Tipp: Die Koordinaten finden Sie in Google Maps, indem Sie mit der
-          rechten Maustaste auf den Standort klicken.
-        </div>
+        {/* USUNIĘTA SEKCJA Z WSPÓŁRZĘDNYMI I PORADĄ */}
       </section>
 
       {/* 3. BILDER */}
@@ -1032,7 +969,7 @@ export default function PartnerForm() {
           )}
         </div>
 
-        {/* NOWE POLE 1 - Status certyfikacji */}
+        {/* POLE 1 - Status certyfikacji */}
         <div className={styles.field}>
           <label className={styles.radioGroupLabel}>
             Erfüllte Teilnahmebedingungen *
@@ -1117,7 +1054,7 @@ export default function PartnerForm() {
           )}
         </div>
 
-        {/* NOWE POLE 2 - Wielkość firmy */}
+        {/* POLE 2 - Wielkość firmy */}
         <div className={styles.field}>
           <label className={styles.radioGroupLabel}>Unternehmensgröße *</label>
           <p className={styles.radioGroupSubtitle}>

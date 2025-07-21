@@ -185,8 +185,6 @@ export interface PartnerFormData {
   // Dane miejsca (wymagane)
   placeName: string;
   address: string;
-  latitude: string;
-  longitude: string;
 
   // Pliki (główne zdjęcie wymagane)
   mainImage: File | null;
@@ -216,8 +214,6 @@ export interface PartnerFormErrors {
   phone?: string;
   placeName?: string;
   address?: string;
-  latitude?: string;
-  longitude?: string;
   mainImage?: string;
   additionalImages?: string;
   textContent?: string;
@@ -243,8 +239,6 @@ export interface PartnerSubmissionData {
   // Dane miejsca
   place_name: string;
   address: string;
-  latitude: number;
-  longitude: number;
 
   // Zawartość tekstowa (wymagana)
   text_content: string;
@@ -279,8 +273,6 @@ export interface PartnerApplication {
   phone: string;
   place_name: string;
   address: string;
-  latitude: number;
-  longitude: number;
   text_content: string;
   main_image_url: string;
   additional_images_urls?: string[];
