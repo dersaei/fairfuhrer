@@ -19,6 +19,7 @@ export interface Place {
   id: number;
   Name: string; // niemieckie nazwy pól jak w Directus
   Adresse: string;
+  Telefon?: string;
   Vollbeschreibung?: string;
   Breite: number; // Już sparsowane do number
   Lange: number; // Już sparsowane do number
@@ -127,6 +128,7 @@ export interface DirectusOrte {
   id: number;
   Name: string;
   Adresse: string;
+  Telefon?: string;
   Vollbeschreibung?: string;
   Breite: string; // String from API - needs parsing
   Lange: string; // String from API - needs parsing

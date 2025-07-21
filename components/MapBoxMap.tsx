@@ -385,16 +385,23 @@ export default function MapBoxMap({ places }: MapBoxMapProps) {
 
         const color = place.Kategorie[0]?.color || "#3388ff";
 
+        const phoneHTML = place.Telefon
+          ? `<p class="${styles.popupPhone}"><a href="tel:${place.Telefon}" class="${styles.popupPhoneLink}">📞 ${place.Telefon}</a></p>`
+          : "";
+
         const popupContent = `
-          <div>
-            <h3>${place.Name}</h3>
-            <p style="font-style: italic; color: #666;">${place.Adresse}</p>
+          <div class="${styles.modernPopup}">
+            <h3 class="${styles.popupTitle}">${place.Name}</h3>
+            <p class="${styles.popupAddress}">📍 ${place.Adresse}</p>
+            ${phoneHTML}
             ${
               place.Vollbeschreibung
-                ? `<p>${place.Vollbeschreibung.replace(
-                    /<[^>]*>/g,
-                    ""
-                  ).substring(0, 100)}...</p>`
+                ? `<p class="${
+                    styles.popupDescription
+                  }">${place.Vollbeschreibung.replace(/<[^>]*>/g, "").substring(
+                    0,
+                    100
+                  )}...</p>`
                 : ""
             }
           </div>

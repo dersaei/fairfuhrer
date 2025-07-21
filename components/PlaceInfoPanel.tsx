@@ -2,7 +2,7 @@
 
 import { useRef, useEffect, useState, useCallback } from "react";
 import { AudioPlayer, ImageGallery, PlaceImage } from "./MediaComponents";
-import ExpandableDescription from "./ExpandableDescription"; // ✅ NOWY IMPORT
+import ExpandableDescription from "./ExpandableDescription";
 import type { Place } from "../types";
 import styles from "./PlaceInfoPanel.module.css";
 
@@ -221,6 +221,11 @@ function PlaceContent({
           {place.Name}
         </h2>
         <p className={styles.placeAddress}>{place.Adresse}</p>
+        {place.Telefon && (
+          <a href={`tel:${place.Telefon}`} className={styles.placePhone}>
+            📞 {place.Telefon}
+          </a>
+        )}
       </div>
 
       {/* ✅ ZASTĄPIONE: Stary opis przez nowy komponent ExpandableDescription */}

@@ -233,10 +233,30 @@
 }
 
 .placeAddress {
-  margin: 5px 0 15px 0;
+  margin: 5px 0 8px 0;
   color: #666;
   font-size: 14px;
   font-style: italic;
+}
+
+.placePhone {
+  display: inline-block;
+  color: #28a745;
+  text-decoration: none;
+  font-size: 14px;
+  font-weight: 500;
+  margin-top: 4px;
+  padding: 4px 8px;
+  border-radius: 6px;
+  transition: all 0.3s ease;
+  border: 1px solid transparent;
+}
+
+.placePhone:hover {
+  color: #1e7e34;
+  background: rgba(40, 167, 69, 0.1);
+  border-color: rgba(40, 167, 69, 0.2);
+  text-decoration: none;
 }
 
 .infoSection {

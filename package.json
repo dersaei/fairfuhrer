@@ -9,17 +9,17 @@
     "lint": "next lint"
   },
   "dependencies": {
-    "@directus/sdk": "^19.1.0",
+    "@directus/sdk": "^20.0.0",
     "@mapbox/mapbox-gl-language": "^1.0.1",
     "@paypal/checkout-server-sdk": "^1.0.3",
     "@paypal/paypal-js": "^8.2.0",
     "@paypal/react-paypal-js": "^8.8.3",
-    "@supabase/supabase-js": "^2.50.3",
+    "@supabase/supabase-js": "^2.52.0",
     "dompurify": "^3.2.6",
-    "dotenv": "^17.0.1",
+    "dotenv": "^17.2.0",
     "lucide-react": "^0.525.0",
     "mapbox-gl": "^3.13.0",
-    "next": "15.3.2",
+    "next": "^15.4.2",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
     "react-map-gl": "^8.0.4",
@@ -29,12 +29,12 @@
     "@eslint/eslintrc": "^3",
     "@types/dompurify": "^3.0.5",
     "@types/mapbox-gl": "^3.4.1",
-    "@types/node": "^20.19.4",
+    "@types/node": "^20.19.9",
     "@types/paypal__checkout-server-sdk": "^1.0.8",
     "@types/react": "^19.1.8",
     "@types/react-dom": "^19.1.6",
-    "eslint": "^9.30.1",
-    "eslint-config-next": "15.3.2",
+    "eslint": "^9.31.0",
+    "eslint-config-next": "^15.4.2",
     "typescript": "^5"
   }
 }
