@@ -399,6 +399,20 @@
   background: linear-gradient(135deg, #059669 0%, #2563eb 100%);
 }
 
+@media (max-width: 950px) and (min-width: 601px) {
+  .featuresGrid {
+    grid-template-columns: repeat(2, 1fr); /* 2 kolumny */
+    gap: 1.5rem;
+  }
+
+  /* Trzecia karta na środku */
+  .featureCard:nth-child(3) {
+    grid-column: 1 / -1; /* Rozciąga na całą szerokość */
+    max-width: 280px; /* Ogranicza szerokość */
+    justify-self: center; /* Wyśrodkowuje */
+  }
+}
+
 /* ===== RESPONSIVE DESIGN ===== */
 @media (max-width: 950px) {
   .section2,
