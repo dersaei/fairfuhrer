@@ -7,7 +7,7 @@ import { getPageAssetUrl } from "@/lib/supabase";
 import Link from "next/link";
 import type { StyleSpecification } from "mapbox-gl";
 import styles from "./page.module.css";
-import { Heart, Star, Users, Headphones, MapPin } from "lucide-react";
+import { Heart, Star, Users, Headphones } from "lucide-react";
 
 // Typ dla naszego stylu atmosfery
 interface AtmosphereStyle extends StyleSpecification {
@@ -237,17 +237,6 @@ export default function HomePage() {
             </h2>
 
             <div className={styles.featuresGrid}>
-              <div className={styles.featureCard}>
-                <div className={styles.featureIcon}>
-                  <MapPin size={24} />
-                </div>
-                <h3 className={styles.featureTitle}>Einzigartige Highlights</h3>
-                <p className={styles.featureDescription}>
-                  Jede Stecknadel erzählt über ein einzigartiges Highlight,
-                  einen Insidertipp oder eine regionale Anekdote
-                </p>
-              </div>
-
               <div className={styles.featureCard}>
                 <div className={styles.featureIcon}>
                   <Headphones size={24} />

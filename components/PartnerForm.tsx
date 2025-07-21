@@ -61,12 +61,17 @@ const CERTIFICATION_STATUS_OPTIONS: CertificationStatusOption[] = [
     value: "C",
     label: "Option C",
     description:
-      "Es ist ein Kleinstbetrieb mit weniger als fünf Mitarbeitenden, der von unserem Team oder unseren regionalen Partner:innen empfohlen wurde.",
+      "Es ist ein Kleinstbetrieb mit weniger als fünf Mitarbeitenden, der von unserem Team oder unseren regionalen Partnerinnen und Partnern empfohlen wird.",
   },
 ];
 
 // OPCJE dla wielkości firmy
 const COMPANY_SIZE_OPTIONS: CompanySizeOption[] = [
+  {
+    value: "ngo",
+    label: "NGOs und gemeinnützige Organisationen",
+    price: "freiwillige Selbsteinstufung",
+  },
   {
     value: "micro",
     label: "Kleinstunternehmen (bis 5 Mitarbeitende)",
@@ -81,11 +86,6 @@ const COMPANY_SIZE_OPTIONS: CompanySizeOption[] = [
     value: "medium",
     label: "Mittlere Unternehmen (bis 500 Mitarbeitende)",
     price: "300 €",
-  },
-  {
-    value: "ngo",
-    label: "NGOs und gemeinnützige Organisationen",
-    price: "freiwillige Selbsteinstufung",
   },
 ];
 
@@ -170,16 +170,6 @@ export default function PartnerForm() {
 
     if (!formData.address.trim()) {
       newErrors.address = "Adresse ist erforderlich";
-    }
-
-    // USUNIĘTA WALIDACJA WSPÓŁRZĘDNYCH
-
-    if (!formData.mainImage) {
-      newErrors.mainImage = "Hauptbild ist erforderlich";
-    }
-
-    if (!formData.textContent.trim()) {
-      newErrors.textContent = "Beschreibung des Pins ist erforderlich";
     }
 
     // ISTNIEJĄCE WALIDACJE
@@ -746,7 +736,7 @@ export default function PartnerForm() {
         <h4>Bilder</h4>
 
         <div className={styles.field}>
-          <label htmlFor="mainImage">Hauptbild * (max. 500KB)</label>
+          <label htmlFor="mainImage">Hauptbild (max. 500KB)</label>
           <div className={styles.fileInputWrapper}>
             <input
               type="file"
@@ -839,7 +829,7 @@ export default function PartnerForm() {
 
       {/* 4. BESCHREIBUNG DES PINS */}
       <section className={styles.section}>
-        <h4>Text des Pins *</h4>
+        <h4>Text des Pins</h4>
 
         <div className={styles.field}>
           <label htmlFor="textContent">Beschreiben Sie Ihren Pin</label>
@@ -864,7 +854,7 @@ export default function PartnerForm() {
 
       {/* 5. AUDIOAUFNAHME */}
       <section className={styles.section}>
-        <h4>Audioaufnahme (optional)</h4>
+        <h4>Audioaufnahme</h4>
 
         <div className={styles.field}>
           <label htmlFor="audioFile">Audio-Datei (MP3, max. 2MB)</label>

@@ -1,4 +1,4 @@
-// app/api/partner-application/route.ts - POPRAWIONA WERSJA z nowymi polami
+// app/api/partner-application/route.ts - ZAKTUALIZOWANA WERSJA z opcjonalnymi mainImage i textContent
 import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@supabase/supabase-js";
 import type { PartnerSubmissionData } from "@/types";
@@ -50,9 +50,8 @@ async function uploadFileToSupabase(
   }
 }
 
-async function saveToDirectus(
-  data: Partial<PartnerSubmissionData> & { main_image_url: string }
-) {
+// ZMIANA: Usuń wymaganie main_image_url z parametru
+async function saveToDirectus(data: Partial<PartnerSubmissionData>) {
   try {
     // DODAJ LOGOWANIE dla debugowania
     console.log("Sending to Directus:", JSON.stringify(data, null, 2));
@@ -147,7 +146,7 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Wyciągnij dane tekstowe z formularza
+    // ZMIANA: Wyciągnij dane tekstowe z formularza (textContent opcjonalne)
     const submissionData: Partial<PartnerSubmissionData> = {
       first_name: formData.get("firstName") as string,
       last_name: formData.get("lastName") as string,
@@ -155,7 +154,10 @@ export async function POST(request: NextRequest) {
       phone: formData.get("phone") as string,
       place_name: formData.get("placeName") as string,
       address: formData.get("address") as string,
-      text_content: formData.get("textContent") as string,
+
+      // ZMIANA: text_content jest opcjonalne - domyślnie pusty string jeśli nie podano
+      text_content: (formData.get("textContent") as string) || "",
+
       website_url: (formData.get("websiteUrl") as string) || undefined,
       message: (formData.get("message") as string) || undefined,
 
@@ -171,13 +173,13 @@ export async function POST(request: NextRequest) {
       created_at: new Date().toISOString(),
     };
 
-    // Walidacja podstawowych danych (w tym nowe pola)
+    // ZMIANA: Walidacja podstawowych danych (BEZ text_content)
     if (
       !submissionData.first_name ||
       !submissionData.last_name ||
       !submissionData.email ||
       !submissionData.place_name ||
-      !submissionData.text_content ||
+      // USUNIĘTE: !submissionData.text_content ||
       !submissionData.certificate ||
       !sustainabilityGoals.length ||
       !submissionData.certification_status ||
@@ -188,7 +190,7 @@ export async function POST(request: NextRequest) {
         last_name: !!submissionData.last_name,
         email: !!submissionData.email,
         place_name: !!submissionData.place_name,
-        text_content: !!submissionData.text_content,
+        // USUNIĘTE z logowania: text_content: !!submissionData.text_content,
         certificate: !!submissionData.certificate,
         sustainabilityGoals: sustainabilityGoals.length,
         certification_status: !!submissionData.certification_status,
@@ -206,9 +208,10 @@ export async function POST(request: NextRequest) {
 
     // Przesyłanie plików do Supabase
 
-    // Główne zdjęcie (wymagane)
+    // ZMIANA: Główne zdjęcie jest teraz opcjonalne
     const mainImage = formData.get("mainImage") as File;
     if (mainImage && mainImage.size > 0) {
+      // Jeśli zdjęcie zostało przesłane, prześlij je
       const uploadResult = await uploadFileToSupabase(
         mainImage,
         "media-files",
@@ -221,14 +224,10 @@ export async function POST(request: NextRequest) {
         );
       }
       submissionData.main_image_url = uploadResult.url;
-    } else {
-      return NextResponse.json(
-        { error: "Główne zdjęcie jest wymagane" },
-        { status: 400 }
-      );
     }
+    // USUNIĘTE: else { return NextResponse.json({ error: "Główne zdjęcie jest wymagane" }, { status: 400 }); }
 
-    // Dodatkowe zdjęcia
+    // Dodatkowe zdjęcia (bez zmian)
     const additionalImages: string[] = [];
     for (let i = 0; i < 6; i++) {
       const additionalImage = formData.get(`additionalImage${i}`) as File;
@@ -252,7 +251,7 @@ export async function POST(request: NextRequest) {
       submissionData.additional_images_urls = additionalImages;
     }
 
-    // Plik audio (opcjonalny)
+    // Plik audio (opcjonalny) - bez zmian
     const audioFile = formData.get("audioFile") as File;
     if (audioFile && audioFile.size > 0) {
       const uploadResult = await uploadFileToSupabase(
@@ -267,7 +266,7 @@ export async function POST(request: NextRequest) {
       }
     }
 
-    // Zapisz do Directus
+    // ZMIANA: Zapisz do Directus (main_image_url może być undefined)
     const savedData = await saveToDirectus(
       submissionData as PartnerSubmissionData
     );

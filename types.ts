@@ -241,7 +241,7 @@ export interface PartnerSubmissionData {
   address: string;
 
   // Zawartość tekstowa (wymagana)
-  text_content: string;
+  text_content?: string;
 
   // Opcjonalne pola tekstowe
   website_url?: string;
@@ -260,7 +260,7 @@ export interface PartnerSubmissionData {
   created_at: string;
 
   // URL-e do plików w Supabase (po upload)
-  main_image_url: string;
+  main_image_url?: string;
   additional_images_urls?: string[];
   audio_file_url?: string;
 }
@@ -273,8 +273,8 @@ export interface PartnerApplication {
   phone: string;
   place_name: string;
   address: string;
-  text_content: string;
-  main_image_url: string;
+  text_content?: string;
+  main_image_url?: string;
   additional_images_urls?: string[];
   audio_file_url?: string;
   website_url?: string;
