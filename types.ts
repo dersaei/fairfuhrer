@@ -248,12 +248,12 @@ export interface PartnerSubmissionData {
   message?: string;
 
   // Teilnahmebedingungen
-  certificate: string; // Certyfikaty (textarea)
-  sustainability_goals: number[]; // Cele zrównoważonego rozwoju (checkboxes)
+  certificate?: string; // Certyfikaty (textarea)
+  sustainability_goals?: number[]; // Cele zrównoważonego rozwoju (checkboxes)
 
   // NOWE POLA
-  certification_status: "A" | "B" | "C"; // Status certyfikacji (radio)
-  company_size: "micro" | "small" | "medium" | "ngo"; // Wielkość firmy (radio)
+  certification_status?: "A" | "B" | "C"; // Status certyfikacji (radio)
+  company_size?: "micro" | "small" | "medium" | "ngo"; // Wielkość firmy (radio)
 
   // Status
   status: "new" | "review" | "approved" | "rejected";
@@ -281,12 +281,12 @@ export interface PartnerApplication {
   message?: string;
 
   // Teilnahmebedingungen
-  certificate: string; // Certyfikaty
-  sustainability_goals: number[]; // JSON array w Directus
+  certificate?: string; // Certyfikaty
+  sustainability_goals?: number[]; // JSON array w Directus
 
   // NOWE POLA
-  certification_status: "A" | "B" | "C"; // Status certyfikacji
-  company_size: "micro" | "small" | "medium" | "ngo"; // Wielkość firmy
+  certification_status?: "A" | "B" | "C"; // Status certyfikacji
+  company_size?: "micro" | "small" | "medium" | "ngo"; // Wielkość firmy
 
   status: "new" | "review" | "approved" | "rejected";
   created_at: string;

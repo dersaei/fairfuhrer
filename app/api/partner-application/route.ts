@@ -1,4 +1,4 @@
-// app/api/partner-application/route.ts - ZAKTUALIZOWANA WERSJA z opcjonalnymi mainImage i textContent
+// app/api/partner-application/route.ts - KOMPLETNY PLIK z naprawionymi błędami TypeScript
 import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@supabase/supabase-js";
 import type { PartnerSubmissionData } from "@/types";
@@ -50,7 +50,7 @@ async function uploadFileToSupabase(
   }
 }
 
-// ZMIANA: Usuń wymaganie main_image_url z parametru
+// Funkcja saveToDirectus - wszystkie pola opcjonalne oprócz podstawowych
 async function saveToDirectus(data: Partial<PartnerSubmissionData>) {
   try {
     // DODAJ LOGOWANIE dla debugowania
@@ -91,7 +91,7 @@ export async function POST(request: NextRequest) {
   try {
     const formData = await request.formData();
 
-    // POPRAWIONE PARSOWANIE sustainability_goals
+    // POPRAWIONE PARSOWANIE sustainability_goals (teraz opcjonalne)
     let sustainabilityGoals: number[] = [];
     const sustainabilityGoalsRaw = formData.get("sustainabilityGoals");
 
@@ -107,47 +107,61 @@ export async function POST(request: NextRequest) {
         }
       } catch (error) {
         console.error("Error parsing sustainabilityGoals:", error);
-        return NextResponse.json(
-          { error: "Błąd parsowania celów zrównoważonego rozwoju" },
-          { status: 400 }
-        );
+        // ZMIANA: Nie zwracaj błędu, po prostu ustaw pustą tablicę
+        sustainabilityGoals = [];
       }
     }
 
     console.log("Parsed sustainabilityGoals:", sustainabilityGoals);
 
-    // NOWE POLA - walidacja
-    const certificationStatus = formData.get("certificationStatus") as string;
-    const companySize = formData.get("companySize") as string;
+    // POPRAWKA: Pobierz wartości jako string, następnie waliduj i typuj
+    const certificationStatusRaw = formData.get(
+      "certificationStatus"
+    ) as string;
+    const companySizeRaw = formData.get("companySize") as string;
 
-    console.log("New fields:", {
+    console.log("New fields raw:", {
+      certificationStatusRaw,
+      companySizeRaw,
+    });
+
+    // POPRAWKA: Zadeklaruj zmienne z prawidłowymi typami
+    let certificationStatus: "A" | "B" | "C" | undefined = undefined;
+    let companySize: "micro" | "small" | "medium" | "ngo" | undefined =
+      undefined;
+
+    // Walidacja i przypisanie certificationStatus
+    if (certificationStatusRaw) {
+      if (["A", "B", "C"].includes(certificationStatusRaw)) {
+        certificationStatus = certificationStatusRaw as "A" | "B" | "C";
+      } else {
+        return NextResponse.json(
+          { error: "Nieprawidłowy status certyfikacji" },
+          { status: 400 }
+        );
+      }
+    }
+
+    // Walidacja i przypisanie companySize
+    if (companySizeRaw) {
+      if (["micro", "small", "medium", "ngo"].includes(companySizeRaw)) {
+        companySize = companySizeRaw as "micro" | "small" | "medium" | "ngo";
+      } else {
+        return NextResponse.json(
+          { error: "Nieprawidłowa wielkość firmy" },
+          { status: 400 }
+        );
+      }
+    }
+
+    console.log("Validated fields:", {
       certificationStatus,
       companySize,
     });
 
-    // Walidacja nowych pól
-    if (
-      !certificationStatus ||
-      !["A", "B", "C"].includes(certificationStatus)
-    ) {
-      return NextResponse.json(
-        { error: "Nieprawidłowy status certyfikacji" },
-        { status: 400 }
-      );
-    }
-
-    if (
-      !companySize ||
-      !["micro", "small", "medium", "ngo"].includes(companySize)
-    ) {
-      return NextResponse.json(
-        { error: "Nieprawidłowa wielkość firmy" },
-        { status: 400 }
-      );
-    }
-
-    // ZMIANA: Wyciągnij dane tekstowe z formularza (textContent opcjonalne)
+    // ZMIANA: Wyciągnij dane tekstowe z formularza (większość pól opcjonalnych)
     const submissionData: Partial<PartnerSubmissionData> = {
+      // WYMAGANE POLA - podstawowe dane
       first_name: formData.get("firstName") as string,
       last_name: formData.get("lastName") as string,
       email: formData.get("email") as string,
@@ -155,42 +169,45 @@ export async function POST(request: NextRequest) {
       place_name: formData.get("placeName") as string,
       address: formData.get("address") as string,
 
-      // ZMIANA: text_content jest opcjonalne - domyślnie pusty string jeśli nie podano
+      // OPCJONALNE POLA - zawartość
       text_content: (formData.get("textContent") as string) || "",
-
       website_url: (formData.get("websiteUrl") as string) || undefined,
       message: (formData.get("message") as string) || undefined,
 
-      // ISTNIEJĄCE POLA
-      certificate: formData.get("certificate") as string,
-      sustainability_goals: sustainabilityGoals,
+      // ZMIANA: OPCJONALNE POLA Teilnahmebedingungen
+      certificate: (formData.get("certificate") as string) || "",
+      sustainability_goals:
+        sustainabilityGoals.length > 0 ? sustainabilityGoals : undefined,
 
-      // NOWE POLA
-      certification_status: certificationStatus as "A" | "B" | "C",
-      company_size: companySize as "micro" | "small" | "medium" | "ngo",
+      // POPRAWKA: Używaj już walidowanych i prawidłowo otypowanych zmiennych
+      certification_status: certificationStatus, // ✅ Teraz prawidłowy typ
+      company_size: companySize, // ✅ Teraz prawidłowy typ
 
+      // Status i czas
       status: "new" as const,
       created_at: new Date().toISOString(),
     };
 
-    // ZMIANA: Walidacja podstawowych danych (BEZ text_content)
+    // ZMIANA: Walidacja tylko podstawowych danych (bez pól Teilnahmebedingungen)
     if (
       !submissionData.first_name ||
       !submissionData.last_name ||
       !submissionData.email ||
       !submissionData.place_name ||
-      // USUNIĘTE: !submissionData.text_content ||
-      !submissionData.certificate ||
-      !sustainabilityGoals.length ||
-      !submissionData.certification_status ||
-      !submissionData.company_size
+      !submissionData.address
+      // USUNIĘTE WSZYSTKIE WALIDACJE Teilnahmebedingungen:
+      // !submissionData.certificate ||
+      // !sustainabilityGoals.length ||
+      // !submissionData.certification_status ||
+      // !submissionData.company_size
     ) {
       console.error("Validation failed:", {
         first_name: !!submissionData.first_name,
         last_name: !!submissionData.last_name,
         email: !!submissionData.email,
         place_name: !!submissionData.place_name,
-        // USUNIĘTE z logowania: text_content: !!submissionData.text_content,
+        address: !!submissionData.address,
+        // OPCJONALNE - tylko do logowania
         certificate: !!submissionData.certificate,
         sustainabilityGoals: sustainabilityGoals.length,
         certification_status: !!submissionData.certification_status,
@@ -200,7 +217,7 @@ export async function POST(request: NextRequest) {
       return NextResponse.json(
         {
           error:
-            "Brakuje wymaganych pól lub nie wybrano celów zrównoważonego rozwoju, lub nie wybrano opcji certyfikacji/wielkości firmy",
+            "Brakuje wymaganych podstawowych danych (imię, nazwisko, email, nazwa pinu, adres)",
         },
         { status: 400 }
       );
@@ -208,7 +225,7 @@ export async function POST(request: NextRequest) {
 
     // Przesyłanie plików do Supabase
 
-    // ZMIANA: Główne zdjęcie jest teraz opcjonalne
+    // OPCJONALNE: Główne zdjęcie
     const mainImage = formData.get("mainImage") as File;
     if (mainImage && mainImage.size > 0) {
       // Jeśli zdjęcie zostało przesłane, prześlij je
@@ -225,9 +242,8 @@ export async function POST(request: NextRequest) {
       }
       submissionData.main_image_url = uploadResult.url;
     }
-    // USUNIĘTE: else { return NextResponse.json({ error: "Główne zdjęcie jest wymagane" }, { status: 400 }); }
 
-    // Dodatkowe zdjęcia (bez zmian)
+    // OPCJONALNE: Dodatkowe zdjęcia
     const additionalImages: string[] = [];
     for (let i = 0; i < 6; i++) {
       const additionalImage = formData.get(`additionalImage${i}`) as File;
@@ -251,7 +267,7 @@ export async function POST(request: NextRequest) {
       submissionData.additional_images_urls = additionalImages;
     }
 
-    // Plik audio (opcjonalny) - bez zmian
+    // OPCJONALNE: Plik audio
     const audioFile = formData.get("audioFile") as File;
     if (audioFile && audioFile.size > 0) {
       const uploadResult = await uploadFileToSupabase(
@@ -266,7 +282,7 @@ export async function POST(request: NextRequest) {
       }
     }
 
-    // ZMIANA: Zapisz do Directus (main_image_url może być undefined)
+    // Zapisz do Directus (wszystkie pola mogą być opcjonalne oprócz podstawowych)
     const savedData = await saveToDirectus(
       submissionData as PartnerSubmissionData
     );

@@ -172,25 +172,6 @@ export default function PartnerForm() {
       newErrors.address = "Adresse ist erforderlich";
     }
 
-    // ISTNIEJĄCE WALIDACJE
-    if (!formData.certificate.trim()) {
-      newErrors.certificate = "Zertifikat ist erforderlich";
-    }
-
-    if (formData.sustainabilityGoals.length === 0) {
-      newErrors.sustainabilityGoals =
-        "Mindestens ein Nachhaltigkeitsziel muss ausgewählt werden";
-    }
-
-    // NOWE WALIDACJE
-    if (!formData.certificationStatus) {
-      newErrors.certificationStatus = "Bitte wählen Sie eine Option aus";
-    }
-
-    if (!formData.companySize) {
-      newErrors.companySize = "Bitte wählen Sie eine Unternehmensgröße aus";
-    }
-
     // Sprawdzenie URL (jeśli podany)
     if (formData.websiteUrl && !validateUrl(formData.websiteUrl)) {
       newErrors.websiteUrl = "Ungültiges Website-Adressformat";
@@ -939,7 +920,7 @@ export default function PartnerForm() {
 
         <div className={styles.field}>
           <label htmlFor="certificate">
-            Bitte geben Sie an, über welche Zertifikate Sie verfügen. *
+            Bitte geben Sie an, über welche Zertifikate Sie verfügen.
           </label>
           <textarea
             id="certificate"
@@ -962,7 +943,7 @@ export default function PartnerForm() {
         {/* POLE 1 - Status certyfikacji */}
         <div className={styles.field}>
           <label className={styles.radioGroupLabel}>
-            Erfüllte Teilnahmebedingungen *
+            Erfüllte Teilnahmebedingungen
           </label>
           <p className={styles.radioGroupSubtitle}>
             Bitte wählen Sie eine Option aus:
@@ -1005,7 +986,7 @@ export default function PartnerForm() {
 
         <div className={styles.field}>
           <label className={styles.checkboxGroupLabel}>
-            Die 17 globalen Nachhaltigkeitsziele *
+            Die 17 globalen Nachhaltigkeitsziele
           </label>
           <p className={styles.checkboxGroupSubtitle}>
             Markieren Sie, welche davon Ihre Tätigkeit bereits erfüllt oder sich
@@ -1046,7 +1027,7 @@ export default function PartnerForm() {
 
         {/* POLE 2 - Wielkość firmy */}
         <div className={styles.field}>
-          <label className={styles.radioGroupLabel}>Unternehmensgröße *</label>
+          <label className={styles.radioGroupLabel}>Unternehmensgröße</label>
           <p className={styles.radioGroupSubtitle}>
             Bitte wählen Sie die passende Kategorie für Ihr Unternehmen:
           </p>
