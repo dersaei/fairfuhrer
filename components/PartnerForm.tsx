@@ -730,7 +730,7 @@ export default function PartnerForm() {
         <h4>Informationen des Pins</h4>
 
         <div className={styles.field}>
-          <label htmlFor="placeName">Name des Pins *</label>
+          <label htmlFor="placeName">Titel des Pins *</label>
           <input
             type="text"
             id="placeName"
@@ -754,7 +754,7 @@ export default function PartnerForm() {
             value={formData.address}
             onChange={handleInputChange}
             className={errors.address ? styles.inputError : ""}
-            placeholder="Straße, Hausnummer, PLZ, Stadt"
+            placeholder="Straße, Hausnummer, PLZ, Stadt, Land"
             maxLength={200}
           />
           {errors.address && (
@@ -902,7 +902,7 @@ export default function PartnerForm() {
 
       {/* 4. BESCHREIBUNG DES PINS */}
       <section className={styles.section}>
-        <h4>Beschreibung des Pins *</h4>
+        <h4>Text des Pins *</h4>
 
         <div className={styles.field}>
           <label htmlFor="textContent">Beschreiben Sie Ihren Pin</label>
@@ -1035,7 +1035,7 @@ export default function PartnerForm() {
         {/* NOWE POLE 1 - Status certyfikacji */}
         <div className={styles.field}>
           <label className={styles.radioGroupLabel}>
-            Zertifizierungsstatus *
+            Erfüllte Teilnahmebedingungen *
           </label>
           <p className={styles.radioGroupSubtitle}>
             Bitte wählen Sie eine Option aus:
