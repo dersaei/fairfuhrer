@@ -70,22 +70,22 @@ const COMPANY_SIZE_OPTIONS: CompanySizeOption[] = [
   {
     value: "ngo",
     label: "NGOs und gemeinnützige Organisationen",
-    price: "freiwillige Selbsteinstufung",
+    price: "Freiwillige Selbsteinstufung",
   },
   {
     value: "micro",
     label: "Kleinstunternehmen (bis 5 Mitarbeitende)",
-    price: "50 €",
+    price: "50 € / SFr",
   },
   {
     value: "small",
     label: "Kleine Unternehmen (bis 50 Mitarbeitende)",
-    price: "200 €",
+    price: "200 € / SFr",
   },
   {
     value: "medium",
     label: "Mittlere Unternehmen (bis 500 Mitarbeitende)",
-    price: "300 €",
+    price: "300 € SFr",
   },
 ];
 
