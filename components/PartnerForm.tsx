@@ -55,7 +55,7 @@ const CERTIFICATION_STATUS_OPTIONS: CertificationStatusOption[] = [
     value: "B",
     label: "Option B",
     description:
-      "Es verfolgt nachweislich Ziele wie Nachhaltigkeit, faire Lieferketten oder Regionalität und beabsichtigt, innerhalb von sechs Monaten eine entsprechende Zertifizierung anzustreben.",
+      "Es verfolgt mindestens drei der 17 Ziele wie Nachhaltigkeit, faire Lieferketten oder Regionalität und beabsichtigt, innerhalb von sechs Monaten eine entsprechende Zertifizierung anzustreben.",
   },
   {
     value: "C",
@@ -70,22 +70,18 @@ const COMPANY_SIZE_OPTIONS: CompanySizeOption[] = [
   {
     value: "ngo",
     label: "NGOs und gemeinnützige Organisationen",
-    price: "Freiwillige Selbsteinstufung",
   },
   {
     value: "micro",
     label: "Kleinstunternehmen (bis 5 Mitarbeitende)",
-    price: "50 € / SFr",
   },
   {
     value: "small",
     label: "Kleine Unternehmen (bis 50 Mitarbeitende)",
-    price: "200 € / SFr",
   },
   {
     value: "medium",
     label: "Mittlere Unternehmen (bis 500 Mitarbeitende)",
-    price: "300 € / SFr",
   },
 ];
 
@@ -674,7 +670,7 @@ export default function PartnerForm() {
 
       {/* 2. INFORMATIONEN DES PINS - BEZ WSPÓŁRZĘDNYCH */}
       <section className={styles.section}>
-        <h4>Informationen des Pins</h4>
+        <h4>Informationen zum Pin</h4>
 
         <div className={styles.field}>
           <label htmlFor="placeName">Titel des Pins *</label>
@@ -920,7 +916,8 @@ export default function PartnerForm() {
 
         <div className={styles.field}>
           <label htmlFor="certificate">
-            Bitte geben Sie an, über welche Zertifikate Sie verfügen.
+            Bitte geben Sie an, über welche Zertifikate Sie verfügen, oder wie
+            sie Ihre Nachhaltigkeit (Option B) begründen.
           </label>
           <textarea
             id="certificate"
@@ -989,8 +986,8 @@ export default function PartnerForm() {
             Die 17 globalen Nachhaltigkeitsziele
           </label>
           <p className={styles.checkboxGroupSubtitle}>
-            Markieren Sie, welche davon Ihre Tätigkeit bereits erfüllt oder sich
-            darauf vorbereitet, in naher Zukunft zu erfüllen.
+            Markieren Sie, welche der 17 ziele verfolgen sie oder streben sie
+            an.
           </p>
 
           <div className={styles.checkboxGrid}>
@@ -1053,7 +1050,6 @@ export default function PartnerForm() {
                   >
                     <strong>{option.label}</strong>
                   </label>
-                  <p className={styles.radioPrice}>{option.price}</p>
                 </div>
               </div>
             ))}

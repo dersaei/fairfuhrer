@@ -385,7 +385,7 @@
 .radioItem {
   display: grid;
   grid-template-columns: 50px 1fr;
-  align-items: flex-start;
+  align-items: center;
   border: 2px solid #e5e7eb;
   border-radius: 12px;
   padding: 1rem;
@@ -468,14 +468,6 @@
   font-size: 0.9rem;
   color: #6b7280;
   line-height: 1.5;
-  margin: 0;
-}
-
-.radioPrice {
-  font-family: "Montserrat", sans-serif;
-  font-size: 1.1rem;
-  color: rgba(252, 108, 20, 1);
-  font-weight: 700;
   margin: 0;
 }
 
@@ -643,10 +635,6 @@
   .radioDescription {
     font-size: 0.85rem;
   }
-
-  .radioPrice {
-    font-size: 1rem;
-  }
 }
 
 @media (max-width: 480px) {
@@ -728,9 +716,5 @@
   .radioDescription {
     font-size: 0.8rem;
     line-height: 1.4;
-  }
-
-  .radioPrice {
-    font-size: 0.9rem;
   }
 }

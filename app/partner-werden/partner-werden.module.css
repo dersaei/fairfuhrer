@@ -35,14 +35,13 @@
 }
 
 .section1Text {
-  font-size: 2rem;
+  font-size: 2.5rem;
   line-height: 1.7;
   margin-bottom: 2rem;
   font-family: "Lato", sans-serif;
   font-weight: 400;
   font-style: normal;
   max-width: 800px;
-  text-transform: uppercase;
 }
 
 /* Style dla WYSIWYG content w sekcji 1 */
@@ -268,17 +267,32 @@
   height: auto;
   max-width: 300px;
 }
+.noVideo {
+  padding: 3rem 2rem;
+  background: #f8fafc;
+  border: 2px dashed #cbd5e1;
+  border-radius: 12px;
+  text-align: center;
+  color: #64748b;
+  aspect-ratio: 16/9;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.noVideo p {
+  margin: 0.5rem 0;
+  font-size: 1.1rem;
+}
+
+.noVideo p:first-child {
+  font-size: 1.5rem;
+  font-weight: 600;
+}
 
 /* RESPONSIVE DESIGN - ZMODYFIKOWANE */
 @media (max-width: 968px) {
-  .section1Title {
-    font-size: 3rem;
-  }
-
-  .section1Text {
-    font-size: 1.5rem;
-  }
-
   .section3 {
     grid-template-columns: 1fr;
     gap: 2rem;
@@ -322,11 +336,11 @@
   }
 
   .section1Title {
-    font-size: 2rem;
+    font-size: 2.5rem;
   }
 
   .section1Text {
-    font-size: 1.2rem;
+    font-size: 1.7rem;
   }
 
   .section3,

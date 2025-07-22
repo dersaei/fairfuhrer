@@ -307,7 +307,6 @@ export interface CertificationStatusOption {
 export interface CompanySizeOption {
   value: "micro" | "small" | "medium" | "ngo";
   label: string;
-  price: string;
 }
 
 // ========================================
@@ -364,7 +363,9 @@ export interface PartnerPageContent {
   // SEKCJA 3 - Tekst + YouTube video + KOLORY
   section3_left_title?: string;
   section3_left_text?: string;
-  section3_youtube_url?: string;
+  section3_mux_playback_id?: string; // hz85VadaGOSuRmlIP7uoACRb63tjJXXNKTcFqHA14Po
+  section3_video_poster?: string; // Custom thumbnail (opcjonalne)
+  section3_video_title?: string; // Tytuł (opcjonalne)
   section3_background_color?: string;
   section3_text_color?: string;
   section3_title_color?: string;

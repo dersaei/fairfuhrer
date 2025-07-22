@@ -1,10 +1,10 @@
-// app/partner-werden/page.tsx - zmodyfikowana wersja
+// app/partner-werden/page.tsx - OCZYSZCZONA WERSJA
 import { Metadata } from "next";
 import Image from "next/image";
 import type { PartnerPageContent } from "../../types";
 import { getPageAssetPath } from "../../lib/supabase";
-import YouTubeEmbed from "../../components/YouTubeEmbed";
 import PartnerForm from "../../components/PartnerForm";
+import MuxVideoEmbed from "../../components/MuxVideoEmbed";
 import styles from "./partner-werden.module.css";
 
 export const revalidate = 86400;
@@ -62,7 +62,7 @@ export default async function PartnerWerdenPage() {
 
   return (
     <div className={styles.container}>
-      {/* SEKCJA 1 - ZMODYFIKOWANA: Teraz na całą szerokość */}
+      {/* SEKCJA 1 */}
       <section
         className={styles.section1}
         style={{
@@ -103,9 +103,7 @@ export default async function PartnerWerdenPage() {
         )}
       </section>
 
-      {/* SEKCJA 2 - USUNIĘTA CAŁKOWICIE */}
-
-      {/* SEKCJA 3 - Tekst + YouTube (bez zmian, ale numeracja przesunięta) */}
+      {/* SEKCJA 3 - TYLKO MUX VIDEO */}
       <section
         className={styles.section3}
         style={{
@@ -136,17 +134,25 @@ export default async function PartnerWerdenPage() {
         </div>
 
         <div className={styles.section3Right}>
-          {pageData.section3_youtube_url && (
-            <YouTubeEmbed
-              url={pageData.section3_youtube_url}
-              title="Partner werden Video"
-              className={styles.youtubeVideo}
+          {/* TYLKO MUX VIDEO - BEZ YOUTUBE FALLBACK */}
+          {pageData.section3_mux_playback_id ? (
+            <MuxVideoEmbed
+              playbackId={pageData.section3_mux_playback_id}
+              poster={pageData.section3_video_poster}
+              autoPlay={false}
+              muted={false}
+              className={styles.muxVideo}
             />
+          ) : (
+            <div className={styles.noVideo}>
+              <p>🎬 Video wird konfiguriert</p>
+              <p>Kontaktieren Sie den Administrator</p>
+            </div>
           )}
         </div>
       </section>
 
-      {/* SEKCJA 4 - FORMULARZ PARTNERSKI (bez zmian) */}
+      {/* SEKCJA 4 - FORMULARZ */}
       <section
         className={styles.section4}
         style={{
@@ -169,7 +175,7 @@ export default async function PartnerWerdenPage() {
         </div>
       </section>
 
-      {/* SEKCJA 5 - Końcowa (bez zmian) */}
+      {/* SEKCJA 5 - KOŃCOWA */}
       {(pageData.section5_title || pageData.section5_text) && (
         <section
           className={styles.section5}
