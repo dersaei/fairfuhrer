@@ -85,7 +85,7 @@ const COMPANY_SIZE_OPTIONS: CompanySizeOption[] = [
   {
     value: "medium",
     label: "Mittlere Unternehmen (bis 500 Mitarbeitende)",
-    price: "300 € SFr",
+    price: "300 € / SFr",
   },
 ];
 
