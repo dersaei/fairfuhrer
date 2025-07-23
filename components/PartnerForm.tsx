@@ -1,4 +1,4 @@
-// components/PartnerForm.tsx - kompletna wersja BEZ pól współrzędnych
+// components/PartnerForm.tsx - z dodanym polem kategorie
 "use client";
 
 import { useState, useRef, ChangeEvent, FormEvent } from "react";
@@ -7,13 +7,14 @@ import type {
   PartnerFormErrors,
   CertificationStatusOption,
   CompanySizeOption,
+  CategoryOption,
 } from "../types";
 import styles from "./PartnerForm.module.css";
 
-// POPRAWIONE LIMITY
-const MAX_MAIN_IMAGE_SIZE = 500 * 1024; // 500KB
-const MAX_ADDITIONAL_IMAGE_SIZE = 500 * 1024; // 500KB
-const MAX_AUDIO_SIZE = 2 * 1024 * 1024; // 2MB
+// STAŁE bez zmian
+const MAX_MAIN_IMAGE_SIZE = 500 * 1024;
+const MAX_ADDITIONAL_IMAGE_SIZE = 500 * 1024;
+const MAX_AUDIO_SIZE = 2 * 1024 * 1024;
 const ALLOWED_IMAGE_TYPES = [
   "image/jpeg",
   "image/jpg",
@@ -22,7 +23,7 @@ const ALLOWED_IMAGE_TYPES = [
 ];
 const ALLOWED_AUDIO_TYPES = ["audio/mpeg", "audio/mp3"];
 
-// 17 globalnych celów zrównoważonego rozwoju (SDGs)
+// Cele zrównoważonego rozwoju bez zmian
 const SUSTAINABILITY_GOALS = [
   { id: 1, name: "Keine Armut" },
   { id: 2, name: "Kein Hunger" },
@@ -43,7 +44,7 @@ const SUSTAINABILITY_GOALS = [
   { id: 17, name: "Partnerschaften zur Erreichung der Ziele" },
 ];
 
-// OPCJE dla statusu certyfikacji
+// Opcje statusu certyfikacji bez zmian
 const CERTIFICATION_STATUS_OPTIONS: CertificationStatusOption[] = [
   {
     value: "A",
@@ -65,24 +66,22 @@ const CERTIFICATION_STATUS_OPTIONS: CertificationStatusOption[] = [
   },
 ];
 
-// OPCJE dla wielkości firmy
+// Opcje wielkości firmy bez zmian
 const COMPANY_SIZE_OPTIONS: CompanySizeOption[] = [
-  {
-    value: "ngo",
-    label: "NGOs und gemeinnützige Organisationen",
-  },
-  {
-    value: "micro",
-    label: "Kleinstunternehmen (bis 5 Mitarbeitende)",
-  },
-  {
-    value: "small",
-    label: "Kleine Unternehmen (bis 50 Mitarbeitende)",
-  },
-  {
-    value: "medium",
-    label: "Mittlere Unternehmen (bis 500 Mitarbeitende)",
-  },
+  { value: "ngo", label: "NGOs und gemeinnützige Organisationen" },
+  { value: "micro", label: "Kleinstunternehmen (bis 5 Mitarbeitende)" },
+  { value: "small", label: "Kleine Unternehmen (bis 50 Mitarbeitende)" },
+  { value: "medium", label: "Mittlere Unternehmen (bis 500 Mitarbeitende)" },
+];
+
+// NOWE OPCJE KATEGORII - na podstawie plików, które dostarczyłeś
+const CATEGORY_OPTIONS: CategoryOption[] = [
+  { value: "Kultur & Natur", label: "Kultur & Natur", color: "#E45858" },
+  { value: "Tourismus", label: "Tourismus", color: "#6477E3" },
+  { value: "Einkaufen", label: "Einkaufen", color: "#F0873D" },
+  { value: "Umwelt", label: "Umwelt", color: "#42D742" },
+  { value: "Bildung", label: "Bildung", color: "#27B9B7" },
+  { value: "Wirtschaft", label: "Wirtschaft", color: "#E0D12E" },
 ];
 
 export default function PartnerForm() {
@@ -93,16 +92,15 @@ export default function PartnerForm() {
     phone: "",
     placeName: "",
     address: "",
+    kategorie: "", // NOWE POLE
     mainImage: null,
     additionalImages: [],
     textContent: "",
     audioFile: null,
     websiteUrl: "",
     message: "",
-    // ISTNIEJĄCE POLA
     certificate: "",
     sustainabilityGoals: [],
-    // NOWE POLA
     certificationStatus: "",
     companySize: "",
   });
@@ -111,7 +109,6 @@ export default function PartnerForm() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitSuccess, setSubmitSuccess] = useState(false);
 
-  // Refs dla file inputs
   const mainImageRef = useRef<HTMLInputElement>(null);
   const additionalImagesRef = useRef<HTMLInputElement>(null);
   const audioFileRef = useRef<HTMLInputElement>(null);
@@ -127,7 +124,7 @@ export default function PartnerForm() {
   };
 
   const validateUrl = (url: string): boolean => {
-    if (!url) return true; // Opcjonalne pole
+    if (!url) return true;
     try {
       new URL(url);
       return true;
@@ -168,7 +165,11 @@ export default function PartnerForm() {
       newErrors.address = "Adresse ist erforderlich";
     }
 
-    // Sprawdzenie URL (jeśli podany)
+    // NOWA WALIDACJA dla kategorii
+    if (!formData.kategorie) {
+      newErrors.kategorie = "Kategorie ist erforderlich";
+    }
+
     if (formData.websiteUrl && !validateUrl(formData.websiteUrl)) {
       newErrors.websiteUrl = "Ungültiges Website-Adressformat";
     }
@@ -176,10 +177,7 @@ export default function PartnerForm() {
     console.log("Validation results:", {
       hasErrors: Object.keys(newErrors).length > 0,
       errors: newErrors,
-      sustainabilityGoalsCount: formData.sustainabilityGoals.length,
-      sustainabilityGoals: formData.sustainabilityGoals,
-      certificationStatus: formData.certificationStatus,
-      companySize: formData.companySize,
+      kategorie: formData.kategorie, // NOWE POLE
     });
 
     setErrors(newErrors);
@@ -195,7 +193,6 @@ export default function PartnerForm() {
       [name]: value,
     }));
 
-    // Usuń błąd dla tego pola
     if (errors[name as keyof PartnerFormErrors]) {
       setErrors((prev) => ({
         ...prev,
@@ -204,14 +201,28 @@ export default function PartnerForm() {
     }
   };
 
-  // FUNKCJE dla radio buttons
+  // NOWA FUNKCJA dla obsługi kategorii
+  const handleCategoryChange = (value: string) => {
+    setFormData((prev) => ({
+      ...prev,
+      kategorie: value,
+    }));
+
+    if (errors.kategorie) {
+      setErrors((prev) => ({
+        ...prev,
+        kategorie: undefined,
+      }));
+    }
+  };
+
+  // Pozostałe funkcje bez zmian
   const handleCertificationStatusChange = (value: "A" | "B" | "C") => {
     setFormData((prev) => ({
       ...prev,
       certificationStatus: value,
     }));
 
-    // Usuń błąd
     if (errors.certificationStatus) {
       setErrors((prev) => ({
         ...prev,
@@ -228,7 +239,6 @@ export default function PartnerForm() {
       companySize: value,
     }));
 
-    // Usuń błąd
     if (errors.companySize) {
       setErrors((prev) => ({
         ...prev,
@@ -237,7 +247,6 @@ export default function PartnerForm() {
     }
   };
 
-  // FUNKCJA do obsługi checkboxów dla celów zrównoważonego rozwoju
   const handleSustainabilityGoalChange = (goalId: number, checked: boolean) => {
     console.log(`Sustainability goal ${goalId} changed to ${checked}`);
 
@@ -247,10 +256,6 @@ export default function PartnerForm() {
         : prev.sustainabilityGoals.filter((id) => id !== goalId);
 
       console.log("Updated sustainabilityGoals:", newGoals);
-      console.log(
-        "Updated sustainabilityGoals type check:",
-        newGoals.map((id) => typeof id)
-      );
 
       return {
         ...prev,
@@ -258,7 +263,6 @@ export default function PartnerForm() {
       };
     });
 
-    // Usuń błąd jeśli wybrano przynajmniej jeden cel
     if (errors.sustainabilityGoals && checked) {
       setErrors((prev) => ({
         ...prev,
@@ -267,6 +271,7 @@ export default function PartnerForm() {
     }
   };
 
+  // Funkcje obsługi plików bez zmian
   const handleMainImageChange = (e: ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
@@ -394,11 +399,8 @@ export default function PartnerForm() {
     e.preventDefault();
 
     console.log("Form data before validation:", {
+      kategorie: formData.kategorie, // NOWE POLE
       sustainabilityGoals: formData.sustainabilityGoals,
-      sustainabilityGoalsLength: formData.sustainabilityGoals.length,
-      sustainabilityGoalsTypes: formData.sustainabilityGoals.map(
-        (id) => typeof id
-      ),
       certificationStatus: formData.certificationStatus,
       companySize: formData.companySize,
     });
@@ -412,40 +414,34 @@ export default function PartnerForm() {
     setErrors({});
 
     try {
-      // Przygotuj FormData do wysłania
       const submitFormData = new FormData();
 
-      // Dodaj podstawowe dane (BEZ WSPÓŁRZĘDNYCH)
+      // Dodaj podstawowe dane
       submitFormData.append("firstName", formData.firstName);
       submitFormData.append("lastName", formData.lastName);
       submitFormData.append("email", formData.email);
       submitFormData.append("phone", formData.phone);
       submitFormData.append("placeName", formData.placeName);
       submitFormData.append("address", formData.address);
-      // USUNIĘTE: latitude i longitude
+      submitFormData.append("kategorie", formData.kategorie); // NOWE POLE
 
       submitFormData.append("textContent", formData.textContent);
       submitFormData.append("websiteUrl", formData.websiteUrl);
       submitFormData.append("message", formData.message);
 
-      // ISTNIEJĄCE POLA z debugowaniem
+      // Pola Teilnahmebedingungen
       submitFormData.append("certificate", formData.certificate);
 
       console.log(
         "sustainabilityGoals being sent:",
         formData.sustainabilityGoals
       );
-      console.log(
-        "sustainabilityGoals JSON string:",
-        JSON.stringify(formData.sustainabilityGoals)
-      );
-
       submitFormData.append(
         "sustainabilityGoals",
         JSON.stringify(formData.sustainabilityGoals)
       );
 
-      // NOWE POLA
+      // Pola radio
       submitFormData.append(
         "certificationStatus",
         formData.certificationStatus
@@ -456,6 +452,7 @@ export default function PartnerForm() {
       console.log("FormData entries:");
       for (const [key, value] of submitFormData.entries()) {
         if (
+          key === "kategorie" ||
           key === "sustainabilityGoals" ||
           key === "certificationStatus" ||
           key === "companySize"
@@ -477,18 +474,17 @@ export default function PartnerForm() {
         submitFormData.append("audioFile", formData.audioFile);
       }
 
-      // Wyślij do API z timeout
+      // Wyślij do API
       const response = await fetch("/api/partner-application", {
         method: "POST",
         body: submitFormData,
-        signal: AbortSignal.timeout(30000), // 30 sekund timeout
+        signal: AbortSignal.timeout(30000),
       });
 
       let result;
       try {
         result = await response.json();
       } catch {
-        // Jeśli nie można sparsować JSON, może to być sukces bez treści
         if (response.ok) {
           result = { success: true };
         } else {
@@ -516,7 +512,7 @@ export default function PartnerForm() {
         phone: "",
         placeName: "",
         address: "",
-        // USUNIĘTE: latitude: "", longitude: "",
+        kategorie: "", // NOWE POLE
         mainImage: null,
         additionalImages: [],
         textContent: "",
@@ -525,7 +521,6 @@ export default function PartnerForm() {
         message: "",
         certificate: "",
         sustainabilityGoals: [],
-        // NOWE POLA
         certificationStatus: "",
         companySize: "",
       });
@@ -537,7 +532,6 @@ export default function PartnerForm() {
     } catch (error) {
       console.error("Błąd wysyłania formularza:", error);
 
-      // Różne typy błędów
       if (error instanceof Error) {
         if (error.name === "TimeoutError") {
           setErrors({
@@ -668,7 +662,7 @@ export default function PartnerForm() {
         </div>
       </section>
 
-      {/* 2. INFORMATIONEN DES PINS - BEZ WSPÓŁRZĘDNYCH */}
+      {/* 2. INFORMATIONEN DES PINS */}
       <section className={styles.section}>
         <h4>Informationen zum Pin</h4>
 
@@ -705,7 +699,53 @@ export default function PartnerForm() {
           )}
         </div>
 
-        {/* USUNIĘTA SEKCJA Z WSPÓŁRZĘDNYMI I PORADĄ */}
+        {/* NOWE POLE KATEGORII z ulepszonymi stylami i funkcjonalnością */}
+        <div className={styles.field}>
+          <label className={styles.radioGroupLabel}>Kategorie *</label>
+          <p className={styles.radioGroupSubtitle}>
+            Wählen Sie die Kategorie, in der Sie Ihren PIN platzieren möchten:
+          </p>
+
+          <div className={styles.radioGroup}>
+            {CATEGORY_OPTIONS.map((category) => (
+              <div
+                key={category.value}
+                className={`${styles.radioItem} ${styles.categoryRadioItem}`}
+                style={
+                  { "--category-color": category.color } as React.CSSProperties
+                }
+                onClick={() => handleCategoryChange(category.value)}
+              >
+                <div
+                  className={`${styles.radioWrapper} ${styles.categoryRadioWrapper}`}
+                >
+                  <input
+                    type="radio"
+                    id={`category-${category.value}`}
+                    name="kategorie"
+                    value={category.value}
+                    checked={formData.kategorie === category.value}
+                    onChange={() => handleCategoryChange(category.value)}
+                    className={`${styles.radio} ${styles.categoryRadio}`}
+                    tabIndex={-1} // Wyłączamy focus na input, bo klikamy w cały div
+                  />
+                </div>
+                <div className={styles.radioContent}>
+                  <label
+                    htmlFor={`category-${category.value}`}
+                    className={`${styles.radioLabel} ${styles.categoryRadioLabel}`}
+                    onClick={(e) => e.preventDefault()} // Zapobiegamy podwójnemu wywołaniu
+                  >
+                    <strong>{category.label}</strong>
+                  </label>
+                </div>
+              </div>
+            ))}
+          </div>
+          {errors.kategorie && (
+            <span className={styles.error}>{errors.kategorie}</span>
+          )}
+        </div>
       </section>
 
       {/* 3. BILDER */}
@@ -937,7 +977,7 @@ export default function PartnerForm() {
           )}
         </div>
 
-        {/* POLE 1 - Status certyfikacji */}
+        {/* Status certyfikacji */}
         <div className={styles.field}>
           <label className={styles.radioGroupLabel}>
             Erfüllte Teilnahmebedingungen
@@ -981,12 +1021,13 @@ export default function PartnerForm() {
           )}
         </div>
 
+        {/* Cele zrównoważonego rozwoju */}
         <div className={styles.field}>
           <label className={styles.checkboxGroupLabel}>
             Die 17 globalen Nachhaltigkeitsziele
           </label>
           <p className={styles.checkboxGroupSubtitle}>
-            Markieren Sie, welche der 17 ziele verfolgen sie oder streben sie
+            Markieren Sie, welche der 17 Ziele verfolgen Sie oder streben Sie
             an.
           </p>
 
@@ -1022,7 +1063,7 @@ export default function PartnerForm() {
           )}
         </div>
 
-        {/* POLE 2 - Wielkość firmy */}
+        {/* Wielkość firmy */}
         <div className={styles.field}>
           <label className={styles.radioGroupLabel}>Unternehmensgröße</label>
           <p className={styles.radioGroupSubtitle}>

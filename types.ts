@@ -185,6 +185,7 @@ export interface PartnerFormData {
   // Dane miejsca (wymagane)
   placeName: string;
   address: string;
+  kategorie: string;
 
   // Pliki (główne zdjęcie wymagane)
   mainImage: File | null;
@@ -214,6 +215,7 @@ export interface PartnerFormErrors {
   phone?: string;
   placeName?: string;
   address?: string;
+  kategorie?: string;
   mainImage?: string;
   additionalImages?: string;
   textContent?: string;
@@ -239,6 +241,7 @@ export interface PartnerSubmissionData {
   // Dane miejsca
   place_name: string;
   address: string;
+  kategorie?: string;
 
   // Zawartość tekstowa (wymagana)
   text_content?: string;
@@ -273,6 +276,7 @@ export interface PartnerApplication {
   phone: string;
   place_name: string;
   address: string;
+  kategorie?: string;
   text_content?: string;
   main_image_url?: string;
   additional_images_urls?: string[];
@@ -294,6 +298,12 @@ export interface PartnerApplication {
   admin_notes?: string;
   reviewed_by?: string;
   reviewed_at?: string;
+}
+
+export interface CategoryOption {
+  value: string;
+  label: string;
+  color: string;
 }
 
 // NOWE TYPY dla opcji wyboru w formularzu

@@ -1,4 +1,4 @@
-// app/api/partner-application/route.ts - KOMPLETNY PLIK z naprawionymi błędami TypeScript
+// app/api/partner-application/route.ts - z dodanym polem kategorie
 import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@supabase/supabase-js";
 import type { PartnerSubmissionData } from "@/types";
@@ -7,7 +7,6 @@ const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
 const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY!;
 const directusUrl = process.env.DIRECTUS_URL!;
 
-// Używamy service role key dla server-side operacji
 const supabase = createClient(supabaseUrl, supabaseServiceKey);
 
 interface FileUploadResult {
@@ -50,10 +49,8 @@ async function uploadFileToSupabase(
   }
 }
 
-// Funkcja saveToDirectus - wszystkie pola opcjonalne oprócz podstawowych
 async function saveToDirectus(data: Partial<PartnerSubmissionData>) {
   try {
-    // DODAJ LOGOWANIE dla debugowania
     console.log("Sending to Directus:", JSON.stringify(data, null, 2));
 
     const response = await fetch(`${directusUrl}/items/partner_applications`, {
@@ -66,14 +63,12 @@ async function saveToDirectus(data: Partial<PartnerSubmissionData>) {
 
     console.log("Directus response status:", response.status);
 
-    // Directus może zwracać 204 (sukces bez treści) lub 200/201
     if (response.ok) {
       try {
         const result = await response.json();
         console.log("Directus response data:", result);
         return result;
       } catch {
-        // 204 No Content - to też sukces
         return { success: true, id: "created" };
       }
     } else {
@@ -91,7 +86,7 @@ export async function POST(request: NextRequest) {
   try {
     const formData = await request.formData();
 
-    // POPRAWIONE PARSOWANIE sustainability_goals (teraz opcjonalne)
+    // Parsowanie sustainability_goals
     let sustainabilityGoals: number[] = [];
     const sustainabilityGoalsRaw = formData.get("sustainabilityGoals");
 
@@ -107,30 +102,30 @@ export async function POST(request: NextRequest) {
         }
       } catch (error) {
         console.error("Error parsing sustainabilityGoals:", error);
-        // ZMIANA: Nie zwracaj błędu, po prostu ustaw pustą tablicę
         sustainabilityGoals = [];
       }
     }
 
     console.log("Parsed sustainabilityGoals:", sustainabilityGoals);
 
-    // POPRAWKA: Pobierz wartości jako string, następnie waliduj i typuj
+    // Walidacja i typowanie pól radio
     const certificationStatusRaw = formData.get(
       "certificationStatus"
     ) as string;
     const companySizeRaw = formData.get("companySize") as string;
+    const kategorieRaw = formData.get("kategorie") as string; // NOWE POLE
 
-    console.log("New fields raw:", {
+    console.log("Form fields raw:", {
       certificationStatusRaw,
       companySizeRaw,
+      kategorieRaw, // NOWE POLE
     });
 
-    // POPRAWKA: Zadeklaruj zmienne z prawidłowymi typami
     let certificationStatus: "A" | "B" | "C" | undefined = undefined;
     let companySize: "micro" | "small" | "medium" | "ngo" | undefined =
       undefined;
 
-    // Walidacja i przypisanie certificationStatus
+    // Walidacja certificationStatus
     if (certificationStatusRaw) {
       if (["A", "B", "C"].includes(certificationStatusRaw)) {
         certificationStatus = certificationStatusRaw as "A" | "B" | "C";
@@ -142,7 +137,7 @@ export async function POST(request: NextRequest) {
       }
     }
 
-    // Walidacja i przypisanie companySize
+    // Walidacja companySize
     if (companySizeRaw) {
       if (["micro", "small", "medium", "ngo"].includes(companySizeRaw)) {
         companySize = companySizeRaw as "micro" | "small" | "medium" | "ngo";
@@ -157,9 +152,10 @@ export async function POST(request: NextRequest) {
     console.log("Validated fields:", {
       certificationStatus,
       companySize,
+      kategorie: kategorieRaw, // NOWE POLE
     });
 
-    // ZMIANA: Wyciągnij dane tekstowe z formularza (większość pól opcjonalnych)
+    // Przygotowanie danych do wysłania
     const submissionData: Partial<PartnerSubmissionData> = {
       // WYMAGANE POLA - podstawowe dane
       first_name: formData.get("firstName") as string,
@@ -168,38 +164,35 @@ export async function POST(request: NextRequest) {
       phone: formData.get("phone") as string,
       place_name: formData.get("placeName") as string,
       address: formData.get("address") as string,
+      kategorie: kategorieRaw || undefined, // NOWE POLE
 
       // OPCJONALNE POLA - zawartość
       text_content: (formData.get("textContent") as string) || "",
       website_url: (formData.get("websiteUrl") as string) || undefined,
       message: (formData.get("message") as string) || undefined,
 
-      // ZMIANA: OPCJONALNE POLA Teilnahmebedingungen
+      // OPCJONALNE POLA Teilnahmebedingungen
       certificate: (formData.get("certificate") as string) || "",
       sustainability_goals:
         sustainabilityGoals.length > 0 ? sustainabilityGoals : undefined,
 
-      // POPRAWKA: Używaj już walidowanych i prawidłowo otypowanych zmiennych
-      certification_status: certificationStatus, // ✅ Teraz prawidłowy typ
-      company_size: companySize, // ✅ Teraz prawidłowy typ
+      // Pola radio
+      certification_status: certificationStatus,
+      company_size: companySize,
 
       // Status i czas
       status: "new" as const,
       created_at: new Date().toISOString(),
     };
 
-    // ZMIANA: Walidacja tylko podstawowych danych (bez pól Teilnahmebedingungen)
+    // Walidacja podstawowych danych (DODANO kategorię do walidacji)
     if (
       !submissionData.first_name ||
       !submissionData.last_name ||
       !submissionData.email ||
       !submissionData.place_name ||
-      !submissionData.address
-      // USUNIĘTE WSZYSTKIE WALIDACJE Teilnahmebedingungen:
-      // !submissionData.certificate ||
-      // !sustainabilityGoals.length ||
-      // !submissionData.certification_status ||
-      // !submissionData.company_size
+      !submissionData.address ||
+      !submissionData.kategorie // NOWE POLE w walidacji
     ) {
       console.error("Validation failed:", {
         first_name: !!submissionData.first_name,
@@ -207,6 +200,7 @@ export async function POST(request: NextRequest) {
         email: !!submissionData.email,
         place_name: !!submissionData.place_name,
         address: !!submissionData.address,
+        kategorie: !!submissionData.kategorie, // NOWE POLE
         // OPCJONALNE - tylko do logowania
         certificate: !!submissionData.certificate,
         sustainabilityGoals: sustainabilityGoals.length,
@@ -217,18 +211,15 @@ export async function POST(request: NextRequest) {
       return NextResponse.json(
         {
           error:
-            "Brakuje wymaganych podstawowych danych (imię, nazwisko, email, nazwa pinu, adres)",
+            "Brakuje wymaganych podstawowych danych (imię, nazwisko, email, nazwa pinu, adres, kategoria)",
         },
         { status: 400 }
       );
     }
 
-    // Przesyłanie plików do Supabase
-
-    // OPCJONALNE: Główne zdjęcie
+    // Przesyłanie plików do Supabase - bez zmian
     const mainImage = formData.get("mainImage") as File;
     if (mainImage && mainImage.size > 0) {
-      // Jeśli zdjęcie zostało przesłane, prześlij je
       const uploadResult = await uploadFileToSupabase(
         mainImage,
         "media-files",
@@ -243,7 +234,7 @@ export async function POST(request: NextRequest) {
       submissionData.main_image_url = uploadResult.url;
     }
 
-    // OPCJONALNE: Dodatkowe zdjęcia
+    // Dodatkowe zdjęcia
     const additionalImages: string[] = [];
     for (let i = 0; i < 6; i++) {
       const additionalImage = formData.get(`additionalImage${i}`) as File;
@@ -267,7 +258,7 @@ export async function POST(request: NextRequest) {
       submissionData.additional_images_urls = additionalImages;
     }
 
-    // OPCJONALNE: Plik audio
+    // Plik audio
     const audioFile = formData.get("audioFile") as File;
     if (audioFile && audioFile.size > 0) {
       const uploadResult = await uploadFileToSupabase(
@@ -282,7 +273,7 @@ export async function POST(request: NextRequest) {
       }
     }
 
-    // Zapisz do Directus (wszystkie pola mogą być opcjonalne oprócz podstawowych)
+    // Zapisz do Directus
     const savedData = await saveToDirectus(
       submissionData as PartnerSubmissionData
     );
