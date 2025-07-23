@@ -155,7 +155,8 @@
   margin: 5vh auto;
   width: 70%;
   background-color: lightcyan;
-  border: 4px dashed ghostwhite;
+  border: 4px dashed black;
+  border-radius: 20px;
   padding: 4vh 3vw;
 }
 
