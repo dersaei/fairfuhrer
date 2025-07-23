@@ -6,6 +6,8 @@ import Image from "next/image";
 import { getPageAssetUrl } from "@/lib/supabase";
 import Link from "next/link";
 import type { StyleSpecification } from "mapbox-gl";
+// ✅ DODAJ IMPORT CONDITIONAL MAPBOX
+import { ConditionalMapbox } from "../components/ConditionalMapbox";
 import styles from "./page.module.css";
 import { Heart, Star, Users, Headphones } from "lucide-react";
 
@@ -17,7 +19,7 @@ interface AtmosphereStyle extends StyleSpecification {
   pitch: number;
 }
 
-// Hook do responsywnych ustawień mapy
+// Hook do responsywnych ustawień mapy (bez zmian)
 const useResponsiveMapSettings = (
   baseZoom: number,
   basePitch: number,
@@ -34,7 +36,6 @@ const useResponsiveMapSettings = (
   });
 
   useEffect(() => {
-    // Nie uruchamiaj jeśli wartości to 0 (znaczy że dane się jeszcze nie załadowały)
     if (baseZoom === 0 && basePitch === 0 && baseBearing === 0) {
       return;
     }
@@ -82,14 +83,14 @@ export default function HomePage() {
   const [mapLoaded, setMapLoaded] = useState(false);
   const MAPBOX_TOKEN = process.env.NEXT_PUBLIC_MAPBOX_TOKEN!;
 
-  // Responsywne ustawienia kamery - tylko gdy atmosphereStyle jest załadowany
+  // Responsywne ustawienia kamery
   const responsiveSettings = useResponsiveMapSettings(
     atmosphereStyle?.zoom || 0,
     atmosphereStyle?.pitch || 0,
     atmosphereStyle?.bearing || 0
   );
 
-  // Załaduj styl atmosphere z public/styles/
+  // Załaduj styl atmosphere z public/styles/ (bez zmian)
   useEffect(() => {
     const loadAtmosphereStyle = async () => {
       try {
@@ -109,15 +110,13 @@ export default function HomePage() {
     loadAtmosphereStyle();
   }, []);
 
-  // Obsługa załadowania mapy
+  // Obsługa załadowania mapy (bez zmian)
   const handleMapLoad = () => {
     setMapLoaded(true);
 
-    // Upewnij się, że mapa ma prawidłowe ustawienia po załadowaniu
     if (mapRef.current && atmosphereStyle) {
       const map = mapRef.current.getMap();
 
-      // Daj mapie czas na pełne załadowanie przed ustawieniem widoku
       setTimeout(() => {
         map.jumpTo({
           center: atmosphereStyle.center,
@@ -126,13 +125,12 @@ export default function HomePage() {
           pitch: responsiveSettings.pitch,
         });
 
-        // Wymuszaj ponowne renderowanie
         map.triggerRepaint();
       }, 100);
     }
   };
 
-  // Efekt dla aktualizacji widoku na resize - tylko gdy mapa jest załadowana
+  // Efekt dla aktualizacji widoku na resize (bez zmian)
   useEffect(() => {
     if (mapRef.current && atmosphereStyle && responsiveSettings && mapLoaded) {
       const map = mapRef.current.getMap();
@@ -150,7 +148,7 @@ export default function HomePage() {
     }
   }, [atmosphereStyle, responsiveSettings, mapLoaded]);
 
-  // Loading state
+  // Loading state (bez zmian)
   if (isLoading) {
     return (
       <div className={styles.loadingContainer}>
@@ -159,7 +157,7 @@ export default function HomePage() {
     );
   }
 
-  // Error state
+  // Error state (bez zmian)
   if (!atmosphereStyle) {
     return (
       <div className={styles.loadingContainer}>
@@ -171,7 +169,7 @@ export default function HomePage() {
   return (
     <>
       <main className={styles.main}>
-        {/* Przycisk Sparschwein - FIXED POSITION */}
+        {/* Przycisk Sparschwein - FIXED POSITION (bez zmian) */}
         <Link href="/sparschwein" className={styles.sparschweineButton}>
           <div>
             <Image
@@ -186,27 +184,29 @@ export default function HomePage() {
           <div className={styles.sparschweineSubtitle}>Danke</div>
         </Link>
 
-        {/* Sekcja 1: Mapa */}
+        {/* ✅ SEKCJA 1: MAPA - OWRAP W CONDITIONAL MAPBOX */}
         <div className={styles.container}>
-          <Map
-            ref={mapRef}
-            mapboxAccessToken={MAPBOX_TOKEN}
-            mapStyle={atmosphereStyle}
-            projection="globe"
-            interactive={false}
-            cursor="default"
-            onLoad={handleMapLoad}
-            initialViewState={{
-              longitude: atmosphereStyle.center[0],
-              latitude: atmosphereStyle.center[1],
-              zoom: responsiveSettings.zoom || atmosphereStyle.zoom,
-              bearing: responsiveSettings.bearing || atmosphereStyle.bearing,
-              pitch: responsiveSettings.pitch || atmosphereStyle.pitch,
-            }}
-            style={{ width: "100%", height: "100%" }}
-          />
+          <ConditionalMapbox>
+            <Map
+              ref={mapRef}
+              mapboxAccessToken={MAPBOX_TOKEN}
+              mapStyle={atmosphereStyle}
+              projection="globe"
+              interactive={false}
+              cursor="default"
+              onLoad={handleMapLoad}
+              initialViewState={{
+                longitude: atmosphereStyle.center[0],
+                latitude: atmosphereStyle.center[1],
+                zoom: responsiveSettings.zoom || atmosphereStyle.zoom,
+                bearing: responsiveSettings.bearing || atmosphereStyle.bearing,
+                pitch: responsiveSettings.pitch || atmosphereStyle.pitch,
+              }}
+              style={{ width: "100%", height: "100%" }}
+            />
+          </ConditionalMapbox>
 
-          {/* Napis po lewej stronie */}
+          {/* Napis po lewej stronie (bez zmian) */}
           <div className={styles.leftText}>
             <h2 className={styles.section1Title}>
               Dein Reiseführer für Geschichte und gute Geschichten
@@ -216,7 +216,7 @@ export default function HomePage() {
             </h3>
           </div>
 
-          {/* Przycisk Play na środku globu - ZAMIENIONY NA LINK */}
+          {/* Przycisk Play na środku globu (bez zmian) */}
           <Link href="/karte" className={styles.playButtonContainer}>
             <div className={styles.playButton}>
               <div className={styles.playTriangle} />
@@ -225,7 +225,7 @@ export default function HomePage() {
           </Link>
         </div>
 
-        {/* SEKCJA 2: Gute Geschichten */}
+        {/* SEKCJA 2: Gute Geschichten (bez zmian) */}
         <section className={styles.section2}>
           <div className={styles.section2Content}>
             <h2 className={styles.section2Title}>
@@ -277,7 +277,7 @@ export default function HomePage() {
           </div>
         </section>
 
-        {/* SEKCJA 3: Inspirierendes Entdecken */}
+        {/* SEKCJA 3: Inspirierendes Entdecken (bez zmian) */}
         <section className={styles.section3}>
           <div className={styles.section3Content}>
             <div className={styles.section3TextSide}>
@@ -293,13 +293,12 @@ export default function HomePage() {
             </div>
 
             <div className={styles.section3ImageSide}>
-              {/* Tutaj możesz dodać obraz lub pozostawić jako placeholder */}
               <span>🎧 Audio-Guides</span>
             </div>
           </div>
         </section>
 
-        {/* SEKCJA 4: Partner werden */}
+        {/* SEKCJA 4: Partner werden (bez zmian) */}
         <section className={styles.section4}>
           <div className={styles.section4Content}>
             <div className={styles.section4Badge}>

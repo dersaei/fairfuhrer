@@ -1,10 +1,12 @@
-// app/partner-werden/page.tsx - OCZYSZCZONA WERSJA
+// app/partner-werden/page.tsx - Z CONDITIONAL MUX VIDEO
 import { Metadata } from "next";
 import Image from "next/image";
 import type { PartnerPageContent } from "../../types";
 import { getPageAssetPath } from "../../lib/supabase";
 import PartnerForm from "../../components/PartnerForm";
 import MuxVideoEmbed from "../../components/MuxVideoEmbed";
+// ✅ DODAJ IMPORT CONDITIONAL MUX VIDEO
+import { ConditionalMuxVideo } from "../../components/ConditionalMuxVideo";
 import styles from "./partner-werden.module.css";
 
 export const revalidate = 86400;
@@ -62,7 +64,7 @@ export default async function PartnerWerdenPage() {
 
   return (
     <div className={styles.container}>
-      {/* SEKCJA 1 */}
+      {/* SEKCJA 1 (bez zmian) */}
       <section
         className={styles.section1}
         style={{
@@ -103,7 +105,7 @@ export default async function PartnerWerdenPage() {
         )}
       </section>
 
-      {/* SEKCJA 3 - TYLKO MUX VIDEO */}
+      {/* ✅ SEKCJA 3 - MUX VIDEO OWRAPOWANE W CONDITIONAL MUX VIDEO */}
       <section
         className={styles.section3}
         style={{
@@ -134,15 +136,17 @@ export default async function PartnerWerdenPage() {
         </div>
 
         <div className={styles.section3Right}>
-          {/* TYLKO MUX VIDEO - BEZ YOUTUBE FALLBACK */}
+          {/* ✅ MUX VIDEO OWRAPOWANE W CONDITIONAL MUX VIDEO */}
           {pageData.section3_mux_playback_id ? (
-            <MuxVideoEmbed
-              playbackId={pageData.section3_mux_playback_id}
-              poster={pageData.section3_video_poster}
-              autoPlay={false}
-              muted={false}
-              className={styles.muxVideo}
-            />
+            <ConditionalMuxVideo>
+              <MuxVideoEmbed
+                playbackId={pageData.section3_mux_playback_id}
+                poster={pageData.section3_video_poster}
+                autoPlay={false}
+                muted={false}
+                className={styles.muxVideo}
+              />
+            </ConditionalMuxVideo>
           ) : (
             <div className={styles.noVideo}>
               <p>🎬 Video wird konfiguriert</p>
@@ -152,7 +156,7 @@ export default async function PartnerWerdenPage() {
         </div>
       </section>
 
-      {/* SEKCJA 4 - FORMULARZ */}
+      {/* SEKCJA 4 - FORMULARZ (bez zmian) */}
       <section
         className={styles.section4}
         style={{
@@ -175,7 +179,7 @@ export default async function PartnerWerdenPage() {
         </div>
       </section>
 
-      {/* SEKCJA 5 - KOŃCOWA */}
+      {/* SEKCJA 5 - KOŃCOWA (bez zmian) */}
       {(pageData.section5_title || pageData.section5_text) && (
         <section
           className={styles.section5}

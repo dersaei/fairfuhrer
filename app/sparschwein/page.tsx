@@ -1,4 +1,4 @@
-// app/sparschwein/page.tsx - UPROSZCZONA WERSJA
+// app/sparschwein/page.tsx - Z CONDITIONAL PAYPAL
 "use client";
 
 import { useState, useEffect } from "react";
@@ -15,6 +15,8 @@ import {
   AlertCircle,
 } from "lucide-react";
 import { PayPalDonationForm } from "@/components/PayPalDonationForm";
+// ✅ DODAJ IMPORT CONDITIONAL PAYPAL
+import { ConditionalPayPal } from "@/components/ConditionalPayPal";
 import type { PayPalDonation } from "@/types";
 import styles from "./sparschwein.module.css";
 
@@ -47,7 +49,6 @@ export default function SparschweinsPage() {
     setDonationSuccess(donation);
     setDonationError("");
 
-    // Scroll to success message
     setTimeout(() => {
       document.getElementById("donation-result")?.scrollIntoView({
         behavior: "smooth",
@@ -60,7 +61,6 @@ export default function SparschweinsPage() {
     setDonationError(error);
     setDonationSuccess(null);
 
-    // Scroll to error message
     setTimeout(() => {
       document.getElementById("donation-result")?.scrollIntoView({
         behavior: "smooth",
@@ -82,7 +82,7 @@ export default function SparschweinsPage() {
 
   return (
     <div className={styles.container}>
-      {/* Hero Section */}
+      {/* Hero Section (bez zmian) */}
       <div className={styles.hero}>
         <div className={styles.heroBackground}></div>
         <div className={styles.heroContent}>
@@ -103,7 +103,7 @@ export default function SparschweinsPage() {
             Unterstützung in die Zukunft zu führen &#8211; Danke schön!
           </p>
 
-          {/* Feature Cards */}
+          {/* Feature Cards (bez zmian) */}
           <div className={styles.featureGrid}>
             <div className={styles.featureCard}>
               <div
@@ -146,7 +146,7 @@ export default function SparschweinsPage() {
         </div>
       </div>
 
-      {/* Success/Error Messages */}
+      {/* Success/Error Messages (bez zmian) */}
       {(donationSuccess || donationError) && (
         <div id="donation-result" className={styles.donationResult}>
           {donationSuccess && (
@@ -155,10 +155,7 @@ export default function SparschweinsPage() {
               <div>
                 <h3>Vielen Dank für Ihre Spende!</h3>
                 <p>
-                  {/* ✅ POPRAWKA: Wyświetl kwotę w EUR poprawnie */}
-                  Ihre Spende von {(donationSuccess.amount / 100).toFixed(
-                    2
-                  )}{" "}
+                  Ihre Spende von {(donationSuccess.amount / 100).toFixed(2)}{" "}
                   EUR wurde erfolgreich verarbeitet.
                 </p>
                 {donationSuccess.donor_name && (
@@ -184,22 +181,24 @@ export default function SparschweinsPage() {
         </div>
       )}
 
-      {/* PayPal Donation Section */}
+      {/* ✅ PAYPAL DONATION SECTION - OWRAP W CONDITIONAL PAYPAL */}
       <div className={styles.donationForm}>
         <div className={styles.paypalSection}>
-          <PayPalDonationForm
-            onSuccess={handleDonationSuccess}
-            onError={handleDonationError}
-            className={styles.paypalForm}
-          />
+          <ConditionalPayPal>
+            <PayPalDonationForm
+              onSuccess={handleDonationSuccess}
+              onError={handleDonationError}
+              className={styles.paypalForm}
+            />
+          </ConditionalPayPal>
         </div>
 
-        {/* Divider */}
+        {/* Divider (bez zmian) */}
         <div className={styles.divider}>
           <span>oder</span>
         </div>
 
-        {/* Bank Transfer Section */}
+        {/* Bank Transfer Section (bez zmian) */}
         <div className={styles.formCard}>
           <div className={styles.formHeader}>
             <div className={styles.formIcon}>
@@ -211,7 +210,6 @@ export default function SparschweinsPage() {
             </p>
           </div>
 
-          {/* Bank Details Section */}
           <div className={styles.bankDetailsContainer}>
             <div className={styles.bankDetailsHeader}>
               <div className={styles.bankDetailsIcon}>
@@ -287,7 +285,7 @@ export default function SparschweinsPage() {
           </div>
         </div>
 
-        {/* Trust Indicators */}
+        {/* Trust Indicators (bez zmian) */}
         <div className={styles.trustIndicators}>
           <p className={styles.trustMessage}>
             Beide Zahlungsmethoden sind sicher und werden vertraulich behandelt

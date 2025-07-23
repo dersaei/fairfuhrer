@@ -31,8 +31,7 @@ export default function ContactInfo() {
           </div>
           <div className={styles.methodContent}>
             <h3>Telefon</h3>
-            <p>+49 1512 3576161</p>
-            <span className={styles.responseTime}>Mo–Do 10:00–18:00</span>
+            <p>+49 1511 7656692</p>
           </div>
         </div>
 

@@ -7,8 +7,11 @@ import "../styles/reset.css";
 import Header from "../components/Header";
 import Footer from "../components/Footer";
 import { PayPalProvider } from "../components/PayPalProvider";
+// ✅ DODAJ COOKIE IMPORTS
+import { CookieProvider } from "../context/CookieContext";
+import CookieBanner from "../components/CookieBanner";
 
-// pozostałe fonty
+// pozostałe fonty (bez zmian)
 const lato = Lato({
   variable: "--font-lato",
   subsets: ["latin"],
@@ -37,6 +40,7 @@ const montserrat = Montserrat({
   display: "swap",
 });
 
+// metadata bez zmian
 export const metadata: Metadata = {
   metadataBase: new URL("https://www.fairfuehrer.guide"),
   title: {
@@ -97,7 +101,6 @@ export const metadata: Metadata = {
   other: {
     "msapplication-TileColor": "#2e7d32",
     "theme-color": "#2e7d32",
-    // Przenieś preconnect do other metadata
     "preconnect-fonts": "https://fonts.googleapis.com",
     "preconnect-gstatic": "https://fonts.gstatic.com",
   },
@@ -126,11 +129,17 @@ export default function RootLayout({
           ${montserrat.variable}
         `}
       >
-        <PayPalProvider>
-          <Header />
-          <main>{children}</main>
-          <Footer />
-        </PayPalProvider>
+        {/* ✅ OWRAP WSZYSTKO W COOKIE PROVIDER */}
+        <CookieProvider>
+          <PayPalProvider>
+            <Header />
+            <main>{children}</main>
+            <Footer />
+          </PayPalProvider>
+
+          {/* ✅ DODAJ COOKIE BANNER */}
+          <CookieBanner />
+        </CookieProvider>
 
         {/* Structured Data dla organizacji - używamy Next.js Script */}
         <Script

@@ -1,6 +1,8 @@
 // components/Footer.tsx
 
 import Link from "next/link";
+// ✅ DODAJ IMPORT COOKIE SETTINGS
+import CookieSettings from "./CookieSettings";
 import styles from "./Footer.module.css";
 
 export default function Footer() {
@@ -64,6 +66,10 @@ export default function Footer() {
                   <Link href="/datenschutz" className={styles.link}>
                     Datenschutz
                   </Link>
+                </li>
+                {/* ✅ DODAJ COOKIE SETTINGS DO LISTY LINKÓW PRAWNYCH */}
+                <li>
+                  <CookieSettings />
                 </li>
               </ul>
             </div>

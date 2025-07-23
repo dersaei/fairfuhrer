@@ -1,6 +1,8 @@
-// app/karte/page.tsx - TYLKO DODANIE SSR TREŚCI
+// app/karte/page.tsx - TYLKO DODANIE CONDITIONAL MAPBOX
 import MapWithFilters from "../../components/MapWithFilters";
 import { ErrorBoundary } from "../../components/ErrorBoundary";
+// ✅ DODAJ IMPORT CONDITIONAL MAPBOX
+import { ConditionalMapbox } from "../../components/ConditionalMapbox";
 import type {
   Place,
   Category,
@@ -9,7 +11,7 @@ import type {
   DirectusOrte,
 } from "../../types";
 
-// ISR revalidation - dane będą odświeżane co 6 godzin
+// ISR revalidation - dane będą odświeżane co 6 godzin (bez zmian)
 export const revalidate = 21600;
 
 // ========================================
@@ -41,7 +43,6 @@ function transformDirectusOrteToPlace(ort: DirectusOrte): Place | null {
     const latitude = parseCoordinate(ort.Breite);
     const longitude = parseCoordinate(ort.Lange);
 
-    // Walidacja współrzędnych
     if (!isValidCoordinate(latitude, longitude)) {
       console.error(
         `Ungültige Koordinaten für Ort ${ort.id}: lat=${latitude}, lng=${longitude}`
@@ -49,7 +50,6 @@ function transformDirectusOrteToPlace(ort: DirectusOrte): Place | null {
       return null;
     }
 
-    // Walidacja wymaganych pól
     if (!ort.Name || !ort.Adresse) {
       console.error(`Fehlende erforderliche Felder für Ort ${ort.id}`);
       return null;
@@ -110,7 +110,6 @@ async function fetchFromDirectus<T>(
 
     const data = (await response.json()) as DirectusCollectionResponse<T>;
 
-    // Prüfe auf Directus API Fehler
     if (data.errors?.length) {
       throw new Error(
         `Directus API Fehler bei ${entityName}: ${data.errors[0].message}`
@@ -129,7 +128,6 @@ async function fetchFromDirectus<T>(
 // ========================================
 
 export default async function KartePage() {
-  // Validierung der Umgebungsvariable
   const rawUrl = process.env.DIRECTUS_URL;
   if (!rawUrl) {
     throw new Error(
@@ -191,12 +189,10 @@ export default async function KartePage() {
     // DATA TRANSFORMATION
     // ========================================
 
-    // Transform places mit filtering von invalid entries
     const places: Place[] = orteData.data
       .map(transformDirectusOrteToPlace)
       .filter((place): place is Place => place !== null);
 
-    // Transform categories
     const categories: Category[] = kategorieData.data
       .map((kat) => ({
         id: kat.id,
@@ -209,7 +205,6 @@ export default async function KartePage() {
     // DATA VALIDATION
     // ========================================
 
-    // Log statistiken
     console.log(`✅ Erfolgreich geladen:`);
     console.log(`   - ${places.length} von ${orteData.data.length} Orte`);
     console.log(
@@ -224,7 +219,6 @@ export default async function KartePage() {
       console.warn("⚠️  Keine gültigen Kategorien gefunden");
     }
 
-    // Prüfe ob alle Places mindestens eine Kategorie haben
     const placesWithoutCategories = places.filter(
       (p) => p.Kategorie.length === 0
     );
@@ -236,12 +230,12 @@ export default async function KartePage() {
     }
 
     // ========================================
-    // ✅ RENDER COMPONENT - DODANIE SSR TREŚCI
+    // ✅ RENDER COMPONENT - Z CONDITIONAL MAPBOX
     // ========================================
 
     return (
       <div>
-        {/* ✅ UKRYTA TREŚĆ SSR - TYLKO DLA GOOGLE (niewidoczna dla użytkowników) */}
+        {/* SSR TREŚĆ - UKRYTA DLA GOOGLE (bez zmian) */}
         <div
           style={{
             position: "absolute",
@@ -285,35 +279,41 @@ export default async function KartePage() {
           ))}
         </div>
 
-        {/* ✅ TWOJA NORMALNA MAPA - BEZ ZMIAN */}
-        <ErrorBoundary
-          fallback={
-            <div
-              style={{
-                padding: "2rem",
-                textAlign: "center",
-                backgroundColor: "#fee",
-                border: "1px solid #fcc",
-                borderRadius: "8px",
-                margin: "2rem",
-                maxWidth: "800px",
-                marginLeft: "auto",
-                marginRight: "auto",
-              }}
-            >
-              <h2>Fehler beim Laden der Kartenkomponente</h2>
-              <p>Die interaktive Karte konnte nicht geladen werden.</p>
-              <p
-                style={{ fontSize: "0.9em", color: "#666", marginTop: "1rem" }}
+        {/* ✅ MAPA OWRAPOWANA W CONDITIONAL MAPBOX */}
+        <ConditionalMapbox>
+          <ErrorBoundary
+            fallback={
+              <div
+                style={{
+                  padding: "2rem",
+                  textAlign: "center",
+                  backgroundColor: "#fee",
+                  border: "1px solid #fcc",
+                  borderRadius: "8px",
+                  margin: "2rem",
+                  maxWidth: "800px",
+                  marginLeft: "auto",
+                  marginRight: "auto",
+                }}
               >
-                Bitte versuchen Sie, die Seite zu aktualisieren oder
-                kontaktieren Sie den Support.
-              </p>
-            </div>
-          }
-        >
-          <MapWithFilters places={places} categories={categories} />
-        </ErrorBoundary>
+                <h2>Fehler beim Laden der Kartenkomponente</h2>
+                <p>Die interaktive Karte konnte nicht geladen werden.</p>
+                <p
+                  style={{
+                    fontSize: "0.9em",
+                    color: "#666",
+                    marginTop: "1rem",
+                  }}
+                >
+                  Bitte versuchen Sie, die Seite zu aktualisieren oder
+                  kontaktieren Sie den Support.
+                </p>
+              </div>
+            }
+          >
+            <MapWithFilters places={places} categories={categories} />
+          </ErrorBoundary>
+        </ConditionalMapbox>
       </div>
     );
   } catch (error) {
@@ -323,7 +323,6 @@ export default async function KartePage() {
 
     console.error("❌ Kritischer Fehler beim Laden der Kartendaten:", error);
 
-    // Bestimme Fehlertyp für bessere UX
     let userMessage = "Ein unbekannter Fehler ist aufgetreten.";
     let technicalDetails = "";
 
@@ -392,7 +391,6 @@ export default async function KartePage() {
           </button>
         </div>
 
-        {/* Technische Details für Entwickler */}
         <details
           style={{
             marginTop: "2rem",
@@ -455,9 +453,5 @@ export const metadata = {
   description: "Entdecken Sie interessante Orte auf unserer interaktiven Karte",
   keywords: "Karte, Orte, Standorte, Navigation",
 };
-
-// ========================================
-// STATIC GENERATION (POZOSTAJE BEZ ZMIAN)
-// ========================================
 
 export const dynamic = "force-dynamic";
