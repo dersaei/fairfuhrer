@@ -75,6 +75,9 @@ export default function PartnerForm() {
     lastName: "",
     email: "",
     phone: "",
+    // NOWE POLA - opcjonalne
+    billingAddress: "",
+    vatNumber: "",
     placeName: "",
     address: "",
     kategorie: "",
@@ -263,6 +266,9 @@ export default function PartnerForm() {
       submitFormData.append("lastName", formData.lastName);
       submitFormData.append("email", formData.email);
       submitFormData.append("phone", formData.phone);
+      // NOWE POLA - opcjonalne
+      submitFormData.append("billingAddress", formData.billingAddress);
+      submitFormData.append("vatNumber", formData.vatNumber);
       submitFormData.append("placeName", formData.placeName);
       submitFormData.append("address", formData.address);
       submitFormData.append("kategorie", formData.kategorie);
@@ -317,6 +323,9 @@ export default function PartnerForm() {
         lastName: "",
         email: "",
         phone: "",
+        // NOWE POLA - opcjonalne
+        billingAddress: "",
+        vatNumber: "",
         placeName: "",
         address: "",
         kategorie: "",
@@ -458,6 +467,43 @@ export default function PartnerForm() {
             />
             {errors.phone && (
               <span className={styles.error}>{errors.phone}</span>
+            )}
+          </div>
+        </div>
+
+        {/* NOWE POLA - opcjonalne dane firmowe */}
+        <div className={styles.row}>
+          <div className={styles.field}>
+            <label htmlFor="billingAddress">Rechnungsadresse</label>
+            <input
+              type="text"
+              id="billingAddress"
+              name="billingAddress"
+              value={formData.billingAddress}
+              onChange={handleInputChange}
+              className={errors.billingAddress ? styles.inputError : ""}
+              placeholder="Straße, Hausnummer, PLZ, Stadt, Land"
+              maxLength={200}
+            />
+            {errors.billingAddress && (
+              <span className={styles.error}>{errors.billingAddress}</span>
+            )}
+          </div>
+
+          <div className={styles.field}>
+            <label htmlFor="vatNumber">USt-IdNr (VAT-EU)</label>
+            <input
+              type="text"
+              id="vatNumber"
+              name="vatNumber"
+              value={formData.vatNumber}
+              onChange={handleInputChange}
+              className={errors.vatNumber ? styles.inputError : ""}
+              placeholder="z. B. AT123456789"
+              maxLength={20}
+            />
+            {errors.vatNumber && (
+              <span className={styles.error}>{errors.vatNumber}</span>
             )}
           </div>
         </div>
@@ -663,7 +709,19 @@ export default function PartnerForm() {
           </label>
           <p className={styles.checkboxGroupSubtitle}>
             Markieren Sie, welche der 17 Ziele verfolgen Sie oder streben Sie
-            an.
+            an.{" "}
+            <a
+              href="https://17ziele.de"
+              target="_blank"
+              rel="noopener noreferrer"
+              style={{
+                color: "rgba(252, 108, 20, 1)",
+                textDecoration: "underline",
+                fontWeight: "500",
+              }}
+            >
+              Hier erfahren Sie mehr über die 17 Ziele.
+            </a>
           </p>
 
           <div className={styles.checkboxGrid}>

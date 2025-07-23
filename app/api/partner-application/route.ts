@@ -119,6 +119,9 @@ export async function POST(request: NextRequest) {
       last_name: formData.get("lastName") as string,
       email: formData.get("email") as string,
       phone: formData.get("phone") as string,
+      // NOWE POLA - opcjonalne dane firmowe
+      billing_address: (formData.get("billingAddress") as string) || undefined,
+      vat_number: (formData.get("vatNumber") as string) || undefined,
       place_name: formData.get("placeName") as string,
       address: formData.get("address") as string,
       kategorie: kategorieRaw || undefined,

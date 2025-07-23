@@ -182,6 +182,10 @@ export interface PartnerFormData {
   email: string;
   phone: string;
 
+  // NOWE POLA - opcjonalne dane firmowe
+  billingAddress: string;
+  vatNumber: string;
+
   // Dane miejsca (wymagane)
   placeName: string;
   address: string;
@@ -207,6 +211,9 @@ export interface PartnerFormErrors {
   lastName?: string;
   email?: string;
   phone?: string;
+  // NOWE POLA - opcjonalne
+  billingAddress?: string;
+  vatNumber?: string;
   placeName?: string;
   address?: string;
   kategorie?: string;
@@ -228,6 +235,10 @@ export interface PartnerSubmissionData {
   last_name: string;
   email: string;
   phone: string;
+
+  // NOWE POLA - opcjonalne dane firmowe
+  billing_address?: string;
+  vat_number?: string;
 
   // Dane miejsca
   place_name: string;
@@ -261,6 +272,9 @@ export interface PartnerApplication {
   last_name: string;
   email: string;
   phone: string;
+  // NOWE POLA - opcjonalne dane firmowe
+  billing_address?: string;
+  vat_number?: string;
   place_name: string;
   address: string;
   kategorie?: string;
@@ -304,39 +318,6 @@ export interface CompanySizeOption {
 // ========================================
 // TYPY DLA ZAWARTOŚCI STRON
 // ========================================
-
-// ✅ PageContent - dla strony "Über uns"
-export interface PageContent {
-  id: number;
-  page_slug: string;
-  title: string;
-  intro_text: string;
-  // Sekcja kwadratów:
-  categories_section_title?: string;
-  categories_section_subtitle?: string;
-  // 7 kwadratów:
-  square1_title?: string;
-  square1_description?: string;
-  square1_color?: string;
-  square2_title?: string;
-  square2_description?: string;
-  square2_color?: string;
-  square3_title?: string;
-  square3_description?: string;
-  square3_color?: string;
-  square4_title?: string;
-  square4_description?: string;
-  square4_color?: string;
-  square5_title?: string;
-  square5_description?: string;
-  square5_color?: string;
-  square6_title?: string;
-  square6_description?: string;
-  square6_color?: string;
-  square7_title?: string;
-  square7_description?: string;
-  square7_color?: string;
-}
 
 // ✅ ROZSZERZONE - PartnerPageContent z kolorami dla każdej sekcji
 export interface PartnerPageContent {
