@@ -163,7 +163,7 @@
 /* Style dla WYSIWYG content w section4Subtitle */
 .section4Subtitle p {
   margin-bottom: 1.2rem;
-  text-align: justify;
+  text-align: left;
 }
 .section4Subtitle h2 {
   font-size: 2rem;
