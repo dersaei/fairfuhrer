@@ -1,53 +1,10 @@
-// app/api/partner-application/route.ts - z dodanym polem kategorie
+// app/api/partner-application/route.ts - uproszczona wersja bez obsługi plików
 import { NextRequest, NextResponse } from "next/server";
-import { createClient } from "@supabase/supabase-js";
 import type { PartnerSubmissionData } from "@/types";
 
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
-const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY!;
 const directusUrl = process.env.DIRECTUS_URL!;
 
-const supabase = createClient(supabaseUrl, supabaseServiceKey);
-
-interface FileUploadResult {
-  url: string;
-  error?: string;
-}
-
-async function uploadFileToSupabase(
-  file: File,
-  bucket: string,
-  folder: string
-): Promise<FileUploadResult> {
-  try {
-    const fileExt = file.name.split(".").pop();
-    const fileName = `${Date.now()}-${Math.random()
-      .toString(36)
-      .substring(2)}.${fileExt}`;
-    const filePath = `${folder}/${fileName}`;
-
-    const { error } = await supabase.storage
-      .from(bucket)
-      .upload(filePath, file, {
-        cacheControl: "3600",
-        upsert: false,
-      });
-
-    if (error) {
-      console.error("Supabase upload error:", error);
-      return { url: "", error: error.message };
-    }
-
-    const {
-      data: { publicUrl },
-    } = supabase.storage.from(bucket).getPublicUrl(filePath);
-
-    return { url: publicUrl };
-  } catch (error) {
-    console.error("File upload error:", error);
-    return { url: "", error: "Błąd podczas przesyłania pliku" };
-  }
-}
+// USUNIĘTE: Supabase setup i funkcje uploadFileToSupabase
 
 async function saveToDirectus(data: Partial<PartnerSubmissionData>) {
   try {
@@ -113,12 +70,12 @@ export async function POST(request: NextRequest) {
       "certificationStatus"
     ) as string;
     const companySizeRaw = formData.get("companySize") as string;
-    const kategorieRaw = formData.get("kategorie") as string; // NOWE POLE
+    const kategorieRaw = formData.get("kategorie") as string;
 
     console.log("Form fields raw:", {
       certificationStatusRaw,
       companySizeRaw,
-      kategorieRaw, // NOWE POLE
+      kategorieRaw,
     });
 
     let certificationStatus: "A" | "B" | "C" | undefined = undefined;
@@ -152,7 +109,7 @@ export async function POST(request: NextRequest) {
     console.log("Validated fields:", {
       certificationStatus,
       companySize,
-      kategorie: kategorieRaw, // NOWE POLE
+      kategorie: kategorieRaw,
     });
 
     // Przygotowanie danych do wysłania
@@ -164,10 +121,9 @@ export async function POST(request: NextRequest) {
       phone: formData.get("phone") as string,
       place_name: formData.get("placeName") as string,
       address: formData.get("address") as string,
-      kategorie: kategorieRaw || undefined, // NOWE POLE
+      kategorie: kategorieRaw || undefined,
 
-      // OPCJONALNE POLA - zawartość
-      text_content: (formData.get("textContent") as string) || "",
+      // OPCJONALNE POLA - zawartość (USUNIĘTE: text_content)
       website_url: (formData.get("websiteUrl") as string) || undefined,
       message: (formData.get("message") as string) || undefined,
 
@@ -185,14 +141,14 @@ export async function POST(request: NextRequest) {
       created_at: new Date().toISOString(),
     };
 
-    // Walidacja podstawowych danych (DODANO kategorię do walidacji)
+    // Walidacja podstawowych danych
     if (
       !submissionData.first_name ||
       !submissionData.last_name ||
       !submissionData.email ||
       !submissionData.place_name ||
       !submissionData.address ||
-      !submissionData.kategorie // NOWE POLE w walidacji
+      !submissionData.kategorie
     ) {
       console.error("Validation failed:", {
         first_name: !!submissionData.first_name,
@@ -200,7 +156,7 @@ export async function POST(request: NextRequest) {
         email: !!submissionData.email,
         place_name: !!submissionData.place_name,
         address: !!submissionData.address,
-        kategorie: !!submissionData.kategorie, // NOWE POLE
+        kategorie: !!submissionData.kategorie,
         // OPCJONALNE - tylko do logowania
         certificate: !!submissionData.certificate,
         sustainabilityGoals: sustainabilityGoals.length,
@@ -217,63 +173,12 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Przesyłanie plików do Supabase - bez zmian
-    const mainImage = formData.get("mainImage") as File;
-    if (mainImage && mainImage.size > 0) {
-      const uploadResult = await uploadFileToSupabase(
-        mainImage,
-        "media-files",
-        "partner-applications/main-images"
-      );
-      if (uploadResult.error) {
-        return NextResponse.json(
-          { error: `Błąd przesyłania głównego zdjęcia: ${uploadResult.error}` },
-          { status: 500 }
-        );
-      }
-      submissionData.main_image_url = uploadResult.url;
-    }
+    // USUNIĘTE: Całą sekcję przesyłania plików do Supabase
+    // - uploadFileToSupabase dla mainImage
+    // - pętla dla additionalImages
+    // - uploadFileToSupabase dla audioFile
 
-    // Dodatkowe zdjęcia
-    const additionalImages: string[] = [];
-    for (let i = 0; i < 6; i++) {
-      const additionalImage = formData.get(`additionalImage${i}`) as File;
-      if (additionalImage && additionalImage.size > 0) {
-        const uploadResult = await uploadFileToSupabase(
-          additionalImage,
-          "media-files",
-          "partner-applications/additional-images"
-        );
-        if (uploadResult.error) {
-          console.warn(
-            `Błąd przesyłania dodatkowego zdjęcia ${i}:`,
-            uploadResult.error
-          );
-        } else {
-          additionalImages.push(uploadResult.url);
-        }
-      }
-    }
-    if (additionalImages.length > 0) {
-      submissionData.additional_images_urls = additionalImages;
-    }
-
-    // Plik audio
-    const audioFile = formData.get("audioFile") as File;
-    if (audioFile && audioFile.size > 0) {
-      const uploadResult = await uploadFileToSupabase(
-        audioFile,
-        "media-files",
-        "partner-applications/audio-files"
-      );
-      if (uploadResult.error) {
-        console.warn("Błąd przesyłania pliku audio:", uploadResult.error);
-      } else {
-        submissionData.audio_file_url = uploadResult.url;
-      }
-    }
-
-    // Zapisz do Directus
+    // Zapisz do Directus (bez URL-i do plików)
     const savedData = await saveToDirectus(
       submissionData as PartnerSubmissionData
     );

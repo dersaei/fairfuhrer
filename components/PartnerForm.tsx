@@ -1,7 +1,7 @@
-// components/PartnerForm.tsx - z dodanym polem kategorie
+// components/PartnerForm.tsx - uproszczona wersja bez obrazów i audio
 "use client";
 
-import { useState, useRef, ChangeEvent, FormEvent } from "react";
+import { useState, ChangeEvent, FormEvent } from "react";
 import type {
   PartnerFormData,
   PartnerFormErrors,
@@ -10,18 +10,6 @@ import type {
   CategoryOption,
 } from "../types";
 import styles from "./PartnerForm.module.css";
-
-// STAŁE bez zmian
-const MAX_MAIN_IMAGE_SIZE = 500 * 1024;
-const MAX_ADDITIONAL_IMAGE_SIZE = 500 * 1024;
-const MAX_AUDIO_SIZE = 2 * 1024 * 1024;
-const ALLOWED_IMAGE_TYPES = [
-  "image/jpeg",
-  "image/jpg",
-  "image/png",
-  "image/webp",
-];
-const ALLOWED_AUDIO_TYPES = ["audio/mpeg", "audio/mp3"];
 
 // Cele zrównoważonego rozwoju bez zmian
 const SUSTAINABILITY_GOALS = [
@@ -44,7 +32,6 @@ const SUSTAINABILITY_GOALS = [
   { id: 17, name: "Partnerschaften zur Erreichung der Ziele" },
 ];
 
-// Opcje statusu certyfikacji bez zmian
 const CERTIFICATION_STATUS_OPTIONS: CertificationStatusOption[] = [
   {
     value: "A",
@@ -66,7 +53,6 @@ const CERTIFICATION_STATUS_OPTIONS: CertificationStatusOption[] = [
   },
 ];
 
-// Opcje wielkości firmy bez zmian
 const COMPANY_SIZE_OPTIONS: CompanySizeOption[] = [
   { value: "ngo", label: "NGOs und gemeinnützige Organisationen" },
   { value: "micro", label: "Kleinstunternehmen (bis 5 Mitarbeitende)" },
@@ -74,7 +60,6 @@ const COMPANY_SIZE_OPTIONS: CompanySizeOption[] = [
   { value: "medium", label: "Mittlere Unternehmen (bis 500 Mitarbeitende)" },
 ];
 
-// NOWE OPCJE KATEGORII - na podstawie plików, które dostarczyłeś
 const CATEGORY_OPTIONS: CategoryOption[] = [
   { value: "Kultur & Natur", label: "Kultur & Natur", color: "#E45858" },
   { value: "Tourismus", label: "Tourismus", color: "#6477E3" },
@@ -92,11 +77,8 @@ export default function PartnerForm() {
     phone: "",
     placeName: "",
     address: "",
-    kategorie: "", // NOWE POLE
-    mainImage: null,
-    additionalImages: [],
-    textContent: "",
-    audioFile: null,
+    kategorie: "",
+    // USUNIĘTE: mainImage, additionalImages, textContent, audioFile
     websiteUrl: "",
     message: "",
     certificate: "",
@@ -109,9 +91,7 @@ export default function PartnerForm() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitSuccess, setSubmitSuccess] = useState(false);
 
-  const mainImageRef = useRef<HTMLInputElement>(null);
-  const additionalImagesRef = useRef<HTMLInputElement>(null);
-  const audioFileRef = useRef<HTMLInputElement>(null);
+  // USUNIĘTE: refs dla file inputs
 
   const validateEmail = (email: string): boolean => {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -136,7 +116,6 @@ export default function PartnerForm() {
   const validateForm = (): boolean => {
     const newErrors: PartnerFormErrors = {};
 
-    // Sprawdzenie wymaganych pól
     if (!formData.firstName.trim()) {
       newErrors.firstName = "Vorname ist erforderlich";
     }
@@ -165,7 +144,6 @@ export default function PartnerForm() {
       newErrors.address = "Adresse ist erforderlich";
     }
 
-    // NOWA WALIDACJA dla kategorii
     if (!formData.kategorie) {
       newErrors.kategorie = "Kategorie ist erforderlich";
     }
@@ -177,7 +155,6 @@ export default function PartnerForm() {
     console.log("Validation results:", {
       hasErrors: Object.keys(newErrors).length > 0,
       errors: newErrors,
-      kategorie: formData.kategorie, // NOWE POLE
     });
 
     setErrors(newErrors);
@@ -201,7 +178,6 @@ export default function PartnerForm() {
     }
   };
 
-  // NOWA FUNKCJA dla obsługi kategorii
   const handleCategoryChange = (value: string) => {
     setFormData((prev) => ({
       ...prev,
@@ -216,7 +192,6 @@ export default function PartnerForm() {
     }
   };
 
-  // Pozostałe funkcje bez zmian
   const handleCertificationStatusChange = (value: "A" | "B" | "C") => {
     setFormData((prev) => ({
       ...prev,
@@ -248,14 +223,10 @@ export default function PartnerForm() {
   };
 
   const handleSustainabilityGoalChange = (goalId: number, checked: boolean) => {
-    console.log(`Sustainability goal ${goalId} changed to ${checked}`);
-
     setFormData((prev) => {
       const newGoals = checked
         ? [...prev.sustainabilityGoals, goalId]
         : prev.sustainabilityGoals.filter((id) => id !== goalId);
-
-      console.log("Updated sustainabilityGoals:", newGoals);
 
       return {
         ...prev,
@@ -271,139 +242,10 @@ export default function PartnerForm() {
     }
   };
 
-  // Funkcje obsługi plików bez zmian
-  const handleMainImageChange = (e: ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
-
-    if (!ALLOWED_IMAGE_TYPES.includes(file.type)) {
-      setErrors((prev) => ({
-        ...prev,
-        mainImage: "Erlaubte Formate: JPEG, PNG, WebP",
-      }));
-      return;
-    }
-
-    if (file.size > MAX_MAIN_IMAGE_SIZE) {
-      setErrors((prev) => ({
-        ...prev,
-        mainImage: "Datei ist zu groß (maximal 500KB)",
-      }));
-      return;
-    }
-
-    setFormData((prev) => ({
-      ...prev,
-      mainImage: file,
-    }));
-
-    setErrors((prev) => ({
-      ...prev,
-      mainImage: undefined,
-    }));
-  };
-
-  const handleAdditionalImagesChange = (e: ChangeEvent<HTMLInputElement>) => {
-    const files = Array.from(e.target.files || []);
-
-    if (files.length > 6) {
-      setErrors((prev) => ({
-        ...prev,
-        additionalImages: "Maximal 6 zusätzliche Bilder",
-      }));
-      return;
-    }
-
-    for (const file of files) {
-      if (!ALLOWED_IMAGE_TYPES.includes(file.type)) {
-        setErrors((prev) => ({
-          ...prev,
-          additionalImages: "Erlaubte Formate: JPEG, PNG, WebP",
-        }));
-        return;
-      }
-
-      if (file.size > MAX_ADDITIONAL_IMAGE_SIZE) {
-        setErrors((prev) => ({
-          ...prev,
-          additionalImages: "Jede Datei kann maximal 500KB haben",
-        }));
-        return;
-      }
-    }
-
-    setFormData((prev) => ({
-      ...prev,
-      additionalImages: files,
-    }));
-
-    setErrors((prev) => ({
-      ...prev,
-      additionalImages: undefined,
-    }));
-  };
-
-  const handleAudioFileChange = (e: ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
-
-    if (!ALLOWED_AUDIO_TYPES.includes(file.type)) {
-      setErrors((prev) => ({
-        ...prev,
-        audioFile: "Erlaubtes Format: MP3",
-      }));
-      return;
-    }
-
-    if (file.size > MAX_AUDIO_SIZE) {
-      setErrors((prev) => ({
-        ...prev,
-        audioFile: "Datei ist zu groß (maximal 2MB)",
-      }));
-      return;
-    }
-
-    setFormData((prev) => ({
-      ...prev,
-      audioFile: file,
-    }));
-
-    setErrors((prev) => ({
-      ...prev,
-      audioFile: undefined,
-    }));
-  };
-
-  const clearMainImage = () => {
-    setFormData((prev) => ({ ...prev, mainImage: null }));
-    if (mainImageRef.current) {
-      mainImageRef.current.value = "";
-    }
-  };
-
-  const clearAdditionalImages = () => {
-    setFormData((prev) => ({ ...prev, additionalImages: [] }));
-    if (additionalImagesRef.current) {
-      additionalImagesRef.current.value = "";
-    }
-  };
-
-  const clearAudioFile = () => {
-    setFormData((prev) => ({ ...prev, audioFile: null }));
-    if (audioFileRef.current) {
-      audioFileRef.current.value = "";
-    }
-  };
+  // USUNIĘTE: funkcje obsługi plików
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
-
-    console.log("Form data before validation:", {
-      kategorie: formData.kategorie, // NOWE POLE
-      sustainabilityGoals: formData.sustainabilityGoals,
-      certificationStatus: formData.certificationStatus,
-      companySize: formData.companySize,
-    });
 
     if (!validateForm()) {
       console.log("Form validation failed, errors:", errors);
@@ -423,19 +265,14 @@ export default function PartnerForm() {
       submitFormData.append("phone", formData.phone);
       submitFormData.append("placeName", formData.placeName);
       submitFormData.append("address", formData.address);
-      submitFormData.append("kategorie", formData.kategorie); // NOWE POLE
+      submitFormData.append("kategorie", formData.kategorie);
 
-      submitFormData.append("textContent", formData.textContent);
+      // USUNIĘTE: textContent
       submitFormData.append("websiteUrl", formData.websiteUrl);
       submitFormData.append("message", formData.message);
 
       // Pola Teilnahmebedingungen
       submitFormData.append("certificate", formData.certificate);
-
-      console.log(
-        "sustainabilityGoals being sent:",
-        formData.sustainabilityGoals
-      );
       submitFormData.append(
         "sustainabilityGoals",
         JSON.stringify(formData.sustainabilityGoals)
@@ -448,31 +285,7 @@ export default function PartnerForm() {
       );
       submitFormData.append("companySize", formData.companySize);
 
-      // Sprawdź co faktycznie jest w FormData
-      console.log("FormData entries:");
-      for (const [key, value] of submitFormData.entries()) {
-        if (
-          key === "kategorie" ||
-          key === "sustainabilityGoals" ||
-          key === "certificationStatus" ||
-          key === "companySize"
-        ) {
-          console.log(`${key}:`, value, typeof value);
-        }
-      }
-
-      // Dodaj pliki
-      if (formData.mainImage) {
-        submitFormData.append("mainImage", formData.mainImage);
-      }
-
-      formData.additionalImages.forEach((file, index) => {
-        submitFormData.append(`additionalImage${index}`, file);
-      });
-
-      if (formData.audioFile) {
-        submitFormData.append("audioFile", formData.audioFile);
-      }
+      // USUNIĘTE: dodawanie plików
 
       // Wyślij do API
       const response = await fetch("/api/partner-application", {
@@ -492,12 +305,6 @@ export default function PartnerForm() {
         }
       }
 
-      console.log("Server response:", {
-        status: response.status,
-        ok: response.ok,
-        result: result,
-      });
-
       if (!response.ok) {
         throw new Error(result?.error || `Błąd serwera: ${response.status}`);
       }
@@ -512,11 +319,8 @@ export default function PartnerForm() {
         phone: "",
         placeName: "",
         address: "",
-        kategorie: "", // NOWE POLE
-        mainImage: null,
-        additionalImages: [],
-        textContent: "",
-        audioFile: null,
+        kategorie: "",
+        // USUNIĘTE: mainImage, additionalImages, textContent, audioFile
         websiteUrl: "",
         message: "",
         certificate: "",
@@ -525,10 +329,7 @@ export default function PartnerForm() {
         companySize: "",
       });
 
-      // Reset file inputs
-      if (mainImageRef.current) mainImageRef.current.value = "";
-      if (additionalImagesRef.current) additionalImagesRef.current.value = "";
-      if (audioFileRef.current) audioFileRef.current.value = "";
+      // USUNIĘTE: reset file inputs
     } catch (error) {
       console.error("Błąd wysyłania formularza:", error);
 
@@ -662,7 +463,7 @@ export default function PartnerForm() {
         </div>
       </section>
 
-      {/* 2. INFORMATIONEN DES PINS */}
+      {/* 2. INFORMATIONEN DES PINS - z przeniesionymi polami Website i Message */}
       <section className={styles.section}>
         <h4>Informationen zum Pin</h4>
 
@@ -699,7 +500,7 @@ export default function PartnerForm() {
           )}
         </div>
 
-        {/* NOWE POLE KATEGORII z ulepszonymi stylami i funkcjonalnością */}
+        {/* POLE KATEGORII */}
         <div className={styles.field}>
           <label className={styles.radioGroupLabel}>Kategorie *</label>
           <p className={styles.radioGroupSubtitle}>
@@ -727,14 +528,14 @@ export default function PartnerForm() {
                     checked={formData.kategorie === category.value}
                     onChange={() => handleCategoryChange(category.value)}
                     className={`${styles.radio} ${styles.categoryRadio}`}
-                    tabIndex={-1} // Wyłączamy focus na input, bo klikamy w cały div
+                    tabIndex={-1}
                   />
                 </div>
                 <div className={styles.radioContent}>
                   <label
                     htmlFor={`category-${category.value}`}
                     className={`${styles.radioLabel} ${styles.categoryRadioLabel}`}
-                    onClick={(e) => e.preventDefault()} // Zapobiegamy podwójnemu wywołaniu
+                    onClick={(e) => e.preventDefault()}
                   >
                     <strong>{category.label}</strong>
                   </label>
@@ -746,176 +547,8 @@ export default function PartnerForm() {
             <span className={styles.error}>{errors.kategorie}</span>
           )}
         </div>
-      </section>
 
-      {/* 3. BILDER */}
-      <section className={styles.section}>
-        <h4>Bilder</h4>
-
-        <div className={styles.field}>
-          <label htmlFor="mainImage">Hauptbild (max. 500KB)</label>
-          <div className={styles.fileInputWrapper}>
-            <input
-              type="file"
-              id="mainImage"
-              ref={mainImageRef}
-              onChange={handleMainImageChange}
-              accept={ALLOWED_IMAGE_TYPES.join(",")}
-              className={styles.hiddenFileInput}
-            />
-
-            <button
-              type="button"
-              onClick={() => mainImageRef.current?.click()}
-              className={`${styles.customFileButton} ${
-                errors.mainImage ? styles.customFileButtonError : ""
-              }`}
-            >
-              <span className={styles.fileIcon}>📷</span>
-              {formData.mainImage
-                ? formData.mainImage.name
-                : "Hauptbild auswählen"}
-            </button>
-
-            {formData.mainImage && (
-              <div className={styles.selectedFile}>
-                <span>✅ Datei ausgewählt: {formData.mainImage.name}</span>
-                <button
-                  type="button"
-                  onClick={clearMainImage}
-                  className={styles.clearFileButton}
-                >
-                  ✕
-                </button>
-              </div>
-            )}
-          </div>
-          {errors.mainImage && (
-            <span className={styles.error}>{errors.mainImage}</span>
-          )}
-        </div>
-
-        <div className={styles.field}>
-          <label htmlFor="additionalImages">
-            Zusätzliche Bilder (max. 6, je max. 500KB)
-          </label>
-          <div className={styles.fileInputWrapper}>
-            <input
-              type="file"
-              id="additionalImages"
-              ref={additionalImagesRef}
-              onChange={handleAdditionalImagesChange}
-              accept={ALLOWED_IMAGE_TYPES.join(",")}
-              multiple
-              className={styles.hiddenFileInput}
-            />
-
-            <button
-              type="button"
-              onClick={() => additionalImagesRef.current?.click()}
-              className={`${styles.customFileButton} ${
-                errors.additionalImages ? styles.customFileButtonError : ""
-              }`}
-            >
-              <span className={styles.fileIcon}>🖼️</span>
-              {formData.additionalImages.length > 0
-                ? `${formData.additionalImages.length} Bilder ausgewählt`
-                : "Zusätzliche Bilder auswählen (optional)"}
-            </button>
-
-            {formData.additionalImages.length > 0 && (
-              <div className={styles.selectedFile}>
-                <span>
-                  ✅ {formData.additionalImages.length} Dateien ausgewählt
-                </span>
-                <button
-                  type="button"
-                  onClick={clearAdditionalImages}
-                  className={styles.clearFileButton}
-                >
-                  ✕
-                </button>
-              </div>
-            )}
-          </div>
-          {errors.additionalImages && (
-            <span className={styles.error}>{errors.additionalImages}</span>
-          )}
-        </div>
-      </section>
-
-      {/* 4. BESCHREIBUNG DES PINS */}
-      <section className={styles.section}>
-        <h4>Text des Pins</h4>
-
-        <div className={styles.field}>
-          <label htmlFor="textContent">Beschreiben Sie Ihren Pin</label>
-          <textarea
-            id="textContent"
-            name="textContent"
-            value={formData.textContent}
-            onChange={handleInputChange}
-            rows={6}
-            className={errors.textContent ? styles.inputError : ""}
-            placeholder="Beschreiben Sie Ihren Pin, seine Geschichte, Attraktionen, was ihn besonders macht..."
-            maxLength={2000}
-          />
-          <div className={styles.charCounter}>
-            {formData.textContent.length}/2000 Zeichen
-          </div>
-          {errors.textContent && (
-            <span className={styles.error}>{errors.textContent}</span>
-          )}
-        </div>
-      </section>
-
-      {/* 5. AUDIOAUFNAHME */}
-      <section className={styles.section}>
-        <h4>Audioaufnahme</h4>
-
-        <div className={styles.field}>
-          <label htmlFor="audioFile">Audio-Datei (MP3, max. 2MB)</label>
-          <div className={styles.fileInputWrapper}>
-            <input
-              type="file"
-              id="audioFile"
-              ref={audioFileRef}
-              onChange={handleAudioFileChange}
-              accept={ALLOWED_AUDIO_TYPES.join(",")}
-              className={styles.hiddenFileInput}
-            />
-
-            <button
-              type="button"
-              onClick={() => audioFileRef.current?.click()}
-              className={`${styles.customFileButton} ${
-                errors.audioFile ? styles.customFileButtonError : ""
-              }`}
-            >
-              <span className={styles.fileIcon}>🎵</span>
-              {formData.audioFile
-                ? formData.audioFile.name
-                : "Audio-Datei auswählen (optional)"}
-            </button>
-
-            {formData.audioFile && (
-              <div className={styles.selectedFile}>
-                <span>✅ Datei ausgewählt: {formData.audioFile.name}</span>
-                <button
-                  type="button"
-                  onClick={clearAudioFile}
-                  className={styles.clearFileButton}
-                >
-                  ✕
-                </button>
-              </div>
-            )}
-          </div>
-          {errors.audioFile && (
-            <span className={styles.error}>{errors.audioFile}</span>
-          )}
-        </div>
-
+        {/* PRZENIESIONE POLA z sekcji AUDIOAUFNAHME */}
         <div className={styles.field}>
           <label htmlFor="websiteUrl">Website-Adresse</label>
           <input
@@ -950,7 +583,9 @@ export default function PartnerForm() {
         </div>
       </section>
 
-      {/* 6. TEILNAHMEBEDINGUNGEN */}
+      {/* USUNIĘTE SEKCJE: BILDER, TEXT DES PINS, AUDIOAUFNAHME */}
+
+      {/* 3. TEILNAHMEBEDINGUNGEN */}
       <section className={styles.section}>
         <h4>Teilnahmebedingungen</h4>
 
@@ -1040,9 +675,6 @@ export default function PartnerForm() {
                     id={`goal-${goal.id}`}
                     checked={formData.sustainabilityGoals.includes(goal.id)}
                     onChange={(e) => {
-                      console.log(
-                        `Checkbox ${goal.id} clicked, checked: ${e.target.checked}`
-                      );
                       handleSustainabilityGoalChange(goal.id, e.target.checked);
                     }}
                     className={styles.checkbox}

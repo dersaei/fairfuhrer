@@ -1,4 +1,4 @@
-// types/index.ts - Kompletna wersja z nowymi polami dla formularza partnerskiego
+// types/index.ts - Kompletna wersja z uproszczonym formularzem partnerskim (bez obrazów i audio)
 
 // ========================================
 // PODSTAWOWE TYPY DLA MAP I LOKALIZACJI
@@ -17,7 +17,7 @@ export type Kategorie = Category;
 // ✅ Place - niemieckie nazwy pól
 export interface Place {
   id: number;
-  Name: string; // niemieckie nazwy pól jak w Directus
+  Name: string; // niemieckie nazwy pół jak w Directus
   Adresse: string;
   Telefon?: string;
   Vollbeschreibung?: string;
@@ -172,7 +172,7 @@ export interface FormValidationErrors {
 }
 
 // ========================================
-// TYPY DLA FORMULARZA PARTNERSKIEGO - ZAKTUALIZOWANE Z NOWYMI POLAMI
+// UPROSZCZONE TYPY DLA FORMULARZA PARTNERSKIEGO (BEZ OBRAZÓW I AUDIO)
 // ========================================
 
 export interface PartnerFormData {
@@ -187,25 +187,19 @@ export interface PartnerFormData {
   address: string;
   kategorie: string;
 
-  // Pliki (główne zdjęcie wymagane)
-  mainImage: File | null;
-  additionalImages: File[]; // maksymalnie 6
+  // USUNIĘTE: mainImage, additionalImages, textContent, audioFile
 
-  // Tekst (wymagany)
-  textContent: string;
-
-  // Opcjonalne
-  audioFile: File | null;
+  // Opcjonalne pola (przeniesione do sekcji "Informationen zum Pin")
   websiteUrl: string;
   message: string;
 
-  // Teilnahmebedingungen (wymagane)
-  certificate: string; // Certyfikaty - wymagany (textarea)
-  sustainabilityGoals: number[]; // Wybrane cele zrównoważonego rozwoju - wymagane (min 1)
+  // Teilnahmebedingungen
+  certificate: string;
+  sustainabilityGoals: number[];
 
-  // NOWE POLA (wymagane)
-  certificationStatus: "A" | "B" | "C" | ""; // Radio button - wymagane
-  companySize: "micro" | "small" | "medium" | "ngo" | ""; // Radio button - wymagane
+  // Pola radio
+  certificationStatus: "A" | "B" | "C" | "";
+  companySize: "micro" | "small" | "medium" | "ngo" | "";
 }
 
 export interface PartnerFormErrors {
@@ -216,16 +210,13 @@ export interface PartnerFormErrors {
   placeName?: string;
   address?: string;
   kategorie?: string;
-  mainImage?: string;
-  additionalImages?: string;
-  textContent?: string;
-  audioFile?: string;
+  // USUNIĘTE: mainImage, additionalImages, textContent, audioFile
   websiteUrl?: string;
   message?: string;
   // Teilnahmebedingungen
   certificate?: string;
   sustainabilityGoals?: string;
-  // NOWE POLA
+  // Pola radio
   certificationStatus?: string;
   companySize?: string;
   general?: string;
@@ -243,29 +234,25 @@ export interface PartnerSubmissionData {
   address: string;
   kategorie?: string;
 
-  // Zawartość tekstowa (wymagana)
-  text_content?: string;
+  // USUNIĘTE: text_content
 
   // Opcjonalne pola tekstowe
   website_url?: string;
   message?: string;
 
   // Teilnahmebedingungen
-  certificate?: string; // Certyfikaty (textarea)
-  sustainability_goals?: number[]; // Cele zrównoważonego rozwoju (checkboxes)
+  certificate?: string;
+  sustainability_goals?: number[];
 
-  // NOWE POLA
-  certification_status?: "A" | "B" | "C"; // Status certyfikacji (radio)
-  company_size?: "micro" | "small" | "medium" | "ngo"; // Wielkość firmy (radio)
+  // Pola radio
+  certification_status?: "A" | "B" | "C";
+  company_size?: "micro" | "small" | "medium" | "ngo";
 
   // Status
   status: "new" | "review" | "approved" | "rejected";
   created_at: string;
 
-  // URL-e do plików w Supabase (po upload)
-  main_image_url?: string;
-  additional_images_urls?: string[];
-  audio_file_url?: string;
+  // USUNIĘTE: main_image_url, additional_images_urls, audio_file_url
 }
 
 export interface PartnerApplication {
@@ -277,20 +264,17 @@ export interface PartnerApplication {
   place_name: string;
   address: string;
   kategorie?: string;
-  text_content?: string;
-  main_image_url?: string;
-  additional_images_urls?: string[];
-  audio_file_url?: string;
+  // USUNIĘTE: text_content, main_image_url, additional_images_urls, audio_file_url
   website_url?: string;
   message?: string;
 
   // Teilnahmebedingungen
-  certificate?: string; // Certyfikaty
-  sustainability_goals?: number[]; // JSON array w Directus
+  certificate?: string;
+  sustainability_goals?: number[];
 
-  // NOWE POLA
-  certification_status?: "A" | "B" | "C"; // Status certyfikacji
-  company_size?: "micro" | "small" | "medium" | "ngo"; // Wielkość firmy
+  // Pola radio
+  certification_status?: "A" | "B" | "C";
+  company_size?: "micro" | "small" | "medium" | "ngo";
 
   status: "new" | "review" | "approved" | "rejected";
   created_at: string;
@@ -305,8 +289,6 @@ export interface CategoryOption {
   label: string;
   color: string;
 }
-
-// NOWE TYPY dla opcji wyboru w formularzu
 
 export interface CertificationStatusOption {
   value: "A" | "B" | "C";
@@ -362,7 +344,6 @@ export interface PartnerPageContent {
   page_slug: string;
 
   // SEKCJA 1
-
   section1_right_title?: string;
   section1_right_text?: string;
   section1_right_image?: string;
