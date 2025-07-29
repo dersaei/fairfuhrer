@@ -101,11 +101,3 @@
     font-size: 14px;
   }
 }
-@media screen and (max-width: 420px) {
-  .filterName {
-    font-size: 12px;
-  }
-  .filterItem {
-    padding: 2px;
-  }
-}
