@@ -125,6 +125,43 @@ export default function CookieBanner() {
                     <span className={styles.cookieTag}>Mux</span>
                   </div>
                 </div>
+
+                {/* 🆕 NOWA KATEGORIA - ANALYTISCHE COOKIES */}
+                <div className={styles.cookieCategory}>
+                  <div className={styles.categoryHeader}>
+                    <h4>Analytische Cookies</h4>
+                    <label className={styles.checkboxLabel}>
+                      <input
+                        type="checkbox"
+                        checked={tempPreferences.analytics}
+                        onChange={(e) =>
+                          setTempPreferences({
+                            ...tempPreferences,
+                            analytics: e.target.checked,
+                          })
+                        }
+                        className={styles.checkbox}
+                        aria-label="Analytische Cookies aktivieren oder deaktivieren"
+                        title="Analytische Cookies für Website-Analysen"
+                      />
+                      <span className={styles.visuallyHidden}>
+                        Analytische Cookies{" "}
+                        {tempPreferences.analytics
+                          ? "aktiviert"
+                          : "deaktiviert"}
+                      </span>
+                    </label>
+                  </div>
+                  <p className={styles.categoryDescription}>
+                    Diese Cookies helfen uns zu verstehen, wie Besucher mit der
+                    Website interagieren, und ermöglichen es uns, die
+                    Nutzererfahrung zu verbessern.
+                  </p>
+                  <div className={styles.cookieList}>
+                    <span className={styles.cookieTag}>Google Analytics</span>
+                    <span className={styles.cookieTag}>Google Tag</span>
+                  </div>
+                </div>
               </div>
 
               <div className={styles.actions}>

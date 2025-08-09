@@ -1,4 +1,4 @@
-// app/layout.tsx
+// fairfuhrer/app/layout.tsx
 import type { Metadata } from "next";
 import { Lato, Montserrat, Staatliches, Oxanium } from "next/font/google";
 import Script from "next/script";
@@ -7,11 +7,13 @@ import "../styles/reset.css";
 import Header from "../components/Header";
 import Footer from "../components/Footer";
 import { PayPalProvider } from "../components/PayPalProvider";
-// ✅ DODAJ COOKIE IMPORTS
 import { CookieProvider } from "../context/CookieContext";
 import CookieBanner from "../components/CookieBanner";
+import GoogleTag from "../components/GoogleTag"; // 🆕 NOWY IMPORT
 
-// pozostałe fonty (bez zmian)
+// 🆕 ZMIENNE ŚRODOWISKOWE
+const GOOGLE_TAG_ID = process.env.NEXT_PUBLIC_GOOGLE_TAG_ID;
+
 const lato = Lato({
   variable: "--font-lato",
   subsets: ["latin"],
@@ -129,7 +131,10 @@ export default function RootLayout({
           ${montserrat.variable}
         `}
       >
-        {/* ✅ OWRAP WSZYSTKO W COOKIE PROVIDER */}
+        {/* 🆕 GOOGLE TAG - ŁADUJE SIĘ JAKO PIERWSZY */}
+        {GOOGLE_TAG_ID && <GoogleTag tagId={GOOGLE_TAG_ID} />}
+
+        {/* ✅ WRAP WSZYSTKO W COOKIE PROVIDER */}
         <CookieProvider>
           <PayPalProvider>
             <Header />
@@ -137,11 +142,11 @@ export default function RootLayout({
             <Footer />
           </PayPalProvider>
 
-          {/* ✅ DODAJ COOKIE BANNER */}
+          {/* ✅ COOKIE BANNER */}
           <CookieBanner />
         </CookieProvider>
 
-        {/* Structured Data dla organizacji - używamy Next.js Script */}
+        {/* Structured Data dla organizacji */}
         <Script
           id="structured-data"
           type="application/ld+json"
