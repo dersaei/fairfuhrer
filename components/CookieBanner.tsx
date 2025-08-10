@@ -126,7 +126,6 @@ export default function CookieBanner() {
                   </div>
                 </div>
 
-                {/* 🆕 NOWA KATEGORIA - ANALYTISCHE COOKIES */}
                 <div className={styles.cookieCategory}>
                   <div className={styles.categoryHeader}>
                     <h4>Analytische Cookies</h4>
@@ -142,7 +141,7 @@ export default function CookieBanner() {
                         }
                         className={styles.checkbox}
                         aria-label="Analytische Cookies aktivieren oder deaktivieren"
-                        title="Analytische Cookies für Website-Analysen"
+                        title="Analytische Cookies für Website-Analysen und Nutzerverhalten"
                       />
                       <span className={styles.visuallyHidden}>
                         Analytische Cookies{" "}
@@ -155,23 +154,27 @@ export default function CookieBanner() {
                   <p className={styles.categoryDescription}>
                     Diese Cookies helfen uns zu verstehen, wie Besucher mit der
                     Website interagieren, und ermöglichen es uns, die
-                    Nutzererfahrung zu verbessern.
+                    Nutzererfahrung zu verbessern. Dazu gehören auch Tools zur
+                    Analyse des Nutzerverhaltens.
                   </p>
                   <div className={styles.cookieList}>
                     <span className={styles.cookieTag}>Google Analytics</span>
                     <span className={styles.cookieTag}>Google Tag</span>
+                    <span className={styles.cookieTag}>Hotjar</span>
                   </div>
                 </div>
               </div>
 
               <div className={styles.actions}>
                 <button
+                  type="button"
                   className={styles.buttonSecondary}
                   onClick={toggleDetails}
                 >
                   Zurück
                 </button>
                 <button
+                  type="button"
                   className={styles.buttonPrimary}
                   onClick={handleSavePreferences}
                 >

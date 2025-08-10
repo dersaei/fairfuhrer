@@ -8,19 +8,20 @@ import React, {
   ReactNode,
 } from "react";
 
-// 🆕 DODANE global types dla Google Tag
+// Global types dla Google Tag i Hotjar
 declare global {
   interface Window {
     dataLayer: unknown[];
     gtag: (...args: unknown[]) => void;
+    hj: (...args: unknown[]) => void;
+    _hjSettings: { hjid: number; hjsv: number };
   }
 }
 
-// 🆕 ROZSZERZONE o analytics
 export interface CookiePreferences {
   necessary: boolean;
   functional: boolean;
-  analytics: boolean; // 🆕 NOWA KATEGORIA
+  analytics: boolean;
 }
 
 interface CookieContextType {
@@ -34,11 +35,10 @@ interface CookieContextType {
   hideBanner: () => void;
 }
 
-// 🆕 DODANE analytics: false
 const defaultPreferences: CookiePreferences = {
   necessary: true, // Always true for Mapbox and PayPal
   functional: false, // Mux - user choice
-  analytics: false, // 🆕 Google Analytics - user choice
+  analytics: false, // Google Analytics + Hotjar - user choice
 };
 
 const CookieContext = createContext<CookieContextType | undefined>(undefined);
@@ -66,14 +66,13 @@ export function CookieProvider({ children }: { children: ReactNode }) {
     }
   }, []);
 
-  // 🆕 ROZSZERZONE o Google Tag consent updates
   const savePreferences = (newPreferences: CookiePreferences) => {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(newPreferences));
     localStorage.setItem(CONSENT_KEY, "true");
     setPreferences(newPreferences);
     setHasConsented(true);
 
-    // 🆕 WYŚLIJ CONSENT UPDATE DO GOOGLE TAG
+    // Wyślij consent update do Google Tag
     if (typeof window !== "undefined" && window.gtag) {
       window.gtag("consent", "update", {
         analytics_storage: newPreferences.analytics ? "granted" : "denied",
@@ -91,6 +90,8 @@ export function CookieProvider({ children }: { children: ReactNode }) {
         consent_analytics: newPreferences.analytics,
         consent_functional: newPreferences.functional,
         consent_necessary: newPreferences.necessary,
+        // Dodaj informację o Hotjar
+        hotjar_enabled: newPreferences.analytics,
       });
 
       console.log("Consent updated:", newPreferences);
@@ -102,23 +103,21 @@ export function CookieProvider({ children }: { children: ReactNode }) {
     savePreferences(updated);
   };
 
-  // 🆕 ROZSZERZONE o analytics: true
   const acceptAll = () => {
     const allAccepted: CookiePreferences = {
       necessary: true,
       functional: true,
-      analytics: true, // 🆕
+      analytics: true,
     };
     savePreferences(allAccepted);
     setShowBanner(false);
   };
 
-  // 🆕 ROZSZERZONE o analytics: false
   const rejectAll = () => {
     const onlyNecessary: CookiePreferences = {
       necessary: true,
       functional: false,
-      analytics: false, // 🆕
+      analytics: false,
     };
     savePreferences(onlyNecessary);
     setShowBanner(false);

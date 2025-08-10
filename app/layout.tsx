@@ -9,10 +9,14 @@ import Footer from "../components/Footer";
 import { PayPalProvider } from "../components/PayPalProvider";
 import { CookieProvider } from "../context/CookieContext";
 import CookieBanner from "../components/CookieBanner";
-import GoogleTag from "../components/GoogleTag"; // 🆕 NOWY IMPORT
+import GoogleTag from "../components/GoogleTag";
+import HotjarTag from "../components/HotjarTag"; // 🆕 NOWY IMPORT
 
-// 🆕 ZMIENNE ŚRODOWISKOWE
+// Zmienne środowiskowe
 const GOOGLE_TAG_ID = process.env.NEXT_PUBLIC_GOOGLE_TAG_ID;
+const HOTJAR_SITE_ID = process.env.NEXT_PUBLIC_HOTJAR_SITE_ID
+  ? parseInt(process.env.NEXT_PUBLIC_HOTJAR_SITE_ID)
+  : null; // 🆕
 
 const lato = Lato({
   variable: "--font-lato",
@@ -42,7 +46,6 @@ const montserrat = Montserrat({
   display: "swap",
 });
 
-// metadata bez zmian
 export const metadata: Metadata = {
   metadataBase: new URL("https://www.fairfuehrer.guide"),
   title: {
@@ -131,18 +134,21 @@ export default function RootLayout({
           ${montserrat.variable}
         `}
       >
-        {/* 🆕 GOOGLE TAG - ŁADUJE SIĘ JAKO PIERWSZY */}
+        {/* Google Tag - ładuje się jako pierwszy */}
         {GOOGLE_TAG_ID && <GoogleTag tagId={GOOGLE_TAG_ID} />}
 
-        {/* ✅ WRAP WSZYSTKO W COOKIE PROVIDER */}
+        {/* Wrap wszystko w Cookie Provider */}
         <CookieProvider>
+          {/* Hotjar Tag - ładuje się tylko gdy HOTJAR_SITE_ID jest ustawione */}
+          {HOTJAR_SITE_ID && <HotjarTag siteId={HOTJAR_SITE_ID} />}
+
           <PayPalProvider>
             <Header />
             <main>{children}</main>
             <Footer />
           </PayPalProvider>
 
-          {/* ✅ COOKIE BANNER */}
+          {/* Cookie Banner */}
           <CookieBanner />
         </CookieProvider>
 
