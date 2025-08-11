@@ -72,29 +72,23 @@ export function CookieProvider({ children }: { children: ReactNode }) {
     setPreferences(newPreferences);
     setHasConsented(true);
 
-    // Wyślij consent update do Google Tag
-    if (typeof window !== "undefined" && window.gtag) {
-      window.gtag("consent", "update", {
-        analytics_storage: newPreferences.analytics ? "granted" : "denied",
-        ad_storage: newPreferences.analytics ? "granted" : "denied",
-        functionality_storage: newPreferences.functional ? "granted" : "denied",
-        personalization_storage: newPreferences.functional
-          ? "granted"
-          : "denied",
-      });
+    console.log("🍪 Saving cookie preferences:", newPreferences);
 
-      // Wyślij custom event do dataLayer
+    // Wyślij consent update do Google Tag jest obsługane przez GoogleConsentManager
+    // Tutaj tylko zapisujemy preferencje i wyślemy custom event do dataLayer
+    if (typeof window !== "undefined") {
       window.dataLayer = window.dataLayer || [];
-      window.dataLayer.push({
-        event: "consent_update",
+      const eventData = {
+        event: "consent_preferences_saved",
         consent_analytics: newPreferences.analytics,
         consent_functional: newPreferences.functional,
         consent_necessary: newPreferences.necessary,
-        // Dodaj informację o Hotjar
         hotjar_enabled: newPreferences.analytics,
-      });
+        timestamp: new Date().toISOString(),
+      };
 
-      console.log("Consent updated:", newPreferences);
+      console.log("📈 Pushing consent event to dataLayer:", eventData);
+      window.dataLayer.push(eventData);
     }
   };
 

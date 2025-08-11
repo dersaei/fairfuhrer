@@ -10,13 +10,15 @@ import { PayPalProvider } from "../components/PayPalProvider";
 import { CookieProvider } from "../context/CookieContext";
 import CookieBanner from "../components/CookieBanner";
 import GoogleTag from "../components/GoogleTag";
-import HotjarTag from "../components/HotjarTag"; // 🆕 NOWY IMPORT
+import GoogleConsentManager from "../components/GoogleConsentManager"; // 🆕
+import HotjarTag from "../components/HotjarTag";
+import DebugAnalytics from "../components/DebugAnalytics"; // 🆕 TYLKO DO TESTOWANIA
 
 // Zmienne środowiskowe
 const GOOGLE_TAG_ID = process.env.NEXT_PUBLIC_GOOGLE_TAG_ID;
 const HOTJAR_SITE_ID = process.env.NEXT_PUBLIC_HOTJAR_SITE_ID
   ? parseInt(process.env.NEXT_PUBLIC_HOTJAR_SITE_ID)
-  : null; // 🆕
+  : null;
 
 const lato = Lato({
   variable: "--font-lato",
@@ -139,6 +141,9 @@ export default function RootLayout({
 
         {/* Wrap wszystko w Cookie Provider */}
         <CookieProvider>
+          {/* Google Consent Manager - zarządza aktualizacjami consent */}
+          <GoogleConsentManager />
+
           {/* Hotjar Tag - ładuje się tylko gdy HOTJAR_SITE_ID jest ustawione */}
           {HOTJAR_SITE_ID && <HotjarTag siteId={HOTJAR_SITE_ID} />}
 
@@ -150,6 +155,9 @@ export default function RootLayout({
 
           {/* Cookie Banner */}
           <CookieBanner />
+
+          {/* 🆕 Debug Component - USUŃ PO NAPRAWIENIU! */}
+          {process.env.NODE_ENV === "development" && <DebugAnalytics />}
         </CookieProvider>
 
         {/* Structured Data dla organizacji */}
