@@ -74,7 +74,7 @@ export function CookieProvider({ children }: { children: ReactNode }) {
         consent_necessary: newPreferences.necessary,
         hotjar_enabled: newPreferences.analytics,
         timestamp: new Date().toISOString(),
-        integration: "nextjs_third_parties", // 🆕 Oznaczenie że używamy Next.js
+        integration: "nextjs_third_parties",
       };
 
       console.log(
@@ -83,6 +83,38 @@ export function CookieProvider({ children }: { children: ReactNode }) {
       );
       window.dataLayer.push(eventData);
     }
+
+    // 🆕 DODANE: Wymuś aktualizację consent dla Next.js GA
+    setTimeout(() => {
+      if (typeof window !== "undefined" && typeof window.gtag === "function") {
+        const consentData = {
+          analytics_storage: newPreferences.analytics ? "granted" : "denied",
+          ad_storage: newPreferences.analytics ? "granted" : "denied",
+          functionality_storage: newPreferences.functional
+            ? "granted"
+            : "denied",
+          personalization_storage: newPreferences.functional
+            ? "granted"
+            : "denied",
+        };
+
+        window.gtag("consent", "update", consentData);
+        console.log("🔄 Manual consent update for Next.js GA:", consentData);
+
+        // Wyślij test event jeśli analytics są włączone
+        if (newPreferences.analytics) {
+          window.gtag("event", "manual_consent_granted", {
+            event_category: "consent",
+            event_label: "nextjs_manual_update",
+            value: 1,
+            timestamp: new Date().toISOString(),
+          });
+          console.log("✅ Manual test event sent after consent update");
+        }
+      } else {
+        console.warn("⚠️ window.gtag not available after 1 second delay");
+      }
+    }, 1000); // Czekaj 1 sekundę na załadowanie Next.js GA
   };
 
   const updatePreferences = (newPreferences: Partial<CookiePreferences>) => {

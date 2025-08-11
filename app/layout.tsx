@@ -13,7 +13,6 @@ import CookieBanner from "../components/CookieBanner";
 import HotjarTag from "../components/HotjarTag";
 
 // Zmienne środowiskowe
-const GOOGLE_TAG_ID = process.env.NEXT_PUBLIC_GOOGLE_TAG_ID;
 const HOTJAR_SITE_ID = process.env.NEXT_PUBLIC_HOTJAR_SITE_ID
   ? parseInt(process.env.NEXT_PUBLIC_HOTJAR_SITE_ID)
   : null;
@@ -147,9 +146,6 @@ export default function RootLayout({
           <CookieBanner />
         </CookieProvider>
 
-        {/* Next.js Google Analytics - JEDYNE DODANIE */}
-        {GOOGLE_TAG_ID && <GoogleAnalytics gaId={GOOGLE_TAG_ID} />}
-
         {/* Structured Data dla organizacji */}
         <Script
           id="structured-data"
@@ -192,6 +188,7 @@ export default function RootLayout({
           }}
         />
       </body>
+      <GoogleAnalytics gaId="G-RZ7CM3J072" />
     </html>
   );
 }
