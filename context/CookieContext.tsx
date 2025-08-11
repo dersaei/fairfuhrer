@@ -8,16 +8,6 @@ import React, {
   ReactNode,
 } from "react";
 
-// Global types dla Google Tag i Hotjar
-declare global {
-  interface Window {
-    dataLayer: unknown[];
-    gtag: (...args: unknown[]) => void;
-    hj: (...args: unknown[]) => void;
-    _hjSettings: { hjid: number; hjsv: number };
-  }
-}
-
 export interface CookiePreferences {
   necessary: boolean;
   functional: boolean;
@@ -74,8 +64,7 @@ export function CookieProvider({ children }: { children: ReactNode }) {
 
     console.log("🍪 Saving cookie preferences:", newPreferences);
 
-    // Wyślij consent update do Google Tag jest obsługane przez GoogleConsentManager
-    // Tutaj tylko zapisujemy preferencje i wyślemy custom event do dataLayer
+    // Wyślij event do dataLayer dla Next.js GA4
     if (typeof window !== "undefined") {
       window.dataLayer = window.dataLayer || [];
       const eventData = {
@@ -85,9 +74,13 @@ export function CookieProvider({ children }: { children: ReactNode }) {
         consent_necessary: newPreferences.necessary,
         hotjar_enabled: newPreferences.analytics,
         timestamp: new Date().toISOString(),
+        integration: "nextjs_third_parties", // 🆕 Oznaczenie że używamy Next.js
       };
 
-      console.log("📈 Pushing consent event to dataLayer:", eventData);
+      console.log(
+        "📈 Pushing consent event to dataLayer (Next.js):",
+        eventData
+      );
       window.dataLayer.push(eventData);
     }
   };

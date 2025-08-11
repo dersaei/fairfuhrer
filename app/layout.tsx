@@ -1,6 +1,7 @@
 // fairfuhrer/app/layout.tsx
 import type { Metadata } from "next";
 import { Lato, Montserrat, Staatliches, Oxanium } from "next/font/google";
+import { GoogleAnalytics } from "@next/third-parties/google"; // 🆕 JEDYNA ZMIANA
 import Script from "next/script";
 import "../styles/reset.css";
 
@@ -9,10 +10,7 @@ import Footer from "../components/Footer";
 import { PayPalProvider } from "../components/PayPalProvider";
 import { CookieProvider } from "../context/CookieContext";
 import CookieBanner from "../components/CookieBanner";
-import GoogleTag from "../components/GoogleTag";
-import GoogleConsentManager from "../components/GoogleConsentManager"; // 🆕
 import HotjarTag from "../components/HotjarTag";
-import DebugAnalytics from "../components/DebugAnalytics"; // 🆕 TYLKO DO TESTOWANIA
 
 // Zmienne środowiskowe
 const GOOGLE_TAG_ID = process.env.NEXT_PUBLIC_GOOGLE_TAG_ID;
@@ -136,15 +134,8 @@ export default function RootLayout({
           ${montserrat.variable}
         `}
       >
-        {/* Google Tag - ładuje się jako pierwszy */}
-        {GOOGLE_TAG_ID && <GoogleTag tagId={GOOGLE_TAG_ID} />}
-
-        {/* Wrap wszystko w Cookie Provider */}
         <CookieProvider>
-          {/* Google Consent Manager - zarządza aktualizacjami consent */}
-          <GoogleConsentManager />
-
-          {/* Hotjar Tag - ładuje się tylko gdy HOTJAR_SITE_ID jest ustawione */}
+          {/* Hotjar Tag */}
           {HOTJAR_SITE_ID && <HotjarTag siteId={HOTJAR_SITE_ID} />}
 
           <PayPalProvider>
@@ -153,12 +144,11 @@ export default function RootLayout({
             <Footer />
           </PayPalProvider>
 
-          {/* Cookie Banner */}
           <CookieBanner />
-
-          {/* 🆕 Debug Component - USUŃ PO NAPRAWIENIU! */}
-          {process.env.NODE_ENV === "development" && <DebugAnalytics />}
         </CookieProvider>
+
+        {/* Next.js Google Analytics - JEDYNE DODANIE */}
+        {GOOGLE_TAG_ID && <GoogleAnalytics gaId={GOOGLE_TAG_ID} />}
 
         {/* Structured Data dla organizacji */}
         <Script
