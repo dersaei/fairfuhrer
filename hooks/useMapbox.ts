@@ -1,6 +1,7 @@
 // hooks/useMapbox.ts - Custom hook dla Mapbox logic
 import { useRef, useCallback, useState, useEffect } from "react";
 import mapboxgl from "mapbox-gl";
+import MapboxLanguage from "@mapbox/mapbox-gl-language";
 import { MapError } from "../utils/errorHandling";
 
 interface UseMapboxOptions {
@@ -43,6 +44,7 @@ export function useMapbox(
       map.on("load", () => {
         setIsLoaded(true);
         setError(null);
+        map.addControl(new MapboxLanguage({ defaultLanguage: "de" }));
         options.onMapLoad?.(map);
       });
 

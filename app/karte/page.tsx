@@ -1,4 +1,5 @@
 // app/karte/page.tsx - TYLKO DODANIE CONDITIONAL MAPBOX
+import type { Metadata } from "next";
 import MapWithFilters from "../../components/MapWithFilters";
 import { ErrorBoundary } from "../../components/ErrorBoundary";
 // ✅ DODAJ IMPORT CONDITIONAL MAPBOX
@@ -63,12 +64,26 @@ function transformDirectusOrteToPlace(ort: DirectusOrte): Place | null {
       Vollbeschreibung: ort.Vollbeschreibung?.trim(),
       Breite: latitude,
       Lange: longitude,
+      // 🆕 POPRAWKA: Dodaj sprawdzenie czy k.Kategorie_id nie jest null
       Kategorie:
-        ort.Kategorie?.map((k) => ({
-          id: k.Kategorie_id.id,
-          name: k.Kategorie_id.Name.trim(),
-          color: k.Kategorie_id.Farbe.trim(),
-        })) ?? [],
+        ort.Kategorie?.map((k) => {
+          // Sprawdź czy Kategorie_id istnieje i nie jest null
+          if (!k.Kategorie_id || k.Kategorie_id === null) {
+            console.warn(`Kategoria bez ID dla miejsca ${ort.id} - pomijam`);
+            return null;
+          }
+
+          return {
+            id: k.Kategorie_id.id,
+            name: k.Kategorie_id.Name.trim(),
+            color: k.Kategorie_id.Farbe.trim(),
+          };
+        }).filter(
+          (
+            kategorie
+          ): kategorie is { id: number; name: string; color: string } =>
+            kategorie !== null
+        ) ?? [],
       Hauptbild: ort.Hauptbild?.trim(),
       Audio_Datei: ort.Audio_Datei?.trim(),
       Link_URL: ort.Link_URL?.trim(),
@@ -445,13 +460,13 @@ export default async function KartePage() {
 }
 
 // ========================================
-// METADATA EXPORT (POZOSTAJE BEZ ZMIAN)
+// METADATA EXPORT
 // ========================================
 
-export const metadata = {
+export const metadata: Metadata = {
   title: "Interaktive Karte",
   description: "Entdecken Sie interessante Orte auf unserer interaktiven Karte",
-  keywords: "Karte, Orte, Standorte, Navigation",
+  keywords: ["Karte", "Orte", "Standorte", "Navigation"],
 };
 
 export const dynamic = "force-dynamic";

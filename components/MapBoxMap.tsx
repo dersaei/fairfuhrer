@@ -9,6 +9,7 @@ import {
   Suspense,
 } from "react";
 import mapboxgl from "mapbox-gl";
+import MapboxLanguage from "@mapbox/mapbox-gl-language";
 import "mapbox-gl/dist/mapbox-gl.css";
 import styles from "./MapBoxMap.module.css";
 import MapSearch from "./MapSearch"; // ✅ IMPORT
@@ -326,6 +327,8 @@ export default function MapBoxMap({ places }: MapBoxMapProps) {
 
       map.on("load", () => {
         setMapLoadingState("success");
+
+        map.addControl(new MapboxLanguage({ defaultLanguage: "de" }));
 
         map.addControl(new mapboxgl.NavigationControl(), "top-left");
 
