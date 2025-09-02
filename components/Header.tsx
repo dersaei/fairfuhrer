@@ -45,7 +45,7 @@ export default function Header() {
       {/* Social media - Desktop */}
       <div className={styles.social}>
         <a
-          href="https://www.instagram.com/fairfuehrer.audioreisefuehrer?igsh=MWcyNjRmMjFuaXljYG"
+          href="https://www.instagram.com/fairfuehrerofficial/"
           target="_blank"
           rel="noopener noreferrer"
           className={styles.socialIcon}
@@ -112,7 +112,7 @@ export default function Header() {
         {/* Social media - Mobile */}
         <div className={styles.mobileSocial}>
           <a
-            href="https://www.instagram.com/fairfuehrer.audioreisefuehrer?igsh=MWcyNjRmMjFuaXljYG"
+            href="https://www.instagram.com/fairfuehrerofficial/"
             target="_blank"
             rel="noopener noreferrer"
             className={styles.socialIcon}
