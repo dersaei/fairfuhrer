@@ -67,6 +67,7 @@ export default function ExpandableDescription({
       {/* Przycisk rozwiń/zwiń */}
       {shouldShowButton && (
         <button
+          type="button"
           className={styles.toggleButton}
           onClick={toggleExpanded}
           aria-expanded={isExpanded}

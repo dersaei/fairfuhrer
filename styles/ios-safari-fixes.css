@@ -1,0 +1,136 @@
+/* styles/ios-safari-fixes.css */
+/* iPhone Safari specific fixes for components */
+
+/* Map container fixes */
+.mapContainerWrapper,
+.container {
+  height: calc(var(--vh, 1vh) * 100);
+  min-height: calc(var(--vh, 1vh) * 100);
+}
+
+/* Info panel fixes */
+.infoPanel {
+  height: calc(var(--vh, 1vh) * 100);
+
+  /* Safe area handling */
+  padding-top: env(safe-area-inset-top);
+  padding-left: env(safe-area-inset-left);
+  padding-right: env(safe-area-inset-right);
+  padding-bottom: env(safe-area-inset-bottom);
+
+  /* Modern scroll handling */
+  overscroll-behavior: contain;
+}
+
+/* Mobile panel adjustments */
+@media (max-width: 768px) {
+  .infoPanel {
+    height: calc(var(--vh, 1vh) * 70);
+    padding-bottom: max(1rem, env(safe-area-inset-bottom));
+    transform: translateY(100%);
+  }
+
+  .infoPanel.open {
+    transform: translateY(0);
+  }
+}
+
+/* Close button touch target */
+.closeButton {
+  position: absolute;
+  top: max(20px, env(safe-area-inset-top, 20px));
+  right: max(20px, env(safe-area-inset-right, 20px));
+  width: 44px;
+  height: 44px;
+
+  /* Remove iOS highlights */
+  -webkit-tap-highlight-color: transparent;
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  user-select: none;
+}
+
+/* Audio controls optimization */
+.audioPlayer,
+.playButton,
+.skipButton {
+  -webkit-tap-highlight-color: transparent;
+  -webkit-touch-callout: none;
+  touch-action: manipulation;
+}
+
+.playButton,
+.skipButton {
+  min-width: 44px;
+  min-height: 44px;
+}
+
+/* Progress bar fixes */
+.progressBar {
+  -webkit-appearance: none;
+  appearance: none;
+  touch-action: manipulation;
+}
+
+.progressBar::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  cursor: pointer;
+}
+
+/* Gallery image optimization */
+.galleryImage,
+.mainImage {
+  transform: translateZ(0);
+  backface-visibility: hidden;
+  -webkit-user-select: none;
+  user-select: none;
+}
+
+/* Filter container mobile */
+@media (max-width: 580px) {
+  .filtersContainer {
+    padding-left: max(8px, env(safe-area-inset-left));
+    padding-right: max(8px, env(safe-area-inset-right));
+  }
+}
+
+/* Landscape orientation fixes */
+@media (orientation: landscape) and (max-height: 500px) {
+  .infoPanel {
+    height: calc(var(--vh, 1vh) * 90);
+  }
+
+  .mapContainerWrapper {
+    height: calc(var(--vh, 1vh) * 100 - 60px);
+  }
+
+  .closeButton {
+    top: max(10px, env(safe-area-inset-top, 10px));
+    right: max(10px, env(safe-area-inset-right, 10px));
+    width: 36px;
+    height: 36px;
+  }
+}
+
+/* External link touch optimization */
+.externalLink {
+  min-height: 44px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  -webkit-appearance: none;
+  appearance: none;
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
+}
+.mapboxgl-ctrl button,
+.mapboxgl-ctrl-group button {
+  min-height: unset !important;
+  min-width: unset !important;
+  font-size: unset !important;
+}

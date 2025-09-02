@@ -437,10 +437,18 @@ export default function MapBoxMap({ places }: MapBoxMapProps) {
         });
 
         markerElement.addEventListener("click", (e) => {
+          e.preventDefault();
           e.stopPropagation();
           if (marker.getPopup()?.isOpen()) marker.togglePopup();
           openPanel(place);
         });
+
+        // Add touch support
+        markerElement.style.touchAction = "manipulation";
+        markerElement.style.setProperty(
+          "-webkit-tap-highlight-color",
+          "transparent"
+        );
 
         markersRef.current.push(marker);
       });

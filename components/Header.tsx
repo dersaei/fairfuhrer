@@ -70,10 +70,12 @@ export default function Header() {
 
       {/* Hamburger Button */}
       <button
+        type="button"
         className={`${styles.hamburger} ${
           isMenuOpen ? styles.hamburgerOpen : ""
         }`}
         onClick={toggleMenu}
+        onTouchStart={(e) => e.preventDefault()}
         aria-label="Toggle menu"
       >
         <span className={styles.hamburgerLine}></span>

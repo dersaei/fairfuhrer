@@ -1,12 +1,43 @@
+/* Enhanced reset.css with iPhone Safari optimizations */
+
 html {
   box-sizing: border-box;
   -webkit-font-smoothing: antialiased;
+  scroll-behavior: smooth;
+
+  /* iPhone Safari: Use CSS custom property for viewport height */
+  height: 100%;
+  height: calc(var(--vh, 1vh) * 100);
+
+  /* Prevent iOS zoom on orientation change */
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
 }
+
+body {
+  margin: 0;
+  padding: 0;
+  border: 0;
+  outline: 0;
+  font-size: 100%;
+  vertical-align: baseline;
+
+  /* iPhone Safari: Prevent overscroll bounce */
+  overscroll-behavior: none;
+
+  /* Better text rendering on iOS */
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+}
+
 *,
 *:before,
 *:after {
   box-sizing: inherit;
 }
+
+/* Base reset for all elements */
 html,
 body,
 div,
@@ -83,6 +114,7 @@ video {
   font-size: 100%;
   vertical-align: baseline;
 }
+
 article,
 aside,
 details,
@@ -96,13 +128,16 @@ nav,
 section {
   display: block;
 }
+
 ul {
   text-align: left;
 }
+
 blockquote,
 q {
   quotes: none;
 }
+
 blockquote:before,
 blockquote:after,
 q:before,
@@ -110,6 +145,8 @@ q:after {
   content: "";
   content: none;
 }
+
+/* iPhone Safari: Enhanced link styling */
 a {
   margin: 0;
   padding: 0;
@@ -117,34 +154,45 @@ a {
   vertical-align: baseline;
   background: transparent;
   text-decoration: none;
+
+  /* Remove iOS link highlighting */
+  -webkit-tap-highlight-color: transparent;
+  -webkit-touch-callout: none;
 }
+
 a:hover,
 a:focus {
   outline: none;
 }
+
 ins {
   background-color: #ff9;
   color: #000;
   text-decoration: none;
 }
+
 mark {
   background-color: #ff9;
   color: #000;
   font-style: italic;
   font-weight: bold;
 }
+
 del {
   text-decoration: line-through;
 }
+
 abbr[title],
 dfn[title] {
   border-bottom: 1px dotted;
   cursor: help;
 }
+
 table {
   border-collapse: collapse;
   border-spacing: 0;
 }
+
 hr {
   display: block;
   height: 1px;
@@ -154,21 +202,120 @@ hr {
   padding: 0;
   width: 60%;
 }
+
+/* iPhone Safari: Enhanced form element styling */
 input,
-select {
+select,
+textarea {
   vertical-align: middle;
+
+  /* Prevent zoom on focus - CRITICAL for iPhone */
+  font-size: max(16px, 1rem);
+
+  /* Remove iOS styling */
+  -webkit-appearance: none;
+  appearance: none;
+  -webkit-tap-highlight-color: transparent;
+  -webkit-touch-callout: none;
+
+  /* Better touch response */
+  touch-action: manipulation;
 }
-button,
+
+/* iPhone Safari: Enhanced button styling */
 html input[type="button"],
 input[type="reset"],
 input[type="submit"] {
-  appearance: button;
+  -webkit-appearance: none;
+  appearance: none;
   cursor: pointer;
+
+  /* Prevent zoom on focus */
+  font-size: max(16px, 1rem);
+
+  /* Ensure minimum touch target */
+  min-height: 44px;
+  min-width: 44px;
+
+  /* Remove iOS highlights and styling */
+  -webkit-tap-highlight-color: transparent;
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  user-select: none;
+
+  /* Better touch response */
+  touch-action: manipulation;
 }
+
+button {
+  -webkit-appearance: none;
+  appearance: none;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+  -webkit-touch-callout: none;
+}
+
+/* iPhone Safari: Media element optimizations */
+img,
+svg,
+video {
+  -webkit-user-select: none;
+  user-select: none;
+  -webkit-touch-callout: none;
+}
+
+/* iPhone Safari: Range input styling */
+input[type="range"] {
+  -webkit-appearance: none;
+  appearance: none;
+  background: transparent;
+}
+
+/* iPhone Safari: Progress bar styling */
+progress {
+  -webkit-appearance: none;
+  appearance: none;
+}
+
+/* iPhone Safari: Select styling */
+select {
+  -webkit-appearance: none;
+  appearance: none;
+  background-image: none;
+}
+
+/* iPhone Safari: Audio/Video controls */
+audio,
+video {
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* Utility classes */
 .hidden {
   position: absolute;
   overflow: hidden;
   width: 0;
   height: 0;
   pointer-events: none;
+}
+
+/* iPhone Safari: Scrollable container class */
+.scrollable {
+  overscroll-behavior: contain;
+}
+
+/* iPhone Safari: Hardware acceleration helper class */
+.gpu-accelerated {
+  transform: translateZ(0);
+  backface-visibility: hidden;
+  will-change: transform;
+}
+
+/* iPhone Safari: Touch-optimized class */
+.touch-optimized {
+  -webkit-tap-highlight-color: transparent;
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  user-select: none;
+  touch-action: manipulation;
 }

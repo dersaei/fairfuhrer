@@ -18,6 +18,8 @@
   background-color: transparent;
   -webkit-user-select: none;
   user-select: none;
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
 }
 
 .filterItem:hover {

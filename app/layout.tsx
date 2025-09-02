@@ -1,9 +1,10 @@
 // fairfuhrer/app/layout.tsx
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Lato, Montserrat, Staatliches, Oxanium } from "next/font/google";
-import { GoogleAnalytics } from "@next/third-parties/google"; // 🆕 JEDYNA ZMIANA
+import { GoogleAnalytics } from "@next/third-parties/google";
 import Script from "next/script";
 import "../styles/reset.css";
+import "../styles/ios-safari-fixes.css";
 
 import Header from "../components/Header";
 import Footer from "../components/Footer";
@@ -12,7 +13,7 @@ import { CookieProvider } from "../context/CookieContext";
 import CookieBanner from "../components/CookieBanner";
 import HotjarTag from "../components/HotjarTag";
 
-// Zmienne środowiskowe
+// Environment Variables
 const HOTJAR_SITE_ID = process.env.NEXT_PUBLIC_HOTJAR_SITE_ID
   ? parseInt(process.env.NEXT_PUBLIC_HOTJAR_SITE_ID)
   : null;
@@ -44,6 +45,15 @@ const montserrat = Montserrat({
   weight: ["400", "500", "600", "700"],
   display: "swap",
 });
+
+export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
+  maximumScale: 5,
+  userScalable: true,
+  viewportFit: "cover",
+  themeColor: "#fc6c14",
+};
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://www.fairfuehrer.guide"),
@@ -103,10 +113,15 @@ export const metadata: Metadata = {
     google: "2bjmGVzCiAjpyN8vCrhb4NlhcbPh9mlFESnC866cCQE",
   },
   other: {
-    "msapplication-TileColor": "#2e7d32",
-    "theme-color": "#2e7d32",
+    "msapplication-TileColor": "#fc6c14",
     "preconnect-fonts": "https://fonts.googleapis.com",
     "preconnect-gstatic": "https://fonts.gstatic.com",
+    // iPhone Safari specific meta tags
+    "apple-mobile-web-app-capable": "yes",
+    "apple-mobile-web-app-status-bar-style": "default",
+    "apple-mobile-web-app-title": "Fair Führer Guide",
+    "mobile-web-app-capable": "yes",
+    "format-detection": "telephone=no",
   },
   icons: {
     icon: [
@@ -146,7 +161,7 @@ export default function RootLayout({
           <CookieBanner />
         </CookieProvider>
 
-        {/* Structured Data dla organizacji */}
+        {/* Structured Data für Organisation */}
         <Script
           id="structured-data"
           type="application/ld+json"
@@ -167,22 +182,68 @@ export default function RootLayout({
           }}
         />
 
-        {/* Viewport height fix script */}
+        {/* Enhanced viewport height fix for iPhone Safari */}
         <Script
           id="viewport-fix"
           strategy="afterInteractive"
           dangerouslySetInnerHTML={{
             __html: `
-              // Fix dla paska adresu na mobile
               function setRealViewportHeight() {
                 const vh = window.innerHeight * 0.01;
                 document.documentElement.style.setProperty('--vh', vh + 'px');
               }
-                          
+              
+              // Initial set
               setRealViewportHeight();
+              
+              // Enhanced event listeners for iPhone Safari
               window.addEventListener('resize', setRealViewportHeight);
               window.addEventListener('orientationchange', function() {
                 setTimeout(setRealViewportHeight, 100);
+              });
+              
+              // Additional iPhone Safari specific events
+              window.addEventListener('load', setRealViewportHeight);
+              if (window.screen && window.screen.orientation) {
+                window.screen.orientation.addEventListener('change', function() {
+                  setTimeout(setRealViewportHeight, 150);
+                });
+              }
+            `,
+          }}
+        />
+
+        {/* iPhone Safari audio context enabler */}
+        <Script
+          id="ios-audio-fix"
+          strategy="afterInteractive"
+          dangerouslySetInnerHTML={{
+            __html: `
+              // Enable audio context on iOS after user interaction
+              function enableIOSAudio() {
+                try {
+                  const AudioContext = window.AudioContext || window.webkitAudioContext;
+                  if (AudioContext) {
+                    const audioContext = new AudioContext();
+                    if (audioContext.state === 'suspended') {
+                      audioContext.resume();
+                    }
+                  }
+                } catch (e) {
+                  console.log('Audio context not available');
+                }
+              }
+              
+              const events = ['touchstart', 'touchend', 'mousedown', 'keydown'];
+              const onFirstInteraction = () => {
+                enableIOSAudio();
+                events.forEach(event => {
+                  document.removeEventListener(event, onFirstInteraction);
+                });
+              };
+              
+              events.forEach(event => {
+                document.addEventListener(event, onFirstInteraction, { once: true });
               });
             `,
           }}
