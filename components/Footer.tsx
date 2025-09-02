@@ -90,7 +90,7 @@ export default function Footer() {
             <p className={styles.socialText}>Folgen Sie uns:</p>
             <div className={styles.mobileSocial}>
               <a
-                href="https://www.instagram.com/fairfuehrer.audioreisefuehrer?igsh=MWcyNjRmMjFuaXljYG"
+                href="https://www.instagram.com/fairfuehrerofficial/"
                 target="_blank"
                 rel="noopener noreferrer"
                 className={styles.socialIcon}
