@@ -1,8 +1,12 @@
 /* components/ExpandableDescription.module.css */
+/* ✅ FIXED iPhone Safari width issues */
 
 .expandableContainer {
   position: relative;
   width: 100%;
+  /* ✅ ADDED: Ensure container respects parent width */
+  max-width: 100%;
+  box-sizing: border-box;
 }
 
 /* Ukryty element do pomiaru wysokości */
@@ -27,6 +31,10 @@
   transition: max-height 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94),
     opacity 0.3s ease;
   position: relative;
+  /* ✅ ADDED: Ensure content respects container width */
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
 }
 
 .content.collapsed {
@@ -96,7 +104,7 @@
   z-index: 1;
 }
 
-/* Przycisk "Mehr lesen" */
+/* Przycisk "Mehr lesen" - FIXED for iPhone Safari */
 .toggleButton {
   display: flex;
   align-items: center;
@@ -118,7 +126,12 @@
   transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
   position: relative;
   z-index: 2;
+
+  /* ✅ FIXED: Ensure button respects container width on iPhone Safari */
   width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
+
   font-family: inherit;
   -webkit-backdrop-filter: blur(10px);
   backdrop-filter: blur(10px);
@@ -126,6 +139,11 @@
   min-height: 44px;
   -webkit-tap-highlight-color: transparent;
   touch-action: manipulation;
+
+  /* ✅ ADDED: Prevent button from breaking out of container */
+  word-wrap: break-word;
+  white-space: nowrap;
+  overflow: hidden;
 }
 
 .toggleButton:hover {
@@ -154,6 +172,8 @@
 .buttonText {
   font-weight: 500;
   letter-spacing: 0.025em;
+  /* ✅ ADDED: Ensure text doesn't overflow */
+  flex-shrink: 0;
 }
 
 /* Ikona chevron */
@@ -171,11 +191,14 @@
   transform: rotate(180deg);
 }
 
-/* Responsywność */
+/* Responsywność - ENHANCED for iPhone Safari */
 @media (max-width: 768px) {
   .toggleButton {
     padding: 0.6rem 1rem;
     border-radius: 10px;
+    /* ✅ ENHANCED: Better handling of smaller screens */
+    font-size: 0.95rem;
+    gap: 0.4rem;
   }
 
   .fadeOverlay {
@@ -192,6 +215,19 @@
   .toggleButton {
     padding: 0.5rem 0.8rem;
     margin-top: 0.75rem;
+    font-size: 0.9rem;
+    gap: 0.3rem;
+    /* ✅ ADDED: Ensure button fits on very small screens */
+    min-width: 0;
+    width: 100%;
+  }
+
+  .buttonText {
+    /* ✅ ADDED: Allow text to shrink on very small screens if needed */
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
   }
 
   .fadeOverlay {
@@ -206,6 +242,17 @@
   .chevron {
     width: 14px;
     height: 14px;
+    flex-shrink: 0;
+  }
+}
+
+/* ✅ ADDED: iPhone Safari specific fixes */
+@media screen and (-webkit-min-device-pixel-ratio: 2) {
+  .toggleButton {
+    /* Force hardware acceleration for smoother animations on Retina displays */
+    transform: translateZ(0);
+    backface-visibility: hidden;
+    -webkit-font-smoothing: antialiased;
   }
 }
 

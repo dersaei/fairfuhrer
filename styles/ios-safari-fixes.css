@@ -1,5 +1,5 @@
 /* styles/ios-safari-fixes.css */
-/* iPhone Safari specific fixes for components */
+/* iPhone Safari specific fixes for components - ENHANCED */
 
 /* Map container fixes */
 .mapContainerWrapper,
@@ -8,9 +8,13 @@
   min-height: calc(var(--vh, 1vh) * 100);
 }
 
-/* Info panel fixes */
+/* Info panel fixes - ENHANCED for width issues */
 .infoPanel {
   height: calc(var(--vh, 1vh) * 100);
+
+  /* ✅ ADDED: Prevent horizontal overflow on iPhone Safari */
+  max-width: 100vw;
+  overflow-x: hidden;
 
   /* Safe area handling */
   padding-top: env(safe-area-inset-top);
@@ -20,22 +24,56 @@
 
   /* Modern scroll handling */
   overscroll-behavior: contain;
+
+  /* ✅ ADDED: Force proper box sizing */
+  box-sizing: border-box;
 }
 
-/* Mobile panel adjustments */
+/* Mobile panel adjustments - ENHANCED */
 @media (max-width: 768px) {
   .infoPanel {
     height: calc(var(--vh, 1vh) * 70);
     padding-bottom: max(1rem, env(safe-area-inset-bottom));
     transform: translateY(100%);
+
+    /* ✅ ENHANCED: Force full width on mobile Safari */
+    width: 100vw !important;
+    max-width: 100vw !important;
+    left: 0 !important;
+    right: 0 !important;
+
+    /* ✅ ADDED: Prevent any margin/padding from breaking layout */
+    margin: 0;
+    border-left: none;
+    border-right: none;
   }
 
   .infoPanel.open {
     transform: translateY(0);
   }
+
+  /* ✅ ADDED: Ensure panel content respects safe areas */
+  .panelContent {
+    max-width: 100%;
+    overflow-x: hidden;
+    box-sizing: border-box;
+  }
 }
 
-/* Close button touch target */
+/* ✅ ADDED: Very small screens (iPhone SE, etc.) */
+@media (max-width: 375px) {
+  .infoPanel {
+    width: 100vw !important;
+    max-width: 100vw !important;
+  }
+
+  .infoSection {
+    padding-left: 1rem;
+    padding-right: 1rem;
+  }
+}
+
+/* Close button touch target - ENHANCED */
 .closeButton {
   position: absolute;
   top: max(20px, env(safe-area-inset-top, 20px));
@@ -48,6 +86,10 @@
   -webkit-touch-callout: none;
   -webkit-user-select: none;
   user-select: none;
+
+  /* ✅ ADDED: Ensure button stays within bounds */
+  margin: 0;
+  flex-shrink: 0;
 }
 
 /* Audio controls optimization */
@@ -57,12 +99,25 @@
   -webkit-tap-highlight-color: transparent;
   -webkit-touch-callout: none;
   touch-action: manipulation;
+
+  /* ✅ ADDED: Ensure audio controls don't overflow */
+  max-width: 100%;
+  box-sizing: border-box;
 }
 
 .playButton,
 .skipButton {
   min-width: 44px;
   min-height: 44px;
+  flex-shrink: 0;
+}
+
+/* ✅ ENHANCED: Audio section positioning */
+.audioSection {
+  /* Ensure audio doesn't overflow panel width */
+  max-width: calc(100% - 2rem);
+  left: 50%;
+  transform: translateX(-50%);
 }
 
 /* Progress bar fixes */
@@ -70,6 +125,10 @@
   -webkit-appearance: none;
   appearance: none;
   touch-action: manipulation;
+
+  /* ✅ ADDED: Ensure progress bar fits container */
+  max-width: 100%;
+  box-sizing: border-box;
 }
 
 .progressBar::-webkit-slider-thumb {
@@ -90,6 +149,36 @@
   user-select: none;
 }
 
+/* ✅ ENHANCED: Gallery container fixes */
+.gallery {
+  max-width: 100%;
+  overflow-x: hidden;
+  box-sizing: border-box;
+}
+
+/* ✅ ADDED: Expandable description button fixes */
+.toggleButton {
+  /* Prevent button from overflowing */
+  max-width: 100%;
+  box-sizing: border-box;
+  word-wrap: break-word;
+
+  /* iPhone Safari touch optimization */
+  -webkit-tap-highlight-color: transparent;
+  -webkit-touch-callout: none;
+  touch-action: manipulation;
+
+  /* Force hardware acceleration */
+  transform: translateZ(0);
+  backface-visibility: hidden;
+}
+
+.expandableContainer {
+  max-width: 100%;
+  overflow-x: hidden;
+  box-sizing: border-box;
+}
+
 /* Filter container mobile */
 @media (max-width: 580px) {
   .filtersContainer {
@@ -98,10 +187,13 @@
   }
 }
 
-/* Landscape orientation fixes */
+/* Landscape orientation fixes - ENHANCED */
 @media (orientation: landscape) and (max-height: 500px) {
   .infoPanel {
     height: calc(var(--vh, 1vh) * 90);
+    /* ✅ ADDED: Ensure width constraints in landscape */
+    width: 100vw !important;
+    max-width: 100vw !important;
   }
 
   .mapContainerWrapper {
@@ -113,6 +205,16 @@
     right: max(10px, env(safe-area-inset-right, 10px));
     width: 36px;
     height: 36px;
+  }
+
+  /* ✅ ADDED: Adjust content spacing in landscape */
+  .placeNameSection {
+    margin-top: 4vh;
+    margin-bottom: 1vh;
+  }
+
+  .audioSection {
+    bottom: -4vh;
   }
 }
 
@@ -127,10 +229,79 @@
   appearance: none;
   -webkit-tap-highlight-color: transparent;
   touch-action: manipulation;
+
+  /* ✅ ADDED: Prevent link from overflowing */
+  max-width: 100%;
+  box-sizing: border-box;
+  word-wrap: break-word;
 }
+
+/* ✅ ADDED: Mapbox controls - prevent interference with our styles */
 .mapboxgl-ctrl button,
 .mapboxgl-ctrl-group button {
   min-height: unset !important;
   min-width: unset !important;
   font-size: unset !important;
+}
+
+/* ✅ ADDED: iPhone Safari specific media queries */
+@supports (-webkit-touch-callout: none) {
+  /* This targets iPhone Safari specifically */
+  .infoPanel {
+    /* Force repaint to prevent rendering issues */
+    transform: translateZ(0);
+    backface-visibility: hidden;
+  }
+
+  @media (max-width: 768px) {
+    .infoPanel {
+      /* Additional iPhone Safari specific fixes */
+      will-change: transform;
+    }
+  }
+}
+
+/* ✅ ADDED: iPhone X and newer safe area fixes */
+@supports (padding: max(0px)) {
+  @media (max-width: 768px) {
+    .closeButton {
+      top: max(12px, env(safe-area-inset-top, 12px) + 8px);
+      right: max(12px, env(safe-area-inset-right, 12px) + 8px);
+    }
+  }
+}
+
+/* ✅ ADDED: Text content overflow prevention */
+.description,
+.content {
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+  -webkit-hyphens: auto;
+  hyphens: auto;
+  max-width: 100%;
+  box-sizing: border-box;
+}
+
+/* ✅ ADDED: Prevent zoom on focus for form elements */
+input,
+textarea,
+select {
+  font-size: max(16px, 1rem);
+  transform: translateZ(0);
+}
+
+/* ✅ ADDED: Force proper viewport calculations */
+@media screen and (max-width: 768px) {
+  html {
+    /* Force viewport recalculation on iPhone Safari */
+    height: -webkit-fill-available;
+  }
+
+  body {
+    /* Prevent bounce scrolling */
+    position: fixed;
+    overflow: hidden;
+    width: 100%;
+    height: -webkit-fill-available;
+  }
 }
