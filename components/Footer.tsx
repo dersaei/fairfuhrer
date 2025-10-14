@@ -1,11 +1,19 @@
 // components/Footer.tsx
+"use client";
 
 import Link from "next/link";
-// ✅ DODAJ IMPORT COOKIE SETTINGS
+import { usePathname } from "next/navigation";
 import CookieSettings from "./CookieSettings";
 import styles from "./Footer.module.css";
 
 export default function Footer() {
+  const pathname = usePathname();
+
+  // Hide footer on /karte page
+  if (pathname === "/karte") {
+    return null;
+  }
+
   return (
     <footer className={styles.footer}>
       <div className={styles.container}>
@@ -13,10 +21,9 @@ export default function Footer() {
         <div className={styles.content}>
           {/* Logo/Nazwa */}
           <div className={styles.brand}>
-            <h3 className={styles.brandName}>Fair Führer Guide</h3>
+            <h3 className={styles.brandName}>FairFührer Guide</h3>
             <p className={styles.brandDescription}>
-              Der digitale Reiseführer für nachhaltiges Leben & Reisen am
-              Bodensee und im Allgäu
+              Der Reiseführer für nachhaltiges Leben & Reisen
             </p>
           </div>
 
@@ -67,7 +74,6 @@ export default function Footer() {
                     Datenschutz
                   </Link>
                 </li>
-                {/* ✅ DODAJ COOKIE SETTINGS DO LISTY LINKÓW PRAWNYCH */}
                 <li>
                   <CookieSettings />
                 </li>

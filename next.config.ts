@@ -1,4 +1,3 @@
-import { withNextVideo } from "next-video/process";
 // next.config.ts
 import type { NextConfig } from "next";
 
@@ -10,7 +9,7 @@ const nextConfig: NextConfig = {
   async headers() {
     return [
       {
-        source: "/styles/atmosphere.json",
+        source: "/styles/atmosphere-v2.json",
         headers: [
           {
             key: "Cache-Control",
@@ -18,7 +17,7 @@ const nextConfig: NextConfig = {
           },
           {
             key: "Content-Type",
-            value: "application/json",
+            value: "application/json; charset=utf-8",
           },
         ],
       },
@@ -36,4 +35,4 @@ const nextConfig: NextConfig = {
   },
 };
 
-export default withNextVideo(nextConfig);
+export default nextConfig;

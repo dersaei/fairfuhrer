@@ -1,7 +1,7 @@
 // components/MuxVideoEmbed.tsx
 "use client";
 
-import Video from "next-video";
+import MuxPlayer from "@mux/mux-player-react";
 import styles from "./MuxVideoEmbed.module.css";
 
 interface MuxVideoEmbedProps {
@@ -17,48 +17,38 @@ export default function MuxVideoEmbed({
   playbackId,
   className = "",
   poster,
+  title,
   autoPlay = false,
   muted = true,
 }: MuxVideoEmbedProps) {
-  // WALIDACJA - sprawdź czy to Twój Playback ID
+  // Validation - check if playbackId is valid
   if (!playbackId || playbackId.length !== 43) {
     return (
       <div className={`${styles.videoError} ${className}`}>
-        <p>❌ Nieprawidłowy Playback ID!</p>
-        <p>Oczekiwano: hz85VadaGOSuRmlIP7uoACRb63tjJXXNKTcFqHA14Po</p>
-        <p>Otrzymano: {playbackId}</p>
+        <p>❌ Ungültige Playback-ID!</p>
+        <p>Erwartet: 43 Zeichen lange Mux Playback-ID</p>
+        <p>Erhalten: {playbackId || "keine ID"}</p>
       </div>
     );
   }
 
-  // TWÓJ STREAM URL
-  const streamUrl = `https://stream.mux.com/${playbackId}.m3u8`;
-
-  // TWÓJ THUMBNAIL URL
-  const thumbnailUrl =
-    poster || `https://image.mux.com/${playbackId}/thumbnail.webp`;
-
-  console.log("🎬 Mux Stream URL:", streamUrl);
-  console.log("🖼️ Mux Thumbnail:", thumbnailUrl);
-
   return (
     <div className={`${styles.videoContainer} ${className}`}>
-      <Video
-        src={streamUrl}
-        poster={thumbnailUrl}
-        autoPlay={autoPlay}
+      <MuxPlayer
+        playbackId={playbackId}
+        poster={poster}
+        autoPlay={autoPlay ? "muted" : false}
         muted={muted}
-        controls
-        playsInline
-        preload="metadata"
+        accentColor="#ac39f2"
+        metadata={{
+          video_title: title || "FairFuhrer Video",
+          viewer_user_id: "anonymous",
+        }}
         style={{
           width: "100%",
           height: "100%",
-          objectFit: "cover",
+          aspectRatio: "16/9",
         }}
-        onLoadStart={() => console.log(`✅ Loading: ${playbackId}`)}
-        onCanPlay={() => console.log(`🎉 Ready: ${playbackId}`)}
-        onError={(error) => console.error("❌ Error:", error)}
       />
     </div>
   );

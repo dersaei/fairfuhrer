@@ -4,11 +4,12 @@
 // PODSTAWOWE TYPY DLA MAP I LOKALIZACJI
 // ========================================
 
-// ✅ Category - BEZ description (nie ma w Directus)
+// ✅ Category
 export interface Category {
   id: number;
   name: string;
   color: string;
+  description?: string;
 }
 
 // Alias dla niemieckiej nazwy kolekcji w Directus
@@ -116,6 +117,7 @@ export interface DirectusKategorie {
   id: number;
   Name: string;
   Farbe: string;
+  Beschreibung?: string;
 }
 
 export interface DirectusOrteKategorie {
@@ -335,7 +337,7 @@ export interface PartnerPageContent {
   // SEKCJA 3 - Tekst + YouTube video + KOLORY
   section3_left_title?: string;
   section3_left_text?: string;
-  section3_mux_playback_id?: string; // hz85VadaGOSuRmlIP7uoACRb63tjJXXNKTcFqHA14Po
+  section3_mux_playback_id?: string;
   section3_video_poster?: string; // Custom thumbnail (opcjonalne)
   section3_video_title?: string; // Tytuł (opcjonalne)
   section3_background_color?: string;

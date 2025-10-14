@@ -5,7 +5,6 @@ import type { PartnerPageContent } from "../../types";
 import { getPageAssetPath } from "../../lib/supabase";
 import PartnerForm from "../../components/PartnerForm";
 import MuxVideoEmbed from "../../components/MuxVideoEmbed";
-// ✅ DODAJ IMPORT CONDITIONAL MUX VIDEO
 import { ConditionalMuxVideo } from "../../components/ConditionalMuxVideo";
 import styles from "./partner-werden.module.css";
 
@@ -136,7 +135,7 @@ export default async function PartnerWerdenPage() {
         </div>
 
         <div className={styles.section3Right}>
-          {/* ✅ MUX VIDEO OWRAPOWANE W CONDITIONAL MUX VIDEO */}
+          {/* ✅ MUX VIDEO  */}
           {pageData.section3_mux_playback_id ? (
             <ConditionalMuxVideo>
               <MuxVideoEmbed
@@ -156,7 +155,7 @@ export default async function PartnerWerdenPage() {
         </div>
       </section>
 
-      {/* SEKCJA 4 - FORMULARZ (bez zmian) */}
+      {/* SEKCJA 4 - FORMULARZ */}
       <section
         className={styles.section4}
         style={{

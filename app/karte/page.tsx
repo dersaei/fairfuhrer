@@ -1,8 +1,7 @@
-// app/karte/page.tsx - TYLKO DODANIE CONDITIONAL MAPBOX
+// app/karte/page.tsx - Complete fixed version with description support
 import type { Metadata } from "next";
 import MapWithFilters from "../../components/MapWithFilters";
 import { ErrorBoundary } from "../../components/ErrorBoundary";
-// ✅ DODAJ IMPORT CONDITIONAL MAPBOX
 import { ConditionalMapbox } from "../../components/ConditionalMapbox";
 import type {
   Place,
@@ -12,11 +11,11 @@ import type {
   DirectusOrte,
 } from "../../types";
 
-// ISR revalidation - dane będą odświeżane co 6 godzin (bez zmian)
+// ISR revalidation - dane będą odświeżane co 6 godzin
 export const revalidate = 21600;
 
 // ========================================
-// HELPER FUNCTIONS (POZOSTAJĄ BEZ ZMIAN)
+// HELPER FUNCTIONS
 // ========================================
 
 /**
@@ -37,7 +36,7 @@ function isValidCoordinate(lat: number, lng: number): boolean {
 }
 
 /**
- * Transformacja Directus Orte do Place z walidacją
+ * Transformacja Directus Orte do Place z walidacją - FIXED
  */
 function transformDirectusOrteToPlace(ort: DirectusOrte): Place | null {
   try {
@@ -64,25 +63,19 @@ function transformDirectusOrteToPlace(ort: DirectusOrte): Place | null {
       Vollbeschreibung: ort.Vollbeschreibung?.trim(),
       Breite: latitude,
       Lange: longitude,
-      // 🆕 POPRAWKA: Dodaj sprawdzenie czy k.Kategorie_id nie jest null
+      // ✅ FIXED: Proper filtering and mapping
       Kategorie:
-        ort.Kategorie?.map((k) => {
-          // Sprawdź czy Kategorie_id istnieje i nie jest null
-          if (!k.Kategorie_id || k.Kategorie_id === null) {
-            console.warn(`Kategoria bez ID dla miejsca ${ort.id} - pomijam`);
-            return null;
-          }
-
-          return {
+        ort.Kategorie?.filter((k) => {
+          // Check if Kategorie_id exists and is not null
+          return k.Kategorie_id && k.Kategorie_id !== null;
+        }).map(
+          (k): Category => ({
+            // ✅ FIXED: Explicitly return Category type
             id: k.Kategorie_id.id,
             name: k.Kategorie_id.Name.trim(),
             color: k.Kategorie_id.Farbe.trim(),
-          };
-        }).filter(
-          (
-            kategorie
-          ): kategorie is { id: number; name: string; color: string } =>
-            kategorie !== null
+            description: k.Kategorie_id.Beschreibung?.trim(),
+          })
         ) ?? [],
       Hauptbild: ort.Hauptbild?.trim(),
       Audio_Datei: ort.Audio_Datei?.trim(),
@@ -154,7 +147,7 @@ export default async function KartePage() {
 
   try {
     // ========================================
-    // FETCH ORTE (PLACES)
+    // FETCH ORTE (PLACES) - Updated with Beschreibung
     // ========================================
 
     const orteUrl = new URL(`${baseUrl}/items/Orte`);
@@ -176,6 +169,7 @@ export default async function KartePage() {
         "Kategorie.Kategorie_id.id",
         "Kategorie.Kategorie_id.Name",
         "Kategorie.Kategorie_id.Farbe",
+        "Kategorie.Kategorie_id.Beschreibung", // Added description field
       ].join(",")
     );
     orteUrl.searchParams.set("limit", "-1");
@@ -187,11 +181,11 @@ export default async function KartePage() {
     );
 
     // ========================================
-    // FETCH KATEGORIEN
+    // FETCH KATEGORIEN - Updated with Beschreibung
     // ========================================
 
     const kategorieUrl = new URL(`${baseUrl}/items/Kategorie`);
-    kategorieUrl.searchParams.set("fields", "id,Name,Farbe");
+    kategorieUrl.searchParams.set("fields", "id,Name,Farbe,Beschreibung"); // Added Beschreibung
     kategorieUrl.searchParams.set("limit", "-1");
     kategorieUrl.searchParams.set("sort", "Name");
 
@@ -213,6 +207,7 @@ export default async function KartePage() {
         id: kat.id,
         name: kat.Name.trim(),
         color: kat.Farbe.trim(),
+        description: kat.Beschreibung?.trim(), // Added description mapping
       }))
       .filter((cat) => cat.name.length > 0 && cat.color.length > 0);
 
@@ -245,12 +240,12 @@ export default async function KartePage() {
     }
 
     // ========================================
-    // ✅ RENDER COMPONENT - Z CONDITIONAL MAPBOX
+    // RENDER COMPONENT
     // ========================================
 
     return (
       <div>
-        {/* SSR TREŚĆ - UKRYTA DLA GOOGLE (bez zmian) */}
+        {/* SSR TREŚĆ - UKRYTA DLA GOOGLE */}
         <div
           style={{
             position: "absolute",
@@ -294,7 +289,7 @@ export default async function KartePage() {
           ))}
         </div>
 
-        {/* ✅ MAPA OWRAPOWANA W CONDITIONAL MAPBOX */}
+        {/* MAPA OWRAPOWANA W CONDITIONAL MAPBOX */}
         <ConditionalMapbox>
           <ErrorBoundary
             fallback={
@@ -333,7 +328,7 @@ export default async function KartePage() {
     );
   } catch (error) {
     // ========================================
-    // ERROR HANDLING (POZOSTAJE BEZ ZMIAN)
+    // ERROR HANDLING
     // ========================================
 
     console.error("❌ Kritischer Fehler beim Laden der Kartendaten:", error);

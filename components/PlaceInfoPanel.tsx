@@ -165,6 +165,7 @@ function CloseButton({ onClick }: { onClick: () => void }) {
 
   return (
     <button
+      type="button"
       className={
         useMinimalStyle ? styles.closeButtonMinimal : styles.closeButton
       }

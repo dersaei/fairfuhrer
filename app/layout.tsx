@@ -5,7 +5,6 @@ import { GoogleAnalytics } from "@next/third-parties/google";
 import Script from "next/script";
 import "../styles/reset.css";
 import "../styles/ios-safari-fixes.css";
-
 import Header from "../components/Header";
 import Footer from "../components/Footer";
 import { PayPalProvider } from "../components/PayPalProvider";
@@ -49,25 +48,21 @@ const montserrat = Montserrat({
 export const viewport: Viewport = {
   width: "device-width",
   initialScale: 1,
-  maximumScale: 5,
-  userScalable: true,
   viewportFit: "cover",
-  themeColor: "#fc6c14",
 };
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://www.fairfuehrer.guide"),
   title: {
-    default: "Fair Führer Guide",
-    template: "%s | Fair Führer Guide",
+    default: "FairFührer Guide",
+    template: "%s | FairFührer Guide",
   },
   description:
-    "Der Digitale Reiseführer Für Nachhaltiges Leben & Reisen Am Bodensee Und Im Allgäu",
+    "Der Reiseführer für nachhaltiges Leben & Reisen Am Bodensee Und Im Allgäu",
   keywords: [
     "nachhaltiges reisen",
     "Bodensee",
     "Allgäu",
-    "digitaler reiseführer",
     "öko tourismus",
     "nachhaltiger tourismus",
     "umweltfreundlich reisen",
@@ -77,60 +72,6 @@ export const metadata: Metadata = {
   authors: [{ name: "Seenergien GmbH" }],
   creator: "Bogusław Siemiątkowski",
   publisher: "Seenergien GmbH",
-  robots: {
-    index: true,
-    follow: true,
-    googleBot: {
-      index: true,
-      follow: true,
-      "max-video-preview": -1,
-      "max-image-preview": "large",
-      "max-snippet": -1,
-    },
-  },
-  openGraph: {
-    type: "website",
-    locale: "de_DE",
-    url: "https://www.fairfuehrer.guide",
-    title: "Fair Führer Guide",
-    description:
-      "Der Digitale Reiseführer Für Nachhaltiges Leben & Reisen Am Bodensee Und Im Allgäu",
-    siteName: "Fair Führer Guide",
-  },
-  twitter: {
-    card: "summary_large_image",
-    title: "Fair Führer Guide",
-    description:
-      "Der Digitale Reiseführer Für Nachhaltiges Leben & Reisen Am Bodensee Und Im Allgäu",
-  },
-  alternates: {
-    canonical: "https://www.fairfuehrer.guide",
-    languages: {
-      "de-DE": "https://www.fairfuehrer.guide",
-    },
-  },
-  verification: {
-    google: "2bjmGVzCiAjpyN8vCrhb4NlhcbPh9mlFESnC866cCQE",
-  },
-  other: {
-    "msapplication-TileColor": "#fc6c14",
-    "preconnect-fonts": "https://fonts.googleapis.com",
-    "preconnect-gstatic": "https://fonts.gstatic.com",
-    // iPhone Safari specific meta tags
-    "apple-mobile-web-app-capable": "yes",
-    "apple-mobile-web-app-status-bar-style": "default",
-    "apple-mobile-web-app-title": "Fair Führer Guide",
-    "mobile-web-app-capable": "yes",
-    "format-detection": "telephone=no",
-  },
-  icons: {
-    icon: [
-      { url: "/favicon.ico", sizes: "any" },
-      { url: "/favicon-16x16.png", sizes: "16x16", type: "image/png" },
-      { url: "/favicon-32x32.png", sizes: "32x32", type: "image/png" },
-    ],
-    apple: "/apple-touch-icon.png",
-  },
 };
 
 export default function RootLayout({
@@ -169,9 +110,8 @@ export default function RootLayout({
             __html: JSON.stringify({
               "@context": "https://schema.org",
               "@type": "Organization",
-              name: "Fair Führer Guide",
-              description:
-                "Der Digitale Reiseführer Für Nachhaltiges Leben & Reisen Am Bodensee Und Im Allgäu",
+              name: "FairFührer Guide",
+              description: "Der Reiseführer für nachhaltiges Leben & Reisen",
               url: "https://www.fairfuehrer.guide",
               contactPoint: {
                 "@type": "ContactPoint",

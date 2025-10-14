@@ -1,10 +1,17 @@
-/* components/CategoryFilter.module.css - Ostateczna wersja */
+/* components/CategoryFilter.module.css - Fixed with larger icons */
 .filterContainer {
   display: flex;
   flex-direction: column;
   margin: 0 auto;
   padding: 8px;
   gap: 8px;
+}
+
+.filterWrapper {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  position: relative;
 }
 
 .filterItem {
@@ -20,6 +27,7 @@
   user-select: none;
   -webkit-tap-highlight-color: transparent;
   touch-action: manipulation;
+  flex: 1;
 }
 
 .filterItem:hover {
@@ -71,6 +79,39 @@
   color: #000;
 }
 
+/* Just the icon, no background circle */
+.filterWrapper .infoButton {
+  width: auto !important; /* Remove fixed size */
+  height: auto !important;
+  border: none !important;
+  background: none !important; /* Remove background circle */
+  border-radius: 0 !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  cursor: pointer !important;
+  color: #0078ff !important; /* Blue icon color */
+  transition: all 0.2s ease !important;
+  flex-shrink: 0 !important;
+  padding: 4px !important; /* Small padding for touch target */
+  margin-left: 4px !important;
+}
+
+.filterWrapper .infoButton:hover {
+  color: #005ce6 !important; /* Darker blue on hover */
+  transform: scale(1.2) !important; /* Scale the icon itself */
+}
+
+.filterWrapper .infoButton:active {
+  transform: scale(1) !important;
+}
+
+.filterWrapper .infoButton svg {
+  width: 18px !important; /* Larger icon */
+  height: 18px !important;
+  stroke-width: 2.5 !important; /* Thicker lines for better visibility */
+}
+
 .noCategories {
   text-align: center;
   color: #666;
@@ -79,7 +120,7 @@
   font-size: 14px;
 }
 
-/* Responsive adjustments */
+/* Mobile adjustments */
 @media screen and (max-width: 580px) {
   .filterContainer {
     padding: 6px;
@@ -87,6 +128,10 @@
     flex-direction: row;
     flex-wrap: wrap;
     justify-content: center;
+  }
+
+  .filterWrapper {
+    gap: 4px;
   }
 
   .filterItem {
@@ -101,5 +146,21 @@
 
   .filterName {
     font-size: 14px;
+  }
+
+  .filterWrapper .infoButton svg {
+    width: 16px !important;
+    height: 16px !important;
+  }
+}
+
+/* Dark mode */
+@media (prefers-color-scheme: dark) {
+  .filterWrapper .infoButton {
+    color: #4fc3f7 !important;
+  }
+
+  .filterWrapper .infoButton:hover {
+    color: #29b6f6 !important;
   }
 }
