@@ -17,9 +17,6 @@ const CategoryFilter: React.FC<CategoryFilterProps> = ({
 }) => {
   const [modalCategory, setModalCategory] = useState<Category | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [triggerElement, setTriggerElement] = useState<HTMLElement | null>(
-    null
-  );
   const [openCategoryId, setOpenCategoryId] = useState<number | null>(null);
 
   // Memoized handler for keyboard events
@@ -42,7 +39,6 @@ const CategoryFilter: React.FC<CategoryFilterProps> = ({
       if (openCategoryId === category.id && isModalOpen) {
         setIsModalOpen(false);
         setModalCategory(null);
-        setTriggerElement(null);
         setOpenCategoryId(null);
       } else {
         // If another modal is open, close it first then open new one
@@ -52,14 +48,12 @@ const CategoryFilter: React.FC<CategoryFilterProps> = ({
 
           // Wait for close animation, then open new modal
           setTimeout(() => {
-            setTriggerElement(e.currentTarget as HTMLElement);
             setModalCategory(category);
             setIsModalOpen(true);
             setOpenCategoryId(category.id);
           }, 200);
         } else {
           // No modal open, just open this one
-          setTriggerElement(e.currentTarget as HTMLElement);
           setModalCategory(category);
           setIsModalOpen(true);
           setOpenCategoryId(category.id);
@@ -73,7 +67,6 @@ const CategoryFilter: React.FC<CategoryFilterProps> = ({
   const handleModalClose = useCallback(() => {
     setIsModalOpen(false);
     setModalCategory(null);
-    setTriggerElement(null);
     setOpenCategoryId(null);
   }, []);
 
@@ -163,7 +156,6 @@ const CategoryFilter: React.FC<CategoryFilterProps> = ({
         category={modalCategory}
         isOpen={isModalOpen}
         onClose={handleModalClose}
-        triggerElement={triggerElement}
       />
     </>
   );
