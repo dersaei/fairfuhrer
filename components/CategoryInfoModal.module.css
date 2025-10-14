@@ -37,17 +37,15 @@
 
 .modal {
   position: fixed;
-  background: white;
+  background: linear-gradient(135deg, #ecfdf5 0%, #dbeafe 100%);
   border-radius: 12px;
   box-shadow: 0 20px 60px rgba(0, 0, 0, 0.2), 0 8px 24px rgba(0, 0, 0, 0.12);
-  width: 280px;
+  width: 450px;
   max-width: calc(100vw - 40px);
-  max-height: 200px;
-  padding: 12px;
+  max-height: 270px;
+  padding: 18px;
   box-sizing: border-box;
   font-family: "Lato", sans-serif;
-  font-size: 14px;
-  line-height: 1.4;
   color: #333;
   border: 1px solid rgba(0, 0, 0, 0.08);
   z-index: 9999;
@@ -141,12 +139,73 @@
   padding-right: 24px;
   word-wrap: break-word;
   overflow-wrap: break-word;
-  white-space: pre-line;
   overflow-y: auto;
-  max-height: 160px;
+  max-height: 250px;
 
   /* iPhone scroll optimizations */
   overscroll-behavior: contain;
+}
+
+/* Styling for HTML content from WYSIWYG editor */
+.content h1,
+.content h2,
+.content h3,
+.content h4,
+.content h5,
+.content h6 {
+  margin: 0 0 8px 0;
+  font-weight: 600;
+  color: #222;
+  line-height: 1.3;
+}
+
+.content h2 {
+  font-size: 18px;
+  text-align: center;
+}
+
+.content h3 {
+  font-size: 15px;
+}
+
+.content p {
+  margin: 0 0 8px 0;
+  line-height: 1.5;
+  text-align: center;
+  font-size: 15px;
+}
+
+.content p:last-child {
+  margin-bottom: 0;
+}
+
+.content ul,
+.content ol {
+  margin: 0 0 8px 0;
+  padding-left: 20px;
+}
+
+.content li {
+  margin-bottom: 4px;
+}
+
+.content strong,
+.content b {
+  font-weight: 600;
+}
+
+.content em,
+.content i {
+  font-style: italic;
+}
+
+.content a {
+  color: #007bff;
+  text-decoration: underline;
+}
+
+.content a:hover {
+  color: #0056b3;
 }
 
 /* Custom scrollbar for content if needed */
@@ -164,12 +223,12 @@
 }
 
 /* Mobile adjustments - iPhone specific */
-@media screen and (max-width: 768px) {
+@media screen and (max-width: 668px) {
   .modal {
     width: calc(100vw - 40px);
-    max-width: 300px;
-    font-size: 13px;
-    padding: 10px;
+    max-width: 380px;
+    font-size: 14px;
+    padding: 15px;
 
     /* iPhone safe areas */
     padding-left: max(10px, env(safe-area-inset-left));
@@ -178,27 +237,19 @@
 
   .content {
     padding-right: 20px;
-    max-height: 140px;
+    max-height: 240px;
   }
 }
-
-/* Very small screens */
-@media screen and (max-width: 375px) {
+@media screen and (max-width: 668px) {
   .modal {
-    width: calc(100vw - 30px);
-    font-size: 12px;
-    padding: 8px;
-  }
-
-  .content {
-    max-height: 120px;
+    max-width: 300px;
   }
 }
 
 /* iPhone landscape */
 @media screen and (max-height: 500px) and (orientation: landscape) {
   .modal {
-    max-height: 60vh;
+    max-height: 62vh;
   }
 }
 

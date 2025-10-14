@@ -11,14 +11,12 @@ interface CategoryInfoModalProps {
   category: Category | null;
   isOpen: boolean;
   onClose: () => void;
-  triggerElement?: HTMLElement | null;
 }
 
 const CategoryInfoModal: React.FC<CategoryInfoModalProps> = ({
   category,
   isOpen,
   onClose,
-  triggerElement,
 }) => {
   const [mounted, setMounted] = useState(false);
   const [isVisible, setIsVisible] = useState(false);
@@ -205,9 +203,10 @@ const CategoryInfoModal: React.FC<CategoryInfoModalProps> = ({
           <div
             id="category-modal-description"
             className={styles.content}
-          >
-            {category.description || "Brak opisu."}
-          </div>
+            dangerouslySetInnerHTML={{
+              __html: category.description || "Brak opisu.",
+            }}
+          />
         </div>
       </FocusTrap>
     </div>
