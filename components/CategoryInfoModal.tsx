@@ -25,11 +25,14 @@ const CategoryInfoModal: React.FC<CategoryInfoModalProps> = ({
   const previousActiveElement = useRef<HTMLElement | null>(null);
   const closeTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
+  /* eslint-disable react-hooks/set-state-in-effect */
+  // Intentional mount detection for portal rendering
   useEffect(() => {
     setMounted(true);
   }, []);
 
   // Staggered animation: First show modal, then make it visible
+  // Animation state management requires effect-based updates
   useEffect(() => {
     if (isOpen && mounted) {
       // Small delay for smooth entrance
@@ -40,6 +43,7 @@ const CategoryInfoModal: React.FC<CategoryInfoModalProps> = ({
       setIsVisible(false);
     }
   }, [isOpen, mounted]);
+  /* eslint-enable react-hooks/set-state-in-effect */
 
   // Store the element that opened the modal so we can return focus to it
   useEffect(() => {
@@ -90,7 +94,9 @@ const CategoryInfoModal: React.FC<CategoryInfoModalProps> = ({
     [handleClose]
   );
 
+  /* eslint-disable react-hooks/set-state-in-effect */
   // Position modal - centered on all viewports
+  // Dynamic positioning based on viewport requires effect-based state updates
   useEffect(() => {
     if (isOpen && mounted) {
       const viewport = {
@@ -116,6 +122,7 @@ const CategoryInfoModal: React.FC<CategoryInfoModalProps> = ({
       setModalStyle(style);
     }
   }, [isOpen, mounted]);
+  /* eslint-enable react-hooks/set-state-in-effect */
 
   // Close on Escape key only
   useEffect(() => {

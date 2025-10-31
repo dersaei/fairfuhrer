@@ -42,6 +42,8 @@ export function CookieProvider({ children }: { children: ReactNode }) {
   const [hasConsented, setHasConsented] = useState(false);
   const [showBanner, setShowBanner] = useState(false);
 
+  /* eslint-disable react-hooks/set-state-in-effect */
+  // Loading consent state from localStorage on mount
   useEffect(() => {
     // Check if user has already given consent
     const consentGiven = localStorage.getItem(CONSENT_KEY);
@@ -55,6 +57,7 @@ export function CookieProvider({ children }: { children: ReactNode }) {
       setShowBanner(true);
     }
   }, []);
+  /* eslint-enable react-hooks/set-state-in-effect */
 
   const savePreferences = (newPreferences: CookiePreferences) => {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(newPreferences));

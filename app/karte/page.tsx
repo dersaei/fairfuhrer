@@ -145,6 +145,9 @@ export default async function KartePage() {
 
   const baseUrl = rawUrl.replace(/\/+$/, "");
 
+  /* eslint-disable react-hooks/error-boundaries */
+  // This try/catch is for data fetching errors in server component, not React rendering errors.
+  // Error boundaries cannot catch server-side data fetching errors.
   try {
     // ========================================
     // FETCH ORTE (PLACES) - Updated with Beschreibung
@@ -452,6 +455,7 @@ export default async function KartePage() {
       </div>
     );
   }
+  /* eslint-enable react-hooks/error-boundaries */
 }
 
 // ========================================

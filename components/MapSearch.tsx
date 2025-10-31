@@ -202,9 +202,12 @@ export default function MapSearch({
     }
   }, [isExpanded]);
 
+  /* eslint-disable react-hooks/set-state-in-effect */
+  // Loading state needs to sync with search results updates
   useEffect(() => {
     setIsLoading(false);
   }, [searchResults]);
+  /* eslint-enable react-hooks/set-state-in-effect */
 
   useEffect(() => {
     if (selectedIndex >= 0 && suggestionsRef.current) {
