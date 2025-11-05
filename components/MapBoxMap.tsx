@@ -11,6 +11,7 @@ import {
 } from "react";
 import mapboxgl from "mapbox-gl";
 import MapboxLanguage from "@mapbox/mapbox-gl-language";
+import DOMPurify from "dompurify";
 import "mapbox-gl/dist/mapbox-gl.css";
 import styles from "./MapBoxMap.module.css";
 import MapSearch from "./MapSearch"; // ✅ IMPORT
@@ -137,16 +138,19 @@ export default function MapBoxMap({ places }: MapBoxMapProps) {
           <div class="marker-pulse"></div>
         `;
 
-        const popup = new mapboxgl.Popup({
-          offset: [0, -15],
-          closeButton: false,
-          className: styles.popup,
-        }).setHTML(`
+        // ✅ XSS PROTECTION: Sanityzacja HTML (choć to statyczny tekst)
+        const userPopupHTML = DOMPurify.sanitize(`
           <div>
             <h3>Ihre Position</h3>
             <p>Sie sind hier</p>
           </div>
         `);
+
+        const popup = new mapboxgl.Popup({
+          offset: [0, -15],
+          closeButton: false,
+          className: styles.popup,
+        }).setHTML(userPopupHTML);
 
         const userMarker = new mapboxgl.Marker({ element: userMarkerElement })
           .setLngLat(location)
@@ -401,33 +405,46 @@ export default function MapBoxMap({ places }: MapBoxMapProps) {
 
         const color = place.Kategorie[0]?.color || "#3388ff";
 
-        const phoneHTML = place.Telefon
-          ? `<p class="${styles.popupPhone}"><a href="tel:${place.Telefon}" class="${styles.popupPhoneLink}">📞 ${place.Telefon}</a></p>`
+        // ✅ XSS PROTECTION: Escape user input before building HTML
+        const safeName = DOMPurify.sanitize(place.Name, { ALLOWED_TAGS: [] });
+        const safeAddress = DOMPurify.sanitize(place.Adresse, {
+          ALLOWED_TAGS: [],
+        });
+        const safePhone = place.Telefon
+          ? DOMPurify.sanitize(place.Telefon, { ALLOWED_TAGS: [] })
+          : "";
+        const safeDescription = place.Vollbeschreibung
+          ? DOMPurify.sanitize(
+              place.Vollbeschreibung.replace(/<[^>]*>/g, "").substring(0, 100),
+              { ALLOWED_TAGS: [] }
+            )
+          : "";
+
+        const phoneHTML = safePhone
+          ? `<p class="${styles.popupPhone}"><a href="tel:${safePhone}" class="${styles.popupPhoneLink}">📞 ${safePhone}</a></p>`
           : "";
 
         const popupContent = `
           <div class="${styles.modernPopup}">
-            <h3 class="${styles.popupTitle}">${place.Name}</h3>
-            <p class="${styles.popupAddress}">📍 ${place.Adresse}</p>
+            <h3 class="${styles.popupTitle}">${safeName}</h3>
+            <p class="${styles.popupAddress}">📍 ${safeAddress}</p>
             ${phoneHTML}
             ${
-              place.Vollbeschreibung
-                ? `<p class="${
-                    styles.popupDescription
-                  }">${place.Vollbeschreibung.replace(/<[^>]*>/g, "").substring(
-                    0,
-                    100
-                  )}...</p>`
+              safeDescription
+                ? `<p class="${styles.popupDescription}">${safeDescription}...</p>`
                 : ""
             }
           </div>
         `;
 
+        // ✅ XSS PROTECTION: Final sanitization of complete HTML
+        const safePopupContent = DOMPurify.sanitize(popupContent);
+
         const popup = new mapboxgl.Popup({
           offset: [0, -20],
           closeButton: false,
           className: styles.popup,
-        }).setHTML(popupContent);
+        }).setHTML(safePopupContent);
 
         const marker = new mapboxgl.Marker({ color, scale: 0.8 })
           .setLngLat([place.Lange, place.Breite])
