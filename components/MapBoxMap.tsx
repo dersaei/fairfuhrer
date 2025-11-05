@@ -8,7 +8,6 @@ import {
   lazy,
   Suspense,
   Activity,
-  useEffectEvent,
 } from "react";
 import mapboxgl from "mapbox-gl";
 import MapboxLanguage from "@mapbox/mapbox-gl-language";
@@ -257,15 +256,6 @@ export default function MapBoxMap({ places }: MapBoxMapProps) {
   // GEOLOCATION
   // ========================================
 
-  // ✅ REACT 19.2: useEffectEvent - zawsze używa najnowszych wartości bez dependency
-  const onLocationFound = useEffectEvent((location: [number, number]) => {
-    // Ta funkcja zawsze widzi najnowsze animateToLocation i addUserLocationMarker
-    animateToLocation(location, 14, 1800);
-    if (mapRef.current) {
-      addUserLocationMarker(mapRef.current, location);
-    }
-  });
-
   const getUserLocation = useCallback(() => {
     userLocationRequestedRef.current = true;
 
@@ -282,7 +272,9 @@ export default function MapBoxMap({ places }: MapBoxMapProps) {
 
         if (mapRef.current) {
           setTimeout(() => {
-            onLocationFound(newLocation); // ✅ Użyj Effect Event
+            // Wywołaj funkcje bezpośrednio - zawsze mają najnowsze wartości przez closure
+            animateToLocation(newLocation, 14, 1800);
+            addUserLocationMarker(mapRef.current!, newLocation);
           }, 100);
         }
       },
@@ -309,7 +301,10 @@ export default function MapBoxMap({ places }: MapBoxMapProps) {
       },
       { enableHighAccuracy: true, timeout: 10000, maximumAge: 300000 }
     );
-  }, []); // ✅ REACT 19.2: Pusta dependency array - Effect Event nie jest dependency!
+    // ✅ Funkcja nie wymaga animateToLocation/addUserLocationMarker w deps,
+    // bo closure zawsze ma dostęp do najnowszych wartości
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []); // Wywołaj tylko raz przy mount
 
   // ========================================
   // MAP INITIALIZATION
