@@ -1,0 +1,105 @@
+/* ErrorBoundary.module.css */
+
+.errorContainer {
+  padding: 2rem;
+  text-align: center;
+  background-color: #fee;
+  border: 1px solid #fcc;
+  border-radius: 8px;
+  margin: 2rem;
+  max-width: 800px;
+  margin-left: auto;
+  margin-right: auto;
+  font-family: "Oxanium", sans-serif;
+}
+
+.errorTitle {
+  color: #c33;
+  font-size: 1.5rem;
+  font-weight: bold;
+  margin-bottom: 1rem;
+}
+
+.errorMessage {
+  color: #666;
+  font-size: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.retryButton {
+  padding: 0.5rem 1rem;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  margin-top: 1rem;
+  font-family: "Oxanium", sans-serif;
+  font-size: 1rem;
+  font-weight: 600;
+  transition: background-color 0.2s ease;
+}
+
+.retryButton:hover {
+  background-color: #0056b3;
+}
+
+.retryButton:active {
+  background-color: #004085;
+}
+
+.errorDetails {
+  margin-top: 1rem;
+  text-align: left;
+}
+
+.errorSummary {
+  cursor: pointer;
+  font-weight: bold;
+  color: #c33;
+  -webkit-user-select: none;
+  user-select: none;
+}
+
+.errorSummary:hover {
+  text-decoration: underline;
+}
+
+.errorStack {
+  font-size: 0.8rem;
+  background-color: #f5f5f5;
+  padding: 1rem;
+  border-radius: 4px;
+  overflow: auto;
+  white-space: pre-wrap;
+  word-break: break-word;
+  max-height: 400px;
+  margin-top: 0.5rem;
+  color: #333;
+  font-family: "Courier New", monospace;
+}
+
+/* ✅ RESPONSYWNOŚĆ - Mobile */
+@media (max-width: 768px) {
+  .errorContainer {
+    margin: 1rem;
+    padding: 1.5rem;
+  }
+
+  .errorTitle {
+    font-size: 1.25rem;
+  }
+
+  .errorMessage {
+    font-size: 0.9rem;
+  }
+
+  .retryButton {
+    width: 100%;
+  }
+
+  .errorStack {
+    font-size: 0.7rem;
+    max-height: 300px;
+  }
+}

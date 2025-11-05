@@ -1,133 +1,79 @@
 // components/ErrorBoundary.tsx
 "use client";
 
-import React, { Component, ErrorInfo, ReactNode } from "react";
+import React, { ReactNode } from "react";
+import {
+  ErrorBoundary as ReactErrorBoundary,
+  FallbackProps,
+} from "react-error-boundary";
+import styles from "./ErrorBoundary.module.css";
 
-interface Props {
-  children: ReactNode;
-  fallback?: ReactNode;
-}
-
-interface State {
-  hasError: boolean;
-  error?: Error;
-}
-
-export class ErrorBoundary extends Component<Props, State> {
-  public state: State = {
-    hasError: false,
-  };
-
-  public static getDerivedStateFromError(error: Error): State {
-    return { hasError: true, error };
-  }
-
-  public componentDidCatch(error: Error, errorInfo: ErrorInfo) {
-    console.error("Error caught by boundary:", error, errorInfo);
-  }
-
-  public render() {
-    if (this.state.hasError) {
-      return (
-        this.props.fallback || (
-          <div
-            style={{
-              padding: "2rem",
-              textAlign: "center",
-              backgroundColor: "#fee",
-              border: "1px solid #fcc",
-              borderRadius: "8px",
-              margin: "2rem",
-              maxWidth: "800px",
-              marginLeft: "auto",
-              marginRight: "auto",
-            }}
-          >
-            <h2>Ein Fehler ist aufgetreten</h2>
-            <p>Die Kartenkomponente konnte nicht geladen werden.</p>
-            <button
-              onClick={() =>
-                this.setState({ hasError: false, error: undefined })
-              }
-              style={{
-                padding: "0.5rem 1rem",
-                backgroundColor: "#007bff",
-                color: "white",
-                border: "none",
-                borderRadius: "4px",
-                cursor: "pointer",
-                marginTop: "1rem",
-              }}
-            >
-              Erneut versuchen
-            </button>
-            {this.state.error && (
-              <details style={{ marginTop: "1rem", textAlign: "left" }}>
-                <summary style={{ cursor: "pointer", fontWeight: "bold" }}>
-                  Technische Details
-                </summary>
-                <pre
-                  style={{
-                    fontSize: "0.8rem",
-                    backgroundColor: "#f5f5f5",
-                    padding: "1rem",
-                    borderRadius: "4px",
-                    overflow: "auto",
-                    whiteSpace: "pre-wrap",
-                    wordBreak: "break-word",
-                  }}
-                >
-                  {this.state.error.stack}
-                </pre>
-              </details>
-            )}
-          </div>
-        )
-      );
-    }
-
-    return this.props.children;
-  }
-}
-
-// Alternative: Functional Error Boundary using react-error-boundary
-// Jeśli wolisz używać hook-based approach, zainstaluj react-error-boundary:
-// npm install react-error-boundary
-
-/*
-import { ErrorBoundary as ReactErrorBoundary } from 'react-error-boundary';
-
-function ErrorFallback({error, resetErrorBoundary}: {error: Error, resetErrorBoundary: () => void}) {
+// ✅ REACT 19.2: Funkcyjny Error Fallback Component
+function ErrorFallback({ error, resetErrorBoundary }: FallbackProps) {
   return (
-    <div style={{ 
-      padding: '2rem', 
-      textAlign: 'center',
-      backgroundColor: '#fee',
-      border: '1px solid #fcc',
-      borderRadius: '8px',
-      margin: '2rem'
-    }}>
-      <h2>Ein Fehler ist aufgetreten</h2>
-      <p>Die Kartenkomponente konnte nicht geladen werden.</p>
-      <button onClick={resetErrorBoundary}>Erneut versuchen</button>
-      <details style={{ marginTop: '1rem', textAlign: 'left' }}>
-        <summary>Fehlerdetails</summary>
-        <pre style={{ fontSize: '0.8rem' }}>{error.message}</pre>
-      </details>
+    <div className={styles.errorContainer}>
+      <h2 className={styles.errorTitle}>Ein Fehler ist aufgetreten</h2>
+      <p className={styles.errorMessage}>
+        Die Kartenkomponente konnte nicht geladen werden.
+      </p>
+      <button
+        type="button"
+        onClick={resetErrorBoundary}
+        className={styles.retryButton}
+      >
+        Erneut versuchen
+      </button>
+      {error && (
+        <details className={styles.errorDetails}>
+          <summary className={styles.errorSummary}>Technische Details</summary>
+          <pre className={styles.errorStack}>{error.stack || error.message}</pre>
+        </details>
+      )}
     </div>
   );
 }
 
-export function ErrorBoundary({ children }: { children: ReactNode }) {
+// ✅ REACT 19.2: Funkcyjny ErrorBoundary Component
+interface ErrorBoundaryProps {
+  children: ReactNode;
+  fallback?: ReactNode;
+  onReset?: () => void;
+}
+
+export function ErrorBoundary({
+  children,
+  fallback,
+  onReset,
+}: ErrorBoundaryProps) {
+  const handleError = (error: Error, errorInfo: { componentStack?: string | null }) => {
+    console.error("🚨 Error caught by boundary:", error);
+
+    if (errorInfo.componentStack) {
+      console.error("📍 Component stack:", errorInfo.componentStack);
+    }
+
+    // ✅ Optional: Send to error tracking service (Sentry, LogRocket, etc.)
+    if (typeof window !== "undefined" && window.gtag) {
+      window.gtag("event", "exception", {
+        description: error.message,
+        fatal: false,
+        stack: error.stack,
+      });
+    }
+  };
+
+  const handleReset = () => {
+    console.log("🔄 ErrorBoundary reset triggered");
+    onReset?.();
+  };
+
   return (
     <ReactErrorBoundary
-      FallbackComponent={ErrorFallback}
-      onError={(error, errorInfo) => {
-        console.error('Error caught by boundary:', error, errorInfo);
-      }}
+      FallbackComponent={fallback ? () => <>{fallback}</> : ErrorFallback}
+      onError={handleError}
+      onReset={handleReset}
     >
       {children}
     </ReactErrorBoundary>
   );
 }
-*/
