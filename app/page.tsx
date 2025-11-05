@@ -184,26 +184,36 @@ export default function HomePage() {
           <div className={styles.sparschweineSubtitle}>Danke</div>
         </Link>
 
-        {/* ✅ SEKCJA 1: MAPA - OWRAP W CONDITIONAL MAPBOX */}
+        {/* ✅ SEKCJA 1: MAPA - ConditionalMapbox z opacity fade-in */}
         <div className={styles.container}>
           <ConditionalMapbox>
-            <Map
-              ref={mapRef}
-              mapboxAccessToken={MAPBOX_TOKEN}
-              mapStyle={atmosphereStyle}
-              projection="globe"
-              interactive={false}
-              cursor="default"
-              onLoad={handleMapLoad}
-              initialViewState={{
-                longitude: atmosphereStyle.center[0],
-                latitude: atmosphereStyle.center[1],
-                zoom: responsiveSettings.zoom || atmosphereStyle.zoom,
-                bearing: responsiveSettings.bearing || atmosphereStyle.bearing,
-                pitch: responsiveSettings.pitch || atmosphereStyle.pitch,
-              }}
-              style={{ width: "100%", height: "100%" }}
-            />
+            {/*
+              ℹ️ Activity NIE jest używane tutaj, bo:
+              - Activity z mode="hidden" ustawia display:none
+              - display:none blokuje inicjalizację Mapbox GL
+              - Zamiast tego używamy opacity transition w CSS
+            */}
+            <div
+              className={`${styles.mapFadeWrapper} ${mapLoaded ? styles.loaded : ""}`}
+            >
+              <Map
+                ref={mapRef}
+                mapboxAccessToken={MAPBOX_TOKEN}
+                mapStyle={atmosphereStyle}
+                projection="globe"
+                interactive={false}
+                cursor="default"
+                onLoad={handleMapLoad}
+                initialViewState={{
+                  longitude: atmosphereStyle.center[0],
+                  latitude: atmosphereStyle.center[1],
+                  zoom: responsiveSettings.zoom || atmosphereStyle.zoom,
+                  bearing: responsiveSettings.bearing || atmosphereStyle.bearing,
+                  pitch: responsiveSettings.pitch || atmosphereStyle.pitch,
+                }}
+                style={{ width: "100%", height: "100%" }}
+              />
+            </div>
           </ConditionalMapbox>
 
           {/* Napis po lewej stronie (bez zmian) */}

@@ -7,6 +7,8 @@ import {
   useState,
   lazy,
   Suspense,
+  Activity,
+  useEffectEvent,
 } from "react";
 import mapboxgl from "mapbox-gl";
 import MapboxLanguage from "@mapbox/mapbox-gl-language";
@@ -255,6 +257,15 @@ export default function MapBoxMap({ places }: MapBoxMapProps) {
   // GEOLOCATION
   // ========================================
 
+  // ✅ REACT 19.2: useEffectEvent - zawsze używa najnowszych wartości bez dependency
+  const onLocationFound = useEffectEvent((location: [number, number]) => {
+    // Ta funkcja zawsze widzi najnowsze animateToLocation i addUserLocationMarker
+    animateToLocation(location, 14, 1800);
+    if (mapRef.current) {
+      addUserLocationMarker(mapRef.current, location);
+    }
+  });
+
   const getUserLocation = useCallback(() => {
     userLocationRequestedRef.current = true;
 
@@ -271,8 +282,7 @@ export default function MapBoxMap({ places }: MapBoxMapProps) {
 
         if (mapRef.current) {
           setTimeout(() => {
-            animateToLocation(newLocation, 14, 1800);
-            addUserLocationMarker(mapRef.current!, newLocation);
+            onLocationFound(newLocation); // ✅ Użyj Effect Event
           }, 100);
         }
       },
@@ -299,7 +309,7 @@ export default function MapBoxMap({ places }: MapBoxMapProps) {
       },
       { enableHighAccuracy: true, timeout: 10000, maximumAge: 300000 }
     );
-  }, [animateToLocation, addUserLocationMarker]);
+  }, []); // ✅ REACT 19.2: Pusta dependency array - Effect Event nie jest dependency!
 
   // ========================================
   // MAP INITIALIZATION
@@ -472,9 +482,11 @@ export default function MapBoxMap({ places }: MapBoxMapProps) {
   // EFFECTS
   // ========================================
 
+  // ✅ REACT 19.2: getUserLocation używa useEffectEvent, więc nie musi być w deps
   useEffect(() => {
     getUserLocation();
-  }, [getUserLocation]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []); // Wywołaj tylko raz przy mount
 
   useEffect(() => {
     initializeMap();
@@ -502,11 +514,12 @@ export default function MapBoxMap({ places }: MapBoxMapProps) {
     }
   }, [updateMarkers]);
 
-  useEffect(() => {
-    if (!isPanelOpen && selectedPlace) {
-      setSelectedPlace(null);
-    }
-  }, [isPanelOpen, selectedPlace]);
+  // ✅ REACT 19.2: Usunięto ten useEffect - Activity zachowuje stan automatycznie
+  // useEffect(() => {
+  //   if (!isPanelOpen && selectedPlace) {
+  //     setSelectedPlace(null);
+  //   }
+  // }, [isPanelOpen, selectedPlace]);
 
   // ========================================
   // RENDER
@@ -536,7 +549,11 @@ export default function MapBoxMap({ places }: MapBoxMapProps) {
           <div className={styles.errorContainer}>
             <h3>Fehler beim Laden der Karte</h3>
             <p>Die Karte konnte nicht geladen werden.</p>
-            <button onClick={initializeMap} className={styles.retryButton}>
+            <button
+              type="button"
+              onClick={initializeMap}
+              className={styles.retryButton}
+            >
               Erneut versuchen
             </button>
           </div>
@@ -552,26 +569,29 @@ export default function MapBoxMap({ places }: MapBoxMapProps) {
         disabled={mapLoadingState !== "success"}
       />
 
-      <Suspense
-        fallback={
-          <div className={styles.loadingOverlay}>
-            <div className={styles.loadingSpinner}>Panel wird geladen...</div>
-          </div>
-        }
-      >
-        <PlaceInfoPanel
-          place={selectedPlace}
-          isOpen={isPanelOpen}
-          isVisible={isPanelVisible}
-          onCloseAction={closePanel}
-          onImageClickAction={handleImageClick}
-        />
-      </Suspense>
+      {/* ✅ REACT 19.2: Użyj Activity zamiast warunkowego renderowania */}
+      <Activity mode={isPanelOpen ? "visible" : "hidden"}>
+        <Suspense
+          fallback={
+            <div className={styles.loadingOverlay}>
+              <div className={styles.loadingSpinner}>Panel wird geladen...</div>
+            </div>
+          }
+        >
+          <PlaceInfoPanel
+            place={selectedPlace}
+            isOpen={isPanelOpen}
+            isVisible={isPanelVisible}
+            onCloseAction={closePanel}
+            onImageClickAction={handleImageClick}
+          />
+        </Suspense>
+      </Activity>
 
       {selectedGalleryImage && selectedPlace?.Galerie_Bilder && (
         <Suspense
           fallback={
-            <div className={styles.loadingOverlay} style={{ zIndex: 12001 }}>
+            <div className={styles.loadingOverlayGallery}>
               <div className={styles.loadingSpinner}>
                 Galerie wird geladen...
               </div>

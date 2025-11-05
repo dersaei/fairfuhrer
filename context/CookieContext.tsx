@@ -5,6 +5,9 @@ import React, {
   useContext,
   useState,
   useEffect,
+  useCallback,
+  useMemo,
+  useEffectEvent,
   ReactNode,
 } from "react";
 
@@ -59,73 +62,88 @@ export function CookieProvider({ children }: { children: ReactNode }) {
   }, []);
   /* eslint-enable react-hooks/set-state-in-effect */
 
-  const savePreferences = (newPreferences: CookiePreferences) => {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(newPreferences));
-    localStorage.setItem(CONSENT_KEY, "true");
-    setPreferences(newPreferences);
-    setHasConsented(true);
+  // ✅ REACT 19.2: useEffectEvent dla analytics tracking (non-reactive side effects)
+  const trackPreferencesChange = useEffectEvent(
+    (prefs: CookiePreferences) => {
+      console.log("🍪 Tracking cookie preferences change:", prefs);
 
-    console.log("🍪 Saving cookie preferences:", newPreferences);
-
-    // Wyślij event do dataLayer dla Next.js GA4
-    if (typeof window !== "undefined") {
-      window.dataLayer = window.dataLayer || [];
-      const eventData = {
-        event: "consent_preferences_saved",
-        consent_analytics: newPreferences.analytics,
-        consent_functional: newPreferences.functional,
-        consent_necessary: newPreferences.necessary,
-        hotjar_enabled: newPreferences.analytics,
-        timestamp: new Date().toISOString(),
-        integration: "nextjs_third_parties",
-      };
-
-      console.log(
-        "📈 Pushing consent event to dataLayer (Next.js):",
-        eventData
-      );
-      window.dataLayer.push(eventData);
-    }
-
-    // 🆕 DODANE: Wymuś aktualizację consent dla Next.js GA
-    setTimeout(() => {
-      if (typeof window !== "undefined" && typeof window.gtag === "function") {
-        const consentData = {
-          analytics_storage: newPreferences.analytics ? "granted" : "denied",
-          ad_storage: newPreferences.analytics ? "granted" : "denied",
-          functionality_storage: newPreferences.functional
-            ? "granted"
-            : "denied",
-          personalization_storage: newPreferences.functional
-            ? "granted"
-            : "denied",
+      // Wyślij event do dataLayer dla Next.js GA4
+      if (typeof window !== "undefined") {
+        window.dataLayer = window.dataLayer || [];
+        const eventData = {
+          event: "consent_preferences_saved",
+          consent_analytics: prefs.analytics,
+          consent_functional: prefs.functional,
+          consent_necessary: prefs.necessary,
+          hotjar_enabled: prefs.analytics,
+          timestamp: new Date().toISOString(),
+          integration: "nextjs_third_parties",
         };
 
-        window.gtag("consent", "update", consentData);
-        console.log("🔄 Manual consent update for Next.js GA:", consentData);
-
-        // Wyślij test event jeśli analytics są włączone
-        if (newPreferences.analytics) {
-          window.gtag("event", "manual_consent_granted", {
-            event_category: "consent",
-            event_label: "nextjs_manual_update",
-            value: 1,
-            timestamp: new Date().toISOString(),
-          });
-          console.log("✅ Manual test event sent after consent update");
-        }
-      } else {
-        console.warn("⚠️ window.gtag not available after 1 second delay");
+        console.log(
+          "📈 Pushing consent event to dataLayer (Next.js):",
+          eventData
+        );
+        window.dataLayer.push(eventData);
       }
-    }, 1000); // Czekaj 1 sekundę na załadowanie Next.js GA
-  };
 
-  const updatePreferences = (newPreferences: Partial<CookiePreferences>) => {
-    const updated = { ...preferences, ...newPreferences };
-    savePreferences(updated);
-  };
+      // Wymuś aktualizację consent dla Next.js GA
+      setTimeout(() => {
+        if (
+          typeof window !== "undefined" &&
+          typeof window.gtag === "function"
+        ) {
+          const consentData = {
+            analytics_storage: prefs.analytics ? "granted" : "denied",
+            ad_storage: prefs.analytics ? "granted" : "denied",
+            functionality_storage: prefs.functional ? "granted" : "denied",
+            personalization_storage: prefs.functional ? "granted" : "denied",
+          };
 
-  const acceptAll = () => {
+          window.gtag("consent", "update", consentData);
+          console.log("🔄 Manual consent update for Next.js GA:", consentData);
+
+          // Wyślij test event jeśli analytics są włączone
+          if (prefs.analytics) {
+            window.gtag("event", "manual_consent_granted", {
+              event_category: "consent",
+              event_label: "nextjs_manual_update",
+              value: 1,
+              timestamp: new Date().toISOString(),
+            });
+            console.log("✅ Manual test event sent after consent update");
+          }
+        } else {
+          console.warn("⚠️ window.gtag not available after 1 second delay");
+        }
+      }, 1000);
+    }
+  );
+
+  // ✅ REACT 19.2: useCallback dla stabilnej referencji funkcji
+  const savePreferences = useCallback(
+    (newPreferences: CookiePreferences) => {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(newPreferences));
+      localStorage.setItem(CONSENT_KEY, "true");
+      setPreferences(newPreferences);
+      setHasConsented(true);
+
+      // ✅ Użyj Effect Event dla analytics tracking
+      trackPreferencesChange(newPreferences);
+    },
+    [trackPreferencesChange]
+  );
+
+  // ✅ REACT 19.2: useCallback dla wszystkich funkcji w context
+  const updatePreferences = useCallback(
+    (newPreferences: Partial<CookiePreferences>) => {
+      const updated = { ...preferences, ...newPreferences };
+      savePreferences(updated);
+    },
+    [preferences, savePreferences]
+  );
+
+  const acceptAll = useCallback(() => {
     const allAccepted: CookiePreferences = {
       necessary: true,
       functional: true,
@@ -133,9 +151,9 @@ export function CookieProvider({ children }: { children: ReactNode }) {
     };
     savePreferences(allAccepted);
     setShowBanner(false);
-  };
+  }, [savePreferences]);
 
-  const rejectAll = () => {
+  const rejectAll = useCallback(() => {
     const onlyNecessary: CookiePreferences = {
       necessary: true,
       functional: false,
@@ -143,29 +161,42 @@ export function CookieProvider({ children }: { children: ReactNode }) {
     };
     savePreferences(onlyNecessary);
     setShowBanner(false);
-  };
+  }, [savePreferences]);
 
-  const showSettings = () => {
+  const showSettings = useCallback(() => {
     setShowBanner(true);
-  };
+  }, []);
 
-  const hideBanner = () => {
+  const hideBanner = useCallback(() => {
     setShowBanner(false);
-  };
+  }, []);
+
+  // ✅ REACT 19.2: useMemo dla context value - zapobiega niepotrzebnym re-renderom
+  const contextValue = useMemo(
+    () => ({
+      preferences,
+      hasConsented,
+      showBanner,
+      updatePreferences,
+      acceptAll,
+      rejectAll,
+      showSettings,
+      hideBanner,
+    }),
+    [
+      preferences,
+      hasConsented,
+      showBanner,
+      updatePreferences,
+      acceptAll,
+      rejectAll,
+      showSettings,
+      hideBanner,
+    ]
+  );
 
   return (
-    <CookieContext.Provider
-      value={{
-        preferences,
-        hasConsented,
-        showBanner,
-        updatePreferences,
-        acceptAll,
-        rejectAll,
-        showSettings,
-        hideBanner,
-      }}
-    >
+    <CookieContext.Provider value={contextValue}>
       {children}
     </CookieContext.Provider>
   );
