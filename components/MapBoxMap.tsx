@@ -5,6 +5,7 @@ import {
   useEffect,
   useCallback,
   useState,
+  useMemo,
   lazy,
   Suspense,
   Activity,
@@ -392,6 +393,52 @@ export default function MapBoxMap({ places }: MapBoxMapProps) {
   // MARKERS MANAGEMENT
   // ========================================
 
+  // ✅ REACT 19.2: useMemo dla popup contents - generuj HTML tylko gdy places się zmienią
+  const popupContents = useMemo(() => {
+    return places.map((place) => {
+      // ✅ XSS PROTECTION: Escape user input before building HTML
+      const safeName = DOMPurify.sanitize(place.Name, { ALLOWED_TAGS: [] });
+      const safeAddress = DOMPurify.sanitize(place.Adresse, {
+        ALLOWED_TAGS: [],
+      });
+      const safePhone = place.Telefon
+        ? DOMPurify.sanitize(place.Telefon, { ALLOWED_TAGS: [] })
+        : "";
+      const safeDescription = place.Vollbeschreibung
+        ? DOMPurify.sanitize(
+            place.Vollbeschreibung.replace(/<[^>]*>/g, "").substring(0, 100),
+            { ALLOWED_TAGS: [] }
+          )
+        : "";
+
+      const phoneHTML = safePhone
+        ? `<p class="${styles.popupPhone}"><a href="tel:${safePhone}" class="${styles.popupPhoneLink}">📞 ${safePhone}</a></p>`
+        : "";
+
+      const popupContent = `
+        <div class="${styles.modernPopup}">
+          <h3 class="${styles.popupTitle}">${safeName}</h3>
+          <p class="${styles.popupAddress}">📍 ${safeAddress}</p>
+          ${phoneHTML}
+          ${
+            safeDescription
+              ? `<p class="${styles.popupDescription}">${safeDescription}...</p>`
+              : ""
+          }
+        </div>
+      `;
+
+      // ✅ XSS PROTECTION: Final sanitization of complete HTML
+      const safePopupContent = DOMPurify.sanitize(popupContent);
+
+      return {
+        placeId: place.id,
+        color: place.Kategorie[0]?.color || "#3388ff",
+        content: safePopupContent,
+      };
+    });
+  }, [places]); // ✅ Tylko gdy places się zmienią
+
   const updateMarkers = useCallback(() => {
     const map = mapRef.current;
     if (!map || !map.loaded()) return;
@@ -400,53 +447,19 @@ export default function MapBoxMap({ places }: MapBoxMapProps) {
       markersRef.current.forEach((marker) => marker.remove());
       markersRef.current = [];
 
-      places.forEach((place) => {
+      places.forEach((place, index) => {
         if (!place.Breite || !place.Lange) return;
 
-        const color = place.Kategorie[0]?.color || "#3388ff";
-
-        // ✅ XSS PROTECTION: Escape user input before building HTML
-        const safeName = DOMPurify.sanitize(place.Name, { ALLOWED_TAGS: [] });
-        const safeAddress = DOMPurify.sanitize(place.Adresse, {
-          ALLOWED_TAGS: [],
-        });
-        const safePhone = place.Telefon
-          ? DOMPurify.sanitize(place.Telefon, { ALLOWED_TAGS: [] })
-          : "";
-        const safeDescription = place.Vollbeschreibung
-          ? DOMPurify.sanitize(
-              place.Vollbeschreibung.replace(/<[^>]*>/g, "").substring(0, 100),
-              { ALLOWED_TAGS: [] }
-            )
-          : "";
-
-        const phoneHTML = safePhone
-          ? `<p class="${styles.popupPhone}"><a href="tel:${safePhone}" class="${styles.popupPhoneLink}">📞 ${safePhone}</a></p>`
-          : "";
-
-        const popupContent = `
-          <div class="${styles.modernPopup}">
-            <h3 class="${styles.popupTitle}">${safeName}</h3>
-            <p class="${styles.popupAddress}">📍 ${safeAddress}</p>
-            ${phoneHTML}
-            ${
-              safeDescription
-                ? `<p class="${styles.popupDescription}">${safeDescription}...</p>`
-                : ""
-            }
-          </div>
-        `;
-
-        // ✅ XSS PROTECTION: Final sanitization of complete HTML
-        const safePopupContent = DOMPurify.sanitize(popupContent);
+        // ✅ REACT 19.2: Użyj pre-computed popup content z useMemo
+        const popupData = popupContents[index];
 
         const popup = new mapboxgl.Popup({
           offset: [0, -20],
           closeButton: false,
           className: styles.popup,
-        }).setHTML(safePopupContent);
+        }).setHTML(popupData.content);
 
-        const marker = new mapboxgl.Marker({ color, scale: 0.8 })
+        const marker = new mapboxgl.Marker({ color: popupData.color, scale: 0.8 })
           .setLngLat([place.Lange, place.Breite])
           .setPopup(popup)
           .addTo(map);
@@ -496,7 +509,7 @@ export default function MapBoxMap({ places }: MapBoxMapProps) {
     } catch (error) {
       console.error("Błąd aktualizacji markerów:", error);
     }
-  }, [places, isPanelOpen, userLocation, openPanel]);
+  }, [places, popupContents, isPanelOpen, userLocation, openPanel]);
 
   // ========================================
   // EFFECTS
