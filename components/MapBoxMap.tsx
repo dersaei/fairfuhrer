@@ -272,9 +272,10 @@ export default function MapBoxMap({ places }: MapBoxMapProps) {
 
         if (mapRef.current) {
           setTimeout(() => {
-            // Wywołaj funkcje bezpośrednio - zawsze mają najnowsze wartości przez closure
+            // Animuj do nowej lokalizacji
             animateToLocation(newLocation, 14, 1800);
-            addUserLocationMarker(mapRef.current!, newLocation);
+            // ✅ Marker będzie dodany przez osobny useEffect reagujący na userLocation
+            // addUserLocationMarker(mapRef.current!, newLocation); - PRZENIESIONE DO useEffect
           }, 100);
         }
       },
@@ -352,16 +353,18 @@ export default function MapBoxMap({ places }: MapBoxMapProps) {
           const location: [number, number] = [longitude, latitude];
           setUserLocation(location);
 
-          addUserLocationMarker(map, location);
+          // ✅ Marker będzie dodany przez osobny useEffect reagujący na userLocation
+          // addUserLocationMarker(map, location); - PRZENIESIONE DO useEffect
 
           setTimeout(() => {
             animateToLocation(location, 14, 1800);
           }, 150);
         });
 
-        if (userLocation) {
-          addUserLocationMarker(map, userLocation);
-        }
+        // ✅ Usunięto - marker jest teraz dodawany przez osobny useEffect
+        // if (userLocation) {
+        //   addUserLocationMarker(map, userLocation);
+        // }
       });
 
       map.on("error", (e) => {
@@ -374,7 +377,12 @@ export default function MapBoxMap({ places }: MapBoxMapProps) {
       console.error("Błąd inicjalizacji mapy:", error);
       setMapLoadingState("error");
     }
-  }, [userLocation, addUserLocationMarker, animateToLocation]);
+    // ✅ REACT 19.2: Closure ma dostęp do początkowej wartości userLocation
+    // oraz do stabilnych referencji addUserLocationMarker i animateToLocation.
+    // Mapa jest inicjalizowana tylko raz - kolejne zmiany userLocation
+    // są obsługiwane przez geolocateControl.on("geolocate") i updateMarkers useEffect.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []); // ✅ Inicjalizuj tylko raz przy mount
 
   // ========================================
   // MARKERS MANAGEMENT
@@ -496,7 +504,10 @@ export default function MapBoxMap({ places }: MapBoxMapProps) {
         mapRef.current = null;
       }
     };
-  }, [initializeMap]);
+    // ✅ REACT 19.2: initializeMap ma pustą deps array, więc jest stabilne.
+    // Ten Effect uruchamia się tylko raz przy mount i sprząta przy unmount.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []); // ✅ Inicjalizuj tylko raz przy mount, cleanup przy unmount
 
   useEffect(() => {
     if (!mapRef.current) return;
@@ -508,6 +519,20 @@ export default function MapBoxMap({ places }: MapBoxMapProps) {
       map.on("load", updateMarkers);
     }
   }, [updateMarkers]);
+
+  // ✅ REACT 19.2: Dodaj user location marker po każdej zmianie lokalizacji
+  useEffect(() => {
+    if (!mapRef.current || !userLocation) return;
+
+    const map = mapRef.current;
+    if (map.loaded()) {
+      addUserLocationMarker(map, userLocation);
+    } else {
+      map.once("load", () => {
+        addUserLocationMarker(map, userLocation);
+      });
+    }
+  }, [userLocation, addUserLocationMarker]);
 
   // ✅ REACT 19.2: Usunięto ten useEffect - Activity zachowuje stan automatycznie
   // useEffect(() => {
