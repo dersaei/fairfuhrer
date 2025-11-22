@@ -375,6 +375,7 @@ export default function PartnerForm() {
           von 2-3 Werktagen bei Ihnen melden.
         </p>
         <button
+          type="button"
           onClick={() => setSubmitSuccess(false)}
           className={styles.newApplicationButton}
         >
@@ -554,7 +555,7 @@ export default function PartnerForm() {
 
         {/* POLE KATEGORII */}
         <div className={styles.field}>
-          <label className={styles.radioGroupLabel}>Kategorie *</label>
+          <div className={styles.radioGroupLabel}>Kategorie *</div>
           <p className={styles.radioGroupSubtitle}>
             Wählen Sie die Kategorie, in der Sie Ihren PIN platzieren möchten:
           </p>
@@ -667,9 +668,9 @@ export default function PartnerForm() {
 
         {/* Status certyfikacji */}
         <div className={styles.field}>
-          <label className={styles.radioGroupLabel}>
+          <div className={styles.radioGroupLabel}>
             Erfüllte Teilnahmebedingungen
-          </label>
+          </div>
           <p className={styles.radioGroupSubtitle}>
             Bitte wählen Sie eine Option aus:
           </p>
@@ -711,9 +712,9 @@ export default function PartnerForm() {
 
         {/* Cele zrównoważonego rozwoju */}
         <div className={styles.field}>
-          <label className={styles.checkboxGroupLabel}>
+          <div className={styles.checkboxGroupLabel}>
             Die 17 globalen Nachhaltigkeitsziele
-          </label>
+          </div>
           <p className={styles.checkboxGroupSubtitle}>
             Markieren Sie, welche der 17 Ziele verfolgen Sie oder streben Sie
             an.{" "}
@@ -762,7 +763,7 @@ export default function PartnerForm() {
 
         {/* Wielkość firmy */}
         <div className={styles.field}>
-          <label className={styles.radioGroupLabel}>Unternehmensgröße</label>
+          <div className={styles.radioGroupLabel}>Unternehmensgröße</div>
           <p className={styles.radioGroupSubtitle}>
             Bitte wählen Sie die passende Kategorie für Ihr Unternehmen:
           </p>
