@@ -413,6 +413,7 @@ export default function PartnerForm() {
               onChange={handleInputChange}
               className={errors.firstName ? styles.inputError : ""}
               maxLength={50}
+              autoComplete="given-name"
             />
             {errors.firstName && (
               <span className={styles.error}>{errors.firstName}</span>
@@ -429,6 +430,7 @@ export default function PartnerForm() {
               onChange={handleInputChange}
               className={errors.lastName ? styles.inputError : ""}
               maxLength={50}
+              autoComplete="family-name"
             />
             {errors.lastName && (
               <span className={styles.error}>{errors.lastName}</span>
@@ -447,6 +449,7 @@ export default function PartnerForm() {
               onChange={handleInputChange}
               className={errors.email ? styles.inputError : ""}
               maxLength={100}
+              autoComplete="email"
             />
             {errors.email && (
               <span className={styles.error}>{errors.email}</span>
@@ -464,6 +467,7 @@ export default function PartnerForm() {
               className={errors.phone ? styles.inputError : ""}
               placeholder="+49 123 456 789"
               maxLength={20}
+              autoComplete="tel"
             />
             {errors.phone && (
               <span className={styles.error}>{errors.phone}</span>
@@ -484,6 +488,7 @@ export default function PartnerForm() {
               className={errors.billingAddress ? styles.inputError : ""}
               placeholder="Straße, Hausnummer, PLZ, Stadt, Land"
               maxLength={200}
+              autoComplete="billing street-address"
             />
             {errors.billingAddress && (
               <span className={styles.error}>{errors.billingAddress}</span>
@@ -540,6 +545,7 @@ export default function PartnerForm() {
             className={errors.address ? styles.inputError : ""}
             placeholder="Straße, Hausnummer, PLZ, Stadt, Land"
             maxLength={200}
+            autoComplete="street-address"
           />
           {errors.address && (
             <span className={styles.error}>{errors.address}</span>
@@ -606,6 +612,7 @@ export default function PartnerForm() {
             className={errors.websiteUrl ? styles.inputError : ""}
             placeholder="https://www.beispiel.com"
             maxLength={200}
+            autoComplete="url"
           />
           {errors.websiteUrl && (
             <span className={styles.error}>{errors.websiteUrl}</span>
