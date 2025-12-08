@@ -1,4 +1,7 @@
-// utils/renderDiagnostics.ts - TYMCZASOWY plik diagnostyczny
+// utils/renderDiagnostics.ts - Next.js 16.0.7 + React 19.2.1
+// ✅ Server-only protection - this file logs sensitive environment variables
+import "server-only";
+
 export function logRenderEnvironment() {
   if (typeof window === "undefined") {
     // Server-side logging (w API routes i podczas build)

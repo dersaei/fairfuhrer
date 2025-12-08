@@ -1,4 +1,7 @@
-// app/api/paypal/create-order/route.ts - Z TYMCZASOWĄ DIAGNOSTYKĄ
+// app/api/paypal/create-order/route.ts - Next.js 16.0.7 + React 19.2.1
+// ✅ Server-only protection (API Routes are server-only by default, but explicit import for consistency)
+import "server-only";
+
 import { NextRequest, NextResponse } from "next/server";
 import { createOrderRequestBody, paypalConfig } from "@/lib/paypal";
 import { getPayPalClient, getOrdersCreateRequest } from "@/lib/paypalServer";

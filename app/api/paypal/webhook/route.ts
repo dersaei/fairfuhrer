@@ -1,4 +1,7 @@
-// app/api/paypal/webhook/route.ts - Bez importu PayPal SDK
+// app/api/paypal/webhook/route.ts - Next.js 16.0.7 + React 19.2.1
+// ✅ Server-only protection
+import "server-only";
+
 import { NextRequest, NextResponse } from "next/server";
 import {
   getPayPalDonationByOrderId,

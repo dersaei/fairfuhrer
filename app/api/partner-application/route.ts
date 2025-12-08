@@ -1,8 +1,18 @@
-// app/api/partner-application/route.ts - uproszczona wersja bez obsługi plików
+// app/api/partner-application/route.ts - Next.js 16.0.7 + React 19.2.1
+// ✅ Server-only protection
+import "server-only";
+
 import { NextRequest, NextResponse } from "next/server";
 import type { PartnerSubmissionData } from "@/types";
 
-const directusUrl = process.env.DIRECTUS_URL!;
+// ========================================
+// Environment Variable Validation
+// ========================================
+
+const directusUrl = process.env.DIRECTUS_URL;
+if (!directusUrl) {
+  throw new Error("❌ Missing required environment variable: DIRECTUS_URL");
+}
 
 // USUNIĘTE: Supabase setup i funkcje uploadFileToSupabase
 

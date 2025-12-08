@@ -1,4 +1,6 @@
-// lib/directus.ts - rozszerz swój istniejący plik
+// lib/directus.ts - Next.js 16.0.7 + React 19.2.1 compatible
+// ✅ Server-only protection - prevents accidental client-side imports
+import "server-only";
 
 import { createDirectus, rest } from "@directus/sdk";
 import type {
@@ -12,9 +14,13 @@ import type {
   WebhookLog,
 } from "@/types";
 
+// ========================================
+// Environment Variable Validation
+// ========================================
+
 const DIRECTUS_URL = process.env.DIRECTUS_URL;
 if (!DIRECTUS_URL) {
-  throw new Error("Brakuje zmiennej środowiskowej DIRECTUS_URL");
+  throw new Error("❌ Missing required environment variable: DIRECTUS_URL");
 }
 
 export const directus = createDirectus(DIRECTUS_URL).with(

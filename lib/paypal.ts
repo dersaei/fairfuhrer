@@ -1,56 +1,49 @@
-// lib/paypal.ts - Next.js 15 kompatybilny
+// lib/paypal.ts - Next.js 16.0.7 + React 19.2.1 compatible
+// ✅ Server-only protection - prevents accidental client-side imports
+import "server-only";
+
 import type { PayPalConfig } from "@/types";
 
-// Helper function do sprawdzania czy jesteśmy server-side
-function isServerSide(): boolean {
-  return typeof window === "undefined";
-}
+// ========================================
+// Environment Variable Validation
+// ========================================
 
-// Funkcja do bezpiecznego pobierania env vars
-function getEnvVar(name: string): string {
-  if (!isServerSide()) {
-    // W browser zwracamy puste stringi - nie kraszujemy
-    return "";
-  }
-  return process.env[name] || "";
-}
+const requiredEnvVars = {
+  PAYPAL_CLIENT_ID: process.env.PAYPAL_CLIENT_ID,
+  PAYPAL_CLIENT_SECRET: process.env.PAYPAL_CLIENT_SECRET,
+  PAYPAL_MODE: process.env.PAYPAL_MODE,
+  PAYPAL_WEBHOOK_ID: process.env.PAYPAL_WEBHOOK_ID,
+};
 
-// Walidacja zmiennych środowiskowych TYLKO server-side
-if (isServerSide()) {
-  const requiredEnvVars = {
-    PAYPAL_CLIENT_ID: process.env.PAYPAL_CLIENT_ID,
-    PAYPAL_CLIENT_SECRET: process.env.PAYPAL_CLIENT_SECRET,
-    PAYPAL_MODE: process.env.PAYPAL_MODE,
-    PAYPAL_WEBHOOK_ID: process.env.PAYPAL_WEBHOOK_ID,
-  };
-
-  // Sprawdź czy wszystkie zmienne są ustawione
-  for (const [key, value] of Object.entries(requiredEnvVars)) {
-    if (!value) {
-      console.error(`Missing environment variable: ${key}`);
-      console.error(
-        "Available env vars:",
-        Object.keys(process.env).filter((k) => k.startsWith("PAYPAL"))
-      );
-      throw new Error(`Missing required environment variable: ${key}`);
-    }
+// Validate all required environment variables
+for (const [key, value] of Object.entries(requiredEnvVars)) {
+  if (!value) {
+    console.error(`❌ Missing environment variable: ${key}`);
+    console.error(
+      "Available PayPal env vars:",
+      Object.keys(process.env).filter((k) => k.startsWith("PAYPAL"))
+    );
+    throw new Error(`Missing required environment variable: ${key}`);
   }
 }
 
-// Konfiguracja PayPal - zabezpieczona przed browser
+// ========================================
+// PayPal Configuration
+// ========================================
+
 export const paypalConfig: PayPalConfig = {
-  client_id: getEnvVar("PAYPAL_CLIENT_ID"),
-  client_secret: getEnvVar("PAYPAL_CLIENT_SECRET"),
-  mode: (getEnvVar("PAYPAL_MODE") as "sandbox" | "production") || "sandbox",
-  webhook_id: getEnvVar("PAYPAL_WEBHOOK_ID"),
-  currency: getEnvVar("PAYPAL_CURRENCY") || "EUR",
-  min_amount: parseInt(getEnvVar("PAYPAL_MIN_AMOUNT") || "100"),
-  max_amount: parseInt(getEnvVar("PAYPAL_MAX_AMOUNT") || "1000000"),
+  client_id: process.env.PAYPAL_CLIENT_ID!,
+  client_secret: process.env.PAYPAL_CLIENT_SECRET!,
+  mode: (process.env.PAYPAL_MODE as "sandbox" | "production") || "sandbox",
+  webhook_id: process.env.PAYPAL_WEBHOOK_ID!,
+  currency: process.env.PAYPAL_CURRENCY || "EUR",
+  min_amount: parseInt(process.env.PAYPAL_MIN_AMOUNT || "100"),
+  max_amount: parseInt(process.env.PAYPAL_MAX_AMOUNT || "1000000"),
   return_url:
-    getEnvVar("PAYPAL_RETURN_URL") ||
+    process.env.PAYPAL_RETURN_URL ||
     "http://localhost:3000/sparschwein/success",
   cancel_url:
-    getEnvVar("PAYPAL_CANCEL_URL") ||
+    process.env.PAYPAL_CANCEL_URL ||
     "http://localhost:3000/sparschwein/cancel",
 };
 

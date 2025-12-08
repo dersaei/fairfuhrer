@@ -1,4 +1,7 @@
-// lib/paypalServer.ts - TYLKO dla server-side użycia (API routes)
+// lib/paypalServer.ts - Next.js 16.0.7 + React 19.2.1
+// ✅ Server-only protection - this file uses PayPal SDK which is server-only
+import "server-only";
+
 import { paypalConfig } from "./paypal";
 
 // Typy dla PayPal SDK
