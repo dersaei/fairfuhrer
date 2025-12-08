@@ -11,8 +11,9 @@ import type {
   DirectusOrte,
 } from "../../types";
 
-// ISR revalidation - dane będą odświeżane co 6 godzin
-export const revalidate = 21600;
+// ISR revalidation - dane będą odświeżane co 24 godziny
+// Miejsca turystyczne zmieniają się rzadko, dłuższy cache = lepsza wydajność
+export const revalidate = 86400; // 24 hours
 
 // ========================================
 // HELPER FUNCTIONS
@@ -101,7 +102,7 @@ async function fetchFromDirectus<T>(
   try {
     const response = await fetch(url, {
       next: {
-        revalidate: 21600,
+        revalidate: 86400, // 24 hours - match page-level revalidation
         tags: [entityName.toLowerCase()],
       },
       headers: {
@@ -468,4 +469,5 @@ export const metadata: Metadata = {
   keywords: ["Karte", "Orte", "Standorte", "Navigation"],
 };
 
-export const dynamic = "force-dynamic";
+// Note: Removed conflicting 'export const dynamic = "force-dynamic"'
+// ISR with revalidate=86400 is the correct caching strategy for this page
