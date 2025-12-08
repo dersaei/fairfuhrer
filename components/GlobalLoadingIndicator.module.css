@@ -1,0 +1,109 @@
+/* components/GlobalLoadingIndicator.module.css - Next.js 16.0.7 */
+
+.loadingBar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+  transform: translateX(-100%);
+  z-index: 99999;
+  opacity: 0;
+  transition: opacity 0.2s ease;
+  /* Delay showing to avoid flashing on fast navigations */
+  transition-delay: 100ms;
+  pointer-events: none;
+}
+
+.loadingBar.active {
+  opacity: 1;
+  animation: slideProgress 1.5s ease-in-out infinite;
+}
+
+/* Slide animation for progress bar */
+@keyframes slideProgress {
+  0% {
+    transform: translateX(-100%);
+  }
+  50% {
+    transform: translateX(0%);
+  }
+  100% {
+    transform: translateX(100%);
+  }
+}
+
+/* Alternative: Indeterminate progress animation */
+.loadingBar.active::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(255, 255, 255, 0.4) 50%,
+    transparent 100%
+  );
+  animation: shimmer 1s ease-in-out infinite;
+}
+
+@keyframes shimmer {
+  0% {
+    transform: translateX(-100%);
+  }
+  100% {
+    transform: translateX(100%);
+  }
+}
+
+/* Screen reader only text */
+.srOnly {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border-width: 0;
+}
+
+/* Ensure visibility on all backgrounds */
+@media (prefers-color-scheme: dark) {
+  .loadingBar {
+    background: linear-gradient(90deg, #667eea 0%, #f093fb 100%);
+  }
+}
+
+/* Reduced motion for accessibility */
+@media (prefers-reduced-motion: reduce) {
+  .loadingBar {
+    animation: none;
+    transition: none;
+  }
+
+  .loadingBar.active {
+    transform: translateX(0);
+    width: 100%;
+    animation: pulse 1.5s ease-in-out infinite;
+  }
+
+  @keyframes pulse {
+    0%,
+    100% {
+      opacity: 1;
+    }
+    50% {
+      opacity: 0.5;
+    }
+  }
+
+  .loadingBar.active::after {
+    animation: none;
+  }
+}

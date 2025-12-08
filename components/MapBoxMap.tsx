@@ -82,13 +82,19 @@ export default function MapBoxMap({ places }: MapBoxMapProps) {
 
   const addUserLocationMarker = useCallback(
     (map: mapboxgl.Map, location: [number, number]) => {
+      console.log("🎯 addUserLocationMarker called with location:", location);
       try {
         if (userLocationMarkerRef.current) {
+          console.log("🗑️ Removing old user location marker");
           userLocationMarkerRef.current.remove();
           userLocationMarkerRef.current = null;
         }
 
-        if (!map || !map.loaded()) return;
+        if (!map || !map.loaded()) {
+          console.warn("⚠️ Map not loaded, skipping marker");
+          return;
+        }
+        console.log("✅ Map loaded, adding user marker...");
 
         if (!document.head.querySelector("#user-location-styles")) {
           const style = document.createElement("style");
@@ -169,11 +175,12 @@ export default function MapBoxMap({ places }: MapBoxMapProps) {
         });
 
         userLocationMarkerRef.current = userMarker;
+        console.log("✅ User location marker added successfully!");
       } catch (error) {
-        console.warn("Błąd podczas dodawania markera użytkownika:", error);
+        console.error("❌ Błąd podczas dodawania markera użytkownika:", error);
       }
     },
-    []
+    [] // Empty deps is OK - this function doesn't depend on external state
   );
 
   // ========================================
@@ -262,55 +269,56 @@ export default function MapBoxMap({ places }: MapBoxMapProps) {
   // ========================================
 
   const getUserLocation = useCallback(() => {
+    console.log("🔍 getUserLocation called, mapLoadingState:", mapLoadingState);
     userLocationRequestedRef.current = true;
 
     if (!navigator.geolocation) {
-      console.warn("Geolocation wird von diesem Browser nicht unterstützt");
+      console.warn("❌ Geolocation wird von diesem Browser nicht unterstützt");
       return;
     }
 
+    console.log("📍 Requesting geolocation permission...");
     navigator.geolocation.getCurrentPosition(
       (position) => {
         const { latitude, longitude } = position.coords;
         const newLocation: [number, number] = [longitude, latitude];
+        console.log("✅ Location received:", newLocation);
         setUserLocation(newLocation);
 
         if (mapRef.current) {
+          console.log("🗺️ Map exists, animating to location...");
+          // Small delay to ensure smooth animation after location received
           setTimeout(() => {
-            // Animuj do nowej lokalizacji
             animateToLocation(newLocation, 14, 1800);
-            // ✅ Marker będzie dodany przez osobny useEffect reagujący na userLocation
-            // addUserLocationMarker(mapRef.current!, newLocation); - PRZENIESIONE DO useEffect
           }, 100);
+        } else {
+          console.warn("⚠️ Map not ready yet, location saved but not animated");
         }
       },
       (error) => {
-        console.error("Geolocation-Fehler:", error);
+        console.error("❌ Geolocation-Fehler:", error);
         switch (error.code) {
           case error.PERMISSION_DENIED:
             console.warn(
-              "Benutzer hat den Zugriff auf die Position verweigert"
+              "🚫 Benutzer hat den Zugriff auf die Position verweigert"
             );
             break;
           case error.POSITION_UNAVAILABLE:
-            console.warn("Positionsinformationen sind nicht verfügbar");
+            console.warn("📍 Positionsinformationen sind nicht verfügbar");
             break;
           case error.TIMEOUT:
-            console.warn("Zeitüberschreitung beim Abrufen der Position");
+            console.warn("⏱️ Zeitüberschreitung beim Abrufen der Position");
             break;
           default:
             console.warn(
-              "Ein unbekannter Fehler beim Abrufen der Position ist aufgetreten"
+              "❓ Ein unbekannter Fehler beim Abrufen der Position ist aufgetreten"
             );
             break;
         }
       },
       { enableHighAccuracy: true, timeout: 10000, maximumAge: 300000 }
     );
-    // ✅ Funkcja nie wymaga animateToLocation/addUserLocationMarker w deps,
-    // bo closure zawsze ma dostęp do najnowszych wartości
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []); // Wywołaj tylko raz przy mount
+  }, [mapLoadingState, animateToLocation]); // ✅ Include dependencies for React 19
 
   // ========================================
   // MAP INITIALIZATION
@@ -515,11 +523,17 @@ export default function MapBoxMap({ places }: MapBoxMapProps) {
   // EFFECTS
   // ========================================
 
-  // ✅ REACT 19.2: getUserLocation używa useEffectEvent, więc nie musi być w deps
+  // ✅ Request user location automatically after map loads (React 19 compatible)
   useEffect(() => {
-    getUserLocation();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []); // Wywołaj tylko raz przy mount
+    if (mapLoadingState === "success" && !userLocationRequestedRef.current) {
+      // Wait to ensure map is fully ready and loaded
+      const timer = setTimeout(() => {
+        getUserLocation();
+      }, 500);
+
+      return () => clearTimeout(timer);
+    }
+  }, [mapLoadingState, getUserLocation]);
 
   useEffect(() => {
     initializeMap();
@@ -552,13 +566,20 @@ export default function MapBoxMap({ places }: MapBoxMapProps) {
 
   // ✅ REACT 19.2: Dodaj user location marker po każdej zmianie lokalizacji
   useEffect(() => {
-    if (!mapRef.current || !userLocation) return;
+    console.log("📍 User location useEffect triggered, userLocation:", userLocation);
+    if (!mapRef.current || !userLocation) {
+      console.log("⏭️ Skipping: map or userLocation missing");
+      return;
+    }
 
     const map = mapRef.current;
+    console.log("🗺️ Map exists, loaded:", map.loaded());
     if (map.loaded()) {
       addUserLocationMarker(map, userLocation);
     } else {
+      console.log("⏳ Map not loaded yet, waiting for load event...");
       map.once("load", () => {
+        console.log("✅ Map load event fired, adding marker now");
         addUserLocationMarker(map, userLocation);
       });
     }
@@ -588,12 +609,6 @@ export default function MapBoxMap({ places }: MapBoxMapProps) {
 
   return (
     <div className={styles.mapContainerWrapper}>
-      {mapLoadingState === "loading" && (
-        <div className={styles.loadingOverlay}>
-          <div className={styles.loadingSpinner}>Karte wird geladen...</div>
-        </div>
-      )}
-
       {mapLoadingState === "error" && (
         <div className={styles.errorOverlay}>
           <div className={styles.errorContainer}>

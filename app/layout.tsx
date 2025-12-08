@@ -1,4 +1,4 @@
-// fairfuhrer/app/layout.tsx
+// fairfuhrer/app/layout.tsx - Next.js 16.0.7 + React 19.2.1
 import type { Metadata, Viewport } from "next";
 import { Lato, Montserrat, Staatliches, Oxanium } from "next/font/google";
 import { GoogleAnalytics } from "@next/third-parties/google";
@@ -11,6 +11,7 @@ import { PayPalProvider } from "../components/PayPalProvider";
 import { CookieProvider } from "../context/CookieContext";
 import CookieBanner from "../components/CookieBanner";
 import HotjarTag from "../components/HotjarTag";
+import GlobalLoadingIndicator from "../components/GlobalLoadingIndicator";
 
 // Environment Variables
 const HOTJAR_SITE_ID = process.env.NEXT_PUBLIC_HOTJAR_SITE_ID
@@ -89,6 +90,9 @@ export default function RootLayout({
           ${montserrat.variable}
         `}
       >
+        {/* ✅ Global Loading Indicator - Next.js 16 useLinkStatus */}
+        <GlobalLoadingIndicator />
+
         <CookieProvider>
           {/* Hotjar Tag */}
           {HOTJAR_SITE_ID && <HotjarTag siteId={HOTJAR_SITE_ID} />}
