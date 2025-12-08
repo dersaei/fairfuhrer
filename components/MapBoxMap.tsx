@@ -13,7 +13,6 @@ import {
 import mapboxgl from "mapbox-gl";
 import MapboxLanguage from "@mapbox/mapbox-gl-language";
 import DOMPurify from "dompurify";
-import "mapbox-gl/dist/mapbox-gl.css";
 import styles from "./MapBoxMap.module.css";
 import MapSearch from "./MapSearch"; // ✅ IMPORT
 import type { Place } from "../types";
@@ -471,7 +470,10 @@ export default function MapBoxMap({ places }: MapBoxMapProps) {
           className: styles.popup,
         }).setHTML(popupData.content);
 
-        const marker = new mapboxgl.Marker({ color: popupData.color, scale: 0.8 })
+        const marker = new mapboxgl.Marker({
+          color: popupData.color,
+          scale: 0.8,
+        })
           .setLngLat([place.Lange, place.Breite])
           .setPopup(popup)
           .addTo(map);
@@ -570,7 +572,10 @@ export default function MapBoxMap({ places }: MapBoxMapProps) {
 
   // ✅ REACT 19.2: Dodaj user location marker po każdej zmianie lokalizacji
   useEffect(() => {
-    console.log("📍 User location useEffect triggered, userLocation:", userLocation);
+    console.log(
+      "📍 User location useEffect triggered, userLocation:",
+      userLocation
+    );
     if (!mapRef.current || !userLocation) {
       console.log("⏭️ Skipping: map or userLocation missing");
       return;
