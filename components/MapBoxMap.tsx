@@ -338,14 +338,18 @@ export default function MapBoxMap({ places }: MapBoxMapProps) {
 
       const map = new mapboxgl.Map({
         container: containerRef.current,
-        style: "mapbox://styles/mapbox/streets-v12",
+        style: "mapbox://styles/mapbox/standard", // ✅ Updated to Mapbox Standard Style
         center: userLocation || [9.0, 47.5],
         zoom: userLocation ? 12 : 6,
-        attributionControl: false,
+        projection: "globe", // ✅ 3D globe projection for better visual experience
+        // ✅ attributionControl removed - using default (required by Mapbox ToS)
       });
 
       map.on("load", () => {
         setMapLoadingState("success");
+
+        // ✅ Set fog for atmospheric effect (Mapbox Standard best practice)
+        map.setFog({});
 
         map.addControl(new MapboxLanguage({ defaultLanguage: "de" }));
 
