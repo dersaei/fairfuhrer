@@ -5,7 +5,6 @@ import {
   useEffect,
   useCallback,
   useState,
-  useMemo,
   lazy,
   Suspense,
   Activity,
@@ -14,7 +13,7 @@ import mapboxgl from "mapbox-gl";
 import MapboxLanguage from "@mapbox/mapbox-gl-language";
 import DOMPurify from "dompurify";
 import styles from "./MapBoxMap.module.css";
-import MapSearch from "./MapSearch"; // ✅ IMPORT
+import MapSearch from "./MapSearch";
 import type { Place } from "../types";
 
 // LAZY LOADING komponentów
@@ -28,9 +27,11 @@ interface MapBoxMapProps {
 export default function MapBoxMap({ places }: MapBoxMapProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const mapRef = useRef<mapboxgl.Map | null>(null);
-  const markersRef = useRef<mapboxgl.Marker[]>([]);
+  // ✅ STYLE LAYERS: No longer need markersRef - layers are managed by Mapbox
   const userLocationMarkerRef = useRef<mapboxgl.Marker | null>(null);
   const userLocationRequestedRef = useRef(false);
+  const hasPerformedInitialFitRef = useRef(false); // ✅ Track if initial fitBounds was done
+  const hoveredFeatureIdRef = useRef<string | number | null>(null); // ✅ Track hovered feature for feature-state
 
   // Panel state
   const [selectedPlace, setSelectedPlace] = useState<Place | null>(null);
@@ -59,6 +60,57 @@ export default function MapBoxMap({ places }: MapBoxMapProps) {
     const token = process.env.NEXT_PUBLIC_MAPBOX_TOKEN;
     return Boolean(token && token.startsWith("pk."));
   };
+
+  // ========================================
+  // GEOJSON CONVERSION (for Style Layers)
+  // ========================================
+
+  /**
+   * Convert Places array to GeoJSON FeatureCollection
+   * This enables using Style Layers instead of DOM Markers for better performance
+   *
+   * According to Mapbox documentation:
+   * - Each feature MUST have an 'id' for feature-state support (hover, selection)
+   * - Properties can include any JSON-serializable data
+   * - Coordinates must be in [longitude, latitude] format
+   *
+   * @param placesData - Array of Place objects from database
+   * @returns GeoJSON FeatureCollection compatible with Mapbox GL JS
+   */
+  const placesToGeoJSON = useCallback((placesData: Place[]) => {
+    return {
+      type: "FeatureCollection" as const,
+      features: placesData
+        .filter((place) => place.Breite && place.Lange)
+        .map((place) => ({
+          type: "Feature" as const,
+          // ✅ CRITICAL: Explicit ID for feature-state support
+          // Mapbox docs: "A property to use as a feature id (for feature state)"
+          id: place.id,
+          geometry: {
+            type: "Point" as const,
+            // ✅ Coordinates in [longitude, latitude] format (GeoJSON spec)
+            coordinates: [place.Lange, place.Breite],
+          },
+          properties: {
+            // ✅ Store all relevant data as properties for expressions
+            id: place.id,
+            name: place.Name,
+            address: place.Adresse,
+            phone: place.Telefon || "",
+            description: place.Vollbeschreibung || "",
+            mainImage: place.Hauptbild || "",
+            audioFile: place.Audio_Datei || "",
+            linkUrl: place.Link_URL || "",
+            linkText: place.Link_Text || "",
+            // Category data for data-driven styling
+            categoryId: place.Kategorie[0]?.id || 0,
+            categoryColor: place.Kategorie[0]?.color || "#3388ff",
+            categoryName: place.Kategorie[0]?.name || "Uncategorized",
+          },
+        })),
+    };
+  }, []);
 
   // ========================================
   // CORE MAP FUNCTIONS
@@ -216,10 +268,22 @@ export default function MapBoxMap({ places }: MapBoxMapProps) {
     setSelectedGalleryImage(null);
     setCurrentImageIndex(0);
 
+    // ✅ Clear selected state from all features when closing panel
+    if (mapRef.current && selectedPlace) {
+      const source = mapRef.current.getSource(
+        "places-source"
+      ) as mapboxgl.GeoJSONSource;
+      if (source) {
+        mapRef.current.removeFeatureState({
+          source: "places-source",
+        });
+      }
+    }
+
     setTimeout(() => {
       setIsPanelOpen(false);
     }, 600);
-  }, []);
+  }, [selectedPlace]);
 
   // ✅ POPRAWIONY HANDLER DLA WYSZUKIWARKI
   const handleSearchPlaceSelect = useCallback(
@@ -337,10 +401,16 @@ export default function MapBoxMap({ places }: MapBoxMapProps) {
 
       const map = new mapboxgl.Map({
         container: containerRef.current,
-        style: "mapbox://styles/mapbox/standard", // ✅ Updated to Mapbox Standard Style
+        // ✅ Mapbox Standard Style - includes all required root properties:
+        // - glyphs: Required for text-field (our cluster-count layer)
+        // - sprite: Required for icon-image, patterns
+        // - sources: Base map sources (streets, terrain, etc.)
+        // - layers: Base map layers
+        style: "mapbox://styles/mapbox/standard",
         center: userLocation || [9.0, 47.5],
         zoom: userLocation ? 12 : 6,
-        projection: "globe", // ✅ 3D globe projection for better visual experience
+        // ✅ Projection: Supported by Mapbox for terrain, sky, and fog
+        projection: "globe", // 3D globe projection for better visual experience
         // ✅ attributionControl removed - using default (required by Mapbox ToS)
       });
 
@@ -354,11 +424,331 @@ export default function MapBoxMap({ places }: MapBoxMapProps) {
 
         map.addControl(new mapboxgl.NavigationControl(), "top-left");
 
+        // ✅ CRITICAL: Add style layers immediately after map loads
+        // This ensures layers are added with initial places data
+        const geojsonData = placesToGeoJSON(places);
+        const sourceId = "places-source";
+
+        map.addSource(sourceId, {
+          type: "geojson",
+          data: geojsonData as GeoJSON.FeatureCollection<GeoJSON.Point>,
+          // ✅ Clustering configuration (Mapbox best practices)
+          cluster: true,
+          clusterMaxZoom: 14, // Stop clustering at zoom 15 (one less than maxzoom)
+          clusterRadius: 50, // Radius in pixels for clustering
+          clusterMinPoints: 2, // Minimum points to form a cluster (default: 2)
+          // ✅ Performance optimization
+          tolerance: 0.375, // Douglas-Peucker simplification (default, optimal for points)
+          // ✅ Feature ID generation - backup if manual ID is missing
+          // Note: We already set IDs manually in placesToGeoJSON, but this provides fallback
+          generateId: false, // We provide IDs explicitly for feature-state
+          // ✅ Tile configuration
+          buffer: 128, // Default buffer size - good balance between artifacts and performance
+          maxzoom: 18, // Maximum zoom for vector tiles generation
+        });
+
+        // Add all three layers
+        map.addLayer({
+          id: "clusters",
+          type: "circle",
+          source: sourceId,
+          filter: ["has", "point_count"],
+          slot: "middle",
+          paint: {
+            // ✅ interpolate for smooth color transitions in perceptually uniform color space
+            "circle-color": [
+              "interpolate",
+              ["linear"],
+              ["to-number", ["get", "point_count"], 0],
+              0,
+              "#51bbd6", // Light blue for small clusters
+              10,
+              "#f1f075", // Yellow for medium clusters
+              30,
+              "#f28cb1", // Pink for large clusters
+            ],
+            // ✅ Smooth transition for color changes
+            "circle-color-transition": {
+              duration: 400,
+              delay: 0,
+            },
+            // ✅ Interpolate for cluster radius with smooth exponential growth
+            "circle-radius": [
+              "interpolate",
+              ["exponential", 1.5],
+              ["to-number", ["get", "point_count"], 0],
+              0,
+              24, // Base radius - increased for better visibility
+              10,
+              34, // Medium radius
+              30,
+              46, // Large radius
+            ],
+            // ✅ Smooth transition for radius changes
+            "circle-radius-transition": {
+              duration: 400,
+              delay: 0,
+            },
+            // ✅ Enhanced opacity for better visibility
+            "circle-opacity": 0.92, // Increased for better visibility
+            "circle-opacity-transition": {
+              duration: 300,
+              delay: 0,
+            },
+            // ✅ BLACK stroke for much better contrast!
+            "circle-stroke-width": 2.5, // Increased from 2
+            "circle-stroke-color": "rgba(0, 0, 0, 0.75)", // Black stroke instead of white
+            "circle-stroke-width-transition": {
+              duration: 300,
+              delay: 0,
+            },
+            // ✅ Add subtle blur for depth effect
+            "circle-blur": 0.15,
+          },
+        });
+
+        map.addLayer({
+          id: "cluster-count",
+          type: "symbol",
+          source: sourceId,
+          filter: ["has", "point_count"],
+          slot: "middle",
+          layout: {
+            "text-field": ["get", "point_count_abbreviated"],
+            "text-font": ["DIN Offc Pro Medium", "Arial Unicode MS Bold"],
+            // ✅ Dynamic text size based on cluster size for better readability
+            "text-size": [
+              "interpolate",
+              ["linear"],
+              ["to-number", ["get", "point_count"], 0],
+              0,
+              13, // Smaller clusters
+              10,
+              14, // Medium clusters
+              30,
+              16, // Large clusters
+            ],
+          },
+          paint: {
+            "text-color": "#ffffff",
+            // ✅ Add text halo for better contrast and visibility
+            "text-halo-color": "rgba(0, 0, 0, 0.3)",
+            "text-halo-width": 1.5,
+            "text-halo-blur": 0.5,
+            // ✅ Smooth opacity transition
+            "text-opacity": 1.0,
+            "text-opacity-transition": {
+              duration: 300,
+              delay: 0,
+            },
+          },
+        });
+
+        map.addLayer({
+          id: "unclustered-point",
+          type: "circle",
+          source: sourceId,
+          filter: ["!", ["has", "point_count"]],
+          slot: "middle",
+          paint: {
+            // ✅ Type-safe color with fallback (Mapbox best practice)
+            "circle-color": [
+              "coalesce",
+              ["to-color", ["get", "categoryColor"]],
+              "#3388ff", // Fallback color if categoryColor is invalid
+            ],
+            // ✅ Dynamic radius based on hover and selection state
+            // Note: Smaller differences to minimize visual "jump" (feature-state transitions have limitations)
+            "circle-radius": [
+              "interpolate",
+              ["exponential", 1.75],
+              ["zoom"],
+              6,
+              [
+                "case",
+                ["boolean", ["feature-state", "hover"], false],
+                6.5, // Subtle increase on hover (20% larger)
+                ["boolean", ["feature-state", "selected"], false],
+                6, // Slightly larger when selected
+                5.5, // Default - good base visibility
+              ],
+              10,
+              [
+                "case",
+                ["boolean", ["feature-state", "hover"], false],
+                11.5, // Subtle increase
+                ["boolean", ["feature-state", "selected"], false],
+                11,
+                10, // Default
+              ],
+              14,
+              [
+                "case",
+                ["boolean", ["feature-state", "hover"], false],
+                15.5, // Subtle increase
+                ["boolean", ["feature-state", "selected"], false],
+                15,
+                14, // Default
+              ],
+            ],
+            // ⚠️ MAPBOX LIMITATION: Transitions don't work with feature-state changes
+            // According to Mapbox documentation, transitions trigger only for:
+            // ✅ Zoom level changes (camera expressions)
+            // ✅ Source data updates
+            // ✅ setPaintProperty() calls
+            // ❌ setFeatureState() calls (our hover/select implementation)
+            //
+            // This transition property is kept because:
+            // 1. It works for zoom-based radius changes
+            // 2. Future Mapbox versions may support it
+            // 3. It's the correct syntax per documentation
+            "circle-radius-transition": {
+              duration: 200,
+              delay: 0,
+            },
+            // ✅ Dynamic stroke width - subtle changes for smoother feel
+            "circle-stroke-width": [
+              "case",
+              ["boolean", ["feature-state", "hover"], false],
+              3.5, // Modest increase on hover
+              ["boolean", ["feature-state", "selected"], false],
+              3.25, // Slightly thicker when selected
+              3, // Default - good visibility with black stroke
+            ],
+            "circle-stroke-width-transition": {
+              duration: 200,
+              delay: 0,
+            },
+            // ✅ BLACK stroke for much better contrast and visibility!
+            "circle-stroke-color": [
+              "case",
+              ["boolean", ["feature-state", "hover"], false],
+              "#000000", // Solid black on hover
+              ["boolean", ["feature-state", "selected"], false],
+              "#1a1a1a", // Very dark gray when selected
+              "rgba(0, 0, 0, 0.85)", // Almost black default - excellent contrast
+            ],
+            // ✅ Dynamic opacity for different states
+            "circle-opacity": [
+              "case",
+              ["boolean", ["feature-state", "hover"], false],
+              1.0, // Full opacity on hover
+              ["boolean", ["feature-state", "selected"], false],
+              0.98, // High opacity when selected
+              0.96, // Slightly increased default opacity
+            ],
+            "circle-opacity-transition": {
+              duration: 150, // Fast opacity changes
+              delay: 0,
+            },
+            // ✅ Subtle shadow effect for depth - slightly stronger
+            "circle-blur": 0.2,
+          },
+        });
+
+        // Click interactions
+        map.on("click", "clusters", (e) => {
+          const features = map.queryRenderedFeatures(e.point, {
+            layers: ["clusters"],
+          });
+          if (!features.length) return;
+
+          const clusterId = features[0].properties?.cluster_id;
+          const source = map.getSource(sourceId) as mapboxgl.GeoJSONSource;
+
+          source.getClusterExpansionZoom(clusterId, (err, zoom) => {
+            if (err || !features[0].geometry) return;
+            const geometry = features[0].geometry as GeoJSON.Point;
+            map.easeTo({
+              center: geometry.coordinates as [number, number],
+              zoom: zoom || map.getZoom() + 2,
+            });
+          });
+        });
+
+        map.on("click", "unclustered-point", (e) => {
+          const features = map.queryRenderedFeatures(e.point, {
+            layers: ["unclustered-point"],
+          });
+          if (!features.length) return;
+
+          const feature = features[0];
+          const placeId = feature.properties?.id;
+          const place = places.find((p) => p.id === placeId);
+          if (place) {
+            // ✅ Set selected state for the clicked feature
+            if (feature.id !== undefined) {
+              map.setFeatureState(
+                { source: sourceId, id: feature.id },
+                { selected: true }
+              );
+            }
+            openPanel(place);
+          }
+        });
+
+        // ✅ Hover effect for unclustered points
+        map.on("mouseenter", "unclustered-point", (e) => {
+          const features = e.features;
+          if (!features || features.length === 0) return;
+
+          const feature = features[0];
+          if (feature.id === undefined) return;
+
+          // Remove hover from previous feature
+          if (hoveredFeatureIdRef.current !== null) {
+            map.setFeatureState(
+              { source: sourceId, id: hoveredFeatureIdRef.current },
+              { hover: false }
+            );
+          }
+
+          // Set hover on current feature
+          hoveredFeatureIdRef.current = feature.id;
+          map.setFeatureState(
+            { source: sourceId, id: feature.id },
+            { hover: true }
+          );
+        });
+
+        map.on("mouseleave", "unclustered-point", () => {
+          if (hoveredFeatureIdRef.current !== null) {
+            map.setFeatureState(
+              { source: sourceId, id: hoveredFeatureIdRef.current },
+              { hover: false }
+            );
+            hoveredFeatureIdRef.current = null;
+          }
+        });
+
+        // Cursor changes
+        map.on("mouseenter", "clusters", () => {
+          map.getCanvas().style.cursor = "pointer";
+        });
+        map.on("mouseleave", "clusters", () => {
+          map.getCanvas().style.cursor = "";
+        });
+        map.on("mouseenter", "unclustered-point", () => {
+          map.getCanvas().style.cursor = "pointer";
+        });
+        map.on("mouseleave", "unclustered-point", () => {
+          map.getCanvas().style.cursor = "";
+        });
+
+        // Initial fitBounds
+        if (places.length > 0 && !isPanelOpen) {
+          const bounds = new mapboxgl.LngLatBounds();
+          places.forEach((p) => bounds.extend([p.Lange, p.Breite]));
+          if (userLocation) bounds.extend(userLocation);
+          map.fitBounds(bounds, { padding: 50, duration: 1000 });
+          hasPerformedInitialFitRef.current = true;
+        }
+
         const geolocateControl = new mapboxgl.GeolocateControl({
           positionOptions: { enableHighAccuracy: true },
           trackUserLocation: true,
-          showUserHeading: true,
-          showUserLocation: true,
+          showUserHeading: false, // ✅ Disable - using custom marker instead
+          showUserLocation: false, // ✅ Disable - using custom pulsing marker
         });
 
         map.addControl(geolocateControl, "top-left");
@@ -401,129 +791,37 @@ export default function MapBoxMap({ places }: MapBoxMapProps) {
   }, []); // ✅ Inicjalizuj tylko raz przy mount
 
   // ========================================
-  // MARKERS MANAGEMENT
+  // STYLE LAYERS MANAGEMENT (replaces old Markers Management)
+  // ========================================
+  // Note: popupContents removed - Style Layers use click events to open panel directly
+  // No need for popup HTML generation since we open PlaceInfoPanel on click
+
+  // ========================================
+  // STYLE LAYERS MANAGEMENT (replaces DOM Markers)
   // ========================================
 
-  // ✅ REACT 19.2: useMemo dla popup contents - generuj HTML tylko gdy places się zmienią
-  const popupContents = useMemo(() => {
-    return places.map((place) => {
-      // ✅ XSS PROTECTION: Escape user input before building HTML
-      const safeName = DOMPurify.sanitize(place.Name, { ALLOWED_TAGS: [] });
-      const safeAddress = DOMPurify.sanitize(place.Adresse, {
-        ALLOWED_TAGS: [],
-      });
-      const safePhone = place.Telefon
-        ? DOMPurify.sanitize(place.Telefon, { ALLOWED_TAGS: [] })
-        : "";
-      const safeDescription = place.Vollbeschreibung
-        ? DOMPurify.sanitize(
-            place.Vollbeschreibung.replace(/<[^>]*>/g, "").substring(0, 100),
-            { ALLOWED_TAGS: [] }
-          )
-        : "";
-
-      const phoneHTML = safePhone
-        ? `<p class="${styles.popupPhone}"><a href="tel:${safePhone}" class="${styles.popupPhoneLink}">📞 ${safePhone}</a></p>`
-        : "";
-
-      const popupContent = `
-        <div class="${styles.modernPopup}">
-          <h3 class="${styles.popupTitle}">${safeName}</h3>
-          <p class="${styles.popupAddress}">📍 ${safeAddress}</p>
-          ${phoneHTML}
-          ${
-            safeDescription
-              ? `<p class="${styles.popupDescription}">${safeDescription}...</p>`
-              : ""
-          }
-        </div>
-      `;
-
-      // ✅ XSS PROTECTION: Final sanitization of complete HTML
-      const safePopupContent = DOMPurify.sanitize(popupContent);
-
-      return {
-        placeId: place.id,
-        color: place.Kategorie[0]?.color || "#3388ff",
-        content: safePopupContent,
-      };
-    });
-  }, [places]); // ✅ Tylko gdy places się zmienią
-
-  const updateMarkers = useCallback(() => {
+  /**
+   * Update GeoJSON data when places change (e.g., filtering)
+   * Layers are already added in map.on("load"), this only updates the data
+   */
+  const updatePlacesData = useCallback(() => {
     const map = mapRef.current;
     if (!map || !map.loaded()) return;
 
     try {
-      markersRef.current.forEach((marker) => marker.remove());
-      markersRef.current = [];
+      const sourceId = "places-source";
+      const source = map.getSource(sourceId) as mapboxgl.GeoJSONSource;
 
-      places.forEach((place, index) => {
-        if (!place.Breite || !place.Lange) return;
-
-        // ✅ REACT 19.2: Użyj pre-computed popup content z useMemo
-        const popupData = popupContents[index];
-
-        const popup = new mapboxgl.Popup({
-          offset: [0, -20],
-          closeButton: false,
-          className: styles.popup,
-        }).setHTML(popupData.content);
-
-        const marker = new mapboxgl.Marker({
-          color: popupData.color,
-          scale: 0.8,
-        })
-          .setLngLat([place.Lange, place.Breite])
-          .setPopup(popup)
-          .addTo(map);
-
-        const markerElement = marker.getElement();
-        markerElement.style.cursor = "pointer";
-
-        let popupTimeout: NodeJS.Timeout;
-        markerElement.addEventListener("mouseenter", () => {
-          clearTimeout(popupTimeout);
-          marker.togglePopup();
-        });
-
-        markerElement.addEventListener("mouseleave", () => {
-          popupTimeout = setTimeout(() => {
-            if (marker.getPopup()?.isOpen()) marker.togglePopup();
-          }, 300);
-        });
-
-        markerElement.addEventListener("click", (e) => {
-          e.preventDefault();
-          e.stopPropagation();
-          if (marker.getPopup()?.isOpen()) marker.togglePopup();
-          openPanel(place);
-        });
-
-        // Add touch support
-        markerElement.style.touchAction = "manipulation";
-        markerElement.style.setProperty(
-          "-webkit-tap-highlight-color",
-          "transparent"
-        );
-
-        markersRef.current.push(marker);
-      });
-
-      if (
-        places.length > 0 &&
-        !isPanelOpen &&
-        !userLocationRequestedRef.current
-      ) {
-        const bounds = new mapboxgl.LngLatBounds();
-        places.forEach((p) => bounds.extend([p.Lange, p.Breite]));
-        if (userLocation) bounds.extend(userLocation);
-        map.fitBounds(bounds, { padding: 50 });
+      // Only update if source exists (it's created in map.on("load"))
+      if (source) {
+        const geojsonData = placesToGeoJSON(places);
+        source.setData(geojsonData as GeoJSON.FeatureCollection<GeoJSON.Point>);
+        console.log("✅ Updated places data in map source");
       }
     } catch (error) {
-      console.error("Błąd aktualizacji markerów:", error);
+      console.error("❌ Error updating places data:", error);
     }
-  }, [places, popupContents, isPanelOpen, userLocation, openPanel]);
+  }, [places, placesToGeoJSON]);
 
   // ========================================
   // EFFECTS
@@ -545,7 +843,7 @@ export default function MapBoxMap({ places }: MapBoxMapProps) {
     initializeMap();
 
     return () => {
-      markersRef.current.forEach((marker) => marker.remove());
+      // ✅ STYLE LAYERS: Cleanup is handled by map.remove() - no need to remove individual markers
       if (userLocationMarkerRef.current) {
         userLocationMarkerRef.current.remove();
       }
@@ -559,16 +857,16 @@ export default function MapBoxMap({ places }: MapBoxMapProps) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []); // ✅ Inicjalizuj tylko raz przy mount, cleanup przy unmount
 
+  // ✅ STYLE LAYERS: Update data when places change (filtering, etc.)
   useEffect(() => {
     if (!mapRef.current) return;
 
     const map = mapRef.current;
     if (map.loaded()) {
-      updateMarkers();
-    } else {
-      map.on("load", updateMarkers);
+      updatePlacesData();
     }
-  }, [updateMarkers]);
+    // Note: No 'else' branch needed - layers are added once in map.on("load")
+  }, [updatePlacesData]);
 
   // ✅ REACT 19.2: Dodaj user location marker po każdej zmianie lokalizacji
   useEffect(() => {

@@ -35,10 +35,11 @@ export function useMapbox(
 
       const map = new mapboxgl.Map({
         container: containerRef.current,
-        style: "mapbox://styles/mapbox/streets-v12",
+        style: "mapbox://styles/mapbox/standard", // ✅ Updated to Mapbox Standard Style for consistency
         center: options.initialCenter || [9.0, 47.5],
         zoom: options.initialZoom || 6,
-        attributionControl: false,
+        projection: "globe", // ✅ Consistent with MapBoxMap.tsx
+        // ✅ attributionControl removed - using default (required by Mapbox ToS)
       });
 
       map.on("load", () => {
