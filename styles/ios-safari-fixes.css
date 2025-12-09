@@ -4,13 +4,20 @@
 /* Map container fixes */
 .mapContainerWrapper,
 .container {
+  /* Fallback for older iOS versions */
   height: calc(var(--vh, 1vh) * 100);
   min-height: calc(var(--vh, 1vh) * 100);
+  /* Modern iOS 15.4+ dynamic viewport height - overrides above */
+  height: 100dvh;
+  min-height: 100dvh;
 }
 
 /* Info panel fixes - ENHANCED for width issues */
 .infoPanel {
+  /* Fallback for older iOS */
   height: calc(var(--vh, 1vh) * 100);
+  /* Modern dynamic viewport height - overrides above */
+  height: 100dvh;
 
   /* ✅ ADDED: Prevent horizontal overflow on iPhone Safari */
   max-width: 100vw;
@@ -32,15 +39,15 @@
 /* Mobile panel adjustments - ENHANCED */
 @media (max-width: 768px) {
   .infoPanel {
-    height: calc(var(--vh, 1vh) * 70);
+    height: calc(var(--vh, 1vh) * 70); /* Fallback */
+    height: 70dvh; /* Modern - overrides above */
     padding-bottom: max(1rem, env(safe-area-inset-bottom));
     transform: translateY(100%);
 
     /* ✅ ENHANCED: Force full width on mobile Safari */
-    width: 100vw !important;
-    max-width: 100vw !important;
-    left: 0 !important;
-    right: 0 !important;
+    width: 100vw;
+    left: 0;
+    right: 0;
 
     /* ✅ ADDED: Prevent any margin/padding from breaking layout */
     margin: 0;
@@ -63,8 +70,7 @@
 /* ✅ ADDED: Very small screens (iPhone SE, etc.) */
 @media (max-width: 375px) {
   .infoPanel {
-    width: 100vw !important;
-    max-width: 100vw !important;
+    width: 100vw;
   }
 
   .infoSection {
@@ -190,14 +196,15 @@
 /* Landscape orientation fixes - ENHANCED */
 @media (orientation: landscape) and (max-height: 500px) {
   .infoPanel {
-    height: calc(var(--vh, 1vh) * 90);
+    height: calc(var(--vh, 1vh) * 90); /* Fallback */
+    height: 90dvh; /* Modern - overrides above */
     /* ✅ ADDED: Ensure width constraints in landscape */
-    width: 100vw !important;
-    max-width: 100vw !important;
+    width: 100vw;
   }
 
   .mapContainerWrapper {
-    height: calc(var(--vh, 1vh) * 100 - 60px);
+    height: calc(var(--vh, 1vh) * 100 - 60px); /* Fallback */
+    height: calc(100dvh - 60px); /* Modern - overrides above */
   }
 
   .closeButton {
@@ -254,8 +261,9 @@
   }
 
   @media (max-width: 768px) {
-    .infoPanel {
-      /* Additional iPhone Safari specific fixes */
+    /* Removed will-change: transform - should only be used during active animations
+       Add .animating class via JavaScript during panel slide animation instead */
+    .infoPanel.animating {
       will-change: transform;
     }
   }
@@ -292,8 +300,9 @@ select {
 
 /* ✅ ADDED: Force proper viewport calculations */
 @media screen and (max-width: 768px) {
-  html {
-    /* Force viewport recalculation on iPhone Safari */
-    height: -webkit-fill-available;
+  body {
+    /* Better on body than html - prevents scroll issues */
+    min-height: -webkit-fill-available; /* Fallback for older iOS */
+    min-height: 100dvh; /* Modern iOS 15.4+ - overrides above */
   }
 }

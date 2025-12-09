@@ -34,6 +34,7 @@ export default function MapBoxMap({ places }: MapBoxMapProps) {
   const hasPerformedInitialFitRef = useRef(false); // ✅ Track if initial fitBounds was done
   const hoveredFeatureIdRef = useRef<string | number | null>(null); // ✅ Track hovered feature for feature-state
   const mapInitializingRef = useRef(false); // ✅ REACT STRICT MODE FIX: Guard against double initialization
+  const hoverPopupRef = useRef<mapboxgl.Popup | null>(null); // ✅ Track hover popup for cleanup
 
   // Panel state
   const [selectedPlace, setSelectedPlace] = useState<Place | null>(null);
@@ -280,6 +281,12 @@ export default function MapBoxMap({ places }: MapBoxMapProps) {
           source: "places-source",
         });
       }
+    }
+
+    // ✅ Remove hover popup if exists
+    if (hoverPopupRef.current) {
+      hoverPopupRef.current.remove();
+      hoverPopupRef.current = null;
     }
 
     setTimeout(() => {
@@ -730,7 +737,7 @@ export default function MapBoxMap({ places }: MapBoxMapProps) {
           }
         });
 
-        // ✅ Hover effect for unclustered points
+        // ✅ Hover effect for unclustered points with tooltip
         map.on("mouseenter", "unclustered-point", (e) => {
           const features = e.features;
           if (!features || features.length === 0) return;
@@ -752,15 +759,75 @@ export default function MapBoxMap({ places }: MapBoxMapProps) {
             { source: sourceId, id: feature.id },
             { hover: true }
           );
+
+          // ✅ Show hover popup/tooltip
+          const { name, address, categoryName, categoryColor, description } =
+            feature.properties || {};
+
+          // Remove old popup if exists
+          if (hoverPopupRef.current) {
+            hoverPopupRef.current.remove();
+            hoverPopupRef.current = null;
+          }
+
+          // Create popup HTML with DOMPurify sanitization
+          // ✅ Category badge with dynamic background color from categoryColor property
+          const popupHTML = DOMPurify.sanitize(`
+            <div class="${styles.modernPopup}">
+              <h3 class="${styles.popupTitle}">${name || "Unbekannt"}</h3>
+              ${
+                categoryName
+                  ? `<div class="${
+                      styles.categoryBadge
+                    }" style="background-color: ${
+                      categoryColor || "#3388ff"
+                    };">${categoryName}</div>`
+                  : ""
+              }
+              ${
+                address
+                  ? `<p class="${styles.popupAddress}">${address}</p>`
+                  : ""
+              }
+              ${
+                description
+                  ? `<p class="${
+                      styles.popupDescription
+                    }">${description.substring(0, 100)}${
+                      description.length > 100 ? "..." : ""
+                    }</p>`
+                  : ""
+              }
+            </div>
+          `);
+
+          // Create and show popup
+          hoverPopupRef.current = new mapboxgl.Popup({
+            closeButton: false,
+            closeOnClick: false,
+            offset: 15,
+            className: styles.popup,
+            maxWidth: "280px",
+          })
+            .setLngLat(e.lngLat)
+            .setHTML(popupHTML)
+            .addTo(map);
         });
 
         map.on("mouseleave", "unclustered-point", () => {
+          // Remove hover state
           if (hoveredFeatureIdRef.current !== null) {
             map.setFeatureState(
               { source: sourceId, id: hoveredFeatureIdRef.current },
               { hover: false }
             );
             hoveredFeatureIdRef.current = null;
+          }
+
+          // ✅ Remove hover popup
+          if (hoverPopupRef.current) {
+            hoverPopupRef.current.remove();
+            hoverPopupRef.current = null;
           }
         });
 
@@ -893,6 +960,11 @@ export default function MapBoxMap({ places }: MapBoxMapProps) {
     return () => {
       console.log("🧹 Cleaning up map...");
       // ✅ STYLE LAYERS: Cleanup is handled by map.remove() - no need to remove individual markers
+      if (hoverPopupRef.current) {
+        console.log("  - Removing hover popup");
+        hoverPopupRef.current.remove();
+        hoverPopupRef.current = null;
+      }
       if (userLocationMarkerRef.current) {
         console.log("  - Removing user location marker");
         userLocationMarkerRef.current.remove();
