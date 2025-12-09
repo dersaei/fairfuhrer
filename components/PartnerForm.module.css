@@ -21,14 +21,14 @@
 }
 
 .formHeader h3 {
-  font-family: "Montserrat", sans-serif;
+  font-family: var(--font-montserrat);
   font-size: 1.75rem;
   font-weight: 700;
   margin-bottom: 0.5rem;
 }
 
 .formHeader p {
-  font-family: "Lato", sans-serif;
+  font-family: var(--font-lato);
   font-size: 1rem;
   opacity: 0.9;
 }
@@ -43,7 +43,7 @@
 }
 
 .section h4 {
-  font-family: "Montserrat", sans-serif;
+  font-family: var(--font-montserrat);
   font-size: 1.25rem;
   font-weight: 600;
   color: #1f2937;
@@ -53,7 +53,7 @@
 }
 
 .sectionNote {
-  font-family: "Lato", sans-serif;
+  font-family: var(--font-lato);
   font-size: 0.9rem;
   color: #6b7280;
   margin-bottom: 1.5rem;
@@ -73,7 +73,7 @@
 
 .field label {
   display: block;
-  font-family: "Lato", sans-serif;
+  font-family: var(--font-lato);
   font-weight: 600;
   color: #374151;
   margin-bottom: 0.5rem;
@@ -86,7 +86,7 @@
   padding: 0.75rem;
   border: 2px solid #d1d5db;
   border-radius: 8px;
-  font-family: "Lato", sans-serif;
+  font-family: var(--font-lato);
   font-size: 1rem;
   transition: border-color 0.2s ease;
   background: white;
@@ -107,7 +107,7 @@
 .error {
   display: block;
   color: #ef4444;
-  font-family: "Lato", sans-serif;
+  font-family: var(--font-lato);
   font-size: 0.875rem;
   margin-top: 0.25rem;
 }
@@ -119,7 +119,7 @@
   padding: 1rem;
   border-radius: 8px;
   margin: 1rem 2rem;
-  font-family: "Lato", sans-serif;
+  font-family: var(--font-lato);
 }
 
 .fileInputWrapper {
@@ -146,7 +146,7 @@
   border: 2px dashed #cbd5e1;
   border-radius: 12px;
   color: #475569;
-  font-family: "Lato", sans-serif;
+  font-family: var(--font-lato);
   font-size: 0.95rem;
   font-weight: 500;
   cursor: pointer;
@@ -199,7 +199,7 @@
   border-radius: 8px;
   font-size: 0.9rem;
   color: #0369a1;
-  font-family: "Lato", sans-serif;
+  font-family: var(--font-lato);
 }
 
 .clearFileButton {
@@ -225,7 +225,7 @@
 
 .charCounter {
   text-align: right;
-  font-family: "Lato", sans-serif;
+  font-family: var(--font-lato);
   font-size: 0.8rem;
   color: #6b7280;
   margin-top: 0.25rem;
@@ -237,7 +237,7 @@
   border-radius: 8px;
   padding: 0.75rem;
   margin-top: 1rem;
-  font-family: "Lato", sans-serif;
+  font-family: var(--font-lato);
   font-size: 0.9rem;
   color: #0369a1;
 }
@@ -246,7 +246,7 @@
 
 .checkboxGroupLabel {
   display: block;
-  font-family: "Lato", sans-serif;
+  font-family: var(--font-lato);
   font-weight: 600;
   color: #374151;
   margin-bottom: 0.5rem;
@@ -254,7 +254,7 @@
 }
 
 .checkboxGroupSubtitle {
-  font-family: "Lato", sans-serif;
+  font-family: var(--font-lato);
   font-size: 0.9rem;
   color: #6b7280;
   margin-bottom: 1.5rem;
@@ -346,7 +346,7 @@
 
 /* LABEL - PROSTA NAZWA */
 .checkboxLabel {
-  font-family: "Lato", sans-serif;
+  font-family: var(--font-lato);
   font-size: 0.9rem;
   color: #374151;
   cursor: pointer;
@@ -358,7 +358,7 @@
 
 .radioGroupLabel {
   display: block;
-  font-family: "Lato", sans-serif;
+  font-family: var(--font-lato);
   font-weight: 600;
   color: #374151;
   margin-bottom: 0.5rem;
@@ -366,7 +366,7 @@
 }
 
 .radioGroupSubtitle {
-  font-family: "Lato", sans-serif;
+  font-family: var(--font-lato);
   font-size: 0.9rem;
   color: #6b7280;
   margin-bottom: 1.5rem;
@@ -455,7 +455,7 @@
 }
 
 .radioLabel {
-  font-family: "Lato", sans-serif;
+  font-family: var(--font-lato);
   font-size: 1rem;
   color: #1f2937;
   cursor: pointer;
@@ -464,7 +464,7 @@
 }
 
 .radioDescription {
-  font-family: "Lato", sans-serif;
+  font-family: var(--font-lato);
   font-size: 0.9rem;
   color: #6b7280;
   line-height: 1.5;
@@ -552,7 +552,7 @@
 
 /* Specjalne style dla labelek kategorii z kolorami */
 .categoryRadioLabel {
-  font-family: "Lato", sans-serif;
+  font-family: var(--font-lato);
   font-size: 1rem;
   cursor: pointer;
   margin: 0 !important;
@@ -582,7 +582,7 @@
   border: none;
   padding: 1rem 3rem;
   border-radius: 50px;
-  font-family: "Montserrat", sans-serif;
+  font-family: var(--font-montserrat);
   font-size: 1.1rem;
   font-weight: 600;
   cursor: pointer;
@@ -613,7 +613,7 @@
 }
 
 .successMessage h3 {
-  font-family: "Montserrat", sans-serif;
+  font-family: var(--font-montserrat);
   font-size: 1.75rem;
   font-weight: 700;
   color: #059669;
@@ -621,7 +621,7 @@
 }
 
 .successMessage p {
-  font-family: "Lato", sans-serif;
+  font-family: var(--font-lato);
   font-size: 1.1rem;
   color: #374151;
   line-height: 1.6;
@@ -638,7 +638,7 @@
   border: none;
   padding: 0.75rem 2rem;
   border-radius: 50px;
-  font-family: "Montserrat", sans-serif;
+  font-family: var(--font-montserrat);
   font-size: 1rem;
   font-weight: 600;
   cursor: pointer;

@@ -9,7 +9,7 @@
   font-size: 2rem;
   color: black;
   margin-bottom: 1rem;
-  font-family: "Montserrat", sans-serif;
+  font-family: var(--font-montserrat);
   font-optical-sizing: auto;
   font-weight: 700;
   font-style: normal;

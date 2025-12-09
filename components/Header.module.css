@@ -24,7 +24,7 @@
   text-decoration: none;
   color: rgba(252, 108, 20, 1);
   font-size: 2.3vw;
-  font-family: "Montserrat", sans-serif;
+  font-family: var(--font-montserrat);
   font-optical-sizing: auto;
   font-weight: 600;
   font-style: normal;
@@ -131,7 +131,7 @@
   text-decoration: none;
   color: rgba(252, 108, 20, 1);
   font-size: 1.5rem;
-  font-family: "Montserrat", sans-serif;
+  font-family: var(--font-montserrat);
   font-weight: 400;
   transition: all 0.3s ease;
   padding: 1rem 0;

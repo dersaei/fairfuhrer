@@ -136,10 +136,8 @@ export default function MapBoxMap({ places }: MapBoxMapProps) {
 
   const addUserLocationMarker = useCallback(
     (map: mapboxgl.Map, location: [number, number]) => {
-      console.log("🎯 addUserLocationMarker called with location:", location);
       try {
         if (userLocationMarkerRef.current) {
-          console.log("🗑️ Removing old user location marker");
           userLocationMarkerRef.current.remove();
           userLocationMarkerRef.current = null;
         }
@@ -148,7 +146,6 @@ export default function MapBoxMap({ places }: MapBoxMapProps) {
           console.warn("⚠️ Map not loaded, skipping marker");
           return;
         }
-        console.log("✅ Map loaded, adding user marker...");
 
         if (!document.head.querySelector("#user-location-styles")) {
           const style = document.createElement("style");
@@ -229,7 +226,6 @@ export default function MapBoxMap({ places }: MapBoxMapProps) {
         });
 
         userLocationMarkerRef.current = userMarker;
-        console.log("✅ User location marker added successfully!");
       } catch (error) {
         console.error("❌ Błąd podczas dodawania markera użytkownika:", error);
       }
@@ -341,7 +337,6 @@ export default function MapBoxMap({ places }: MapBoxMapProps) {
   // ========================================
 
   const getUserLocation = useCallback(() => {
-    console.log("🔍 getUserLocation called, mapLoadingState:", mapLoadingState);
     userLocationRequestedRef.current = true;
 
     if (!navigator.geolocation) {
@@ -349,16 +344,13 @@ export default function MapBoxMap({ places }: MapBoxMapProps) {
       return;
     }
 
-    console.log("📍 Requesting geolocation permission...");
     navigator.geolocation.getCurrentPosition(
       (position) => {
         const { latitude, longitude } = position.coords;
         const newLocation: [number, number] = [longitude, latitude];
-        console.log("✅ Location received:", newLocation);
         setUserLocation(newLocation);
 
         if (mapRef.current) {
-          console.log("🗺️ Map exists, animating to location...");
           // Small delay to ensure smooth animation after location received
           setTimeout(() => {
             animateToLocation(newLocation, 14, 1800);
@@ -390,51 +382,34 @@ export default function MapBoxMap({ places }: MapBoxMapProps) {
       },
       { enableHighAccuracy: true, timeout: 10000, maximumAge: 300000 }
     );
-  }, [mapLoadingState, animateToLocation]); // ✅ Include dependencies for React 19
+  }, [animateToLocation]); // ✅ Include dependencies for React 19
 
   // ========================================
   // MAP INITIALIZATION
   // ========================================
 
   const initializeMap = useCallback(() => {
-    console.log("🔍 initializeMap called");
-    console.log("  - mapExists:", !!mapRef.current);
-    console.log("  - containerExists:", !!containerRef.current);
-    console.log("  - isInitializing:", mapInitializingRef.current);
-    console.log(
-      "  - containerChildren:",
-      containerRef.current?.children.length ?? 0
-    );
-
     // ✅ REACT STRICT MODE FIX: Multiple guards against double initialization
     // 1. Check if map instance exists
     // 2. Check if container is missing
     // 3. Check if initialization is in progress (flag)
     // 4. Check if container already has map elements (DOM check - most reliable!)
     if (mapRef.current) {
-      console.log("⏭️ Skipping - map already exists");
       return;
     }
     if (!containerRef.current) {
-      console.log("⏭️ Skipping - container missing");
       return;
     }
     if (mapInitializingRef.current) {
-      console.log("⏭️ Skipping - initialization in progress");
       return;
     }
     // ✅ DOM CHECK: Most reliable guard - Mapbox adds canvas/elements to container
     if (containerRef.current.children.length > 0) {
-      console.log(
-        "⏭️ Skipping - container already has map elements (DOM check)"
-      );
       return;
     }
 
     // ✅ Set flag IMMEDIATELY before any async operations
     mapInitializingRef.current = true;
-    console.log("🗺️ Initializing new map instance...");
-    console.log("  - Flag set to true");
 
     if (!isValidMapboxToken()) {
       setMapLoadingState("error");
@@ -462,16 +437,11 @@ export default function MapBoxMap({ places }: MapBoxMapProps) {
       });
 
       map.on("load", () => {
-        console.log("✅ Map loaded successfully");
         setMapLoadingState("success");
 
         // ✅ Set fog for atmospheric effect (Mapbox Standard best practice)
         map.setFog({});
-
-        console.log("🌍 Adding language control...");
         map.addControl(new MapboxLanguage({ defaultLanguage: "de" }));
-
-        console.log("🧭 Adding navigation control...");
         map.addControl(new mapboxgl.NavigationControl(), "top-left");
 
         // ✅ CRITICAL: Add style layers immediately after map loads
@@ -929,7 +899,6 @@ export default function MapBoxMap({ places }: MapBoxMapProps) {
           hasPerformedInitialFitRef.current = true;
         }
 
-        console.log("📍 Adding geolocate control...");
         const geolocateControl = new mapboxgl.GeolocateControl({
           positionOptions: { enableHighAccuracy: true },
           trackUserLocation: true,
@@ -938,7 +907,6 @@ export default function MapBoxMap({ places }: MapBoxMapProps) {
         });
 
         map.addControl(geolocateControl, "top-left");
-        console.log("✅ All controls added");
 
         geolocateControl.on("geolocate", (e) => {
           userLocationRequestedRef.current = true;
@@ -967,7 +935,6 @@ export default function MapBoxMap({ places }: MapBoxMapProps) {
       });
 
       mapRef.current = map;
-      console.log("✅ Map instance created and ref set");
     } catch (error) {
       console.error("Błąd inicjalizacji mapy:", error);
       setMapLoadingState("error");
@@ -1006,7 +973,6 @@ export default function MapBoxMap({ places }: MapBoxMapProps) {
       if (source) {
         const geojsonData = placesToGeoJSON(places);
         source.setData(geojsonData as GeoJSON.FeatureCollection<GeoJSON.Point>);
-        console.log("✅ Updated places data in map source");
       }
     } catch (error) {
       console.error("❌ Error updating places data:", error);
@@ -1033,26 +999,21 @@ export default function MapBoxMap({ places }: MapBoxMapProps) {
     initializeMap();
 
     return () => {
-      console.log("🧹 Cleaning up map...");
       // ✅ STYLE LAYERS: Cleanup is handled by map.remove() - no need to remove individual markers
       if (hoverPopupRef.current) {
-        console.log("  - Removing hover popup");
         hoverPopupRef.current.remove();
         hoverPopupRef.current = null;
       }
       if (userLocationMarkerRef.current) {
-        console.log("  - Removing user location marker");
         userLocationMarkerRef.current.remove();
         userLocationMarkerRef.current = null;
       }
       if (mapRef.current) {
-        console.log("  - Removing map instance");
         mapRef.current.remove();
         mapRef.current = null;
       }
       // ✅ REACT STRICT MODE FIX: Reset flag on unmount for re-initialization
       mapInitializingRef.current = false;
-      console.log("✅ Map cleanup complete, flag reset to false");
     };
     // ✅ REACT 19.2: initializeMap ma pustą deps array, więc jest stabilne.
     // Ten Effect uruchamia się tylko raz przy mount i sprząta przy unmount.
@@ -1072,23 +1033,15 @@ export default function MapBoxMap({ places }: MapBoxMapProps) {
 
   // ✅ REACT 19.2: Dodaj user location marker po każdej zmianie lokalizacji
   useEffect(() => {
-    console.log(
-      "📍 User location useEffect triggered, userLocation:",
-      userLocation
-    );
     if (!mapRef.current || !userLocation) {
-      console.log("⏭️ Skipping: map or userLocation missing");
       return;
     }
 
     const map = mapRef.current;
-    console.log("🗺️ Map exists, isStyleLoaded:", map.isStyleLoaded());
     if (map.isStyleLoaded()) {
       addUserLocationMarker(map, userLocation);
     } else {
-      console.log("⏳ Style not loaded yet, waiting for idle event...");
       map.once("idle", () => {
-        console.log("✅ Map idle event fired, adding marker now");
         addUserLocationMarker(map, userLocation);
       });
     }

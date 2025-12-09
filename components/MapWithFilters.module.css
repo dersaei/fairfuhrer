@@ -30,7 +30,7 @@
 .legendTitle {
   font-size: 1.3rem;
   font-weight: 700;
-  font-family: "Montserrat", sans-serif;
+  font-family: var(--font-montserrat);
   color: #333;
   text-align: center;
   margin: 0 0 4px 0;
@@ -39,7 +39,7 @@
 .legendSubtitle {
   font-size: 0.85rem;
   font-weight: 400;
-  font-family: "Lato", sans-serif;
+  font-family: var(--font-lato);
   color: #666;
   text-align: center;
   margin: 0 0 6px 0;

@@ -1,6 +1,5 @@
 // fairfuhrer/app/layout.tsx - Next.js 16.0.7 + React 19.2.1
 import type { Metadata, Viewport } from "next";
-import { Lato, Montserrat, Staatliches, Oxanium } from "next/font/google";
 import { GoogleAnalytics } from "@next/third-parties/google";
 import Script from "next/script";
 import "../styles/reset.css";
@@ -12,39 +11,12 @@ import { CookieProvider } from "../context/CookieContext";
 import CookieBanner from "../components/CookieBanner";
 import HotjarTag from "../components/HotjarTag";
 import GlobalLoadingIndicator from "../components/GlobalLoadingIndicator";
+import { lato, montserrat, oxanium, staatliches } from "./fonts";
 
 // Environment Variables
 const HOTJAR_SITE_ID = process.env.NEXT_PUBLIC_HOTJAR_SITE_ID
   ? parseInt(process.env.NEXT_PUBLIC_HOTJAR_SITE_ID)
   : null;
-
-const lato = Lato({
-  variable: "--font-lato",
-  subsets: ["latin"],
-  weight: ["400", "700"],
-  display: "swap",
-});
-
-const staatliches = Staatliches({
-  variable: "--font-staatliches",
-  subsets: ["latin"],
-  weight: "400",
-  display: "swap",
-});
-
-const oxanium = Oxanium({
-  variable: "--font-oxanium",
-  subsets: ["latin"],
-  weight: ["400", "700"],
-  display: "swap",
-});
-
-const montserrat = Montserrat({
-  variable: "--font-montserrat",
-  subsets: ["latin"],
-  weight: ["400", "500", "600", "700"],
-  display: "swap",
-});
 
 export const viewport: Viewport = {
   width: "device-width",
