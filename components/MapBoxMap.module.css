@@ -201,6 +201,70 @@
   font-weight: 400;
 }
 
+/* Cluster list popup */
+.clusterListPopup {
+  max-width: 280px;
+  padding: 12px;
+  font-family: "Lato", sans-serif;
+}
+
+.clusterListTitle {
+  margin: 0 0 10px 0;
+  font-size: 14px;
+  font-weight: 700;
+  color: #2c3e50;
+  font-family: "Oxanium", sans-serif;
+  text-transform: uppercase;
+}
+
+.clusterListItems {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.clusterListItem {
+  padding: 8px 0;
+  border-bottom: 1px solid #e0e0e0;
+  font-size: 13px;
+  color: #333;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.clusterListItem:last-child {
+  border-bottom: none;
+}
+
+.clusterListItem:hover {
+  background-color: rgba(51, 136, 255, 0.05);
+  padding-left: 4px;
+}
+
+.clusterListItem:hover .clusterItemName {
+  color: #3388ff;
+}
+
+.clusterItemName {
+  font-weight: 600;
+  display: block;
+  margin-bottom: 6px;
+  transition: color 0.2s ease;
+}
+
+/* Category badge inside cluster list - smaller margin */
+.clusterListItem .categoryBadge {
+  margin: 4px 0 0 0;
+  font-size: 11px;
+  padding: 3px 10px;
+}
+
+.clusterItemCategory {
+  font-size: 11px;
+  color: #666;
+  font-style: italic;
+}
+
 /* ✅ RESPONSYWNOŚĆ - Mobile */
 @media (max-width: 768px) {
   .mapContainerWrapper {

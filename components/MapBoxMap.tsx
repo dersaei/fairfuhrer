@@ -489,6 +489,8 @@ export default function MapBoxMap({ places }: MapBoxMapProps) {
           clusterMinPoints: 2, // Minimum points to form a cluster (default: 2)
           // ✅ Performance optimization
           tolerance: 0.375, // Douglas-Peucker simplification (default, optimal for points)
+          // ✅ Dynamic updates - enables updateData() for incremental updates
+          promoteId: "id", // Use 'id' property as feature ID for dynamic updates
           // ✅ Feature ID generation - backup if manual ID is missing
           // Note: We already set IDs manually in placesToGeoJSON, but this provides fallback
           generateId: false, // We provide IDs explicitly for feature-state
@@ -696,7 +698,7 @@ export default function MapBoxMap({ places }: MapBoxMapProps) {
           },
         });
 
-        // Click interactions
+        // Click interactions for clusters
         map.on("click", "clusters", (e) => {
           const features = map.queryRenderedFeatures(e.point, {
             layers: ["clusters"],
@@ -704,16 +706,89 @@ export default function MapBoxMap({ places }: MapBoxMapProps) {
           if (!features.length) return;
 
           const clusterId = features[0].properties?.cluster_id;
+          const pointCount = features[0].properties?.point_count || 0;
           const source = map.getSource(sourceId) as mapboxgl.GeoJSONSource;
+          const geometry = features[0].geometry as GeoJSON.Point;
 
-          source.getClusterExpansionZoom(clusterId, (err, zoom) => {
-            if (err || !features[0].geometry) return;
-            const geometry = features[0].geometry as GeoJSON.Point;
-            map.easeTo({
-              center: geometry.coordinates as [number, number],
-              zoom: zoom || map.getZoom() + 2,
+          // ✅ For small clusters (2-5 points), show list of places
+          if (pointCount >= 2 && pointCount <= 5) {
+            source.getClusterLeaves(
+              clusterId,
+              pointCount,
+              0,
+              (error, clusterFeatures) => {
+                if (error || !clusterFeatures) {
+                  console.error("Error getting cluster leaves:", error);
+                  return;
+                }
+
+                // Build list of places in cluster
+                const placesList = clusterFeatures
+                  .map((feature) => {
+                    const props = feature.properties;
+                    return `
+                    <li class="${styles.clusterListItem}" data-place-id="${props?.id || ""}">
+                      <span class="${styles.clusterItemName}">${props?.name || "Unbekannt"}</span>
+                      ${
+                        props?.categoryName
+                          ? `<div class="${styles.categoryBadge}" style="background-color: ${props.categoryColor || "#3388ff"};">${props.categoryName}</div>`
+                          : ""
+                      }
+                    </li>
+                  `;
+                  })
+                  .join("");
+
+                const popupHTML = DOMPurify.sanitize(`
+                  <div class="${styles.clusterListPopup}">
+                    <h4 class="${styles.clusterListTitle}">Orte in diesem Bereich (${pointCount})</h4>
+                    <ul class="${styles.clusterListItems}">
+                      ${placesList}
+                    </ul>
+                  </div>
+                `);
+
+                // Create popup with list
+                const clusterPopup = new mapboxgl.Popup({
+                  closeButton: true,
+                  closeOnClick: true,
+                  offset: 25,
+                  maxWidth: "300px",
+                })
+                  .setLngLat(geometry.coordinates as [number, number])
+                  .setHTML(popupHTML)
+                  .addTo(map);
+
+                // Add click handlers to list items after popup is added to DOM
+                setTimeout(() => {
+                  const listItems = document.querySelectorAll(
+                    `.${styles.clusterListItem}`
+                  );
+                  listItems.forEach((item) => {
+                    item.addEventListener("click", () => {
+                      const placeId = item.getAttribute("data-place-id");
+                      const place = places.find(
+                        (p) => p.id === Number(placeId)
+                      );
+                      if (place) {
+                        clusterPopup.remove(); // Close popup
+                        openPanel(place); // Open place panel
+                      }
+                    });
+                  });
+                }, 50);
+              }
+            );
+          } else {
+            // ✅ For larger clusters, zoom in (original behavior)
+            source.getClusterExpansionZoom(clusterId, (err, zoom) => {
+              if (err) return;
+              map.easeTo({
+                center: geometry.coordinates as [number, number],
+                zoom: zoom || map.getZoom() + 2,
+              });
             });
-          });
+          }
         });
 
         map.on("click", "unclustered-point", (e) => {
