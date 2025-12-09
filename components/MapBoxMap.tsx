@@ -394,21 +394,40 @@ export default function MapBoxMap({ places }: MapBoxMapProps) {
     console.log("  - mapExists:", !!mapRef.current);
     console.log("  - containerExists:", !!containerRef.current);
     console.log("  - isInitializing:", mapInitializingRef.current);
+    console.log(
+      "  - containerChildren:",
+      containerRef.current?.children.length ?? 0
+    );
 
-    // ✅ REACT STRICT MODE FIX: Check BOTH mapRef AND initializing flag
-    // This prevents race condition where second call happens before first sets mapRef
-    if (mapRef.current || !containerRef.current || mapInitializingRef.current) {
-      console.log("⏭️ Skipping initialization - already exists or in progress");
+    // ✅ REACT STRICT MODE FIX: Multiple guards against double initialization
+    // 1. Check if map instance exists
+    // 2. Check if container is missing
+    // 3. Check if initialization is in progress (flag)
+    // 4. Check if container already has map elements (DOM check - most reliable!)
+    if (mapRef.current) {
+      console.log("⏭️ Skipping - map already exists");
+      return;
+    }
+    if (!containerRef.current) {
+      console.log("⏭️ Skipping - container missing");
+      return;
+    }
+    if (mapInitializingRef.current) {
+      console.log("⏭️ Skipping - initialization in progress");
+      return;
+    }
+    // ✅ DOM CHECK: Most reliable guard - Mapbox adds canvas/elements to container
+    if (containerRef.current.children.length > 0) {
+      console.log(
+        "⏭️ Skipping - container already has map elements (DOM check)"
+      );
       return;
     }
 
     // ✅ Set flag IMMEDIATELY before any async operations
     mapInitializingRef.current = true;
     console.log("🗺️ Initializing new map instance...");
-    console.log(
-      "  - Flag set to true, isInitializing:",
-      mapInitializingRef.current
-    );
+    console.log("  - Flag set to true");
 
     if (!isValidMapboxToken()) {
       setMapLoadingState("error");
@@ -437,9 +456,6 @@ export default function MapBoxMap({ places }: MapBoxMapProps) {
 
       map.on("load", () => {
         console.log("✅ Map loaded successfully");
-        // ✅ CRITICAL: Reset flag AFTER map loads successfully
-        // This prevents race condition in React Strict Mode
-        mapInitializingRef.current = false;
         setMapLoadingState("success");
 
         // ✅ Set fog for atmospheric effect (Mapbox Standard best practice)
@@ -875,30 +891,21 @@ export default function MapBoxMap({ places }: MapBoxMapProps) {
     initializeMap();
 
     return () => {
-      console.log("🧹 Cleanup triggered");
-      console.log("  - isInitializing:", mapInitializingRef.current);
-
-      // ✅ CRITICAL FIX: React Strict Mode calls cleanup between double-mount
-      // If flag is TRUE, it means map is still initializing - DON'T remove it!
-      // This is React Strict Mode testing, not real unmount
-      if (mapInitializingRef.current) {
-        console.log(
-          "⏭️ Skipping cleanup - map still initializing (React Strict Mode)"
-        );
-        return;
-      }
-
-      // Real cleanup (only on actual unmount when flag is false)
       console.log("🧹 Cleaning up map...");
+      // ✅ STYLE LAYERS: Cleanup is handled by map.remove() - no need to remove individual markers
       if (userLocationMarkerRef.current) {
+        console.log("  - Removing user location marker");
         userLocationMarkerRef.current.remove();
         userLocationMarkerRef.current = null;
       }
       if (mapRef.current) {
+        console.log("  - Removing map instance");
         mapRef.current.remove();
         mapRef.current = null;
       }
-      console.log("✅ Map cleanup complete");
+      // ✅ REACT STRICT MODE FIX: Reset flag on unmount for re-initialization
+      mapInitializingRef.current = false;
+      console.log("✅ Map cleanup complete, flag reset to false");
     };
     // ✅ REACT 19.2: initializeMap ma pustą deps array, więc jest stabilne.
     // Ten Effect uruchamia się tylko raz przy mount i sprząta przy unmount.

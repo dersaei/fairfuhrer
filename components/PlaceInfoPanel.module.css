@@ -447,11 +447,9 @@
     left: 0;
     width: 100vw; /* ✅ FIXED: Explicit viewport width */
     max-width: none; /* ✅ FIXED: Remove max-width constraint on mobile */
-    height: 70dvh;
+    height: 100%;
     transform: translateY(100%);
     border-left: none;
-    border-top: 1px solid rgba(252, 108, 20, 0.1);
-    border-radius: 20px 20px 0 0;
     transition: transform 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94);
 
     /* ✅ FIXED: Apply safe area only on mobile and only to content */
@@ -471,10 +469,6 @@
 
   .panelBackdrop {
     background: rgba(0, 0, 0, 0.5);
-  }
-
-  .mainImage {
-    height: 200px;
   }
 
   .placeName {
@@ -502,13 +496,6 @@
 }
 
 @media (max-width: 480px) {
-  .infoPanel {
-    height: 100%;
-    border-radius: 16px 16px 0 0;
-    /* ✅ Ensure full width on very small screens */
-    width: 100vw;
-  }
-
   .placeName {
     font-size: 1.3rem;
   }
