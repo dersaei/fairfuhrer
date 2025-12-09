@@ -10,7 +10,6 @@ import {
   Activity,
 } from "react";
 import mapboxgl from "mapbox-gl";
-import MapboxLanguage from "@mapbox/mapbox-gl-language";
 import "mapbox-gl/dist/mapbox-gl.css";
 import DOMPurify from "dompurify";
 import styles from "./MapBoxMap.module.css";
@@ -441,7 +440,11 @@ export default function MapBoxMap({ places }: MapBoxMapProps) {
 
         // ✅ Set fog for atmospheric effect (Mapbox Standard best practice)
         map.setFog({});
-        map.addControl(new MapboxLanguage({ defaultLanguage: "de" }));
+
+        // ✅ Set language to German for Mapbox Standard Style
+        // For Standard Style, use setConfigProperty instead of MapboxLanguage plugin
+        map.setConfigProperty("basemap", "language", "de");
+
         map.addControl(new mapboxgl.NavigationControl(), "top-left");
 
         // ✅ CRITICAL: Add style layers immediately after map loads
