@@ -290,7 +290,9 @@ select {
   transform: translateZ(0);
 }
 
-/* ✅ ADDED: Force proper viewport calculations */
+/* ✅ FIXED: Proper viewport calculations WITHOUT blocking scroll
+   Previous version used position: fixed + overflow: hidden which
+   blocked scrolling on ALL mobile pages! Now we only set height. */
 @media screen and (max-width: 768px) {
   html {
     /* Force viewport recalculation on iPhone Safari */
@@ -298,10 +300,23 @@ select {
   }
 
   body {
-    /* Prevent bounce scrolling */
-    position: fixed;
+    /* Use min-height instead of fixed positioning */
+    min-height: -webkit-fill-available;
+    /* Allow normal scrolling - removed position: fixed and overflow: hidden */
+  }
+}
+
+/* ✅ ADDED: Only apply fixed positioning to map page wrapper
+   This prevents scroll ONLY where needed (map container) */
+.mapContainerWrapper {
+  /* Prevent scroll bounce only within map */
+  overscroll-behavior: contain;
+}
+
+@media screen and (max-width: 768px) {
+  /* Map page specific - prevent scroll only for map container */
+  .mapContainerWrapper {
+    position: relative;
     overflow: hidden;
-    width: 100%;
-    height: -webkit-fill-available;
   }
 }
