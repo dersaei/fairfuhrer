@@ -32,6 +32,7 @@ export default function MapBoxMap({ places }: MapBoxMapProps) {
   const userLocationRequestedRef = useRef(false);
   const hasPerformedInitialFitRef = useRef(false); // ✅ Track if initial fitBounds was done
   const hoveredFeatureIdRef = useRef<string | number | null>(null); // ✅ Track hovered feature for feature-state
+  const mapInitializingRef = useRef(false); // ✅ REACT STRICT MODE FIX: Guard against double initialization
 
   // Panel state
   const [selectedPlace, setSelectedPlace] = useState<Place | null>(null);
@@ -388,10 +389,26 @@ export default function MapBoxMap({ places }: MapBoxMapProps) {
   // ========================================
 
   const initializeMap = useCallback(() => {
-    if (mapRef.current || !containerRef.current) return;
+    console.log("🔍 initializeMap called, current state:", {
+      mapExists: !!mapRef.current,
+      containerExists: !!containerRef.current,
+      isInitializing: mapInitializingRef.current,
+    });
+
+    // ✅ REACT STRICT MODE FIX: Check BOTH mapRef AND initializing flag
+    // This prevents race condition where second call happens before first sets mapRef
+    if (mapRef.current || !containerRef.current || mapInitializingRef.current) {
+      console.log("⏭️ Skipping initialization - already exists or in progress");
+      return;
+    }
+
+    // ✅ Set flag IMMEDIATELY before any async operations
+    mapInitializingRef.current = true;
+    console.log("🗺️ Initializing new map instance...");
 
     if (!isValidMapboxToken()) {
       setMapLoadingState("error");
+      mapInitializingRef.current = false; // Reset on error
       return;
     }
 
@@ -415,13 +432,16 @@ export default function MapBoxMap({ places }: MapBoxMapProps) {
       });
 
       map.on("load", () => {
+        console.log("✅ Map loaded successfully");
         setMapLoadingState("success");
 
         // ✅ Set fog for atmospheric effect (Mapbox Standard best practice)
         map.setFog({});
 
+        console.log("🌍 Adding language control...");
         map.addControl(new MapboxLanguage({ defaultLanguage: "de" }));
 
+        console.log("🧭 Adding navigation control...");
         map.addControl(new mapboxgl.NavigationControl(), "top-left");
 
         // ✅ CRITICAL: Add style layers immediately after map loads
@@ -744,6 +764,7 @@ export default function MapBoxMap({ places }: MapBoxMapProps) {
           hasPerformedInitialFitRef.current = true;
         }
 
+        console.log("📍 Adding geolocate control...");
         const geolocateControl = new mapboxgl.GeolocateControl({
           positionOptions: { enableHighAccuracy: true },
           trackUserLocation: true,
@@ -752,6 +773,7 @@ export default function MapBoxMap({ places }: MapBoxMapProps) {
         });
 
         map.addControl(geolocateControl, "top-left");
+        console.log("✅ All controls added");
 
         geolocateControl.on("geolocate", (e) => {
           userLocationRequestedRef.current = true;
@@ -776,12 +798,15 @@ export default function MapBoxMap({ places }: MapBoxMapProps) {
       map.on("error", (e) => {
         console.error("Błąd mapy:", e);
         setMapLoadingState("error");
+        mapInitializingRef.current = false; // Reset on error
       });
 
       mapRef.current = map;
+      console.log("✅ Map instance created and ref set");
     } catch (error) {
       console.error("Błąd inicjalizacji mapy:", error);
       setMapLoadingState("error");
+      mapInitializingRef.current = false; // Reset on error
     }
     // ✅ REACT 19.2: Closure ma dostęp do początkowej wartości userLocation
     // oraz do stabilnych referencji addUserLocationMarker i animateToLocation.
@@ -851,6 +876,8 @@ export default function MapBoxMap({ places }: MapBoxMapProps) {
         mapRef.current.remove();
         mapRef.current = null;
       }
+      // ✅ REACT STRICT MODE FIX: Reset flag on unmount for re-initialization
+      mapInitializingRef.current = false;
     };
     // ✅ REACT 19.2: initializeMap ma pustą deps array, więc jest stabilne.
     // Ten Effect uruchamia się tylko raz przy mount i sprząta przy unmount.
@@ -880,13 +907,13 @@ export default function MapBoxMap({ places }: MapBoxMapProps) {
     }
 
     const map = mapRef.current;
-    console.log("🗺️ Map exists, loaded:", map.loaded());
-    if (map.loaded()) {
+    console.log("🗺️ Map exists, isStyleLoaded:", map.isStyleLoaded());
+    if (map.isStyleLoaded()) {
       addUserLocationMarker(map, userLocation);
     } else {
-      console.log("⏳ Map not loaded yet, waiting for load event...");
-      map.once("load", () => {
-        console.log("✅ Map load event fired, adding marker now");
+      console.log("⏳ Style not loaded yet, waiting for idle event...");
+      map.once("idle", () => {
+        console.log("✅ Map idle event fired, adding marker now");
         addUserLocationMarker(map, userLocation);
       });
     }
