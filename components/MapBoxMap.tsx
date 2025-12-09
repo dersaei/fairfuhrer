@@ -11,6 +11,7 @@ import {
 } from "react";
 import mapboxgl from "mapbox-gl";
 import MapboxLanguage from "@mapbox/mapbox-gl-language";
+import "mapbox-gl/dist/mapbox-gl.css";
 import DOMPurify from "dompurify";
 import styles from "./MapBoxMap.module.css";
 import MapSearch from "./MapSearch";
@@ -404,7 +405,10 @@ export default function MapBoxMap({ places }: MapBoxMapProps) {
     // ✅ Set flag IMMEDIATELY before any async operations
     mapInitializingRef.current = true;
     console.log("🗺️ Initializing new map instance...");
-    console.log("  - Flag set to true, isInitializing:", mapInitializingRef.current);
+    console.log(
+      "  - Flag set to true, isInitializing:",
+      mapInitializingRef.current
+    );
 
     if (!isValidMapboxToken()) {
       setMapLoadingState("error");
@@ -878,7 +882,9 @@ export default function MapBoxMap({ places }: MapBoxMapProps) {
       // If flag is TRUE, it means map is still initializing - DON'T remove it!
       // This is React Strict Mode testing, not real unmount
       if (mapInitializingRef.current) {
-        console.log("⏭️ Skipping cleanup - map still initializing (React Strict Mode)");
+        console.log(
+          "⏭️ Skipping cleanup - map still initializing (React Strict Mode)"
+        );
         return;
       }
 
