@@ -296,12 +296,4 @@ select {
     /* Force viewport recalculation on iPhone Safari */
     height: -webkit-fill-available;
   }
-
-  body {
-    /* Prevent bounce scrolling */
-    position: fixed;
-    overflow: hidden;
-    width: 100%;
-    height: -webkit-fill-available;
-  }
 }
