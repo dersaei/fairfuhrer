@@ -34,6 +34,7 @@ export default function MapBoxMap({ places }: MapBoxMapProps) {
   const hoveredFeatureIdRef = useRef<string | number | null>(null); // ✅ Track hovered feature for feature-state
   const mapInitializingRef = useRef(false); // ✅ REACT STRICT MODE FIX: Guard against double initialization
   const hoverPopupRef = useRef<mapboxgl.Popup | null>(null); // ✅ Track hover popup for cleanup
+  const mouseLeaveTimeoutRef = useRef<NodeJS.Timeout | null>(null); // ✅ Debounce mouseleave to prevent flickering
 
   // Panel state
   const [selectedPlace, setSelectedPlace] = useState<Place | null>(null);
@@ -777,7 +778,13 @@ export default function MapBoxMap({ places }: MapBoxMapProps) {
           const placeId = feature.properties?.id;
           const place = places.find((p) => p.id === placeId);
           if (place) {
-            // ✅ Set selected state for the clicked feature
+            // Remove hover popup immediately before opening panel
+            if (hoverPopupRef.current) {
+              hoverPopupRef.current.remove();
+              hoverPopupRef.current = null;
+            }
+
+            // Set selected state for the clicked feature
             if (feature.id !== undefined) {
               map.setFeatureState(
                 { source: sourceId, id: feature.id },
@@ -795,6 +802,12 @@ export default function MapBoxMap({ places }: MapBoxMapProps) {
 
           const feature = features[0];
           if (feature.id === undefined) return;
+
+          // Cancel any pending mouseleave timeout
+          if (mouseLeaveTimeoutRef.current) {
+            clearTimeout(mouseLeaveTimeoutRef.current);
+            mouseLeaveTimeoutRef.current = null;
+          }
 
           // Remove hover from previous feature
           if (hoveredFeatureIdRef.current !== null) {
@@ -866,20 +879,23 @@ export default function MapBoxMap({ places }: MapBoxMapProps) {
         });
 
         map.on("mouseleave", "unclustered-point", () => {
-          // Remove hover state
-          if (hoveredFeatureIdRef.current !== null) {
-            map.setFeatureState(
-              { source: sourceId, id: hoveredFeatureIdRef.current },
-              { hover: false }
-            );
-            hoveredFeatureIdRef.current = null;
-          }
+          // Debounce mouseleave to prevent flickering when moving cursor to click
+          mouseLeaveTimeoutRef.current = setTimeout(() => {
+            // Remove hover state
+            if (hoveredFeatureIdRef.current !== null) {
+              map.setFeatureState(
+                { source: sourceId, id: hoveredFeatureIdRef.current },
+                { hover: false }
+              );
+              hoveredFeatureIdRef.current = null;
+            }
 
-          // ✅ Remove hover popup
-          if (hoverPopupRef.current) {
-            hoverPopupRef.current.remove();
-            hoverPopupRef.current = null;
-          }
+            // Remove hover popup
+            if (hoverPopupRef.current) {
+              hoverPopupRef.current.remove();
+              hoverPopupRef.current = null;
+            }
+          }, 100); // 100ms delay prevents flickering during click motion
         });
 
         // Cursor changes
@@ -1005,6 +1021,11 @@ export default function MapBoxMap({ places }: MapBoxMapProps) {
     initializeMap();
 
     return () => {
+      // Clear any pending mouseleave timeout
+      if (mouseLeaveTimeoutRef.current) {
+        clearTimeout(mouseLeaveTimeoutRef.current);
+        mouseLeaveTimeoutRef.current = null;
+      }
       // ✅ STYLE LAYERS: Cleanup is handled by map.remove() - no need to remove individual markers
       if (hoverPopupRef.current) {
         hoverPopupRef.current.remove();

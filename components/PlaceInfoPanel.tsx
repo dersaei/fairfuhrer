@@ -52,13 +52,14 @@ export default function PlaceInfoPanel({
       // 2. Nie zamykaj gdy kliknięto w:
       // - Galerię pełnoekranową
       // - Panel
-      // - Elementy Mapbox
+      // - Elementy Mapbox (popup, controls, canvas layers)
       if (
         target.closest('[data-gallery-modal="true"]') ||
         (panelRef.current && panelRef.current.contains(target)) ||
         target.closest(".mapboxgl-marker") ||
         target.closest(".mapboxgl-ctrl") ||
-        target.closest(".mapboxgl-popup")
+        target.closest(".mapboxgl-popup") ||
+        target.closest(".mapboxgl-canvas-container")
       ) {
         return;
       }
