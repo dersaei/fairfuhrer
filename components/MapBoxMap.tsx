@@ -687,8 +687,8 @@ export default function MapBoxMap({ places }: MapBoxMapProps) {
           const source = map.getSource(sourceId) as mapboxgl.GeoJSONSource;
           const geometry = features[0].geometry as GeoJSON.Point;
 
-          // ✅ For small clusters (2-5 points), show list of places
-          if (pointCount >= 2 && pointCount <= 5) {
+          // ✅ For small clusters (2-6 points), show list of places
+          if (pointCount >= 2 && pointCount <= 6) {
             source.getClusterLeaves(
               clusterId,
               pointCount,
