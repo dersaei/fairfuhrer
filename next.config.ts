@@ -2,6 +2,10 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
+  // Enable instrumentation for global error tracking and analytics
+  experimental: {
+    instrumentationHook: true,
+  },
   images: {
     loader: "custom",
     loaderFile: "./supabase-image-loader.ts",

@@ -11,12 +11,17 @@ import { CookieProvider } from "../context/CookieContext";
 import CookieBanner from "../components/CookieBanner";
 import HotjarTag from "../components/HotjarTag";
 import GlobalLoadingIndicator from "../components/GlobalLoadingIndicator";
+import { WebVitals } from "./_components/web-vitals";
+import { AnalyticsTracker } from "./_components/analytics-tracker";
 import { lato, montserrat, oxanium, staatliches } from "./fonts";
 
 // Environment Variables
 const HOTJAR_SITE_ID = process.env.NEXT_PUBLIC_HOTJAR_SITE_ID
   ? parseInt(process.env.NEXT_PUBLIC_HOTJAR_SITE_ID)
   : null;
+
+const GA_MEASUREMENT_ID =
+  process.env.NEXT_PUBLIC_GOOGLE_TAG_ID || "G-RZ7CM3J072";
 
 export const viewport: Viewport = {
   width: "device-width",
@@ -66,6 +71,12 @@ export default function RootLayout({
         <GlobalLoadingIndicator />
 
         <CookieProvider>
+          {/* Web Vitals monitoring - sends Core Web Vitals to Google Analytics */}
+          <WebVitals />
+
+          {/* SPA pageview tracking for client-side navigation */}
+          <AnalyticsTracker />
+
           {/* Hotjar Tag */}
           {HOTJAR_SITE_ID && <HotjarTag siteId={HOTJAR_SITE_ID} />}
 
@@ -165,7 +176,7 @@ export default function RootLayout({
           }}
         />
       </body>
-      <GoogleAnalytics gaId="G-RZ7CM3J072" />
+      <GoogleAnalytics gaId={GA_MEASUREMENT_ID} />
     </html>
   );
 }
