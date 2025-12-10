@@ -9,7 +9,7 @@
     "lint": "eslint ."
   },
   "dependencies": {
-    "@directus/sdk": "^20.2.0",
+    "@directus/sdk": "^20.3.0",
     "@hotjar/browser": "^1.0.9",
     "@mux/mux-player-react": "^3.10.0",
     "@next/third-parties": "^16.0.8",
