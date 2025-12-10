@@ -422,28 +422,31 @@ export default function MapBoxMap({ places }: MapBoxMapProps) {
 
       const map = new mapboxgl.Map({
         container: containerRef.current,
-        // ✅ Mapbox Standard Style - includes all required root properties:
-        // - glyphs: Required for text-field (our cluster-count layer)
-        // - sprite: Required for icon-image, patterns
-        // - sources: Base map sources (streets, terrain, etc.)
-        // - layers: Base map layers
-        style: "mapbox://styles/mapbox/standard",
+        // ✅ Mapbox Streets v12 - Latest version (2025) that supports language changes
+        // Note: Standard Style does NOT support language configuration via API
+        style: "mapbox://styles/mapbox/streets-v12",
         center: userLocation || [9.0, 47.5],
         zoom: userLocation ? 12 : 6,
-        // ✅ Projection: Supported by Mapbox for terrain, sky, and fog
-        projection: "globe", // 3D globe projection for better visual experience
+        // ✅ Projection: Globe view for better visual experience
+        projection: "globe",
         // ✅ attributionControl removed - using default (required by Mapbox ToS)
       });
 
       map.on("load", () => {
         setMapLoadingState("success");
 
-        // ✅ Set fog for atmospheric effect (Mapbox Standard best practice)
+        // ✅ Set fog for atmospheric effect
         map.setFog({});
 
-        // ✅ Set language to German for Mapbox Standard Style
-        // For Standard Style, use setConfigProperty instead of MapboxLanguage plugin
-        map.setConfigProperty("basemap", "language", "de");
+        // ✅ Change map language to German
+        // Get all symbol layers (these contain labels)
+        const layers = map.getStyle().layers;
+        layers.forEach((layer) => {
+          if (layer.type === "symbol" && layer.layout && layer.layout["text-field"]) {
+            // Change text-field from {name} or {name_en} to {name_de}
+            map.setLayoutProperty(layer.id, "text-field", ["get", "name_de"]);
+          }
+        });
 
         map.addControl(new mapboxgl.NavigationControl(), "top-left");
 
