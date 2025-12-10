@@ -14,6 +14,7 @@ import GlobalLoadingIndicator from "../components/GlobalLoadingIndicator";
 import { WebVitals } from "./_components/web-vitals";
 import { AnalyticsTracker } from "./_components/analytics-tracker";
 import { lato, montserrat, oxanium, staatliches } from "./fonts";
+import { Suspense } from "react";
 
 // Environment Variables
 const HOTJAR_SITE_ID = process.env.NEXT_PUBLIC_HOTJAR_SITE_ID
@@ -75,7 +76,9 @@ export default function RootLayout({
           <WebVitals />
 
           {/* SPA pageview tracking for client-side navigation */}
-          <AnalyticsTracker />
+          <Suspense fallback={null}>
+            <AnalyticsTracker />
+          </Suspense>
 
           {/* Hotjar Tag */}
           {HOTJAR_SITE_ID && <HotjarTag siteId={HOTJAR_SITE_ID} />}

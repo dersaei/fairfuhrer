@@ -1,7 +1,6 @@
 // hooks/useMapbox.ts - Custom hook dla Mapbox logic
 import { useRef, useCallback, useState, useEffect } from "react";
 import mapboxgl from "mapbox-gl";
-import MapboxLanguage from "@mapbox/mapbox-gl-language";
 import { MapError } from "../utils/errorHandling";
 
 interface UseMapboxOptions {
@@ -35,17 +34,25 @@ export function useMapbox(
 
       const map = new mapboxgl.Map({
         container: containerRef.current,
-        style: "mapbox://styles/mapbox/standard", // ✅ Updated to Mapbox Standard Style for consistency
+        style: "mapbox://styles/mapbox/streets-v12", // ✅ Streets v12 supports language changes
         center: options.initialCenter || [9.0, 47.5],
         zoom: options.initialZoom || 6,
-        projection: "globe", // ✅ Consistent with MapBoxMap.tsx
+        projection: "globe",
         // ✅ attributionControl removed - using default (required by Mapbox ToS)
       });
 
       map.on("load", () => {
         setIsLoaded(true);
         setError(null);
-        map.addControl(new MapboxLanguage({ defaultLanguage: "de" }));
+
+        // ✅ Change map language to German
+        const layers = map.getStyle().layers;
+        layers.forEach((layer) => {
+          if (layer.type === "symbol" && layer.layout && layer.layout["text-field"]) {
+            map.setLayoutProperty(layer.id, "text-field", ["get", "name_de"]);
+          }
+        });
+
         options.onMapLoad?.(map);
       });
 

@@ -2,10 +2,8 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  // Enable instrumentation for global error tracking and analytics
-  experimental: {
-    instrumentationHook: true,
-  },
+  // Note: instrumentation.js is now available by default in Next.js 16
+  // No need for experimental.instrumentationHook anymore
   images: {
     loader: "custom",
     loaderFile: "./supabase-image-loader.ts",
