@@ -319,3 +319,15 @@ video {
   user-select: none;
   touch-action: manipulation;
 }
+
+/* Gallery modal - prevent body scroll when gallery is open */
+html.gallery-open {
+  overflow: hidden;
+}
+
+html.gallery-open body {
+  overflow: hidden;
+  position: fixed;
+  width: 100%;
+  height: 100%;
+}

@@ -1,7 +1,7 @@
 // components/MediaComponents.tsx
 "use client";
 
-import { useState, useRef } from "react";
+import { useState, useRef, useCallback } from "react";
 import Image from "next/image";
 import { getAudioUrl, getOptimizedImagePath } from "../lib/supabase";
 import styles from "./MediaComponents.module.css";
@@ -28,7 +28,7 @@ export function AudioPlayer({
   const [duration, setDuration] = useState(0);
   const audioRef = useRef<HTMLAudioElement>(null);
 
-  const togglePlay = () => {
+  const togglePlay = useCallback(() => {
     if (!audioRef.current) return;
 
     if (isPlaying) {
@@ -36,47 +36,47 @@ export function AudioPlayer({
     } else {
       audioRef.current.play();
     }
-  };
+  }, [isPlaying]);
 
-  const skipBackward = () => {
+  const skipBackward = useCallback(() => {
     if (!audioRef.current) return;
     const newTime = Math.max(0, audioRef.current.currentTime - 5);
     audioRef.current.currentTime = newTime;
     setCurrentTime(newTime);
-  };
+  }, []);
 
-  const skipForward = () => {
+  const skipForward = useCallback(() => {
     if (!audioRef.current) return;
     const newTime = Math.min(duration, audioRef.current.currentTime + 5);
     audioRef.current.currentTime = newTime;
     setCurrentTime(newTime);
-  };
+  }, [duration]);
 
-  const handleTimeUpdate = () => {
+  const handleTimeUpdate = useCallback(() => {
     if (audioRef.current) {
       setCurrentTime(audioRef.current.currentTime);
     }
-  };
+  }, []);
 
-  const handleLoadedMetadata = () => {
+  const handleLoadedMetadata = useCallback(() => {
     if (audioRef.current) {
       setDuration(audioRef.current.duration);
     }
-  };
+  }, []);
 
-  const handleSeek = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleSeek = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
     const newTime = parseFloat(e.target.value);
     if (audioRef.current) {
       audioRef.current.currentTime = newTime;
       setCurrentTime(newTime);
     }
-  };
+  }, []);
 
-  const formatTime = (time: number) => {
+  const formatTime = useCallback((time: number) => {
     const minutes = Math.floor(time / 60);
     const seconds = Math.floor(time % 60);
     return `${minutes}:${seconds.toString().padStart(2, "0")}`;
-  };
+  }, []);
 
   return (
     <div className={`${styles.audioPlayer} ${className}`}>
@@ -157,21 +157,35 @@ export function ImageGallery({
   return (
     <div className={`${styles.gallery} ${className}`}>
       {images.map((imageName, index) => (
-        <div key={index} className={styles.galleryItem}>
+        <div
+          key={`${placeId}-${imageName}`}
+          className={styles.galleryItem}
+          onClick={() => {
+            onImageClickAction(
+              getOptimizedImagePath(placeId, imageName, "gallery")
+            );
+          }}
+          role="button"
+          tabIndex={0}
+          onKeyDown={(e) => {
+            if (e.key === "Enter" || e.key === " ") {
+              e.preventDefault();
+              onImageClickAction(
+                getOptimizedImagePath(placeId, imageName, "gallery")
+              );
+            }
+          }}
+          aria-label={`Zdjęcie ${index + 1} z galerii`}
+        >
           <Image
-            src={getOptimizedImagePath(placeId, imageName, "gallery")} // ✅ ZOPTYMALIZOWANE
+            src={getOptimizedImagePath(placeId, imageName, "gallery")}
             alt={`Zdjęcie ${index + 1}`}
             className={styles.galleryImage}
             width={300}
             height={200}
             style={{ objectFit: "cover" }}
             sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 300px"
-            onClick={() => {
-              // ✅ POPRAWKA: Przekaż path zamiast pełnego URL
-              onImageClickAction(
-                getOptimizedImagePath(placeId, imageName, "gallery")
-              );
-            }}
+            loading="lazy"
             onError={(e) => {
               const target = e.target as HTMLImageElement;
               target.style.display = "none";
@@ -207,12 +221,15 @@ export function PlaceImage({
 
   if (imageError) return null;
 
+  // Validate alt text for accessibility
+  const validatedAlt = alt && alt.trim() !== "" ? alt : `Bild für Ort ${placeId}`;
+
   return (
     <div className={`${styles.imageContainer} ${className}`}>
       {!imageLoaded && <div className={styles.imagePlaceholder}>Laden...</div>}
       <Image
-        src={getOptimizedImagePath(placeId, filename, type)} // ✅ ZOPTYMALIZOWANE
-        alt={alt}
+        src={getOptimizedImagePath(placeId, filename, type)}
+        alt={validatedAlt}
         className={`${styles.placeImage} ${imageLoaded ? styles.loaded : ""}`}
         width={width}
         height={height}
@@ -220,7 +237,7 @@ export function PlaceImage({
         sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 400px"
         onLoad={() => setImageLoaded(true)}
         onError={() => setImageError(true)}
-        priority={type === "main"} // ✅ Priority dla głównych obrazków
+        priority={type === "main"}
       />
     </div>
   );
