@@ -73,28 +73,3 @@ export function isValidAmount(amountInCents: number): boolean {
     amountInCents <= paypalConfig.max_amount
   );
 }
-
-// Funkcja do tworzenia PayPal order request body
-export function createOrderRequestBody(amountInCents: number) {
-  return {
-    intent: "CAPTURE",
-    purchase_units: [
-      {
-        amount: {
-          currency_code: paypalConfig.currency,
-          value: formatAmount(amountInCents),
-        },
-        description: "Spende für FairFührer",
-      },
-    ],
-    application_context: {
-      brand_name: "FairFührer",
-      locale: "de-DE",
-      landing_page: "BILLING",
-      shipping_preference: "NO_SHIPPING",
-      user_action: "PAY_NOW",
-      return_url: paypalConfig.return_url,
-      cancel_url: paypalConfig.cancel_url,
-    },
-  };
-}
