@@ -1,4 +1,3 @@
-// lib/paypal.ts - Next.js 16.0.7 + React 19.2.1 compatible
 // ✅ Server-only protection - prevents accidental client-side imports
 import "server-only";
 
@@ -43,8 +42,7 @@ export const paypalConfig: PayPalConfig = {
     process.env.PAYPAL_RETURN_URL ||
     "http://localhost:3000/sparschwein/success",
   cancel_url:
-    process.env.PAYPAL_CANCEL_URL ||
-    "http://localhost:3000/sparschwein/cancel",
+    process.env.PAYPAL_CANCEL_URL || "http://localhost:3000/sparschwein/cancel",
 };
 
 // PayPal Script Options (dla React komponentów) - BEZ server SDK
@@ -72,29 +70,4 @@ export function isValidAmount(amountInCents: number): boolean {
     amountInCents >= paypalConfig.min_amount &&
     amountInCents <= paypalConfig.max_amount
   );
-}
-
-// Funkcja do tworzenia PayPal order request body
-export function createOrderRequestBody(amountInCents: number) {
-  return {
-    intent: "CAPTURE",
-    purchase_units: [
-      {
-        amount: {
-          currency_code: paypalConfig.currency,
-          value: formatAmount(amountInCents),
-        },
-        description: "Spende für FairFührer",
-      },
-    ],
-    application_context: {
-      brand_name: "FairFührer",
-      locale: "de-DE",
-      landing_page: "BILLING",
-      shipping_preference: "NO_SHIPPING",
-      user_action: "PAY_NOW",
-      return_url: paypalConfig.return_url,
-      cancel_url: paypalConfig.cancel_url,
-    },
-  };
 }

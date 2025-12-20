@@ -1,83 +1,88 @@
-// lib/paypalServer.ts - Next.js 16.0.7 + React 19.2.1
-// ✅ Server-only protection - this file uses PayPal SDK which is server-only
 import "server-only";
 
 import { paypalConfig } from "./paypal";
+import {
+  Client,
+  Environment,
+  LogLevel,
+  OrdersController,
+  CheckoutPaymentIntent,
+} from "@paypal/paypal-server-sdk";
 
-// Typy dla PayPal SDK
-interface PayPalSDK {
-  core: {
-    SandboxEnvironment: new (clientId: string, clientSecret: string) => unknown;
-    LiveEnvironment: new (clientId: string, clientSecret: string) => unknown;
-    PayPalHttpClient: new (environment: unknown) => {
-      execute: (request: unknown) => Promise<unknown>;
-    };
-  };
-  orders: {
-    OrdersCreateRequest: new () => {
-      prefer: (preference: string) => void;
-      requestBody: (body: unknown) => void;
-    };
-    OrdersCaptureRequest: new (orderId: string) => {
-      requestBody: (body: unknown) => void;
-    };
-    OrdersGetRequest: new (orderId: string) => unknown;
-  };
-}
+let _paypalClient: Client | null = null;
+let _ordersController: OrdersController | null = null;
 
-// Dynamiczny import PayPal SDK - TYLKO server-side
-let paypalSDK: PayPalSDK | null = null;
-
-async function getPayPalSDK(): Promise<PayPalSDK> {
-  if (!paypalSDK) {
-    // Dynamiczny import żeby nie ładować w browser
-    paypalSDK = (await import("@paypal/checkout-server-sdk")) as PayPalSDK;
-  }
-  return paypalSDK;
-}
-
-// PayPal Environment setup
-async function createEnvironment() {
-  const sdk = await getPayPalSDK();
-  const { core } = sdk;
-
-  const clientId = paypalConfig.client_id;
-  const clientSecret = paypalConfig.client_secret;
-
-  if (paypalConfig.mode === "sandbox") {
-    return new core.SandboxEnvironment(clientId, clientSecret);
-  } else {
-    return new core.LiveEnvironment(clientId, clientSecret);
-  }
-}
-
-// PayPal Client
-let _paypalClient: { execute: (request: unknown) => Promise<unknown> } | null =
-  null;
-
-export async function getPayPalClient(): Promise<{
-  execute: (request: unknown) => Promise<unknown>;
-}> {
+function getPayPalClient(): Client {
   if (!_paypalClient) {
-    const sdk = await getPayPalSDK();
-    const environment = await createEnvironment();
-    _paypalClient = new sdk.core.PayPalHttpClient(environment);
+    _paypalClient = new Client({
+      clientCredentialsAuthCredentials: {
+        oAuthClientId: paypalConfig.client_id,
+        oAuthClientSecret: paypalConfig.client_secret,
+      },
+      environment:
+        paypalConfig.mode === "sandbox"
+          ? Environment.Sandbox
+          : Environment.Production,
+      logging: {
+        logLevel: LogLevel.Info,
+        logRequest: { logBody: true },
+        logResponse: { logHeaders: true },
+      },
+    });
   }
   return _paypalClient;
 }
 
-// Export request classes
-export async function getOrdersCreateRequest() {
-  const sdk = await getPayPalSDK();
-  return sdk.orders.OrdersCreateRequest;
+function getOrdersController(): OrdersController {
+  if (!_ordersController) {
+    const client = getPayPalClient();
+    _ordersController = new OrdersController(client);
+  }
+  return _ordersController;
 }
 
-export async function getOrdersCaptureRequest() {
-  const sdk = await getPayPalSDK();
-  return sdk.orders.OrdersCaptureRequest;
+export async function createPayPalOrder(
+  amountInCents: number,
+  currency = "EUR"
+) {
+  const orders = getOrdersController();
+  const amountValue = (amountInCents / 100).toFixed(2);
+
+  const response = await orders.createOrder({
+    body: {
+      intent: CheckoutPaymentIntent.Capture,
+      purchaseUnits: [
+        {
+          amount: {
+            currencyCode: currency,
+            value: amountValue,
+          },
+        },
+      ],
+    },
+    prefer: "return=representation",
+  });
+
+  return response;
 }
 
-export async function getOrdersGetRequest() {
-  const sdk = await getPayPalSDK();
-  return sdk.orders.OrdersGetRequest;
+export async function capturePayPalOrder(orderId: string) {
+  const orders = getOrdersController();
+
+  const response = await orders.captureOrder({
+    id: orderId,
+    prefer: "return=representation",
+  });
+
+  return response;
+}
+
+export async function getPayPalOrder(orderId: string) {
+  const orders = getOrdersController();
+
+  const response = await orders.getOrder({
+    id: orderId,
+  });
+
+  return response;
 }

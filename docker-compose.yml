@@ -1,6 +1,6 @@
 services:
   directus:
-    image: directus/directus:11.13.4
+    image: directus/directus:11.14.0
     environment:
       DATABASE_URL: ${DATABASE_URL}
       ADMIN_EMAIL: ${DIRECTUS_ADMIN_EMAIL}

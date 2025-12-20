@@ -1,9 +1,9 @@
-// app/api/paypal/capture-payment/route.ts - Next.js 16.0.7 + React 19.2.1
+// app/api/paypal/capture-payment/route.ts
 // ✅ Server-only protection
 import "server-only";
 
 import { NextRequest, NextResponse } from "next/server";
-import { getPayPalClient, getOrdersCaptureRequest } from "@/lib/paypalServer";
+import { capturePayPalOrder } from "@/lib/paypalServer";
 import {
   getPayPalDonationByOrderId,
   updatePayPalDonationStatus,
@@ -39,62 +39,28 @@ export async function POST(request: NextRequest) {
       });
     }
 
-    // Utwórz PayPal capture request
-    const OrdersCaptureRequest = await getOrdersCaptureRequest();
-    const captureRequest = new OrdersCaptureRequest(body.order_id);
-    captureRequest.requestBody({});
-
-    // Wykonaj capture w PayPal
-    const paypalClient = await getPayPalClient();
-    const capture = (await paypalClient.execute(captureRequest)) as unknown;
-
-    // Type guard dla PayPal response
-    if (!capture || typeof capture !== "object") {
-      throw new Error("Invalid PayPal capture response");
-    }
-
-    const captureResponse = capture as {
-      result: Record<string, unknown>;
-      statusCode: number;
-    };
-
-    if (!captureResponse.result) {
-      throw new Error("PayPal capture failed");
-    }
+    // Wykonaj capture w PayPal używając nowego SDK
+    const capture = await capturePayPalOrder(body.order_id);
 
     // Pobierz dane z capture response
-    const captureResult = captureResponse.result;
-    const purchaseUnits = captureResult.purchase_units as
-      | Array<Record<string, unknown>>
-      | undefined;
+    const captureResult = capture.result;
+    const purchaseUnits = captureResult.purchaseUnits;
     const purchaseUnit = purchaseUnits?.[0];
-    const payments = purchaseUnit?.payments as
-      | Record<string, unknown>
-      | undefined;
-    const captures = payments?.captures as
-      | Array<Record<string, unknown>>
-      | undefined;
+    const payments = purchaseUnit?.payments;
+    const captures = payments?.captures;
     const captureDetails = captures?.[0];
 
-    if (!captureDetails || typeof captureDetails.id !== "string") {
+    if (!captureDetails || !captureDetails.id) {
       throw new Error("No capture details found");
     }
 
     // Bezpieczne parsowanie kwot
-    const captureId = captureDetails.id as string;
-    const captureStatus = captureDetails.status as string;
-    const captureAmount = captureDetails.amount as
-      | { currency_code: string; value: string }
-      | undefined;
-    const sellerBreakdown = captureDetails.seller_receivable_breakdown as
-      | Record<string, unknown>
-      | undefined;
-    const paypalFee = sellerBreakdown?.paypal_fee as
-      | { value: string }
-      | undefined;
-    const netAmount = sellerBreakdown?.net_amount as
-      | { value: string }
-      | undefined;
+    const captureId = captureDetails.id;
+    const captureStatus = captureDetails.status;
+    const captureAmount = captureDetails.amount;
+    const sellerBreakdown = captureDetails.sellerReceivableBreakdown;
+    const paypalFee = sellerBreakdown?.paypalFee;
+    const netAmount = sellerBreakdown?.netAmount;
 
     // Przygotuj dane do aktualizacji
     const updateData = {
@@ -130,7 +96,7 @@ export async function POST(request: NextRequest) {
       amount: captureAmount
         ? {
             value: captureAmount.value,
-            currency_code: captureAmount.currency_code,
+            currency_code: captureAmount.currencyCode,
           }
         : undefined,
       fees: paypalFee,

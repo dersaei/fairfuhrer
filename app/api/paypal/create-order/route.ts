@@ -1,10 +1,10 @@
-// app/api/paypal/create-order/route.ts - Next.js 16.0.7 + React 19.2.1
+// app/api/paypal/create-order/route.ts
 // ✅ Server-only protection (API Routes are server-only by default, but explicit import for consistency)
 import "server-only";
 
 import { NextRequest, NextResponse } from "next/server";
-import { createOrderRequestBody, paypalConfig } from "@/lib/paypal";
-import { getPayPalClient, getOrdersCreateRequest } from "@/lib/paypalServer";
+import { paypalConfig } from "@/lib/paypal";
+import { createPayPalOrder } from "@/lib/paypalServer";
 import { createPayPalDonation } from "@/lib/directus";
 import {
   isValidPayPalAmount, // Sprawdza centy
@@ -108,38 +108,20 @@ export async function POST(request: NextRequest) {
     // ✅ POPRAWKA: Użyj amount bezpośrednio (już w centach)
     const amountInCents = body.amount;
 
-    // Utwórz PayPal request
-    const OrdersCreateRequest = await getOrdersCreateRequest();
-    const paypalRequest = new OrdersCreateRequest();
-    paypalRequest.prefer("return=representation");
-    paypalRequest.requestBody(createOrderRequestBody(amountInCents));
+    // Wykonaj request do PayPal używając nowego SDK
+    const order = await createPayPalOrder(
+      amountInCents,
+      body.currency || paypalConfig.currency
+    );
 
-    // Wykonaj request do PayPal
-    const paypalClient = await getPayPalClient();
-    const order = (await paypalClient.execute(paypalRequest)) as unknown;
+    // Pobierz dane z response
+    const orderId = order.result.id;
+    const orderStatus = order.result.status;
+    const orderLinks = order.result.links;
 
-    // Type guard dla PayPal response
-    if (!order || typeof order !== "object") {
-      throw new Error("Invalid PayPal response");
+    if (!orderId) {
+      throw new Error("PayPal order ID is missing from response");
     }
-
-    const orderResponse = order as {
-      result: Record<string, unknown>;
-      statusCode: number;
-    };
-
-    if (
-      !orderResponse.result?.id ||
-      typeof orderResponse.result.id !== "string"
-    ) {
-      throw new Error("PayPal order creation failed - missing order ID");
-    }
-
-    const orderId = orderResponse.result.id as string;
-    const orderStatus = orderResponse.result.status as string;
-    const orderLinks = orderResponse.result.links as
-      | Array<{ href: string; rel: string; method: string }>
-      | undefined;
 
     // Utwórz donację w Directus (z opcjonalnymi donor data jeśli są)
     const donationData: Omit<PayPalDonation, "id"> = {
@@ -163,7 +145,9 @@ export async function POST(request: NextRequest) {
 
     // Znajdź approval URL
     const approvalUrl =
-      orderLinks?.find((link) => link.rel === "approve")?.href || "";
+      orderLinks?.find(
+        (link: { rel: string; href: string }) => link.rel === "approve"
+      )?.href || "";
 
     // Log success
     console.log("PayPal order created successfully:", {
