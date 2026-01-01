@@ -526,15 +526,26 @@ export default function MapBoxMap({ places }: MapBoxMapProps) {
         markersRef.current.push(marker);
       });
 
-      if (
-        places.length > 0 &&
-        !isPanelOpen &&
-        !userLocationRequestedRef.current
-      ) {
+      // ✅ Dopasuj widok mapy aby pokazać wszystkie markery
+      if (places.length > 0 && !isPanelOpen) {
         const bounds = new mapboxgl.LngLatBounds();
-        places.forEach((p) => bounds.extend([p.Lange, p.Breite]));
+        places.forEach((p) => {
+          if (p.Breite && p.Lange) {
+            bounds.extend([p.Lange, p.Breite]);
+          }
+        });
         if (userLocation) bounds.extend(userLocation);
-        map.fitBounds(bounds, { padding: 50 });
+
+        // ✅ Responsive padding - więcej na desktop, mniej na mobile
+        const padding = window.innerWidth > 768
+          ? { top: 80, bottom: 80, left: 80, right: 80 }
+          : { top: 50, bottom: 50, left: 20, right: 20 };
+
+        map.fitBounds(bounds, {
+          padding,
+          duration: 1000, // Płynna animacja 1s
+          maxZoom: 12 // Nie zbliżaj zbyt mocno
+        });
       }
     } catch (error) {
       console.error("Błąd aktualizacji markerów:", error);
