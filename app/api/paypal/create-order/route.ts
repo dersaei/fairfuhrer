@@ -11,12 +11,6 @@ import {
 } from "@/utils/paypalTypeGuards";
 import type { PayPalDonation } from "@/types";
 
-// ✅ TYMCZASOWO: Import diagnostyki
-import {
-  logRenderEnvironment,
-  validateRenderConfig,
-} from "@/utils/renderDiagnostics";
-
 // ✅ POPRAWKA: Obsługuj zarówno stare jak i nowe requesty (backward compatibility)
 interface PayPalCreateOrderRequest {
   amount: number; // W centach!
@@ -69,19 +63,6 @@ function validateCreateOrderRequest(body: PayPalCreateOrderRequest): {
 
 export async function POST(request: NextRequest) {
   try {
-    // ✅ TYMCZASOWO: Uruchom diagnostykę przy pierwszym API call
-    console.log("🔍 === RENDER DIAGNOSTICS START ===");
-    logRenderEnvironment();
-
-    const validation = validateRenderConfig();
-    if (!validation.isValid) {
-      console.error("❌ Render configuration errors:", validation.errors);
-      // Nie blokuj request, ale zaloguj błędy dla debugowania
-    } else {
-      console.log("✅ Render configuration validation passed!");
-    }
-    console.log("🔍 === RENDER DIAGNOSTICS END ===");
-
     // Parse request body
     const body: PayPalCreateOrderRequest = await request.json();
 
@@ -166,11 +147,6 @@ export async function POST(request: NextRequest) {
     });
   } catch (error) {
     console.error("PayPal create order error:", error);
-
-    // ✅ TYMCZASOWO: Log environment gdy jest błąd
-    console.log("🔍 === ENVIRONMENT CHECK DUE TO ERROR ===");
-    logRenderEnvironment();
-    console.log("🔍 === END ERROR DIAGNOSTICS ===");
 
     return NextResponse.json(
       {

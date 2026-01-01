@@ -1,7 +1,7 @@
 // fairfuhrer/app/components/HotjarTag.tsx
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import Hotjar from "@hotjar/browser";
 import { useCookies } from "../context/CookieContext";
 
@@ -10,69 +10,59 @@ interface HotjarTagProps {
   hotjarVersion?: number;
 }
 
+/**
+ * Hotjar integration component with proper initialization handling
+ * Prevents duplicate initialization and manages consent-based loading
+ */
 export default function HotjarTag({
   siteId,
   hotjarVersion = 6,
 }: HotjarTagProps) {
   const { preferences, hasConsented } = useCookies();
+  const isInitializedRef = useRef(false);
 
   useEffect(() => {
-    // Sprawdź czy siteId jest prawidłowe
+    // Validate site ID
     if (!siteId || isNaN(siteId)) {
       console.warn("Hotjar: Invalid site ID provided");
       return;
     }
 
-    // Uruchom Hotjar tylko jeśli użytkownik wyraził zgodę na cookies analityczne
+    // Initialize Hotjar if user has consented to analytics
     if (hasConsented && preferences.analytics) {
-      try {
-        Hotjar.init(siteId, hotjarVersion);
-        console.log("Hotjar initialized successfully");
-      } catch (error) {
-        console.error("Failed to initialize Hotjar:", error);
+      // Only initialize once
+      if (!isInitializedRef.current) {
+        try {
+          Hotjar.init(siteId, hotjarVersion);
+          isInitializedRef.current = true;
+          console.log("✅ Hotjar initialized successfully");
+        } catch (error) {
+          console.error("❌ Failed to initialize Hotjar:", error);
+        }
+      }
+    } else if (hasConsented && !preferences.analytics) {
+      // User has declined analytics - clear Hotjar cookies
+      if (isInitializedRef.current || typeof window !== "undefined") {
+        try {
+          // Clear Hotjar cookies
+          const hotjarCookies = document.cookie
+            .split(";")
+            .filter((cookie) => cookie.trim().startsWith("_hj"));
+
+          hotjarCookies.forEach((cookie) => {
+            const cookieName = cookie.split("=")[0].trim();
+            document.cookie = `${cookieName}=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;`;
+          });
+
+          isInitializedRef.current = false;
+          console.log("🧹 Hotjar disabled and cookies cleared");
+        } catch (error) {
+          console.error("❌ Failed to clear Hotjar data:", error);
+        }
       }
     }
   }, [siteId, hotjarVersion, hasConsented, preferences.analytics]);
 
-  // Obsługuj zmiany preferencji cookies w czasie rzeczywistym
-  useEffect(() => {
-    // Sprawdź czy siteId jest prawidłowe
-    if (!siteId || isNaN(siteId)) {
-      return;
-    }
-
-    if (hasConsented) {
-      if (preferences.analytics) {
-        // Jeśli analityczne cookies zostały włączone
-        try {
-          Hotjar.init(siteId, hotjarVersion);
-          console.log("Hotjar enabled via consent update");
-        } catch (error) {
-          console.error("Failed to enable Hotjar:", error);
-        }
-      } else {
-        // Jeśli analityczne cookies zostały wyłączone
-        // Hotjar nie ma built-in metody do wyłączania, ale możemy wyczyścić dane
-        try {
-          // Wyczyść lokalne dane Hotjar
-          if (typeof window !== "undefined") {
-            const hotjarCookies = document.cookie
-              .split(";")
-              .filter((cookie) => cookie.trim().startsWith("_hj"));
-
-            hotjarCookies.forEach((cookie) => {
-              const cookieName = cookie.split("=")[0].trim();
-              document.cookie = `${cookieName}=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;`;
-            });
-          }
-          console.log("Hotjar disabled and cookies cleared");
-        } catch (error) {
-          console.error("Failed to clear Hotjar data:", error);
-        }
-      }
-    }
-  }, [preferences.analytics, hasConsented, siteId, hotjarVersion]);
-
-  // Komponent nie renderuje nic - tylko zarządza skryptem
+  // This component doesn't render anything - it only manages the Hotjar script
   return null;
 }

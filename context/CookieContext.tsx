@@ -9,6 +9,7 @@ import React, {
   useMemo,
   ReactNode,
 } from "react";
+import { saveCookiePreferences } from "@/app/actions/cookies";
 
 export interface CookiePreferences {
   necessary: boolean;
@@ -38,6 +39,22 @@ const CookieContext = createContext<CookieContextType | undefined>(undefined);
 const STORAGE_KEY = "cookie-preferences";
 const CONSENT_KEY = "cookie-consent-given";
 
+/**
+ * Type guard to validate CookiePreferences object
+ */
+function isValidCookiePreferences(obj: unknown): obj is CookiePreferences {
+  return (
+    typeof obj === "object" &&
+    obj !== null &&
+    "necessary" in obj &&
+    "functional" in obj &&
+    "analytics" in obj &&
+    typeof (obj as CookiePreferences).necessary === "boolean" &&
+    typeof (obj as CookiePreferences).functional === "boolean" &&
+    typeof (obj as CookiePreferences).analytics === "boolean"
+  );
+}
+
 export function CookieProvider({ children }: { children: ReactNode }) {
   const [preferences, setPreferences] =
     useState<CookiePreferences>(defaultPreferences);
@@ -45,21 +62,101 @@ export function CookieProvider({ children }: { children: ReactNode }) {
   const [showBanner, setShowBanner] = useState(false);
 
   /* eslint-disable react-hooks/set-state-in-effect */
-  // Loading consent state from localStorage on mount
+  // Loading consent state from localStorage/cookies on mount with validation
   useEffect(() => {
-    // Check if user has already given consent
-    const consentGiven = localStorage.getItem(CONSENT_KEY);
-    const savedPreferences = localStorage.getItem(STORAGE_KEY);
+    try {
+      // First try to read from cookies (priority)
+      const cookieValue = document.cookie
+        .split("; ")
+        .find((row) => row.startsWith("cookie-preferences="))
+        ?.split("=")[1];
 
-    if (consentGiven && savedPreferences) {
-      setPreferences(JSON.parse(savedPreferences));
-      setHasConsented(true);
-      setShowBanner(false);
-    } else {
+      let parsedPreferences: CookiePreferences | null = null;
+
+      if (cookieValue) {
+        try {
+          const decoded = decodeURIComponent(cookieValue);
+          const parsed = JSON.parse(decoded);
+          if (isValidCookiePreferences(parsed)) {
+            parsedPreferences = parsed;
+          }
+        } catch (error) {
+          console.error("Failed to parse cookie preferences:", error);
+        }
+      }
+
+      // Fallback to localStorage if cookies don't have valid data
+      if (!parsedPreferences) {
+        const savedPreferences = localStorage.getItem(STORAGE_KEY);
+        if (savedPreferences) {
+          try {
+            const parsed = JSON.parse(savedPreferences);
+            if (isValidCookiePreferences(parsed)) {
+              parsedPreferences = parsed;
+            } else {
+              console.warn("Invalid preferences format in localStorage");
+              localStorage.removeItem(STORAGE_KEY);
+            }
+          } catch (error) {
+            console.error("Failed to parse localStorage preferences:", error);
+            localStorage.removeItem(STORAGE_KEY);
+          }
+        }
+      }
+
+      // Check if user has given consent
+      const consentGiven =
+        document.cookie.includes("cookie-consent-given=true") ||
+        localStorage.getItem(CONSENT_KEY) === "true";
+
+      if (consentGiven && parsedPreferences) {
+        setPreferences(parsedPreferences);
+        setHasConsented(true);
+        setShowBanner(false);
+      } else {
+        setShowBanner(true);
+      }
+    } catch (error) {
+      console.error("Error loading cookie preferences:", error);
       setShowBanner(true);
     }
   }, []);
   /* eslint-enable react-hooks/set-state-in-effect */
+
+  // ✅ Storage event listener - sync preferences across browser tabs
+  useEffect(() => {
+    const handleStorageChange = (e: StorageEvent) => {
+      // Only handle changes to our specific keys
+      if (e.key === STORAGE_KEY && e.newValue) {
+        try {
+          const parsed = JSON.parse(e.newValue);
+          if (isValidCookiePreferences(parsed)) {
+            setPreferences(parsed);
+            console.log("🔄 Cookie preferences synced from another tab");
+          }
+        } catch (error) {
+          console.error(
+            "Failed to parse preferences from storage event:",
+            error
+          );
+        }
+      } else if (e.key === CONSENT_KEY) {
+        const newConsentValue = e.newValue === "true";
+        setHasConsented(newConsentValue);
+        console.log(
+          `🔄 Consent status synced from another tab: ${newConsentValue}`
+        );
+      }
+    };
+
+    // Listen for storage events from other tabs
+    window.addEventListener("storage", handleStorageChange);
+
+    // Cleanup listener on unmount
+    return () => {
+      window.removeEventListener("storage", handleStorageChange);
+    };
+  }, []);
 
   // ✅ Funkcja do analytics tracking - zwykła funkcja, nie hook
   const trackPreferencesChange = (prefs: CookiePreferences) => {
@@ -85,43 +182,72 @@ export function CookieProvider({ children }: { children: ReactNode }) {
       window.dataLayer.push(eventData);
     }
 
-    // Wymuś aktualizację consent dla Next.js GA
-    setTimeout(() => {
-      if (
-        typeof window !== "undefined" &&
-        typeof window.gtag === "function"
-      ) {
-        const consentData = {
-          analytics_storage: prefs.analytics ? "granted" : "denied",
-          ad_storage: prefs.analytics ? "granted" : "denied",
-          functionality_storage: prefs.functional ? "granted" : "denied",
-          personalization_storage: prefs.functional ? "granted" : "denied",
-        };
+    // ✅ Adaptive gtag availability check - polls with exponential backoff
+    const sendConsentToGtag = (prefs: CookiePreferences) => {
+      const consentData = {
+        analytics_storage: prefs.analytics ? "granted" : "denied",
+        ad_storage: prefs.analytics ? "granted" : "denied",
+        functionality_storage: prefs.functional ? "granted" : "denied",
+        personalization_storage: prefs.functional ? "granted" : "denied",
+      };
 
-        window.gtag("consent", "update", consentData);
-        console.log("🔄 Manual consent update for Next.js GA:", consentData);
+      window.gtag("consent", "update", consentData);
+      console.log("🔄 Manual consent update for Next.js GA:", consentData);
 
-        // Wyślij test event jeśli analytics są włączone
-        if (prefs.analytics) {
-          window.gtag("event", "manual_consent_granted", {
-            event_category: "consent",
-            event_label: "nextjs_manual_update",
-            value: 1,
-            timestamp: new Date().toISOString(),
-          });
-          console.log("✅ Manual test event sent after consent update");
-        }
-      } else {
-        console.warn("⚠️ window.gtag not available after 1 second delay");
+      // Wyślij test event jeśli analytics są włączone
+      if (prefs.analytics) {
+        window.gtag("event", "manual_consent_granted", {
+          event_category: "consent",
+          event_label: "nextjs_manual_update",
+          value: 1,
+          timestamp: new Date().toISOString(),
+        });
+        console.log("✅ Manual test event sent after consent update");
       }
-    }, 1000);
+    };
+
+    // Adaptive polling: check multiple times with increasing delays
+    const checkGtagAvailability = (
+      attempt = 0,
+      maxAttempts = 5,
+      delay = 100
+    ) => {
+      if (typeof window !== "undefined" && typeof window.gtag === "function") {
+        // gtag is available - send consent immediately
+        sendConsentToGtag(prefs);
+      } else if (attempt < maxAttempts) {
+        // gtag not yet available - retry with exponential backoff
+        setTimeout(() => {
+          checkGtagAvailability(attempt + 1, maxAttempts, delay * 2);
+        }, delay);
+      } else {
+        // Max attempts reached
+        console.warn(
+          "⚠️ window.gtag not available after multiple checks. GA may not be loaded."
+        );
+      }
+    };
+
+    // Start checking for gtag availability
+    checkGtagAvailability();
   };
 
   // ✅ REACT 19.2: useCallback dla stabilnej referencji funkcji
   const savePreferences = useCallback(
-    (newPreferences: CookiePreferences) => {
+    async (newPreferences: CookiePreferences) => {
+      // Save to both localStorage (for immediate access) and server-side cookies (for security)
       localStorage.setItem(STORAGE_KEY, JSON.stringify(newPreferences));
       localStorage.setItem(CONSENT_KEY, "true");
+
+      // Save to server-side cookies via Server Action
+      try {
+        await saveCookiePreferences(newPreferences);
+        console.log("✅ Preferences saved to server-side cookies");
+      } catch (error) {
+        console.error("Failed to save preferences to server:", error);
+        // Continue even if server-side save fails - localStorage is still available
+      }
+
       setPreferences(newPreferences);
       setHasConsented(true);
 

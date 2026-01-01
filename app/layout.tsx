@@ -1,6 +1,4 @@
-// fairfuhrer/app/layout.tsx - Next.js 16.0.7 + React 19.2.1
 import type { Metadata, Viewport } from "next";
-import { Lato, Montserrat, Staatliches, Oxanium } from "next/font/google";
 import { GoogleAnalytics } from "@next/third-parties/google";
 import Script from "next/script";
 import "../styles/reset.css";
@@ -12,39 +10,18 @@ import { CookieProvider } from "../context/CookieContext";
 import CookieBanner from "../components/CookieBanner";
 import HotjarTag from "../components/HotjarTag";
 import GlobalLoadingIndicator from "../components/GlobalLoadingIndicator";
+import { WebVitals } from "./_components/web-vitals";
+import { AnalyticsTracker } from "./_components/analytics-tracker";
+import { lato, montserrat, oxanium, staatliches } from "./fonts";
+import { Suspense } from "react";
 
 // Environment Variables
 const HOTJAR_SITE_ID = process.env.NEXT_PUBLIC_HOTJAR_SITE_ID
   ? parseInt(process.env.NEXT_PUBLIC_HOTJAR_SITE_ID)
   : null;
 
-const lato = Lato({
-  variable: "--font-lato",
-  subsets: ["latin"],
-  weight: ["400", "700"],
-  display: "swap",
-});
-
-const staatliches = Staatliches({
-  variable: "--font-staatliches",
-  subsets: ["latin"],
-  weight: "400",
-  display: "swap",
-});
-
-const oxanium = Oxanium({
-  variable: "--font-oxanium",
-  subsets: ["latin"],
-  weight: ["400", "700"],
-  display: "swap",
-});
-
-const montserrat = Montserrat({
-  variable: "--font-montserrat",
-  subsets: ["latin"],
-  weight: ["400", "500", "600", "700"],
-  display: "swap",
-});
+const GA_MEASUREMENT_ID =
+  process.env.NEXT_PUBLIC_GOOGLE_TAG_ID || "G-RZ7CM3J072";
 
 export const viewport: Viewport = {
   width: "device-width",
@@ -81,7 +58,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="de">
+    <html lang="de" data-scroll-behavior="smooth">
       <body
         className={`
           ${lato.variable}
@@ -94,6 +71,14 @@ export default function RootLayout({
         <GlobalLoadingIndicator />
 
         <CookieProvider>
+          {/* Web Vitals monitoring - sends Core Web Vitals to Google Analytics */}
+          <WebVitals />
+
+          {/* SPA pageview tracking for client-side navigation */}
+          <Suspense fallback={null}>
+            <AnalyticsTracker />
+          </Suspense>
+
           {/* Hotjar Tag */}
           {HOTJAR_SITE_ID && <HotjarTag siteId={HOTJAR_SITE_ID} />}
 
@@ -193,7 +178,7 @@ export default function RootLayout({
           }}
         />
       </body>
-      <GoogleAnalytics gaId="G-RZ7CM3J072" />
+      <GoogleAnalytics gaId={GA_MEASUREMENT_ID} />
     </html>
   );
 }

@@ -11,7 +11,6 @@ import {
   Activity,
 } from "react";
 import mapboxgl from "mapbox-gl";
-import MapboxLanguage from "@mapbox/mapbox-gl-language";
 import DOMPurify from "dompurify";
 import "mapbox-gl/dist/mapbox-gl.css";
 import styles from "./MapBoxMap.module.css";
@@ -338,6 +337,8 @@ export default function MapBoxMap({ places }: MapBoxMapProps) {
 
       const map = new mapboxgl.Map({
         container: containerRef.current,
+        // ✅ Streets v12 - supports MapboxLanguage plugin for German labels
+        // Note: "standard" style does NOT support language changes via API
         style: "mapbox://styles/mapbox/streets-v12",
         center: userLocation || [9.0, 47.5],
         zoom: userLocation ? 12 : 6,
@@ -347,7 +348,25 @@ export default function MapBoxMap({ places }: MapBoxMapProps) {
       map.on("load", () => {
         setMapLoadingState("success");
 
-        map.addControl(new MapboxLanguage({ defaultLanguage: "de" }));
+        // ✅ Manual German language change for all symbol layers
+        // This works with streets-v12 style by changing {name} to {name_de}
+        try {
+          const layers = map.getStyle().layers;
+          if (layers) {
+            layers.forEach((layer) => {
+              if (layer.type === "symbol" && layer.layout && "text-field" in layer.layout) {
+                try {
+                  // Change text-field from {name} or {name_en} to {name_de}
+                  map.setLayoutProperty(layer.id, "text-field", ["get", "name_de"]);
+                } catch (layerError) {
+                  console.warn(`Could not set German language for layer ${layer.id}:`, layerError);
+                }
+              }
+            });
+          }
+        } catch (error) {
+          console.error("Error setting German language on map:", error);
+        }
 
         map.addControl(new mapboxgl.NavigationControl(), "top-left");
 
@@ -467,7 +486,10 @@ export default function MapBoxMap({ places }: MapBoxMapProps) {
           className: styles.popup,
         }).setHTML(popupData.content);
 
-        const marker = new mapboxgl.Marker({ color: popupData.color, scale: 0.8 })
+        const marker = new mapboxgl.Marker({
+          color: popupData.color,
+          scale: 0.8,
+        })
           .setLngLat([place.Lange, place.Breite])
           .setPopup(popup)
           .addTo(map);
@@ -557,29 +579,34 @@ export default function MapBoxMap({ places }: MapBoxMapProps) {
     if (!mapRef.current) return;
 
     const map = mapRef.current;
-    if (map.loaded()) {
+
+    // ✅ POPRAWKA: Użyj isStyleLoaded() zamiast loaded()
+    // isStyleLoaded() jest bardziej niezawodne dla dodawania markerów
+    if (map.isStyleLoaded()) {
       updateMarkers();
     } else {
-      map.on("load", updateMarkers);
+      // ✅ Użyj 'idle' zamiast 'load' - bardziej niezawodne
+      const handleIdle = () => {
+        updateMarkers();
+        map.off("idle", handleIdle); // Usuń listener po pierwszym wywołaniu
+      };
+      map.on("idle", handleIdle);
+
+      return () => {
+        map.off("idle", handleIdle); // Cleanup
+      };
     }
   }, [updateMarkers]);
 
   // ✅ REACT 19.2: Dodaj user location marker po każdej zmianie lokalizacji
   useEffect(() => {
-    console.log("📍 User location useEffect triggered, userLocation:", userLocation);
-    if (!mapRef.current || !userLocation) {
-      console.log("⏭️ Skipping: map or userLocation missing");
-      return;
-    }
+    if (!mapRef.current || !userLocation) return;
 
     const map = mapRef.current;
-    console.log("🗺️ Map exists, loaded:", map.loaded());
-    if (map.loaded()) {
+    if (map.isStyleLoaded()) {
       addUserLocationMarker(map, userLocation);
     } else {
-      console.log("⏳ Map not loaded yet, waiting for load event...");
-      map.once("load", () => {
-        console.log("✅ Map load event fired, adding marker now");
+      map.once("idle", () => {
         addUserLocationMarker(map, userLocation);
       });
     }

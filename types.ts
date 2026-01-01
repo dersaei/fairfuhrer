@@ -445,10 +445,10 @@ export type EmptyObject = Record<string, never>;
 // ✅ POPRAWKA: Lepsze definicje dla component props
 export type BaseProps = Record<string, unknown>;
 
-// ✅ POPRAWKA: Zamiast {} w utility types
+// ✅ POPRAWKA: Zamiast {} w utility types - uproszczona wersja dla Next.js 16 & React 19
 export type Prettify<T> = {
   [K in keyof T]: T[K];
-} & Record<string, never>;
+};
 
 export type RequiredFields<T, K extends keyof T> = T & Required<Pick<T, K>>;
 

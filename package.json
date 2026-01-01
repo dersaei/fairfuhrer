@@ -11,7 +11,6 @@
   "dependencies": {
     "@directus/sdk": "^20.3.0",
     "@hotjar/browser": "^1.0.9",
-    "@mapbox/mapbox-gl-language": "^1.0.1",
     "@mux/mux-player-react": "^3.10.2",
     "@next/third-parties": "^16.1.1",
     "@paypal/paypal-js": "^9.1.0",
@@ -26,7 +25,7 @@
     "next": "^16.1.1",
     "react": "^19.2.3",
     "react-dom": "^19.2.3",
-    "react-error-boundary": "^6.0.0",
+    "react-error-boundary": "^6.0.1",
     "react-map-gl": "^8.1.0",
     "server-only": "^0.0.1"
   },

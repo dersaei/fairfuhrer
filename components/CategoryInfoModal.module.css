@@ -45,7 +45,7 @@
   max-height: 270px;
   padding: 18px;
   box-sizing: border-box;
-  font-family: "Lato", sans-serif;
+  font-family: var(--font-lato);
   color: #333;
   border: 1px solid rgba(0, 0, 0, 0.08);
   z-index: 9999;
