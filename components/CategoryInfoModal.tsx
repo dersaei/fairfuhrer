@@ -1,7 +1,7 @@
 // components/CategoryInfoModal.tsx - Positioned directly above clicked icon
 "use client";
 
-import React, { useEffect, useCallback, useState, useRef } from "react";
+import React, { useEffect, useCallback, useState } from "react";
 import { createPortal } from "react-dom";
 import { FocusTrap } from "focus-trap-react";
 import styles from "./CategoryInfoModal.module.css";
@@ -22,8 +22,7 @@ const CategoryInfoModal: React.FC<CategoryInfoModalProps> = ({
   const [isVisible, setIsVisible] = useState(false);
   const [isClosing, setIsClosing] = useState(false);
   const [modalStyle, setModalStyle] = useState<React.CSSProperties>({});
-  const previousActiveElement = useRef<HTMLElement | null>(null);
-  const closeTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const [closeTimeoutId, setCloseTimeoutId] = useState<NodeJS.Timeout | null>(null);
 
   /* eslint-disable react-hooks/set-state-in-effect */
   // Intentional mount detection for portal rendering
@@ -45,43 +44,33 @@ const CategoryInfoModal: React.FC<CategoryInfoModalProps> = ({
   }, [isOpen, mounted]);
   /* eslint-enable react-hooks/set-state-in-effect */
 
-  // Store the element that opened the modal so we can return focus to it
-  useEffect(() => {
-    if (isOpen) {
-      previousActiveElement.current = document.activeElement as HTMLElement;
-    }
-  }, [isOpen]);
-
   const handleClose = useCallback(() => {
     if (!isClosing) {
       setIsClosing(true);
       setIsVisible(false);
 
       // Clear any existing timeout
-      if (closeTimeoutRef.current) {
-        clearTimeout(closeTimeoutRef.current);
+      if (closeTimeoutId) {
+        clearTimeout(closeTimeoutId);
       }
 
       // Wait for animation to complete (350ms for smoother close)
-      closeTimeoutRef.current = setTimeout(() => {
+      const timeoutId = setTimeout(() => {
         setIsClosing(false);
         onClose();
-        // Return focus to the element that opened the modal
-        if (previousActiveElement.current) {
-          previousActiveElement.current.focus();
-        }
       }, 350);
+      setCloseTimeoutId(timeoutId);
     }
-  }, [onClose, isClosing]);
+  }, [onClose, isClosing, closeTimeoutId]);
 
   // Cleanup timeout on unmount
   useEffect(() => {
     return () => {
-      if (closeTimeoutRef.current) {
-        clearTimeout(closeTimeoutRef.current);
+      if (closeTimeoutId) {
+        clearTimeout(closeTimeoutId);
       }
     };
-  }, []);
+  }, [closeTimeoutId]);
 
   // Handle backdrop click (click outside modal)
   const handleBackdropClick = useCallback(
@@ -124,22 +113,6 @@ const CategoryInfoModal: React.FC<CategoryInfoModalProps> = ({
   }, [isOpen, mounted]);
   /* eslint-enable react-hooks/set-state-in-effect */
 
-  // Close on Escape key only
-  useEffect(() => {
-    const handleKeyDown = (event: KeyboardEvent) => {
-      if (event.key === "Escape" && isOpen) {
-        handleClose();
-      }
-    };
-
-    if (isOpen) {
-      document.addEventListener("keydown", handleKeyDown);
-      return () => {
-        document.removeEventListener("keydown", handleKeyDown);
-      };
-    }
-  }, [isOpen, handleClose]);
-
   // Lock body scroll when modal is open
   useEffect(() => {
     if (isOpen) {
@@ -170,10 +143,14 @@ const CategoryInfoModal: React.FC<CategoryInfoModalProps> = ({
       <FocusTrap
         active={isOpen && !isClosing}
         focusTrapOptions={{
-          initialFocus: false,
+          initialFocus: `button.${styles.closeButton}`,
           allowOutsideClick: true,
-          escapeDeactivates: false, // We handle Escape ourselves
-          returnFocusOnDeactivate: false, // We handle focus return ourselves
+          escapeDeactivates: (event) => {
+            handleClose();
+            event.preventDefault();
+            return false; // Don't deactivate automatically, handleClose manages state
+          },
+          returnFocusOnDeactivate: true,
         }}
       >
         <div

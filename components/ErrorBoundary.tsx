@@ -10,6 +10,9 @@ import styles from "./ErrorBoundary.module.css";
 
 // ✅ REACT 19.2: Funkcyjny Error Fallback Component
 function ErrorFallback({ error, resetErrorBoundary }: FallbackProps) {
+  const errorMessage = error instanceof Error ? error.message : String(error);
+  const errorStack = error instanceof Error ? error.stack : undefined;
+
   return (
     <div className={styles.errorContainer}>
       <h2 className={styles.errorTitle}>Ein Fehler ist aufgetreten</h2>
@@ -23,10 +26,10 @@ function ErrorFallback({ error, resetErrorBoundary }: FallbackProps) {
       >
         Erneut versuchen
       </button>
-      {error && (
+      {error != null && (
         <details className={styles.errorDetails}>
           <summary className={styles.errorSummary}>Technische Details</summary>
-          <pre className={styles.errorStack}>{error.stack || error.message}</pre>
+          <pre className={styles.errorStack}>{errorStack || errorMessage}</pre>
         </details>
       )}
     </div>
@@ -45,7 +48,7 @@ export function ErrorBoundary({
   fallback,
   onReset,
 }: ErrorBoundaryProps) {
-  const handleError = (error: Error, errorInfo: { componentStack?: string | null }) => {
+  const handleError = (error: unknown, errorInfo: { componentStack?: string | null }) => {
     console.error("🚨 Error caught by boundary:", error);
 
     if (errorInfo.componentStack) {
@@ -54,10 +57,12 @@ export function ErrorBoundary({
 
     // ✅ Optional: Send to error tracking service (Sentry, LogRocket, etc.)
     if (typeof window !== "undefined" && window.gtag) {
+      const message = error instanceof Error ? error.message : String(error);
+      const stack = error instanceof Error ? error.stack : undefined;
       window.gtag("event", "exception", {
-        description: error.message,
+        description: message,
         fatal: false,
-        stack: error.stack,
+        stack: stack,
       });
     }
   };
