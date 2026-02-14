@@ -21,6 +21,7 @@
 .searchBox {
   position: relative;
   display: flex;
+  justify-content: center;
   align-items: center;
   background: rgba(255, 255, 255, 0.95);
   border: 2px solid rgba(252, 108, 20, 0.1);
@@ -28,15 +29,21 @@
   height: 48px;
   width: 48px;
   transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  -webkit-backdrop-filter: blur(12px);
   backdrop-filter: blur(12px);
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1), 0 1px 4px rgba(0, 0, 0, 0.05);
+  box-shadow:
+    0 4px 20px rgba(0, 0, 0, 0.1),
+    0 1px 4px rgba(0, 0, 0, 0.05);
   overflow: hidden;
 }
 
 .searchContainer.expanded .searchBox {
-  width: 320px;
+  width: 420px;
   border-color: rgba(252, 108, 20, 0.3);
-  box-shadow: 0 8px 32px rgba(252, 108, 20, 0.15), 0 2px 8px rgba(0, 0, 0, 0.1);
+  border-radius: 0;
+  box-shadow:
+    0 8px 32px rgba(252, 108, 20, 0.15),
+    0 2px 8px rgba(0, 0, 0, 0.1);
 }
 
 /* ========================================
@@ -57,7 +64,6 @@
   justify-content: center;
   color: wheat;
   transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-  border-radius: 50px;
   z-index: 2;
 }
 
@@ -202,12 +208,15 @@
   left: 0;
   right: 0;
   background: rgba(255, 255, 255, 0.98);
-  border: 1px solid rgba(252, 108, 20, 0.15);
-  border-radius: 16px;
+  border: 2px solid rgba(252, 108, 20, 0.15);
+  -webkit-backdrop-filter: blur(16px);
   backdrop-filter: blur(16px);
-  box-shadow: 0 12px 48px rgba(0, 0, 0, 0.12), 0 4px 16px rgba(0, 0, 0, 0.08);
+  box-shadow:
+    0 12px 48px rgba(0, 0, 0, 0.12),
+    0 4px 16px rgba(0, 0, 0, 0.08);
   max-height: 400px;
   overflow-y: auto;
+  overflow-x: hidden;
   z-index: 1001;
   animation: slideDown 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
   scrollbar-width: thin;
@@ -235,7 +244,6 @@
 
 .suggestions::-webkit-scrollbar-thumb {
   background: rgba(252, 108, 20, 0.3);
-  border-radius: 3px;
 }
 
 .suggestions::-webkit-scrollbar-thumb:hover {
@@ -252,7 +260,6 @@
   gap: 12px;
   padding: 16px;
   cursor: pointer;
-  border-bottom: 1px solid rgba(0, 0, 0, 0.05);
   transition: all 0.2s ease;
   position: relative;
 }
@@ -307,7 +314,7 @@
 }
 
 .suggestionTitle {
-  font-size: 15px;
+  font-size: 18px;
   font-weight: 600;
   color: #2c3e50;
   margin-bottom: 4px;
@@ -319,12 +326,11 @@
   background: rgba(252, 108, 20, 0.2);
   color: #fc6c14;
   padding: 0 2px;
-  border-radius: 3px;
   font-weight: 700;
 }
 
 .suggestionMeta {
-  font-size: 13px;
+  font-size: 15px;
   color: #666;
   margin-bottom: 8px;
   line-height: 1.4;
@@ -338,12 +344,11 @@
   background: rgba(252, 108, 20, 0.15);
   color: #fc6c14;
   padding: 0 2px;
-  border-radius: 2px;
   font-weight: 500;
 }
 
 .metaLabel {
-  font-size: 12px;
+  font-size: 17px;
   flex-shrink: 0;
 }
 
@@ -355,17 +360,16 @@
 }
 
 .categoryTag {
-  font-size: 11px;
+  font-size: 14px;
   font-weight: 500;
   color: white;
   padding: 3px 8px;
-  border-radius: 12px;
   text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
   white-space: nowrap;
 }
 
 .moreCategories {
-  font-size: 11px;
+  font-size: 14px;
   color: #999;
   font-weight: 500;
 }
@@ -408,41 +412,7 @@
   color: #888;
 }
 
-/* ========================================
-   RESPONSIVE DESIGN - PRAWY GÓRNY RÓG ZAWSZE
-   ======================================== */
-
-@media (max-width: 768px) {
-  .searchContainer {
-    top: 2vh;
-    right: 4vw;
-    max-width: 85vw;
-  }
-
-  .suggestionItem {
-    padding: 14px;
-    gap: 10px;
-  }
-
-  .suggestionIcon {
-    width: 28px;
-    height: 28px;
-  }
-
-  .suggestionTitle {
-    font-size: 14px;
-  }
-
-  .suggestionMeta {
-    font-size: 12px;
-  }
-
-  .suggestions {
-    max-height: 300px;
-  }
-}
-
-@media (max-width: 480px) {
+@media (max-width: 550px) {
   .searchContainer {
     top: 1vh;
     right: 2vw;
@@ -579,8 +549,10 @@
 
 .searchContainer.expanded .searchBox:focus-within {
   border-color: #fc6c14;
-  box-shadow: 0 0 0 3px rgba(252, 108, 20, 0.1),
-    0 8px 32px rgba(252, 108, 20, 0.15), 0 2px 8px rgba(0, 0, 0, 0.1);
+  box-shadow:
+    0 0 0 3px rgba(252, 108, 20, 0.1),
+    0 8px 32px rgba(252, 108, 20, 0.15),
+    0 2px 8px rgba(0, 0, 0, 0.1);
 }
 
 .suggestionItem:focus {

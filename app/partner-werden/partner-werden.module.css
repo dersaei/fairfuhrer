@@ -1,9 +1,5 @@
 /* app/partner-werden/partner-werden.module.css - zmodyfikowana wersja */
 
-.container {
-  min-height: 100vh;
-}
-
 .errorMessage {
   text-align: center;
   background: white;
@@ -15,57 +11,54 @@
 
 /* SEKCJA 1 - ZMODYFIKOWANA: Na całą szerokość, wyśrodkowana */
 .section1 {
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  text-align: center;
-  padding: 4vh 4vw;
+  display: block;
+  position: relative;
+  padding: 6vh 6vw;
 }
 
 .section1Title {
   font-size: 4rem;
-  margin-bottom: 2rem;
+  margin-bottom: 1rem;
   line-height: 1.2;
   font-family: var(--font-montserrat);
   font-optical-sizing: auto;
   font-weight: 700;
   font-style: normal;
+  text-align: center;
+  text-shadow: 1px 2px 2px white;
 }
 
-.section1Text {
-  font-size: 2.5rem;
+.section1Text p {
+  font-size: 1.125rem;
   line-height: 1.7;
-  margin-bottom: 2rem;
+  max-width: 800px;
+  margin: 0 auto;
   font-family: var(--font-lato);
   font-weight: 400;
   font-style: normal;
-  max-width: 800px;
+  text-align: justify;
 }
 
-/* Style dla WYSIWYG content w sekcji 1 */
-.section1Text p {
-  margin-bottom: 1rem;
-}
-
-.section1Text strong {
+.section1Text h3 {
   font-weight: 700;
+  font-size: 1.5rem;
+  text-align: center;
+  margin-bottom: 1rem;
+  text-shadow: 1px 2px 2px black;
 }
 
-.section1Text em {
-  font-style: italic;
-}
-
-.section1ImageContainer {
-  margin-top: 2rem;
+.section1Text a {
+  color: #64748b;
+  text-shadow: 1px 1px 1px gold;
+  font-size: 1.2rem;
 }
 
 .section1Image {
-  border-radius: 12px;
-  width: 100%;
-  height: auto;
-  max-width: 300px;
+  height: 90px;
+  width: 300px;
+  display: block;
+  position: relative;
+  margin: 0 auto;
 }
 
 /* SEKCJA 2 - USUNIĘTA CAŁKOWICIE */
@@ -74,14 +67,10 @@
 /* SEKCJA 3 - Tekst + YouTube (bez zmian w stylu) */
 .section3 {
   display: grid;
-  grid-template-columns: 1fr 1.2fr;
+  grid-template-columns: 1fr 1.3fr;
   gap: 4rem;
-  padding: 4rem;
+  padding: 3rem;
   align-items: center;
-}
-
-.section3Left {
-  padding: 2rem;
 }
 
 .section3Title {
@@ -108,43 +97,15 @@
   margin-bottom: 1rem;
 }
 
-.section3Text ul,
-.section3Text ol {
-  margin: 1rem 0;
-  padding-left: 1.5rem;
-}
-
-.section3Text li {
-  margin-bottom: 0.5rem;
-}
-
 .section3Text h2,
 .section3Text h3 {
   margin: 1.5rem 0 1rem 0;
   font-weight: 600;
 }
 
-.section3Text strong {
-  font-weight: 700;
-}
-
-.section3Right {
-  padding: 2rem;
-}
-
 /* SEKCJA 4 - FORMULARZ PARTNERSKI (bez zmian) */
 .section4 {
-  padding: 4rem 2rem;
-  text-align: center;
-}
-
-.section4Title {
-  font-size: 2.5rem;
-  font-weight: 700;
-  margin-bottom: 1rem;
-  font-family: var(--font-montserrat);
-  font-optical-sizing: auto;
-  font-style: normal;
+  padding: 6vh 0;
 }
 
 .section4Subtitle {
@@ -152,22 +113,22 @@
   font-family: var(--font-lato);
   font-weight: 400;
   font-style: normal;
-  margin: 5vh auto;
-  width: 60%;
-  background-color: lightcyan;
-  border: 4px dashed black;
-  border-radius: 20px;
-  padding: 4vh 3vw;
+  margin: 2vh auto;
+  width: 85%;
+  background-color: rgb(228, 158, 114);
+  border: 2px dashed black;
+  padding: 4vw 4vw;
+  text-align: center;
 }
 
 /* Style dla WYSIWYG content w section4Subtitle */
 .section4Subtitle p {
-  margin-bottom: 1.2rem;
+  margin-bottom: 1rem;
   text-align: left;
 }
 .section4Subtitle h2 {
-  font-size: 2rem;
-  margin-bottom: 2vh;
+  font-size: 5vw;
+  margin: 4vh 0;
 }
 
 .section4Subtitle ul,
@@ -190,82 +151,32 @@
   font-style: italic;
 }
 
-.section4Subtitle a {
-  color: rgba(252, 108, 20, 1);
-  text-decoration: underline;
-}
-
-.section4Subtitle a:hover {
-  color: rgba(61, 209, 231, 1);
-}
-
 .partnerFormContainer {
-  max-width: 900px;
   margin: 0 auto;
   text-align: left;
 }
 
 /* SEKCJA 5 - Końcowa (bez zmian) */
 .section5 {
-  padding: 4rem 4rem 2rem 4rem;
+  padding: 8vh 5vw;
   text-align: center;
 }
 
 .section5Title {
   font-size: 2.5rem;
   font-weight: 700;
-  margin-bottom: 2rem;
+  margin: 9vh 0;
   font-family: var(--font-montserrat);
   font-optical-sizing: auto;
   font-style: normal;
 }
 
-.section5Text {
-  font-size: 1.125rem;
-  line-height: 1.7;
-  max-width: 800px;
-  margin: 0 auto;
-  font-family: var(--font-lato);
-  font-weight: 400;
-  font-style: normal;
-  text-align: justify;
-}
-
-/* Style dla WYSIWYG w sekcji 5 */
-.section5Text p {
-  margin-bottom: 1rem;
-}
-
-.section5Text ul,
-.section5Text ol {
-  margin: 1rem 0;
-  padding-left: 1.5rem;
-  text-align: left;
-}
-
-.section5Text li {
-  margin-bottom: 0.5rem;
-}
-
-.section5Text h2,
-.section5Text h3 {
-  margin: 1.5rem 0 1rem 0;
-  font-weight: 600;
-}
-
-.section5Text strong {
-  font-weight: 700;
-}
-
-.section5ImageContainer {
-  margin-top: 2rem;
-}
-
 .section5Image {
-  border-radius: 12px;
-  width: 100%;
-  height: auto;
-  max-width: 300px;
+  display: block;
+  position: relative;
+  margin: 0 auto;
+  height: 90px;
+  width: 300px;
 }
 .noVideo {
   padding: 3rem 2rem;
@@ -297,77 +208,5 @@
     grid-template-columns: 1fr;
     gap: 2rem;
     padding: 3rem 2rem;
-  }
-
-  .section3Title {
-    font-size: 2rem;
-  }
-
-  .section4 {
-    padding: 3rem 1.5rem;
-  }
-
-  .section4Title {
-    font-size: 2rem;
-  }
-  .section4Subtitle {
-    width: 70%;
-  }
-
-  .partnerFormContainer {
-    max-width: 100%;
-  }
-
-  .section5 {
-    padding: 3rem 2rem;
-  }
-
-  .section5Title {
-    font-size: 2rem;
-  }
-}
-
-@media (max-width: 790px) {
-  .section4Subtitle {
-    width: 90%;
-  }
-}
-
-@media (max-width: 640px) {
-  .section1 {
-    padding: 2rem 1rem;
-  }
-
-  .section1Title {
-    font-size: 2.5rem;
-  }
-
-  .section1Text {
-    font-size: 1.7rem;
-  }
-
-  .section3,
-  .section4,
-  .section5 {
-    padding: 2rem 1rem;
-  }
-
-  .section4Title,
-  .section5Title {
-    font-size: 1.75rem;
-  }
-
-  .section4Subtitle {
-    font-size: 1.1rem;
-    margin-bottom: 2rem;
-    width: 95%;
-  }
-
-  .section4Subtitle h2 {
-    font-size: 1.6rem;
-  }
-
-  .partnerFormContainer {
-    margin: 0;
   }
 }

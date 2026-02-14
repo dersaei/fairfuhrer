@@ -22,12 +22,12 @@ async function getPartnerPageContent(): Promise<PartnerPageContent | null> {
     }
 
     const response = await fetch(
-      `${directusUrl}/items/partner_page_content?filter[page_slug][_eq]=partner-werden&fields=*&limit=1`
+      `${directusUrl}/items/partner_page_content?filter[page_slug][_eq]=partner-werden&fields=*&limit=1`,
     );
 
     if (!response.ok) {
       throw new Error(
-        `Failed to fetch partner page content: ${response.status}`
+        `Failed to fetch partner page content: ${response.status}`,
       );
     }
 
@@ -172,10 +172,6 @@ export default async function PartnerWerdenPage() {
             dangerouslySetInnerHTML={{ __html: pageData.section4_subtitle }}
           />
         )}
-
-        <div className={styles.partnerFormContainer}>
-          <PartnerForm />
-        </div>
       </section>
 
       {/* SEKCJA 5 - KOŃCOWA (bez zmian) */}
@@ -187,6 +183,9 @@ export default async function PartnerWerdenPage() {
             color: pageData.section5_text_color || undefined,
           }}
         >
+          <div className={styles.partnerFormContainer}>
+            <PartnerForm />
+          </div>
           {pageData.section5_title && (
             <h2
               className={styles.section5Title}

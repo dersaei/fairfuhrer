@@ -28,7 +28,8 @@
   line-height: 1.6;
   color: #343a40;
   overflow: hidden;
-  transition: max-height 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94),
+  transition:
+    max-height 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94),
     opacity 0.3s ease;
   position: relative;
   /* ✅ ADDED: Ensure content respects container width */
@@ -118,7 +119,6 @@
     rgba(252, 108, 20, 0.08) 100%
   );
   border: 1.5px solid rgba(252, 108, 20, 0.2);
-  border-radius: 12px;
   color: #fc6c14;
   font-size: 1rem;
   font-weight: 500;
@@ -164,7 +164,8 @@
 
 .toggleButton:focus {
   outline: none;
-  box-shadow: 0 0 0 3px rgba(252, 108, 20, 0.2),
+  box-shadow:
+    0 0 0 3px rgba(252, 108, 20, 0.2),
     0 4px 16px rgba(252, 108, 20, 0.2);
 }
 
@@ -195,8 +196,6 @@
 @media (max-width: 768px) {
   .toggleButton {
     padding: 0.6rem 1rem;
-    border-radius: 10px;
-    /* ✅ ENHANCED: Better handling of smaller screens */
     font-size: 0.95rem;
     gap: 0.4rem;
   }

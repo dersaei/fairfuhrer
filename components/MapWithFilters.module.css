@@ -24,7 +24,6 @@
   -webkit-backdrop-filter: blur(10px);
   backdrop-filter: blur(10px);
   z-index: 10;
-  border-radius: 0 8px 0 0; /* Zaokrąglone góry */
 }
 
 .legendTitle {
@@ -76,7 +75,6 @@
     padding: 4px 8px;
     padding-left: max(8px, env(safe-area-inset-left)); /* Add this */
     padding-right: max(8px, env(safe-area-inset-right)); /* Add this */
-    border-radius: 0;
     position: relative;
   }
 
