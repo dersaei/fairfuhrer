@@ -13,7 +13,7 @@
 .section1 {
   display: block;
   position: relative;
-  padding: 6vh 6vw;
+  padding: 6vh 7vw;
 }
 
 .section1Title {
@@ -40,11 +40,12 @@
 }
 
 .section1Text h3 {
-  font-weight: 700;
+  font-weight: 500;
   font-size: 1.5rem;
   text-align: center;
   margin-bottom: 1rem;
   text-shadow: 1px 2px 2px black;
+  font-family: var(--font-oxanium);
 }
 
 .section1Text a {
@@ -105,37 +106,52 @@
 
 /* SEKCJA 4 - FORMULARZ PARTNERSKI (bez zmian) */
 .section4 {
-  padding: 6vh 0;
+  padding: 4vh 5vw;
 }
 
 .section4Subtitle {
-  font-size: 1.25rem;
-  font-family: var(--font-lato);
-  font-weight: 400;
   font-style: normal;
   margin: 2vh auto;
-  width: 85%;
-  background-color: rgb(228, 158, 114);
-  border: 2px dashed black;
-  padding: 4vw 4vw;
+  padding: 4vh 4vw;
   text-align: center;
 }
 
 /* Style dla WYSIWYG content w section4Subtitle */
 .section4Subtitle p {
-  margin-bottom: 1rem;
+  margin-bottom: 1.125rem;
   text-align: left;
+  font-weight: 400;
+  line-height: 1.7;
+  color: #f8fafc;
+  text-shadow: 1px 1px 2px black;
+  font-family: var(--font-lato);
 }
 .section4Subtitle h2 {
   font-size: 5vw;
   margin: 4vh 0;
+  text-shadow: 1px 2px 2px wheat;
+  font-family: var(--font-montserrat);
+  font-weight: 700;
 }
-
+.section4Subtitle h3 {
+  font-size: 2rem;
+  margin: 2vh 0;
+  padding: 1vh 1vw;
+  font-family: var(--font-oxanium);
+  font-weight: 600;
+  background-color: #cbd5e1;
+}
 .section4Subtitle ul,
 .section4Subtitle ol {
   margin: 1rem auto;
   width: 90%;
   text-align: left;
+  color: #f8fafc;
+  text-shadow: 1px 1px 2px black;
+  font-family: var(--font-lato);
+  font-weight: 400;
+  line-height: 1.7;
+  font-size: 1.125rem;
 }
 
 .section4Subtitle li {
@@ -144,11 +160,13 @@
 
 .section4Subtitle strong {
   font-weight: 700;
-  text-align: center !important;
 }
 
-.section4Subtitle em {
+.section4Subtitle table {
   font-style: italic;
+  font-size: 1.2rem;
+  font-family: var(--font-oxanium);
+  font-weight: 400;
 }
 
 .partnerFormContainer {
@@ -208,5 +226,24 @@
     grid-template-columns: 1fr;
     gap: 2rem;
     padding: 3rem 2rem;
+  }
+}
+@media (max-width: 700px) {
+  .section4Subtitle h2 {
+    font-size: 8vw;
+  }
+  .section4Subtitle h3 {
+    font-size: 1.5rem;
+  }
+}
+@media (max-width: 500px) {
+  .section1Title {
+    font-size: 15vw;
+  }
+  .section1Text p {
+    font-size: 1rem;
+  }
+  .section1Text h3 {
+    font-size: 1.3rem;
   }
 }

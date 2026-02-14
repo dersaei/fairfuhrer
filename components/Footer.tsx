@@ -106,7 +106,7 @@ export default function Footer() {
                   width="26"
                   height="26"
                   fill="none"
-                  stroke="currentColor"
+                  stroke="black"
                   strokeWidth="2"
                   strokeLinecap="round"
                   strokeLinejoin="round"
@@ -124,12 +124,7 @@ export default function Footer() {
                 className={styles.socialIcon}
                 aria-label="Facebook"
               >
-                <svg
-                  width="26"
-                  height="26"
-                  fill="currentColor"
-                  viewBox="0 0 320 512"
-                >
+                <svg width="26" height="26" fill="black" viewBox="0 0 320 512">
                   <path d="M279.14 288l14.22-92.66h-88.91V127.45c0-25.35 12.42-50.06 52.24-50.06H293V6.26S259.5 0 225.36 0c-73.22 0-121 44.38-121 124.72v70.62H22.89V288h81.47v224h100.2V288z" />
                 </svg>
               </a>

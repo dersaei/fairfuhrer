@@ -1,8 +1,9 @@
 /* components/Footer.module.css */
 
 .footer {
-  background-color: #1a1a1a;
+  background-color: #fc6c14;
   color: #ffffff;
+  text-shadow: 1px 1px 2px black;
   margin-top: auto; /* Pushes footer to bottom */
 }
 
@@ -26,16 +27,16 @@
 }
 
 .brandName {
-  font-size: 1.5rem;
+  font-size: 2rem;
   font-weight: 700;
   margin: 0;
   color: #ffffff;
 }
 
 .brandDescription {
-  font-size: 0.875rem;
+  font-size: 1rem;
   line-height: 1.5;
-  color: #b3b3b3;
+  color: #fff8f8;
   margin: 0;
 }
 
@@ -52,7 +53,7 @@
 }
 
 .linkTitle {
-  font-size: 1rem;
+  font-size: 1.2rem;
   font-weight: 600;
   margin: 0;
   color: #ffffff;
@@ -70,9 +71,9 @@
 }
 
 .link {
-  color: #b3b3b3;
+  color: wheat;
   text-decoration: none;
-  font-size: 0.875rem;
+  font-size: 1rem;
   transition: color 0.2s ease;
 }
 
@@ -92,8 +93,8 @@
 }
 
 .copyright {
-  font-size: 0.75rem;
-  color: #888;
+  font-size: 0.85rem;
+  color: wheat;
 }
 
 .copyright p {
@@ -107,8 +108,8 @@
 }
 
 .socialText {
-  font-size: 0.75rem;
-  color: #888;
+  font-size: 0.85rem;
+  color: wheat;
   margin: 0;
 }
 
@@ -135,25 +136,17 @@
     gap: 1rem;
   }
 
-  .brandName {
-    font-size: 1.25rem;
-  }
   .linkList {
     flex-direction: row;
     justify-content: center;
+  }
+  .linkTitle {
+    border-bottom: 1px solid #333;
   }
 }
 
 @media (max-width: 480px) {
   .container {
     padding: 1.5rem 0.5rem 1rem;
-  }
-
-  .linkTitle {
-    font-size: 0.875rem;
-  }
-
-  .link {
-    font-size: 0.8125rem;
   }
 }
