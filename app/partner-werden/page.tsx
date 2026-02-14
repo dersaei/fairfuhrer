@@ -23,6 +23,7 @@ async function getPartnerPageContent(): Promise<PartnerPageContent | null> {
 
     const response = await fetch(
       `${directusUrl}/items/partner_page_content?filter[page_slug][_eq]=partner-werden&fields=*&limit=1`,
+      { next: { tags: ["partner-werden"] } },
     );
 
     if (!response.ok) {
