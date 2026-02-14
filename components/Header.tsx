@@ -3,8 +3,8 @@
 import styles from "./Header.module.css";
 import Image from "next/image";
 import Link from "next/link";
-import { getAssetPath } from "../lib/supabase";
 import { useState } from "react";
+import logoFairfuehrer from "../public/logo-fairfuehrer.png";
 
 export default function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -19,15 +19,19 @@ export default function Header() {
 
   return (
     <header className={styles.header}>
-      <Link href="/" className={styles.logo}>
-        <Image
-          src={getAssetPath("logo-fairfuehrer1.png")}
-          alt="Fair Guide Logo"
-          width={232}
-          height={66}
-          priority
-        />
-      </Link>
+      <div className={styles.logo}>
+        <Link href="/">
+          <Image
+            src={logoFairfuehrer}
+            alt="Fair Guide Logo"
+            unoptimized
+            style={{
+              width: "232px",
+              height: "auto",
+            }}
+          />
+        </Link>
+      </div>
 
       {/* Desktop Navigation */}
       <nav className={styles.nav}>

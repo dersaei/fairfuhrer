@@ -12,6 +12,10 @@
 .logo {
   z-index: 1002;
 }
+.logo a {
+  display: flex;
+  justify-content: center;
+}
 
 /* Desktop Navigation */
 .nav {
