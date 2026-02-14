@@ -91,7 +91,7 @@
   background-color: rgba(255, 255, 255, 0.1);
   -webkit-backdrop-filter: blur(10px);
   backdrop-filter: blur(10px);
-  border-radius: 30px;
+  border-radius: 0;
   border: 1px solid rgba(255, 255, 255, 0.2);
   color: rgba(255, 255, 255, 1);
   font-size: 1.3rem;
@@ -109,7 +109,7 @@
   bottom: auto;
   padding: 0.8rem 1.2rem;
   color: white;
-  border-radius: 1rem;
+  border-radius: 0;
   cursor: pointer;
   font-family: inherit;
   text-decoration: none;
@@ -124,9 +124,9 @@
 
 .sparschweineButton:hover {
   transform: translateY(-3px);
-  box-shadow: 0 12px 35px rgba(16, 185, 129, 0.4);
-  background-color: #d1fae5;
-  border-color: rgba(16, 185, 129, 0.4);
+  box-shadow: 0 8px 20px rgba(252, 108, 20, 0.3);
+  background-color: #fff3e6;
+  border-color: rgba(252, 108, 20, 0.4);
 }
 
 .sparschweineSubtitle {
@@ -138,15 +138,15 @@
 }
 
 .sparschweineButton:hover .heartIcon {
-  color: #047857;
+  color: rgba(252, 108, 20, 1);
 }
 
 .sparschweineButton:hover .sparschweineTitle {
-  color: #047857;
+  color: rgba(252, 108, 20, 1);
 }
 
 .sparschweineButton:hover .sparschweineSubtitle {
-  color: #047857;
+  color: rgba(252, 108, 20, 1);
 }
 
 .section1Title {
@@ -181,25 +181,10 @@
 
 /* ===== SEKCJA 2: Gute Geschichten (Lista funkcji) ===== */
 .section2 {
-  background: linear-gradient(135deg, #ecfdf5 0%, #dbeafe 100%);
+  background: #f9f9f9;
   padding: 6rem 2rem;
   position: relative;
   overflow: hidden;
-}
-
-.section2::before {
-  content: "";
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: linear-gradient(
-    135deg,
-    rgba(16, 185, 129, 0.05) 0%,
-    rgba(59, 130, 246, 0.05) 100%
-  );
-  pointer-events: none;
 }
 
 .section2Content {
@@ -219,11 +204,7 @@
 }
 
 .section2TitleGradient {
-  background: linear-gradient(135deg, #059669 0%, #2563eb 100%);
-  -webkit-background-clip: text;
-  background-clip: text;
-  -webkit-text-fill-color: transparent;
-  color: transparent;
+  color: rgba(252, 108, 20, 1);
 }
 
 .featuresGrid {
@@ -235,28 +216,26 @@
 }
 
 .featureCard {
-  background: rgba(255, 255, 255, 0.9);
-  -webkit-backdrop-filter: blur(8px);
-  backdrop-filter: blur(8px);
-  border-radius: 1rem;
+  background: white;
+  border-radius: 0;
   padding: 2rem 1.5rem;
-  border: 1px solid rgba(16, 185, 129, 0.1);
+  border: 1px solid #e5e5e5;
   transition: all 0.3s ease;
   text-align: left;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
 }
 
 .featureCard:hover {
-  transform: translateY(-8px);
-  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.15);
-  border-color: rgba(16, 185, 129, 0.3);
+  transform: translateY(-4px);
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+  border-color: rgba(252, 108, 20, 0.4);
 }
 
 .featureIcon {
   width: 3rem;
   height: 3rem;
-  background: linear-gradient(135deg, #10b981 0%, #3b82f6 100%);
-  border-radius: 0.75rem;
+  background: rgba(252, 108, 20, 1);
+  border-radius: 0;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -282,7 +261,7 @@
 
 /* ===== SEKCJA 3: Inspirierendes Entdecken (Tekst + obraz) ===== */
 .section3 {
-  background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+  background: white;
   padding: 6rem 2rem;
   position: relative;
 }
@@ -319,10 +298,10 @@
 
 .section3ImageSide {
   position: relative;
-  border-radius: 1.5rem;
+  border-radius: 0;
   overflow: hidden;
-  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
-  background: linear-gradient(135deg, #10b981 0%, #3b82f6 100%);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+  background: rgba(252, 108, 20, 1);
   min-height: 400px;
   display: flex;
   align-items: center;
@@ -334,24 +313,12 @@
 
 /* ===== SEKCJA 4: Partner werden (Call-to-action) ===== */
 .section4 {
-  background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+  background: #111111;
   padding: 6rem 2rem;
   color: white;
   text-align: center;
   position: relative;
   overflow: hidden;
-}
-
-.section4::before {
-  content: "";
-  position: absolute;
-  inset: 0;
-  background: radial-gradient(
-    circle at 50% 50%,
-    rgba(16, 185, 129, 0.1) 0%,
-    transparent 50%
-  );
-  pointer-events: none;
 }
 
 .section4Content {
@@ -364,14 +331,14 @@
   display: inline-flex;
   align-items: center;
   gap: 0.5rem;
-  background: rgba(16, 185, 129, 0.1);
-  color: #10b981;
+  background: rgba(252, 108, 20, 0.15);
+  color: rgba(252, 108, 20, 1);
   padding: 0.5rem 1rem;
-  border-radius: 9999px;
+  border-radius: 0;
   font-size: 0.875rem;
   font-weight: 500;
   margin-bottom: 1.5rem;
-  border: 1px solid rgba(16, 185, 129, 0.3);
+  border: 1px solid rgba(252, 108, 20, 0.4);
 }
 
 .section4Title {
@@ -384,7 +351,7 @@
 
 .section4Text {
   font-size: 1.2rem;
-  color: #cbd5e1;
+  color: #d4d4d4;
   line-height: 1.7;
   margin-bottom: 3rem;
   font-family: var(--font-lato);
@@ -394,14 +361,14 @@
   display: inline-flex;
   align-items: center;
   gap: 0.5rem;
-  background: linear-gradient(135deg, #10b981 0%, #3b82f6 100%);
+  background: rgba(252, 108, 20, 1);
   color: white;
   text-decoration: none;
   padding: 1.2rem 3rem;
-  border-radius: 9999px;
+  border-radius: 0;
   font-weight: 600;
   font-size: 1.2rem;
-  box-shadow: 0 8px 25px rgba(16, 185, 129, 0.3);
+  box-shadow: 0 4px 12px rgba(252, 108, 20, 0.3);
   transition: all 0.3s ease;
   font-family: var(--font-oxanium);
   border: none;
@@ -410,8 +377,8 @@
 
 .partnerButton:hover {
   transform: translateY(-3px);
-  box-shadow: 0 12px 35px rgba(16, 185, 129, 0.4);
-  background: linear-gradient(135deg, #059669 0%, #2563eb 100%);
+  box-shadow: 0 8px 20px rgba(252, 108, 20, 0.4);
+  background: #e05a10;
 }
 
 @media (max-width: 950px) and (min-width: 601px) {
