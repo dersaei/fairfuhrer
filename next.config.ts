@@ -2,11 +2,6 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  experimental: {
-    staleTimes: {
-      dynamic: 0,
-    },
-  },
   images: {
     loader: "custom",
     loaderFile: "./supabase-image-loader.ts",
@@ -33,16 +28,6 @@ const nextConfig: NextConfig = {
           {
             key: "Cache-Control",
             value: "public, max-age=86400", // 24h cache
-          },
-        ],
-      },
-      // Strony z dynamiczną treścią z CMS - nie cache'ować na Cloudflare
-      {
-        source: "/partner-werden",
-        headers: [
-          {
-            key: "CDN-Cache-Control",
-            value: "no-store",
           },
         ],
       },

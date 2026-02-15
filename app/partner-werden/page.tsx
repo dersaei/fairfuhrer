@@ -8,7 +8,7 @@ import MuxVideoEmbed from "../../components/MuxVideoEmbed";
 import { ConditionalMuxVideo } from "../../components/ConditionalMuxVideo";
 import styles from "./partner-werden.module.css";
 
-export const revalidate = 604800;
+export const revalidate = 604800; // 7 dni fallback, główna rewalidacja przez Directus Flow
 
 interface DirectusResponse<T> {
   data: T[];

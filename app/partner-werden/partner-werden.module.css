@@ -118,7 +118,7 @@
 
 /* Style dla WYSIWYG content w section4Subtitle */
 .section4Subtitle p {
-  font-size: 1.135rem;
+  font-size: 1.25rem;
   margin-bottom: 1rem;
   text-align: left;
   font-weight: 400;
@@ -152,7 +152,7 @@
   font-family: var(--font-lato);
   font-weight: 400;
   line-height: 1.7;
-  font-size: 1.125rem;
+  font-size: 1.25rem;
 }
 
 .section4Subtitle li {
@@ -170,7 +170,7 @@
   font-weight: 400;
 }
 .section4Subtitle em {
-  font-size: 1.125rem;
+  font-size: 1.25rem;
   font-family: var(--font-lato);
   font-weight: 400;
   line-height: 1.7;
@@ -252,5 +252,12 @@
   }
   .section1Text h3 {
     font-size: 1.3rem;
+  }
+  .section4Subtitle p,
+  .section4Subtitle em,
+  .section4Subtitle ul,
+  .section4Subtitle ol,
+  .section4Subtitle table {
+    font-size: 1rem;
   }
 }
