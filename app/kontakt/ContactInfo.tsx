@@ -18,7 +18,7 @@ export default function ContactInfo() {
           </div>
           <div className={styles.methodContent}>
             <h3>Email</h3>
-            <p>frank.gebhard@seenergien.com</p>
+            <p>info@fairfuehrer.guide</p>
             <span className={styles.responseTime}>
               Wir antworten innerhalb von 48 Stunden.
             </span>

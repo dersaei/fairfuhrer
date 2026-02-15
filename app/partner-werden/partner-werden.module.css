@@ -118,7 +118,8 @@
 
 /* Style dla WYSIWYG content w section4Subtitle */
 .section4Subtitle p {
-  margin-bottom: 1.125rem;
+  font-size: 1.135rem;
+  margin-bottom: 1rem;
   text-align: left;
   font-weight: 400;
   line-height: 1.7;
@@ -167,6 +168,12 @@
   font-size: 1.2rem;
   font-family: var(--font-oxanium);
   font-weight: 400;
+}
+.section4Subtitle em {
+  font-size: 1.125rem;
+  font-family: var(--font-lato);
+  font-weight: 400;
+  line-height: 1.7;
 }
 
 .partnerFormContainer {
