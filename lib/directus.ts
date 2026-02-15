@@ -54,7 +54,7 @@ export async function getImpressumContent(): Promise<ImpressumContent | null> {
         headers: {
           "Content-Type": "application/json",
         },
-        next: { revalidate: 3600 }, // Revalidacja co godzinę - TYLKO dla tej strony
+        next: { revalidate: 3600, tags: ["impressum"] },
       }
     );
 
@@ -83,7 +83,7 @@ export async function getDatenschutzContent(): Promise<DatenschutzContent | null
         headers: {
           "Content-Type": "application/json",
         },
-        next: { revalidate: 3600 }, // Revalidacja co godzinę
+        next: { revalidate: 3600, tags: ["datenschutz"] },
       }
     );
 
