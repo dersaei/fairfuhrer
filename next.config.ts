@@ -36,6 +36,16 @@ const nextConfig: NextConfig = {
           },
         ],
       },
+      // Strony z dynamiczną treścią z CMS - nie cache'ować na Cloudflare
+      {
+        source: "/partner-werden",
+        headers: [
+          {
+            key: "CDN-Cache-Control",
+            value: "no-store",
+          },
+        ],
+      },
     ];
   },
 };

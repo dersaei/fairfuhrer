@@ -31,6 +31,7 @@ export default function MapBoxMap({ places }: MapBoxMapProps) {
   const markersRef = useRef<mapboxgl.Marker[]>([]);
   const userLocationMarkerRef = useRef<mapboxgl.Marker | null>(null);
   const userLocationRequestedRef = useRef(false);
+  const lastFittedPlacesRef = useRef<string>("");
 
   // Panel state
   const [selectedPlace, setSelectedPlace] = useState<Place | null>(null);
@@ -526,8 +527,11 @@ export default function MapBoxMap({ places }: MapBoxMapProps) {
         markersRef.current.push(marker);
       });
 
-      // ✅ Dopasuj widok mapy aby pokazać wszystkie markery
-      if (places.length > 0 && !isPanelOpen) {
+      // ✅ Dopasuj widok mapy aby pokazać wszystkie markery (tylko gdy zmieni się zestaw miejsc)
+      const placesKey = places.map((p) => p.id).sort().join(",");
+      if (places.length > 0 && placesKey !== lastFittedPlacesRef.current) {
+        lastFittedPlacesRef.current = placesKey;
+
         const bounds = new mapboxgl.LngLatBounds();
         places.forEach((p) => {
           if (p.Breite && p.Lange) {
@@ -550,7 +554,7 @@ export default function MapBoxMap({ places }: MapBoxMapProps) {
     } catch (error) {
       console.error("Błąd aktualizacji markerów:", error);
     }
-  }, [places, popupContents, isPanelOpen, userLocation, openPanel]);
+  }, [places, popupContents, userLocation, openPanel]);
 
   // ========================================
   // EFFECTS
