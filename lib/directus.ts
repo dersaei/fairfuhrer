@@ -7,8 +7,12 @@ import type {
   Place,
   Category,
   ContactMessage,
+  HomePageContent,
+  FeaturedPin,
   ImpressumContent,
   DatenschutzContent,
+  ContactInfoContent,
+  SupportSectionContent,
   PayPalDonation,
   DirectusPayPalDonation,
   WebhookLog,
@@ -39,22 +43,84 @@ export interface DirectusSchema {
   Orte: Place[]; // Niemiecka nazwa
   Kategorie: Category[]; // Niemiecka nazwa
   contact_messages: ContactMessage[];
+  home_page_content: HomePageContent[];
+  featured_pins: FeaturedPin[];
   impressum_content: ImpressumContent[];
   datenschutz_content: DatenschutzContent[];
+  contact_info_content: ContactInfoContent[];
   // NOWE kolekcje PayPal:
   paypal_donations: DirectusPayPalDonation[];
   webhook_logs: WebhookLog[];
 }
 
-export async function getImpressumContent(): Promise<ImpressumContent | null> {
+export async function getHomePageContent(): Promise<HomePageContent | null> {
+  const isDev = process.env.NODE_ENV === "development";
   try {
     const response = await fetch(
-      `${DIRECTUS_URL}/items/impressum_content?filter[page_slug][_eq]=impressum`,
+      `${DIRECTUS_URL}/items/home_page_content?filter[page_slug][_eq]=home&fields=*&limit=1`,
       {
         headers: {
           "Content-Type": "application/json",
         },
-        next: { revalidate: 3600, tags: ["impressum"] },
+        ...(isDev
+          ? { cache: "no-store" as const }
+          : { next: { revalidate: 3600, tags: ["home-page"] } }),
+      }
+    );
+
+    if (!response.ok) {
+      throw new Error("Failed to fetch home page content");
+    }
+
+    const data = await response.json();
+
+    if (data.data && data.data.length > 0) {
+      return data.data[0] as HomePageContent;
+    }
+
+    return null;
+  } catch (error) {
+    console.error("Error fetching home page content:", error);
+    return null;
+  }
+}
+
+export async function getFeaturedPins(): Promise<FeaturedPin[]> {
+  try {
+    const isDev = process.env.NODE_ENV === "development";
+    const response = await fetch(
+      `${DIRECTUS_URL}/items/featured_pins?filter[status][_eq]=published&sort=sort&fields=*,ort.*,ort.Kategorie.Kategorie_id.*`,
+      {
+        headers: {
+          "Content-Type": "application/json",
+        },
+        ...(isDev
+          ? { cache: "no-store" as const }
+          : { next: { revalidate: 3600, tags: ["featured-pins"] } }),
+      }
+    );
+
+    if (!response.ok) {
+      throw new Error("Failed to fetch featured pins");
+    }
+
+    const data = await response.json();
+    return (data.data as FeaturedPin[]) || [];
+  } catch (error) {
+    console.error("Error fetching featured pins:", error);
+    return [];
+  }
+}
+
+export async function getImpressumContent(): Promise<ImpressumContent | null> {
+  try {
+    const response = await fetch(
+      `${DIRECTUS_URL}/items/impressum_content?filter[page_slug][_eq]=impressum&fields=id,page_slug,title,address,email,business_info_top,business_info_bottom,legal_content,webseitenerstellung`,
+      {
+        headers: {
+          "Content-Type": "application/json",
+        },
+        next: { revalidate: 86400, tags: ["impressum"] },
       }
     );
 
@@ -83,7 +149,7 @@ export async function getDatenschutzContent(): Promise<DatenschutzContent | null
         headers: {
           "Content-Type": "application/json",
         },
-        next: { revalidate: 3600, tags: ["datenschutz"] },
+        next: { revalidate: 86400, tags: ["datenschutz"] },
       }
     );
 
@@ -100,6 +166,57 @@ export async function getDatenschutzContent(): Promise<DatenschutzContent | null
     return null;
   } catch (error) {
     console.error("Error fetching datenschutz content:", error);
+    return null;
+  }
+}
+
+export async function getSupportSectionContent(): Promise<SupportSectionContent | null> {
+  const isDev = process.env.NODE_ENV === "development";
+  try {
+    const response = await fetch(
+      `${DIRECTUS_URL}/items/support_section_content?filter[page_slug][_eq]=kontakt&fields=*&limit=1`,
+      {
+        headers: {
+          "Content-Type": "application/json",
+        },
+        ...(isDev
+          ? { cache: "no-store" as const }
+          : { next: { revalidate: 3600, tags: ["support-section"] } }),
+      }
+    );
+
+    if (!response.ok) {
+      throw new Error("Failed to fetch support section content");
+    }
+
+    const data = await response.json();
+    return data.data?.[0] ?? null;
+  } catch (error) {
+    console.error("Error fetching support section content:", error);
+    return null;
+  }
+}
+
+export async function getContactInfoContent(): Promise<ContactInfoContent | null> {
+  try {
+    const response = await fetch(
+      `${DIRECTUS_URL}/items/contact_info_content?filter[page_slug][_eq]=kontakt&fields=*&limit=1`,
+      {
+        headers: {
+          "Content-Type": "application/json",
+        },
+        next: { revalidate: 3600, tags: ["contact-info"] },
+      }
+    );
+
+    if (!response.ok) {
+      throw new Error("Failed to fetch contact info content");
+    }
+
+    const data = await response.json();
+    return data.data?.[0] ?? null;
+  } catch (error) {
+    console.error("Error fetching contact info content:", error);
     return null;
   }
 }

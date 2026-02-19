@@ -8,6 +8,7 @@
   justify-content: space-between;
   background: white;
   z-index: 1000;
+  overflow: hidden;
 }
 .logo {
   z-index: 1002;
@@ -30,9 +31,9 @@
   text-decoration: none;
   color: #fc6c14;
   font-size: 1.2rem;
-  font-family: var(--font-montserrat);
+  font-family: var(--font-anton);
   font-optical-sizing: auto;
-  font-weight: 600;
+  font-weight: 400;
   font-style: normal;
   transition: color 0.3s ease-in-out;
 }
@@ -51,12 +52,12 @@
 .socialIcon {
   display: flex;
   align-items: center;
-  color: rgba(252, 108, 20, 1);
+  color: black;
   transition: color 0.3s;
 }
 
 .socialIcon:hover {
-  color: #000;
+  color: #fc6c14;
 }
 
 /* Hamburger Button */
@@ -108,36 +109,37 @@
 .mobileMenu {
   position: fixed;
   top: 0;
-  right: -100%;
+  right: 0;
   width: 100%;
   height: 100dvh;
   background: white;
   box-shadow: -5px 0 15px rgba(0, 0, 0, 0.1);
-  transition: right 0.5s cubic-bezier(0.25, 0.1, 0.25, 1);
+  transform: translateX(100%);
+  transition: transform 0.5s cubic-bezier(0.25, 0.1, 0.25, 1);
   z-index: 999;
   display: flex;
   flex-direction: column;
   padding-top: 120px;
   padding-left: 2rem;
   padding-right: 2rem;
+  overflow-x: hidden;
 }
 
 .mobileMenuOpen {
-  right: 0;
+  transform: translateX(0);
 }
 
 .mobileNav {
   display: flex;
   flex-direction: column;
-  gap: 2rem;
-  margin-bottom: 3rem;
+  margin-bottom: 1rem;
 }
 
 .mobileNavLink {
   text-decoration: none;
   color: rgba(252, 108, 20, 1);
   font-size: 1.5rem;
-  font-family: var(--font-montserrat);
+  font-family: var(--font-anton);
   font-weight: 400;
   transition: all 0.3s ease;
   padding: 1rem 0;
@@ -174,14 +176,41 @@
   transform: translateX(10px);
 }
 
-.mobileSocial {
+/* Store Badges - Mobile Menu */
+.mobileStoreBadges {
   display: flex;
-  gap: 1.5rem;
-  margin-top: auto;
-  margin-bottom: 2rem;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
 }
 
-@media screen and (max-width: 768px) {
+.mobileStoreBadgesLabel {
+  font-family: var(--font-fira);
+  font-size: 0.8rem;
+  color: #888;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.mobileStoreBadgesIcons {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.mobileStoreBadgeImg {
+  width: 100px;
+  height: auto;
+}
+
+.mobileSocial {
+  display: flex;
+  justify-content: flex-start;
+  column-gap: 1rem;
+}
+
+@media screen and (max-width: 735px) {
   /* Hide desktop navigation and social */
   .nav,
   .social {
@@ -195,15 +224,5 @@
 
   .navLink {
     font-size: 4vw;
-  }
-}
-
-@media screen and (max-width: 480px) {
-  .mobileMenu {
-    padding-top: 100px;
-  }
-
-  .mobileNavLink {
-    font-size: 1.3rem;
   }
 }

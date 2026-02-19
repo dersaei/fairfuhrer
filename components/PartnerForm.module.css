@@ -17,16 +17,17 @@
 }
 
 .formHeader h3 {
-  font-family: var(--font-montserrat);
+  font-family: var(--font-anton);
   font-size: 1.75rem;
-  font-weight: 700;
+  font-weight: 400;
   margin-bottom: 0.5rem;
 }
 
 .formHeader p {
-  font-family: var(--font-lato);
+  font-family: var(--font-fira);
   font-size: 1rem;
   opacity: 0.9;
+  font-weight: 400;
 }
 
 .section {
@@ -39,9 +40,9 @@
 }
 
 .section h4 {
-  font-family: var(--font-montserrat);
+  font-family: var(--font-anton);
   font-size: 1.25rem;
-  font-weight: 600;
+  font-weight: 400;
   color: #1f2937;
   margin-bottom: 1rem;
   padding-bottom: 0.5rem;
@@ -49,7 +50,7 @@
 }
 
 .sectionNote {
-  font-family: var(--font-lato);
+  font-family: var(--font-fira);
   font-size: 0.9rem;
   color: #6b7280;
   margin-bottom: 1.5rem;
@@ -69,7 +70,7 @@
 
 .field label {
   display: block;
-  font-family: var(--font-lato);
+  font-family: var(--font-fira);
   font-weight: 600;
   color: #374151;
   margin-bottom: 0.5rem;
@@ -82,7 +83,7 @@
   padding: 0.75rem;
   border: 2px solid #d1d5db;
   border-radius: 8px;
-  font-family: var(--font-lato);
+  font-family: var(--font-fira);
   font-size: 1rem;
   transition: border-color 0.2s ease;
   background: white;
@@ -103,7 +104,7 @@
 .error {
   display: block;
   color: #ef4444;
-  font-family: var(--font-lato);
+  font-family: var(--font-fira);
   font-size: 0.875rem;
   margin-top: 0.25rem;
 }
@@ -115,7 +116,7 @@
   padding: 1rem;
   border-radius: 8px;
   margin: 1rem 2rem;
-  font-family: var(--font-lato);
+  font-family: var(--font-fira);
 }
 
 .fileInputWrapper {
@@ -142,7 +143,7 @@
   border: 2px dashed #cbd5e1;
   border-radius: 12px;
   color: #475569;
-  font-family: var(--font-lato);
+  font-family: var(--font-fira);
   font-size: 0.95rem;
   font-weight: 500;
   cursor: pointer;
@@ -195,7 +196,7 @@
   border-radius: 8px;
   font-size: 0.9rem;
   color: #0369a1;
-  font-family: var(--font-lato);
+  font-family: var(--font-fira);
 }
 
 .clearFileButton {
@@ -221,7 +222,7 @@
 
 .charCounter {
   text-align: right;
-  font-family: var(--font-lato);
+  font-family: var(--font-fira);
   font-size: 0.8rem;
   color: #6b7280;
   margin-top: 0.25rem;
@@ -233,7 +234,7 @@
   border-radius: 8px;
   padding: 0.75rem;
   margin-top: 1rem;
-  font-family: var(--font-lato);
+  font-family: var(--font-fira);
   font-size: 0.9rem;
   color: #0369a1;
 }
@@ -242,7 +243,7 @@
 
 .checkboxGroupLabel {
   display: block;
-  font-family: var(--font-lato);
+  font-family: var(--font-fira);
   font-weight: 600;
   color: #374151;
   margin-bottom: 0.5rem;
@@ -250,7 +251,7 @@
 }
 
 .checkboxGroupSubtitle {
-  font-family: var(--font-lato);
+  font-family: var(--font-fira);
   font-size: 0.9rem;
   color: #6b7280;
   margin-bottom: 1.5rem;
@@ -342,7 +343,7 @@
 
 /* LABEL - PROSTA NAZWA */
 .checkboxLabel {
-  font-family: var(--font-lato);
+  font-family: var(--font-fira);
   font-size: 0.8rem;
   color: #374151;
   cursor: pointer;
@@ -354,7 +355,7 @@
 
 .radioGroupLabel {
   display: block;
-  font-family: var(--font-lato);
+  font-family: var(--font-fira);
   font-weight: 600;
   color: #374151;
   margin-bottom: 0.5rem;
@@ -362,7 +363,7 @@
 }
 
 .radioGroupSubtitle {
-  font-family: var(--font-lato);
+  font-family: var(--font-fira);
   font-size: 0.9rem;
   color: #6b7280;
   margin-bottom: 1.5rem;
@@ -451,7 +452,7 @@
 }
 
 .radioLabel {
-  font-family: var(--font-lato);
+  font-family: var(--font-fira);
   font-size: 1rem;
   color: #1f2937;
   cursor: pointer;
@@ -460,7 +461,7 @@
 }
 
 .radioDescription {
-  font-family: var(--font-lato);
+  font-family: var(--font-fira);
   font-size: 0.9rem;
   color: #6b7280;
   line-height: 1.5;
@@ -549,7 +550,7 @@
 
 /* Specjalne style dla labelek kategorii z kolorami */
 .categoryRadioLabel {
-  font-family: var(--font-lato);
+  font-family: var(--font-fira);
   font-size: 1rem;
   cursor: pointer;
   margin: 0 !important;
@@ -575,9 +576,9 @@
   border: none;
   padding: 1rem 3rem;
   border-radius: 50px;
-  font-family: var(--font-montserrat);
+  font-family: var(--font-anton);
   font-size: 1.1rem;
-  font-weight: 600;
+  font-weight: 400;
   cursor: pointer;
   transition: all 0.3s ease;
   box-shadow: 0 4px 15px rgba(252, 108, 20, 0.3);
@@ -606,15 +607,15 @@
 }
 
 .successMessage h3 {
-  font-family: var(--font-montserrat);
+  font-family: var(--font-anton);
   font-size: 1.75rem;
-  font-weight: 700;
+  font-weight: 400;
   color: #059669;
   margin-bottom: 1rem;
 }
 
 .successMessage p {
-  font-family: var(--font-lato);
+  font-family: var(--font-fira);
   font-size: 1.1rem;
   color: #374151;
   line-height: 1.6;
@@ -631,9 +632,9 @@
   border: none;
   padding: 0.75rem 2rem;
   border-radius: 50px;
-  font-family: var(--font-montserrat);
+  font-family: var(--font-anton);
   font-size: 1rem;
-  font-weight: 600;
+  font-weight: 400;
   cursor: pointer;
   transition: all 0.3s ease;
 }

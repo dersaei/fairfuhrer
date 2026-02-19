@@ -2,7 +2,9 @@
 "use client";
 
 import { useState, useMemo } from "react";
-import { Euro, Heart, CreditCard } from "lucide-react";
+import { Euro, CreditCard } from "lucide-react";
+import Image from "next/image";
+import paypalLogo from "@/public/paypal-logo-fair-fuehrer-guide.png";
 import { PayPalButtons } from "./PayPalButtons";
 import { isValidEURAmount, convertEURToCents } from "@/utils/paypalTypeGuards";
 import type {
@@ -84,14 +86,9 @@ export function PayPalDonationForm({
   // Handle cancel
   const handleCancel = () => {
     setIsSubmitting(false);
-    setErrors({}); // Wyczyść błędy
-
-    // ✅ POPRAWKA: Pokaż informację o anulowaniu
     setErrors({
       general: "Zahlung wurde abgebrochen. Sie können es erneut versuchen.",
     });
-
-    console.log("Payment cancelled - resetting form");
   };
 
   // ✅ POPRAWKA: Konwersja tylko gdy amount > 0
@@ -107,10 +104,8 @@ export function PayPalDonationForm({
       {/* Header */}
       <div className={styles.formHeader}>
         <div className={styles.formIcon}>
-          <Heart size={32} />
+          <Image src={paypalLogo} alt="PayPal Logo" height={40} unoptimized />
         </div>
-        <h3 className={styles.formTitle}>PayPal Spende</h3>
-        <p className={styles.formSubtitle}>Schnell und sicher mit PayPal</p>
       </div>
 
       {/* Amount Section */}

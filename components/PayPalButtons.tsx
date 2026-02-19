@@ -1,4 +1,4 @@
-// components/PayPalButtons.tsx - PRZYWRÓCONA WERSJA Z DONOR DATA
+// components/PayPalButtons.tsx
 "use client";
 
 import { PayPalButtons as PayPalButtonsSDK } from "@paypal/react-paypal-js";
@@ -6,7 +6,6 @@ import { useState } from "react";
 import type { PayPalDonation } from "@/types";
 import styles from "./PayPalButtons.module.css";
 
-// ✅ PRZYWRÓCONO DonorData interface
 interface DonorData {
   email?: string;
   name?: string;
@@ -14,8 +13,8 @@ interface DonorData {
 }
 
 interface PayPalButtonsProps {
-  amount: number; // WAŻNE: już w centach!
-  donorData?: DonorData; // ✅ PRZYWRÓCONO
+  amount: number; // w centach
+  donorData?: DonorData;
   onApprove?: () => boolean; // return false to cancel
   onSuccess?: (donation: PayPalDonation) => void;
   onError?: (error: string) => void;
@@ -25,7 +24,7 @@ interface PayPalButtonsProps {
 
 export function PayPalButtons({
   amount,
-  donorData, // ✅ PRZYWRÓCONO
+  donorData,
   onApprove,
   onSuccess,
   onError,
@@ -33,6 +32,8 @@ export function PayPalButtons({
   disabled = false,
 }: PayPalButtonsProps) {
   const [isProcessing, setIsProcessing] = useState(false);
+  // Przechowuj orderId żeby cancel-order mógł go użyć
+  const [currentOrderId, setCurrentOrderId] = useState<string | null>(null);
 
   return (
     <div className={styles.paypalButtonsContainer}>
@@ -53,25 +54,20 @@ export function PayPalButtons({
           tagline: false,
           height: 45,
         }}
-        // ✅ POPRAWKA: Użyj fundingSource (pojedyncza liczba) lub forceReRender
-        forceReRender={[`paypal-card-${amount}`]} // Force re-render when amount changes
+        forceReRender={[amount]}
         createOrder={async () => {
           try {
-            // Validate before proceeding
             if (onApprove && !onApprove()) {
               throw new Error("Validation failed");
             }
 
             setIsProcessing(true);
 
-            // ✅ PRZYWRÓCONO: Wysyłaj donor data z formularza
             const response = await fetch("/api/paypal/create-order", {
               method: "POST",
-              headers: {
-                "Content-Type": "application/json",
-              },
+              headers: { "Content-Type": "application/json" },
               body: JSON.stringify({
-                amount, // Już w centach!
+                amount,
                 currency: "EUR",
                 donor_email: donorData?.email,
                 donor_name: donorData?.name,
@@ -85,14 +81,7 @@ export function PayPalButtons({
             }
 
             const data = await response.json();
-
-            // Debug log
-            console.log("PayPal order created:", {
-              amount_in_cents: amount,
-              amount_in_eur: amount / 100,
-              order_id: data.order_id,
-            });
-
+            setCurrentOrderId(data.order_id);
             return data.order_id;
           } catch (error) {
             setIsProcessing(false);
@@ -104,15 +93,10 @@ export function PayPalButtons({
         }}
         onApprove={async (data) => {
           try {
-            // Call our API to capture payment
             const response = await fetch("/api/paypal/capture-payment", {
               method: "POST",
-              headers: {
-                "Content-Type": "application/json",
-              },
-              body: JSON.stringify({
-                order_id: data.orderID,
-              }),
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({ order_id: data.orderID }),
             });
 
             if (!response.ok) {
@@ -122,14 +106,12 @@ export function PayPalButtons({
 
             const captureData = await response.json();
 
-            // Success - create donation object for callback
             const donation: PayPalDonation = {
-              id: `temp_${Date.now()}`, // Temporary ID
-              amount, // W centach
+              id: `temp_${Date.now()}`,
+              amount,
               currency: "EUR",
               paypal_order_id: data.orderID,
               paypal_payment_id: captureData.payment_id,
-              // ✅ PRZYWRÓCONO: Dane z naszego formularza
               donor_email: donorData?.email,
               donor_name: donorData?.name,
               donor_message: donorData?.message,
@@ -140,6 +122,7 @@ export function PayPalButtons({
             };
 
             setIsProcessing(false);
+            setCurrentOrderId(null);
             onSuccess?.(donation);
           } catch (error) {
             setIsProcessing(false);
@@ -150,23 +133,18 @@ export function PayPalButtons({
         }}
         onCancel={() => {
           setIsProcessing(false);
-          console.log("PayPal payment cancelled by user");
 
-          // ✅ POPRAWKA: Aktualizuj status w Directus na cancelled
-          // Znajdź ostatnie zamówienie i zaktualizuj status
-          fetch("/api/paypal/cancel-order", {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify({
-              // Tutaj możemy wysłać amount żeby znaleźć pending order
-              amount,
-              timestamp: Date.now(),
-            }),
-          }).catch((error) => {
-            console.error("Failed to update cancelled status:", error);
-          });
+          // Aktualizuj status w Directus — używaj order_id, nie amount
+          if (currentOrderId) {
+            fetch("/api/paypal/cancel-order", {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({ order_id: currentOrderId }),
+            }).catch((error) => {
+              console.error("Failed to update cancelled status:", error);
+            });
+            setCurrentOrderId(null);
+          }
 
           onCancel?.();
         }}

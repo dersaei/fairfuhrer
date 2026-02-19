@@ -1,6 +1,7 @@
 // app/_components/web-vitals.tsx
 "use client";
 
+import { useRef } from "react";
 import { useReportWebVitals } from "next/web-vitals";
 import { useCookies } from "../../context/CookieContext";
 
@@ -12,38 +13,35 @@ import { useCookies } from "../../context/CookieContext";
  * - TTFB (Time to First Byte)
  * - FCP (First Contentful Paint)
  * - LCP (Largest Contentful Paint)
- * - FID (First Input Delay)
  * - CLS (Cumulative Layout Shift)
  * - INP (Interaction to Next Paint)
  */
 export function WebVitals() {
   const { preferences, hasConsented } = useCookies();
 
+  // useReportWebVitals registers the callback once and doesn't update it on re-renders.
+  // Use a ref so the callback always reads the latest consent state without stale closure.
+  const consentRef = useRef({ hasConsented, analytics: preferences.analytics });
+  consentRef.current = { hasConsented, analytics: preferences.analytics };
+
   useReportWebVitals((metric) => {
-    // Only send metrics if user has consented to analytics cookies
-    if (!hasConsented || !preferences.analytics) {
+    if (!consentRef.current.hasConsented || !consentRef.current.analytics) {
       return;
     }
 
-    // Send to Google Analytics
-    if (typeof window !== "undefined" && window.gtag) {
+    if (window.gtag) {
       window.gtag("event", metric.name, {
         // CLS values are typically very small decimals, so multiply by 1000
         value: Math.round(
           metric.name === "CLS" ? metric.value * 1000 : metric.value
         ),
-        event_label: metric.id, // Unique ID for this page load
-        non_interaction: true, // Don't affect bounce rate
+        event_label: metric.id,
+        non_interaction: true,
         metric_delta: metric.delta,
         metric_rating: metric.rating,
       });
-
-      console.log(
-        `📊 Web Vital sent: ${metric.name} = ${metric.value} (${metric.rating})`
-      );
     }
   });
 
-  // This component doesn't render anything
   return null;
 }

@@ -359,6 +359,65 @@ export interface PartnerPageContent {
   section5_title_color?: string;
 }
 
+// ✅ FeaturedPin - kolekcja "Featured Pins" w Directus (M2O → Orte)
+export interface FeaturedPin {
+  id: number;
+  ort: Place; // Many-to-One relacja do Orte (deep-fetched)
+  sort: number;
+  status: "published" | "draft" | "archived";
+}
+
+// ✅ HomePageContent - kolekcja "Home Page Content" w Directus
+export interface HomePageContent {
+  id: number;
+  page_slug: string;
+
+  // Hero section
+  hero_title?: string;
+  hero_subtitle?: string;
+  hero_button_text?: string;
+  hero_button_link?: string;
+  hero_image?: string; // filename w Supabase
+  hero_background_color?: string;
+
+  // Badges bar
+  badges_label?: string;
+  badge_app_store?: string; // filename w Supabase
+  badge_google_play?: string; // filename w Supabase
+  badge_partner_logo?: string; // filename w Supabase
+
+  // Section 2 - Kategorie
+  section2_background_color?: string;
+  section2_title?: string;
+  section2_title_font_size?: string;
+  section2_title_color?: string;
+  section2_title_text_shadow?: string;
+
+  // Section 3
+  section3_background_color?: string;
+  section3_title?: string;
+  section3_title_font_size?: string;
+  section3_title_color?: string;
+  section3_title_text_shadow?: string;
+  section3_text?: string;
+  section3_button_text?: string;
+
+  // Section 4 - Partner werden
+  section4_background_color?: string;
+  section4_badge_text?: string;
+  section4_title?: string;
+  section4_title_font_size?: string;
+  section4_title_color?: string;
+  section4_title_text_shadow?: string;
+  section4_text?: string;
+  section4_text_font_size?: string;
+  section4_text_color?: string;
+  section4_button_text?: string;
+  section4_button_link?: string;
+  section4_button_color?: string;
+  section4_button_font_size?: string;
+}
+
 // ✅ ImpressumContent
 export interface ImpressumContent {
   id: number;
@@ -369,6 +428,7 @@ export interface ImpressumContent {
   business_info_top: string;
   business_info_bottom: string;
   legal_content: string; // HTML content
+  webseitenerstellung?: string; // HTML content
 }
 
 // ✅ DatenschutzContent - dla strony Datenschutz
@@ -377,6 +437,39 @@ export interface DatenschutzContent {
   page_slug: string;
   title: string;
   content: string; // HTML content
+}
+
+// ✅ SupportSectionContent - dla sekcji wsparcia na stronie /kontakt
+export interface SupportSectionContent {
+  id: number;
+  page_slug: string;
+  background_color?: string;
+  title?: string;
+  title_font_size?: string;
+  title_color?: string;
+  text?: string;
+  text_font_size?: string;
+  text_color?: string;
+  second_text?: string;
+  second_text_font_size?: string;
+  second_text_color?: string;
+}
+
+// ✅ ContactInfoContent - dla sekcji nagłówkowej strony /kontakt
+export interface ContactInfoContent {
+  id: number;
+  page_slug: string;
+  background_color?: string;
+  title?: string;
+  title_color?: string;
+  title_font_size?: string;
+  title_text_shadow?: string;
+  intro_features?: string; // Markdown: ## Heading\nText\n\n## Heading2\nText2
+  features_h2_color?: string;
+  features_h2_font_size?: string;
+  features_h2_text_shadow?: string;
+  features_p_color?: string;
+  features_p_font_size?: string;
 }
 
 // ========================================

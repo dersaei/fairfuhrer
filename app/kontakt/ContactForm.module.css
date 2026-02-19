@@ -1,7 +1,7 @@
 /* app/kontakt/ContactForm.module.css */
 .contactForm {
-  background-color: aliceblue;
-  padding: 10vh 2vw;
+  background-color: white;
+  padding: 10vh 2vw 4vh;
   height: fit-content;
 }
 
@@ -23,14 +23,12 @@
 }
 
 .contactForm h2 {
-  font-size: 2rem;
+  font-size: 3rem;
   color: black;
   margin: 0;
-  font-family: var(--font-montserrat);
-  font-optical-sizing: auto;
-  font-weight: 700;
+  font-family: var(--font-anton);
+  font-weight: 400;
   font-style: normal;
-  text-transform: uppercase;
   text-align: center;
 }
 
@@ -55,8 +53,7 @@
 }
 
 .formGroup {
-  font-family:
-    -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", sans-serif;
+  font-family: var(--font-fira);
   width: 50vw;
   margin: 1.3rem auto;
   box-shadow:
@@ -114,9 +111,7 @@
   font-size: 1rem;
   font-weight: 600;
   cursor: pointer;
-  transition:
-    background-color 0.2s,
-    transform 0.1s;
+  transition: all 0.5s ease-in-out;
   width: 40%;
   margin: 0 auto;
   display: block;
@@ -127,7 +122,7 @@
 }
 
 .submitButton:hover:not(:disabled) {
-  background: black;
+  background-color: black;
   transform: translateY(-1px);
 }
 
@@ -137,13 +132,81 @@
   transform: none;
 }
 
+.contactMethods {
+  display: flex;
+  flex-direction: row;
+  width: 90%;
+  margin: 3rem auto 0;
+  justify-content: center;
+}
+
+.contactMethod {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 1rem;
+  padding: 1.5rem 1rem;
+  background: white;
+  transition: all 0.5s ease-in-out;
+  flex: 1;
+  max-width: 300px;
+}
+
+.contactMethod:hover {
+  transform: translateY(-5px);
+}
+
+.methodIcon {
+  color: #3b82f6;
+  background: rgba(59, 130, 246, 0.1);
+  padding: 1rem;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.methodContent {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  font-family: var(--font-fira);
+}
+
+.methodContent h3 {
+  font-weight: 600;
+  color: #1e293b;
+  margin-bottom: 0.5rem;
+  font-size: 1.4rem;
+}
+
+.methodContent p {
+  color: #374151;
+  margin-bottom: 0.5rem;
+  font-size: 1rem;
+  line-height: 1.4;
+}
+
+.responseTime {
+  font-size: 0.8rem;
+  color: #6b7280;
+  font-style: italic;
+}
+
 @media (max-width: 750px) {
   .formGroup {
     width: 80%;
   }
 }
 
-@media (max-width: 600px) {
+@media (max-width: 630px) {
+  .contactMethods {
+    flex-direction: column;
+    gap: 2rem;
+    justify-content: center;
+    align-items: center;
+  }
   .contactForm h2 {
     font-size: 6vw;
   }

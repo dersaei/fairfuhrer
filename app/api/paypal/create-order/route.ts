@@ -69,7 +69,6 @@ export async function POST(request: NextRequest) {
     // ✅ POPRAWKA: Użyj nowej funkcji walidacji
     const requestValidation = validateCreateOrderRequest(body);
     if (!requestValidation.isValid) {
-      console.error("Validation failed:", requestValidation.error);
       return NextResponse.json(
         {
           error: requestValidation.error,
@@ -78,13 +77,6 @@ export async function POST(request: NextRequest) {
         { status: 400 }
       );
     }
-
-    // Log debug info
-    console.log("Creating PayPal order:", {
-      amount_cents: body.amount,
-      amount_eur: body.amount / 100,
-      currency: body.currency,
-    });
 
     // ✅ POPRAWKA: Użyj amount bezpośrednio (już w centach)
     const amountInCents = body.amount;
@@ -129,14 +121,6 @@ export async function POST(request: NextRequest) {
       orderLinks?.find(
         (link: { rel: string; href: string }) => link.rel === "approve"
       )?.href || "";
-
-    // Log success
-    console.log("PayPal order created successfully:", {
-      order_id: orderId,
-      donation_id: donation.id,
-      amount_cents: amountInCents,
-      amount_eur: amountInCents / 100,
-    });
 
     // Zwróć odpowiedź
     return NextResponse.json({

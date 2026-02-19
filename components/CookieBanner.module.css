@@ -49,8 +49,9 @@
 .title {
   margin: 0 0 16px 0;
   font-size: 1.5rem;
-  font-weight: 600;
+  font-weight: 400;
   color: #1a1a1a;
+  font-family: var(--font-anton);
 }
 
 .description {
@@ -58,6 +59,7 @@
   color: #4a4a4a;
   line-height: 1.6;
   font-size: 0.95rem;
+  font-family: var(--font-fira);
 }
 
 .actions {

@@ -21,6 +21,7 @@ body {
   outline: 0;
   font-size: 100%;
   vertical-align: baseline;
+  overflow-x: hidden;
 
   /* iPhone Safari: Prevent overscroll bounce */
   overscroll-behavior: none;
@@ -366,4 +367,26 @@ html.gallery-open body {
 /* Scrollbar corner (when both scrollbars are present) */
 *::-webkit-scrollbar-corner {
   background: rgba(0, 0, 0, 0.05);
+}
+
+/* ===== Mapbox popup category badges (global — poza drzewem React) ===== */
+.popup-category-badges {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  margin-bottom: 6px;
+  justify-content: center;
+}
+
+.popup-category-badge {
+  background-color: #999;
+  color: white;
+  font-size: 0.65rem;
+  font-weight: 400;
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
+  padding: 3px 9px;
+  border-radius: 9999px;
+  line-height: 1.4;
+  font-family: var(--font-fira);
 }

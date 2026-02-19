@@ -9,20 +9,6 @@ const nextConfig: NextConfig = {
   async headers() {
     return [
       {
-        source: "/styles/atmosphere-v2.json",
-        headers: [
-          {
-            key: "Cache-Control",
-            value: "public, max-age=31536000, immutable",
-          },
-          {
-            key: "Content-Type",
-            value: "application/json; charset=utf-8",
-          },
-        ],
-      },
-      // cache dla obrazków
-      {
         source: "/images/:path*",
         headers: [
           {

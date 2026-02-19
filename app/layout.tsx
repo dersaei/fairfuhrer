@@ -5,6 +5,7 @@ import "../styles/reset.css";
 import "../styles/ios-safari-fixes.css";
 import Header from "../components/Header";
 import Footer from "../components/Footer";
+import ScrollToTop from "../components/ScrollToTop";
 import { PayPalProvider } from "../components/PayPalProvider";
 import { CookieProvider } from "../context/CookieContext";
 import CookieBanner from "../components/CookieBanner";
@@ -12,7 +13,7 @@ import HotjarTag from "../components/HotjarTag";
 import GlobalLoadingIndicator from "../components/GlobalLoadingIndicator";
 import { WebVitals } from "./_components/web-vitals";
 import { AnalyticsTracker } from "./_components/analytics-tracker";
-import { lato, montserrat, oxanium, staatliches } from "./fonts";
+import { anton, firaSansCondensed } from "./fonts";
 import { Suspense } from "react";
 
 // Environment Variables
@@ -20,8 +21,7 @@ const HOTJAR_SITE_ID = process.env.NEXT_PUBLIC_HOTJAR_SITE_ID
   ? parseInt(process.env.NEXT_PUBLIC_HOTJAR_SITE_ID)
   : null;
 
-const GA_MEASUREMENT_ID =
-  process.env.NEXT_PUBLIC_GOOGLE_TAG_ID || "G-RZ7CM3J072";
+const GA_MEASUREMENT_ID = process.env.NEXT_PUBLIC_GOOGLE_TAG_ID ?? null;
 
 export const viewport: Viewport = {
   width: "device-width",
@@ -32,7 +32,7 @@ export const viewport: Viewport = {
 export const metadata: Metadata = {
   metadataBase: new URL("https://www.fairfuehrer.guide"),
   title: {
-    default: "FairFührer Guide",
+    default: "Fair Führer Guide",
     template: "%s | FairFührer Guide",
   },
   description:
@@ -61,12 +61,28 @@ export default function RootLayout({
     <html lang="de" data-scroll-behavior="smooth">
       <body
         className={`
-          ${lato.variable}
-          ${staatliches.variable}
-          ${oxanium.variable}
-          ${montserrat.variable}
+          ${anton.variable}
+          ${firaSansCondensed.variable}
         `}
       >
+        {/* GA Consent Mode - domyślnie denied, zaktualizowane po zgodzie użytkownika */}
+        <Script
+          id="ga-consent-default"
+          strategy="afterInteractive"
+          dangerouslySetInnerHTML={{
+            __html: `
+              window.dataLayer = window.dataLayer || [];
+              function gtag(){dataLayer.push(arguments);}
+              gtag('consent', 'default', {
+                analytics_storage: 'denied',
+                ad_storage: 'denied',
+                functionality_storage: 'denied',
+                personalization_storage: 'denied',
+                wait_for_update: 2000
+              });
+            `,
+          }}
+        />
         {/* ✅ Global Loading Indicator - Next.js 16 useLinkStatus */}
         <GlobalLoadingIndicator />
 
@@ -75,9 +91,11 @@ export default function RootLayout({
           <WebVitals />
 
           {/* SPA pageview tracking for client-side navigation */}
-          <Suspense fallback={null}>
-            <AnalyticsTracker />
-          </Suspense>
+          {GA_MEASUREMENT_ID && (
+            <Suspense fallback={null}>
+              <AnalyticsTracker gaId={GA_MEASUREMENT_ID} />
+            </Suspense>
+          )}
 
           {/* Hotjar Tag */}
           {HOTJAR_SITE_ID && <HotjarTag siteId={HOTJAR_SITE_ID} />}
@@ -86,6 +104,7 @@ export default function RootLayout({
             <Header />
             <main>{children}</main>
             <Footer />
+            <ScrollToTop />
           </PayPalProvider>
 
           <CookieBanner />
@@ -178,7 +197,7 @@ export default function RootLayout({
           }}
         />
       </body>
-      <GoogleAnalytics gaId={GA_MEASUREMENT_ID} />
+      {GA_MEASUREMENT_ID && <GoogleAnalytics gaId={GA_MEASUREMENT_ID} />}
     </html>
   );
 }

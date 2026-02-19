@@ -3,8 +3,10 @@
 import styles from "./Header.module.css";
 import Image from "next/image";
 import Link from "next/link";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import logoFairfuehrer from "../public/logo-fairfuehrer.png";
+import appStoreBadge from "../public/app-store-badge.png";
+import googlePlayBadge from "../public/google-play-badge.png";
 
 export default function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -16,6 +18,13 @@ export default function Header() {
   const closeMenu = () => {
     setIsMenuOpen(false);
   };
+
+  useEffect(() => {
+    document.body.style.overflow = isMenuOpen ? "hidden" : "";
+    return () => {
+      document.body.style.overflow = "";
+    };
+  }, [isMenuOpen]);
 
   return (
     <header className={styles.header}>
@@ -37,6 +46,9 @@ export default function Header() {
       <nav className={styles.nav}>
         <Link href="/" className={styles.navLink}>
           Entdecken
+        </Link>
+        <Link href="/karte" className={styles.navLink}>
+          Karte
         </Link>
         <Link href="/partner-werden" className={styles.navLink}>
           Mitmachen
@@ -113,6 +125,13 @@ export default function Header() {
             Entdecken
           </Link>
           <Link
+            href="/karte"
+            className={styles.mobileNavLink}
+            onClick={closeMenu}
+          >
+            Karte
+          </Link>
+          <Link
             href="/partner-werden"
             className={styles.mobileNavLink}
             onClick={closeMenu}
@@ -126,7 +145,40 @@ export default function Header() {
           >
             Über uns
           </Link>
+          <Link
+            href="/impressum"
+            className={styles.mobileNavLink}
+            onClick={closeMenu}
+          >
+            Impressum
+          </Link>
+          <Link
+            href="/datenschutz"
+            className={styles.mobileNavLink}
+            onClick={closeMenu}
+          >
+            Datenschutz
+          </Link>
         </nav>
+
+        {/* Store Badges - Mobile */}
+        <div className={styles.mobileStoreBadges}>
+          <span className={styles.mobileStoreBadgesLabel}>Bald verfügbar</span>
+          <div className={styles.mobileStoreBadgesIcons}>
+            <Image
+              src={appStoreBadge}
+              alt="App Store"
+              unoptimized
+              className={styles.mobileStoreBadgeImg}
+            />
+            <Image
+              src={googlePlayBadge}
+              alt="Google Play"
+              unoptimized
+              className={styles.mobileStoreBadgeImg}
+            />
+          </div>
+        </div>
 
         {/* Social media - Mobile */}
         <div className={styles.mobileSocial}>

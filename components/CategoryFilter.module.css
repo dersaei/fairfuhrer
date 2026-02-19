@@ -67,9 +67,9 @@
 }
 
 .filterName {
-  font-size: 15px;
+  font-size: 1rem;
   font-weight: 400;
-  font-family: var(--font-lato);
+  font-family: var(--font-fira);
   color: #333;
   transition: color 0.2s ease;
   flex: 1;
@@ -121,7 +121,7 @@
 }
 
 /* Mobile adjustments */
-@media screen and (max-width: 580px) {
+@media screen and (max-width: 680px) {
   .filterContainer {
     padding: 6px;
     gap: 3px;

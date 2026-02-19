@@ -40,3 +40,11 @@
     transform: rotate(360deg);
   }
 }
+
+.consentNotice {
+  padding: 20px;
+  background-color: #f5f5f5;
+  border-radius: 8px;
+  text-align: center;
+  color: #666;
+}

@@ -5,13 +5,13 @@ import { getImpressumContent } from "@/lib/directus";
 import { ImpressumContent } from "@/types";
 import styles from "./impressum.module.css";
 
-// Generowanie metadanych dla SEO
+// Metadaten für SEO
 export async function generateMetadata(): Promise<Metadata> {
   const content = await getImpressumContent();
 
   return {
     title: content?.title || "Impressum",
-    description: "Impressum - Informacje prawne",
+    description: "Impressum - Rechtliche Informationen",
   };
 }
 
@@ -22,19 +22,19 @@ export default async function ImpressumPage() {
     return (
       <div className={styles.container}>
         <h1>Impressum</h1>
-        <p>Treść strony jest obecnie niedostępna.</p>
+        <p>Der Seiteninhalt ist derzeit nicht verfügbar.</p>
       </div>
     );
   }
 
   return (
     <div className={styles.container}>
-      {/* Tytuł strony */}
+      {/* Seitentitel */}
       <h1 className={styles.title}>{content.title}</h1>
 
-      {/* Sekcja z podstawowymi informacjami */}
+      {/* Basisinformationen */}
       <div className={styles.infoSection}>
-        {/* Adres */}
+        {/* Adresse */}
         <div className={styles.addressSection}>
           <div
             className={styles.addressText}
@@ -44,7 +44,7 @@ export default async function ImpressumPage() {
           />
         </div>
 
-        {/* Email */}
+        {/* E-Mail */}
         <div className={styles.emailSection}>
           <a href={`mailto:${content.email}`} className={styles.emailLink}>
             {content.email}
@@ -57,7 +57,7 @@ export default async function ImpressumPage() {
             }}
           />
         </div>
-        {/* Informacje o firmie na dole */}
+        {/* Unternehmensinfo unten */}
         <div className={styles.businessInfoBottom}>
           <div
             dangerouslySetInnerHTML={{
@@ -67,10 +67,17 @@ export default async function ImpressumPage() {
         </div>
       </div>
 
-      {/* Treść prawna z WYSIWYG */}
+      {/* Rechtlicher Inhalt WYSIWYG */}
       <div className={styles.legalContent}>
         <div dangerouslySetInnerHTML={{ __html: content.legal_content }} />
       </div>
+
+      {/* Technische Umsetzung */}
+      {content.webseitenerstellung && (
+        <div className={styles.legalContent}>
+          <div dangerouslySetInnerHTML={{ __html: content.webseitenerstellung }} />
+        </div>
+      )}
     </div>
   );
 }

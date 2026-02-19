@@ -217,6 +217,20 @@ function PlaceContent({
         )}
       </div>
 
+      {place.Kategorie && place.Kategorie.length > 0 && (
+        <div className={styles.categoryBadges}>
+          {place.Kategorie.map((cat) => (
+            <span
+              key={cat.id}
+              className={styles.categoryBadge}
+              style={{ "--badge-color": cat.color } as React.CSSProperties}
+            >
+              {cat.name}
+            </span>
+          ))}
+        </div>
+      )}
+
       <div className={styles.placeNameSection}>
         <h2 id={`place-title-${place.id}`} className={styles.placeName}>
           {place.Name}

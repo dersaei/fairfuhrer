@@ -1,28 +1,20 @@
-// fairfuhrer/app/components/ConditionalPayPal.tsx
+// components/ConditionalPayPal.tsx
 "use client";
 
-import React from "react";
+import type { ReactNode } from "react";
 import { useCookies } from "../context/CookieContext";
+import styles from "./PayPalButtons.module.css";
 
 interface ConditionalPayPalProps {
-  children: React.ReactNode;
+  children: ReactNode;
 }
 
 export function ConditionalPayPal({ children }: ConditionalPayPalProps) {
   const { hasConsented } = useCookies();
 
-  // PayPal is necessary, so we render it once user has given any consent
   if (!hasConsented) {
     return (
-      <div
-        style={{
-          padding: "20px",
-          backgroundColor: "#f5f5f5",
-          borderRadius: "8px",
-          textAlign: "center" as const,
-          color: "#666",
-        }}
-      >
+      <div className={styles.consentNotice}>
         <p>
           PayPal wird geladen, nachdem Sie den Cookie-Einstellungen zugestimmt
           haben.

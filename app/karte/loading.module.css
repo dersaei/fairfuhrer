@@ -80,16 +80,16 @@
 .loadingTitle {
   margin: 0;
   font-size: 1.5rem;
-  font-weight: 600;
+  font-weight: 400;
   color: #2d3748;
-  font-family: var(--font-montserrat);
+  font-family: var(--font-anton);
 }
 
 .loadingSubtitle {
   margin: 0;
   font-size: 1rem;
   color: #718096;
-  font-family: var(--font-lato);
+  font-family: var(--font-fira);
 }
 
 /* Simulated controls */
@@ -140,8 +140,8 @@
 /* Legend title - matches MapWithFilters.module.css */
 .legendTitle {
   font-size: 1.3rem;
-  font-weight: 700;
-  font-family: var(--font-montserrat);
+  font-weight: 400;
+  font-family: var(--font-anton);
   color: #333;
   text-align: center;
   margin: 0 0 4px 0;
@@ -151,7 +151,7 @@
 .legendSubtitle {
   font-size: 0.85rem;
   font-weight: 400;
-  font-family: var(--font-lato);
+  font-family: var(--font-fira);
   color: #666;
   text-align: center;
   margin: 0 0 6px 0;

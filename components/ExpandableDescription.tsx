@@ -2,6 +2,7 @@
 "use client";
 
 import { useState, useRef, useEffect } from "react";
+import { cleanHtml } from "@/utils/cleanHtml";
 import styles from "./ExpandableDescription.module.css";
 
 interface ExpandableDescriptionProps {
@@ -19,6 +20,8 @@ export default function ExpandableDescription({
   const [shouldShowButton, setShouldShowButton] = useState(false);
   const contentRef = useRef<HTMLDivElement>(null);
   const fullContentRef = useRef<HTMLDivElement>(null);
+
+  const sanitizedContent = cleanHtml(content);
 
   // Sprawdź czy tekst jest dłuższy niż maksymalna liczba linii
   useEffect(() => {
@@ -43,7 +46,7 @@ export default function ExpandableDescription({
       <div
         ref={fullContentRef}
         className={styles.hiddenContent}
-        dangerouslySetInnerHTML={{ __html: content }}
+        dangerouslySetInnerHTML={{ __html: sanitizedContent }}
         aria-hidden="true"
       />
 
@@ -56,7 +59,7 @@ export default function ExpandableDescription({
         style={{
           maxHeight: isExpanded ? "none" : `${maxLines * 1.6}em`,
         }}
-        dangerouslySetInnerHTML={{ __html: content }}
+        dangerouslySetInnerHTML={{ __html: sanitizedContent }}
       />
 
       {/* Gradient overlay gdy tekst jest zwinięty */}

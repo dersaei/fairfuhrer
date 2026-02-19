@@ -16,13 +16,111 @@ import type {
   WebhookLog,
 } from "@/types";
 
+// PayPal Webhook Signature Verification via REST API
+// https://developer.paypal.com/api/rest/webhooks/rest/#link-verifywebhooksignature
+async function verifyPayPalWebhookSignature(
+  rawBody: string,
+  headers: Record<string, string>
+): Promise<boolean> {
+  const webhookId = process.env.PAYPAL_WEBHOOK_ID;
+  if (!webhookId) {
+    console.error("PAYPAL_WEBHOOK_ID not configured — cannot verify webhook");
+    return false;
+  }
+
+  const clientId = process.env.PAYPAL_CLIENT_ID;
+  const clientSecret = process.env.PAYPAL_CLIENT_SECRET;
+  if (!clientId || !clientSecret) {
+    console.error("PayPal credentials not configured");
+    return false;
+  }
+
+  const mode = process.env.PAYPAL_MODE === "production" ? "live" : "sandbox";
+  const baseUrl =
+    mode === "live"
+      ? "https://api-m.paypal.com"
+      : "https://api-m.sandbox.paypal.com";
+
+  try {
+    // Pobierz access token
+    const tokenResponse = await fetch(`${baseUrl}/v1/oauth2/token`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/x-www-form-urlencoded",
+        Authorization: `Basic ${Buffer.from(`${clientId}:${clientSecret}`).toString("base64")}`,
+      },
+      body: "grant_type=client_credentials",
+    });
+
+    if (!tokenResponse.ok) {
+      console.error("Failed to get PayPal access token for webhook verification");
+      return false;
+    }
+
+    const tokenData = await tokenResponse.json();
+    const accessToken = tokenData.access_token as string;
+
+    // Zweryfikuj sygnaturę
+    const verifyResponse = await fetch(
+      `${baseUrl}/v1/notifications/verify-webhook-signature`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${accessToken}`,
+        },
+        body: JSON.stringify({
+          auth_algo: headers["paypal-auth-algo"],
+          cert_url: headers["paypal-cert-url"],
+          client_id: clientId,
+          webhook_id: webhookId,
+          webhook_event: JSON.parse(rawBody),
+          transmission_id: headers["paypal-transmission-id"],
+          transmission_sig: headers["paypal-transmission-sig"],
+          transmission_time: headers["paypal-transmission-time"],
+        }),
+      }
+    );
+
+    if (!verifyResponse.ok) {
+      console.error("PayPal webhook verification API returned error:", verifyResponse.status);
+      return false;
+    }
+
+    const verifyData = await verifyResponse.json();
+    return verifyData.verification_status === "SUCCESS";
+  } catch (error) {
+    console.error("Webhook signature verification failed:", error);
+    return false;
+  }
+}
+
 export async function POST(request: NextRequest) {
   const receivedAt = new Date().toISOString();
   let webhookEvent: PayPalWebhookEvent | null = null;
 
   try {
+    // Odczytaj raw body raz (potrzebne zarówno do weryfikacji jak i parsowania)
+    const rawBody = await request.text();
+
+    // Zbierz headers PayPal potrzebne do weryfikacji
+    const headers: Record<string, string> = {};
+    request.headers.forEach((value, key) => {
+      headers[key] = value;
+    });
+
+    // ✅ SECURITY: Zweryfikuj podpis webhooka przed przetworzeniem
+    const isVerified = await verifyPayPalWebhookSignature(rawBody, headers);
+    if (!isVerified) {
+      console.error("PayPal webhook signature verification failed — rejecting request");
+      return NextResponse.json(
+        { error: "Webhook signature verification failed" },
+        { status: 401 }
+      );
+    }
+
     // Parse webhook payload
-    const body = await request.json();
+    const body = JSON.parse(rawBody);
 
     // Walidacja webhook event
     if (!isValidPayPalWebhookEvent(body)) {
@@ -34,20 +132,14 @@ export async function POST(request: NextRequest) {
 
     webhookEvent = body;
 
-    // Pobierz headers dla logowania
-    const headers: Record<string, string> = {};
-    request.headers.forEach((value, key) => {
-      headers[key] = value;
-    });
-
     // Przygotuj log entry
     const webhookLogData: Omit<WebhookLog, "id"> = {
       webhook_id: webhookEvent.id,
       event_type: webhookEvent.event_type,
       resource_id: webhookEvent.resource.id,
-      verification_status: "NOT_VERIFIED",
+      verification_status: "VERIFIED",
       processing_result: {} as WebhookProcessingResult, // Wypełni się później
-      raw_payload: JSON.stringify(body),
+      raw_payload: rawBody,
       headers,
       received_at: receivedAt,
       processed_at: undefined, // Wypełni się później
@@ -79,7 +171,7 @@ export async function POST(request: NextRequest) {
           webhook_id: webhookEvent.id,
           event_type: webhookEvent.event_type,
           resource_id: webhookEvent.resource.id,
-          verification_status: "NOT_VERIFIED",
+          verification_status: "VERIFIED",
           processing_result: {
             success: false,
             action_taken: "error_processing",

@@ -48,7 +48,7 @@
   max-height: 270px;
   padding: 18px;
   box-sizing: border-box;
-  font-family: var(--font-lato);
+  font-family: var(--font-fira);
   color: #333;
   border: 1px solid rgba(0, 0, 0, 0.08);
   z-index: 9999;

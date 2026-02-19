@@ -1,69 +1,60 @@
-// app/api/paypal/cancel-order/route.ts - Next.js 16.0.7 + React 19.2.1
+// app/api/paypal/cancel-order/route.ts
 // ✅ Server-only protection
 import "server-only";
 
 import { NextRequest, NextResponse } from "next/server";
-import { updatePayPalDonationStatus } from "@/lib/directus";
+import {
+  getPayPalDonationByOrderId,
+  updatePayPalDonationStatus,
+} from "@/lib/directus";
+import { isValidPayPalId } from "@/utils/paypalTypeGuards";
 
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
-    const { amount, timestamp } = body;
+    const { order_id } = body;
 
-    console.log("Searching for cancelled order:", { amount, timestamp });
-
-    // ✅ Znajdź najnowsze pending zamówienie z tym amount z ostatnich 10 minut
-    const tenMinutesAgo = new Date(Date.now() - 10 * 60 * 1000).toISOString();
-
-    const response = await fetch(
-      `${process.env.DIRECTUS_URL}/items/paypal_donations?` +
-        `filter[status][_eq]=pending&` +
-        `filter[amount][_eq]=${amount}&` +
-        `filter[created_at][_gte]=${tenMinutesAgo}&` +
-        `sort=-created_at&limit=1`,
-      {
-        headers: {
-          "Content-Type": "application/json",
-        },
-      }
-    );
-
-    if (!response.ok) {
-      throw new Error("Failed to fetch pending donations");
+    // Walidacja — wymagamy konkretnego order_id zamiast wyszukiwania po kwocie
+    if (!isValidPayPalId(order_id)) {
+      return NextResponse.json(
+        { error: "Invalid or missing order_id" },
+        { status: 400 }
+      );
     }
 
-    const data = await response.json();
+    // Znajdź donację po order_id (nie po kwocie)
+    const donation = await getPayPalDonationByOrderId(order_id);
 
-    if (data.data && data.data.length > 0) {
-      const donation = data.data[0];
-
-      // Aktualizuj status na cancelled
-      await updatePayPalDonationStatus(donation.id, {
-        status: "cancelled",
-        failed_at: new Date().toISOString(),
-      });
-
-      console.log("Updated donation status to cancelled:", donation.id);
-
-      return NextResponse.json({
-        success: true,
-        donation_id: donation.id,
-        message: "Status updated to cancelled",
-      });
-    } else {
-      console.log("No pending donation found to cancel");
+    if (!donation) {
+      // Zwracamy 200 zamiast 404 — nie ujawniamy czy order_id istnieje
       return NextResponse.json({
         success: false,
         message: "No pending donation found",
       });
     }
+
+    // Anuluj tylko jeśli nadal w statusie pending/processing
+    if (donation.status !== "pending" && donation.status !== "processing") {
+      return NextResponse.json({
+        success: false,
+        message: "Donation is not in a cancellable state",
+      });
+    }
+
+    await updatePayPalDonationStatus(donation.id, {
+      status: "cancelled",
+      failed_at: new Date().toISOString(),
+    });
+
+    return NextResponse.json({
+      success: true,
+      donation_id: donation.id,
+      message: "Status updated to cancelled",
+    });
   } catch (error) {
     console.error("Cancel order error:", error);
     return NextResponse.json(
-      {
-        error: "Failed to cancel order",
-        details: error instanceof Error ? error.message : "Unknown error",
-      },
+      { error: "Failed to cancel order" },
       { status: 500 }
     );
   }

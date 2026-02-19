@@ -1,142 +1,66 @@
 /* app/kontakt/ContactInfo.module.css */
 .contactInfo {
-  background: #fc6c14;
   padding: 4vh 2vw;
   height: fit-content;
 }
 
-.contactInfo h2 {
-  font-size: 2rem;
-  color: black;
+.contactInfo h1 {
   margin-bottom: 1rem;
-  font-family: var(--font-montserrat);
+  font-family: var(--font-anton);
   font-optical-sizing: auto;
-  font-weight: 700;
-  font-style: normal;
-  text-transform: uppercase;
-  text-align: center;
-  text-shadow: 1px 1px 2px white;
-}
-
-.intro {
-  color: black;
-  margin-bottom: 2rem;
-  line-height: 1.6;
-  font-size: 1.15rem;
   font-weight: 400;
-  font-family: var(--font-oxanium);
+  font-style: normal;
   text-align: center;
 }
 
-.contactMethods {
+.featureCards {
   display: flex;
   flex-direction: row;
   gap: 1.5rem;
   width: 90%;
-  margin: 0 auto;
+  margin: 0 auto 2rem;
   justify-content: center;
 }
 
-.contactMethod {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  text-align: center;
-  gap: 1rem;
-  padding: 1.5rem 1rem;
-  background: white;
-  transition: all 0.3s ease-in-out;
-  box-shadow: rgba(0, 0, 0, 0.2) 0px -3px 10px inset;
-  border: 2px solid #1e293b;
+.featureCard {
   flex: 1;
-  max-width: 300px;
+  padding: 0.5rem 1rem;
+  text-align: center;
+  font-family: var(--font-fira);
 }
 
-.contactMethod:hover {
-  background: #e2e8f0;
-  box-shadow: none;
-  transform: translateY(-5px);
+.featureCard h2 {
+  font-weight: 700;
+  margin-bottom: 0.4rem;
 }
 
-.methodIcon {
-  font-size: 1.5rem;
-  flex-shrink: 0;
-  color: #3b82f6;
-  background: rgba(59, 130, 246, 0.1);
-  padding: 1rem;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.methodContent {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-}
-
-.methodContent h3 {
-  font-weight: 600;
-  color: #1e293b;
-  margin-bottom: 0.5rem;
-  font-size: 1.2rem;
-}
-
-.methodContent p {
-  color: #374151;
-  margin-bottom: 0.5rem;
-  font-size: 1rem;
-  line-height: 1.4;
-}
-
-.responseTime {
-  font-size: 0.875rem;
-  color: #6b7280;
-  font-style: italic;
+.featureCard p {
+  line-height: 1.5;
+  margin: 0;
 }
 
 /* Responsive Design */
 @media (max-width: 950px) {
-  .contactMethods {
+  .featureCards {
     flex-direction: column;
     width: 60%;
+    align-items: center;
   }
 
-  .contactMethod {
-    flex-direction: row;
-    text-align: left;
+  .featureCard {
     max-width: none;
-  }
-
-  .methodContent {
-    align-items: flex-start;
-  }
-
-  .methodIcon {
-    padding: 0.75rem;
+    width: 100%;
   }
 }
 
 @media (max-width: 750px) {
-  .contactMethods {
+  .featureCards {
     width: 80%;
   }
 }
 
 @media (max-width: 600px) {
-  .contactInfo h2 {
-    font-size: 6vw;
-  }
-  .contactMethods {
+  .featureCards {
     width: 90%;
-  }
-
-  .contactMethod {
-    padding: 1rem;
-  }
-
-  .methodIcon {
-    padding: 0.5rem;
   }
 }

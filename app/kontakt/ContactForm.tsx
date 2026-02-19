@@ -1,7 +1,7 @@
 "use client";
 
-import { useState, FormEvent } from "react";
-import { Mail } from "lucide-react";
+import { useState } from "react";
+import { Mail, AtSign, Phone, MapPin } from "lucide-react";
 import styles from "./ContactForm.module.css";
 
 interface FormData {
@@ -24,7 +24,7 @@ export default function ContactForm() {
     "idle" | "success" | "error"
   >("idle");
 
-  const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: React.SyntheticEvent<HTMLFormElement>) => {
     e.preventDefault();
     setIsSubmitting(true);
     setSubmitStatus("idle");
@@ -76,7 +76,7 @@ export default function ContactForm() {
   };
 
   const handleChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
   ) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
@@ -165,6 +165,48 @@ export default function ContactForm() {
           {isSubmitting ? "Wird gesendet ..." : "Nachricht senden"}
         </button>
       </form>
+
+      <div className={styles.contactMethods}>
+        <div className={styles.contactMethod}>
+          <div className={styles.methodIcon}>
+            <AtSign size={24} />
+          </div>
+          <div className={styles.methodContent}>
+            <h3>Email</h3>
+            <p>info@fairfuehrer.guide</p>
+            <span className={styles.responseTime}>
+              Wir antworten innerhalb von 48 Stunden
+            </span>
+          </div>
+        </div>
+
+        <div className={styles.contactMethod}>
+          <div className={styles.methodIcon}>
+            <Phone size={24} />
+          </div>
+          <div className={styles.methodContent}>
+            <h3>Telefon</h3>
+            <p>+49 1511 7656692</p>
+          </div>
+        </div>
+
+        <div className={styles.contactMethod}>
+          <div className={styles.methodIcon}>
+            <MapPin size={24} />
+          </div>
+          <div className={styles.methodContent}>
+            <h3>Adresse</h3>
+            <p>
+              Seenergien GmbH
+              <br />
+              Hintere Insel 1<br />
+              88131 Lindau
+              <br />
+              Deutschland
+            </p>
+          </div>
+        </div>
+      </div>
     </div>
   );
 }

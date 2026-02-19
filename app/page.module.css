@@ -1,522 +1,356 @@
 /* app/page.module.css */
-
-.container {
-  width: 100%;
-  height: calc(100vh - 90px);
-  position: relative;
-  overflow: hidden;
-}
-
-.loadingContainer {
-  width: 100%;
-  height: calc(100vh - 90px);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background-color: #f0f0f0;
-}
-
-/* Map fade-in wrapper */
-.mapFadeWrapper {
-  width: 100%;
-  height: 100%;
-  opacity: 0;
-  transition: opacity 0.6s ease-in-out;
-}
-
-.mapFadeWrapper.loaded {
-  opacity: 1;
-}
-
-/* Napis po lewej stronie */
-.leftText {
-  position: absolute;
-  top: 50%;
-  left: 3vw;
-  transform: translateY(-50%);
-  z-index: 10;
-  width: 30vw;
-  text-align: center;
-}
-
-/* Kontener przycisku play */
-.playButtonContainer {
-  position: absolute;
-  top: 53%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  cursor: pointer;
-  z-index: 20;
-  transition: all 0.3s ease-in-out;
-  scale: 1.1;
-}
-
-.playButtonContainer:hover {
-  transform: translate(-50%, -50%) scale(1.2);
-}
-
-/* Ikona Play */
-.playButton {
-  width: 120px;
-  height: 120px;
-  border-radius: 50%;
-  background-color: rgba(255, 255, 255, 0.15);
-  -webkit-backdrop-filter: blur(10px);
-  backdrop-filter: blur(10px);
-  border: 2px solid rgba(255, 255, 255, 0.3);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
-  margin-bottom: 1.5rem;
-  transition: all 0.3s ease-in-out;
-}
-
-/* Trójkąt Play */
-.playTriangle {
-  width: 0;
-  height: 0;
-  border-left: 35px solid rgba(255, 255, 255, 0.9);
-  border-top: 20px solid transparent;
-  border-bottom: 20px solid transparent;
-  margin-left: 8px;
-}
-
-/* Tekst "Zur Karte" */
-.mapText {
-  padding: 0.8rem 2rem;
-  background-color: rgba(255, 255, 255, 0.1);
-  -webkit-backdrop-filter: blur(10px);
-  backdrop-filter: blur(10px);
-  border-radius: 30px;
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  color: rgba(255, 255, 255, 1);
-  font-size: 1.3rem;
-  font-weight: 500;
-  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
-  font-family: var(--font-oxanium);
-}
-
-/* Przycisk Sparschwein */
-.sparschweineButton {
-  position: fixed;
-  top: 7rem;
-  right: 2rem;
-  bottom: auto;
-  padding: 0.8rem 1.2rem;
-  color: white;
-  border-radius: 1rem;
-  cursor: pointer;
-  font-family: inherit;
-  text-decoration: none;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  text-align: center;
-  transition: all 0.5s ease-in-out;
-  z-index: 1000;
-  width: 100px;
-}
-
-.sparschweineButton:hover {
-  transform: translateY(-3px);
-  box-shadow: 0 12px 35px rgba(16, 185, 129, 0.4);
-  background-color: #d1fae5;
-  border-color: rgba(16, 185, 129, 0.4);
-}
-
-.sparschweineSubtitle {
-  font-size: 1rem;
-  font-weight: 400;
-  opacity: 1;
-  color: white;
-  font-family: var(--font-montserrat);
-}
-
-.sparschweineButton:hover .heartIcon {
-  color: #047857;
-}
-
-.sparschweineButton:hover .sparschweineTitle {
-  color: #047857;
-}
-
-.sparschweineButton:hover .sparschweineSubtitle {
-  color: #047857;
-}
-
-.section1Title {
-  font-size: 3.9vw;
-  font-weight: 300;
-  color: black;
-  line-height: 1.4;
-  font-family: var(--font-montserrat);
-  font-weight: 700;
-  font-style: normal;
-  font-style: normal;
-  color: white;
-  text-shadow: 2px 4px 2px black;
-}
-
-.section1Subtitle {
-  font-size: 2.5vw;
-  font-family: var(--font-lato);
-  font-weight: 400;
-  font-style: normal;
-  background-color: rgba(255, 255, 255, 0.2);
-  padding: 5px;
-  color: black;
-}
-
 .main {
   display: block;
   width: 100%;
   margin: 0;
   padding: 0;
-}
-
-/* ===== SEKCJA 2: Gute Geschichten (Lista funkcji) ===== */
-.section2 {
-  background: linear-gradient(135deg, #ecfdf5 0%, #dbeafe 100%);
-  padding: 6rem 2rem;
   position: relative;
-  overflow: hidden;
 }
 
-.section2::before {
-  content: "";
+.heroContainer {
+  position: relative;
+  width: 100%;
+  height: calc(100dvh - 90px);
+  display: flex;
+}
+
+.heroImageSide {
+  position: relative;
+  width: 50%;
+  height: 100%;
+}
+
+.heroTextSide {
+  width: 50%;
+  height: 100%;
+  background-color: #fc6c14;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 4rem;
+}
+
+.heroTitle {
+  font-size: clamp(2rem, 3rem, 4vw);
+  font-weight: 400;
+  text-align: center;
+  color: black;
+  line-height: 1.3;
+  margin: 0 0 1.5rem 0;
+  font-family: var(--font-anton);
+  text-shadow: 1px 1px 2px black;
+  -webkit-text-stroke: 0.5px white;
+}
+.heroSubtitle {
+  font-family: var(--font-fira);
+  font-weight: 400;
+  font-size: 1.5rem;
+  color: white;
+  line-height: 1.2;
+  text-align: center;
+  margin: 0 0 3vh 0;
+  text-shadow: 1px 1px 1px black;
+}
+
+.heroButton {
+  display: inline-block;
+  background-color: white;
+  color: black;
+  text-decoration: none;
+  padding: 1rem 2.5rem;
+  border-radius: 9999px;
+  border: 2px solid black;
+  font-weight: 400;
+  font-size: 1.2rem;
+  font-family: var(--font-fira);
+  transition: all 1s ease;
+  opacity: 0.9;
+  box-shadow: 0px 0px 0px 0px black;
+}
+
+.heroButton:hover {
+  box-shadow: 1px 3px 18px 2px rgba(0, 0, 0, 0.2);
+  opacity: 1;
+}
+
+/* Mobile-only overlay elements — hidden on desktop */
+.heroTitleMobile,
+.heroButtonMobile {
+  display: none;
+}
+
+/* Store Badges Bar - bottom of hero, full width */
+.heroBadgesBar {
   position: absolute;
-  top: 0;
+  bottom: 0;
   left: 0;
   right: 0;
-  bottom: 0;
-  background: linear-gradient(
-    135deg,
-    rgba(16, 185, 129, 0.05) 0%,
-    rgba(59, 130, 246, 0.05) 100%
-  );
-  pointer-events: none;
+  z-index: 2;
+  background: white;
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+  padding: 0.6rem 2rem;
+}
+
+.heroBadgesLabel {
+  font-family: var(--font-fira);
+  font-size: 0.8rem;
+  color: #555;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  font-weight: 500;
+  white-space: nowrap;
+}
+
+.heroBadgesIcons {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.heroBadgeImg {
+  width: 100px;
+  height: auto;
+}
+
+.heroBadgePartner {
+  margin-left: auto;
+  height: 30px;
+  width: auto;
+}
+
+/* ===== SEKCJA 2: Kategorie ===== */
+.section2 {
+  padding: 4rem 2rem;
 }
 
 .section2Content {
-  position: relative;
   max-width: 1200px;
   margin: 0 auto;
   text-align: center;
 }
 
 .section2Title {
-  font-size: clamp(2rem, 4vw, 3.5rem);
-  font-weight: 800;
-  color: #111827;
-  margin-bottom: 2rem;
-  line-height: 1.2;
-  font-family: var(--font-montserrat);
+  font-weight: 400;
+  margin: 0 0 3rem 0;
+  line-height: 1.3;
+  font-family: var(--font-anton);
+  padding: 0 4vw;
 }
 
-.section2TitleGradient {
-  background: linear-gradient(135deg, #059669 0%, #2563eb 100%);
-  -webkit-background-clip: text;
-  background-clip: text;
-  -webkit-text-fill-color: transparent;
-  color: transparent;
-}
-
-.featuresGrid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-  gap: 1.5rem;
-  margin-top: 3rem;
-  justify-items: center;
-}
-
-.featureCard {
-  background: rgba(255, 255, 255, 0.9);
-  -webkit-backdrop-filter: blur(8px);
-  backdrop-filter: blur(8px);
-  border-radius: 1rem;
-  padding: 2rem 1.5rem;
-  border: 1px solid rgba(16, 185, 129, 0.1);
-  transition: all 0.3s ease;
-  text-align: left;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
-}
-
-.featureCard:hover {
-  transform: translateY(-8px);
-  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.15);
-  border-color: rgba(16, 185, 129, 0.3);
-}
-
-.featureIcon {
-  width: 3rem;
-  height: 3rem;
-  background: linear-gradient(135deg, #10b981 0%, #3b82f6 100%);
-  border-radius: 0.75rem;
+.categoriesList {
   display: flex;
-  align-items: center;
   justify-content: center;
-  margin-bottom: 1rem;
-  color: white;
-}
-
-.featureTitle {
-  font-size: 1.1rem;
-  font-weight: 600;
-  color: #111827;
-  margin-bottom: 0.5rem;
-  font-family: var(--font-montserrat);
-}
-
-.featureDescription {
-  color: #6b7280;
-  font-size: 0.95rem;
-  line-height: 1.6;
-  margin: 0;
-  font-family: var(--font-lato);
-}
-
-/* ===== SEKCJA 3: Inspirierendes Entdecken (Tekst + obraz) ===== */
-.section3 {
-  background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
-  padding: 6rem 2rem;
-  position: relative;
-}
-
-.section3Content {
-  max-width: 1200px;
-  margin: 0 auto;
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 4rem;
   align-items: center;
+  gap: 3rem;
+  flex-wrap: wrap;
 }
 
-.section3TextSide {
-  padding-right: 2rem;
+.categoryItem {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.categoryName {
+  font-size: 1rem;
+  font-weight: 500;
+  color: white;
+  font-family: var(--font-fira);
+}
+
+/* ===== SEKCJA 3: Mapa Featured Pins ===== */
+.section3 {
+  padding: 5rem 0 0;
+}
+
+.section3ButtonRow {
+  display: flex;
+  justify-content: center;
+  padding: 3rem 0;
 }
 
 .section3Title {
-  font-size: clamp(2rem, 3.5vw, 3rem);
-  font-weight: 700;
-  color: #111827;
-  margin-bottom: 1.5rem;
+  font-weight: 400;
+  margin: 0 0 2rem 0;
   line-height: 1.3;
-  font-family: var(--font-montserrat);
+  font-family: var(--font-anton);
+  text-align: center;
+  padding: 0 4vw;
 }
 
-.section3Text {
-  font-size: 1.2rem;
-  color: #4b5563;
-  line-height: 1.7;
-  margin-bottom: 2rem;
-  font-family: var(--font-lato);
-}
-
-.section3ImageSide {
-  position: relative;
-  border-radius: 1.5rem;
-  overflow: hidden;
-  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
-  background: linear-gradient(135deg, #10b981 0%, #3b82f6 100%);
-  min-height: 400px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: white;
-  font-size: 1.2rem;
-  font-weight: 500;
-}
-
-/* ===== SEKCJA 4: Partner werden (Call-to-action) ===== */
+/* ===== SEKCJA 4: Wsparcie ===== */
 .section4 {
-  background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
-  padding: 6rem 2rem;
-  color: white;
+  padding: 4rem 2rem;
   text-align: center;
   position: relative;
   overflow: hidden;
 }
 
-.section4::before {
-  content: "";
-  position: absolute;
-  inset: 0;
-  background: radial-gradient(
-    circle at 50% 50%,
-    rgba(16, 185, 129, 0.1) 0%,
-    transparent 50%
-  );
-  pointer-events: none;
-}
-
 .section4Content {
   position: relative;
-  max-width: 800px;
+  max-width: 700px;
   margin: 0 auto;
 }
 
-.section4Badge {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.5rem;
-  background: rgba(16, 185, 129, 0.1);
-  color: #10b981;
-  padding: 0.5rem 1rem;
-  border-radius: 9999px;
-  font-size: 0.875rem;
-  font-weight: 500;
+.section4IconContainer {
+  position: relative;
+  display: inline-block;
   margin-bottom: 1.5rem;
-  border: 1px solid rgba(16, 185, 129, 0.3);
+}
+
+.section4HeartIcon {
+  color: #fc6c14;
+  display: block;
+}
+
+.section4SparkleIcon {
+  position: absolute;
+  top: -8px;
+  right: -8px;
+  color: white;
+  animation: sparkle 2s ease-in-out infinite;
+}
+
+@keyframes sparkle {
+  0%,
+  100% {
+    transform: rotate(0deg) scale(1);
+    opacity: 1;
+  }
+  50% {
+    transform: rotate(180deg) scale(1.2);
+    opacity: 0.8;
+  }
 }
 
 .section4Title {
-  font-size: clamp(2rem, 4vw, 3.5rem);
-  font-weight: 800;
-  margin-bottom: 1.5rem;
+  font-weight: 400;
+  margin-bottom: 1rem;
+  font-family: var(--font-anton);
   line-height: 1.2;
-  font-family: var(--font-montserrat);
 }
 
 .section4Text {
-  font-size: 1.2rem;
-  color: #cbd5e1;
   line-height: 1.7;
-  margin-bottom: 3rem;
-  font-family: var(--font-lato);
+  margin-bottom: 2rem;
+  font-family: var(--font-fira);
+  font-weight: 500;
 }
 
-.partnerButton {
+.section4Button {
   display: inline-flex;
   align-items: center;
   gap: 0.5rem;
-  background: linear-gradient(135deg, #10b981 0%, #3b82f6 100%);
-  color: white;
   text-decoration: none;
-  padding: 1.2rem 3rem;
-  border-radius: 9999px;
+  padding: 1rem 2rem;
   font-weight: 600;
-  font-size: 1.2rem;
-  box-shadow: 0 8px 25px rgba(16, 185, 129, 0.3);
-  transition: all 0.3s ease;
-  font-family: var(--font-oxanium);
-  border: none;
-  cursor: pointer;
+  transition: transform 0.5s ease-in-out;
+  font-family: var(--font-fira);
 }
 
-.partnerButton:hover {
+.section4Button:hover {
   transform: translateY(-3px);
-  box-shadow: 0 12px 35px rgba(16, 185, 129, 0.4);
-  background: linear-gradient(135deg, #059669 0%, #2563eb 100%);
 }
 
-@media (max-width: 950px) and (min-width: 601px) {
-  .featuresGrid {
-    grid-template-columns: repeat(2, 1fr); /* 2 kolumny */
-    gap: 1.5rem;
+@media screen and (max-width: 735px) {
+  .heroContainer {
+    height: calc(100dvh - 90px);
   }
 
-  /* Trzecia karta na środku */
-  .featureCard:nth-child(3) {
-    grid-column: 1 / -1; /* Rozciąga na całą szerokość */
-    max-width: 280px; /* Ogranicza szerokość */
-    justify-self: center; /* Wyśrodkowuje */
-  }
-}
-
-/* ===== RESPONSIVE DESIGN ===== */
-@media (max-width: 950px) {
-  .section2,
-  .section3,
-  .section4 {
-    padding: 4rem 1.5rem;
+  .heroImageSide {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
   }
 
-  .section3Content {
-    grid-template-columns: 1fr;
-    gap: 2rem;
-    text-align: center;
+  .heroTextSide {
+    display: none;
   }
 
-  .section3TextSide {
-    padding-right: 0;
+  .heroBadgesBar {
+    display: none;
   }
 
-  .featureCard {
-    padding: 1.5rem;
-  }
-
-  .leftText {
-    bottom: 13vh;
-    left: 0;
-    width: 90%;
-    margin: 0 auto;
+  .heroTitleMobile {
     display: block;
-    position: relative;
-    text-align: center;
-    top: auto;
-  }
-  .section1Title {
-    font-size: 5vw;
-  }
-  .section1Subtitle {
-    font-size: 3vw;
+    position: absolute;
+    top: 40%;
+    left: 1.5rem;
+    transform: translateY(-50%);
+    width: 40%;
+    margin: 0;
+    font-size: 2rem;
+    font-weight: 400;
+    text-align: left;
+    font-family: var(--font-anton);
+    color: #fc6c14;
+    line-height: 1.3;
+    text-shadow: 1px 2px 4px rgba(0, 0, 0, 0.6);
+    z-index: 2;
   }
 
-  .sparschweineSubtitle {
-    font-size: 0.8rem;
+  .heroButtonMobile {
+    display: inline-block;
+    position: absolute;
+    bottom: 2.5rem;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 2;
+    background-color: white;
+    color: black;
+    text-decoration: none;
+    padding: 1rem 2.5rem;
+    border-radius: 9999px;
+    border: 2px solid black;
+    font-weight: 400;
+    font-size: 1.2rem;
+    font-family: var(--font-fira);
+    transition: all 1s ease;
+    opacity: 0.8;
+    box-shadow: 0px 0px 0px 0px black;
+  }
+
+  .heroButtonMobile:hover {
+    box-shadow: 1px 3px 18px 2px rgba(0, 0, 0, 0.5);
+    opacity: 1;
+  }
+  .section2Title {
+    font-size: 8vw;
+    padding: 0;
+  }
+  .categoryName {
+    font-size: 0.7rem;
+  }
+  .section3Title {
+    font-size: 8vw;
+    padding: 0;
+  }
+  .section4Title {
+    font-size: 2rem !important;
+  }
+  .section4Text {
+    font-size: 1rem !important;
+  }
+  .section4Button {
+    font-size: 1rem !important;
   }
 }
 
-@media (max-width: 600px) {
-  .featuresGrid {
-    grid-template-columns: 1fr;
-    gap: 1rem;
-  }
-  .container {
-    height: calc(100svh - 90px);
-  }
-
-  .section2,
-  .section3,
-  .section4 {
-    padding: 3rem 1rem;
-  }
-
-  .featureCard {
-    text-align: center;
-    padding: 1.5rem 2rem;
-  }
-
-  .section3ImageSide {
-    min-height: 250px;
-  }
-
-  .partnerButton {
-    padding: 1rem 2rem;
-    font-size: 1.1rem;
+@media (max-width: 500px) {
+  .heroTitleMobile {
+    width: 50%;
+    top: 35%;
   }
 }
 
 /* Fallback dla starszych przeglądarek */
-@supports not (height: 100svh) {
-  @media screen and (max-width: 768px) {
-    .mapContainerWrapper {
-      height: calc(100vh - 90px);
-      height: calc(var(--vh, 1vh) * 100 - 90px); /* JavaScript fallback */
-    }
-  }
-}
-
-@media screen and (max-width: 480px) {
-  .section1Title {
-    font-size: 6.2vw;
-  }
-  .section1Subtitle {
-    font-size: 4.2vw;
+@supports not (height: 100dvh) {
+  .heroContainer {
+    height: calc(100vh - 90px);
   }
 }

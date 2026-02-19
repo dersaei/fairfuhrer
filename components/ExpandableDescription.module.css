@@ -126,13 +126,11 @@
   transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
   position: relative;
   z-index: 2;
-
   /* ✅ FIXED: Ensure button respects container width on iPhone Safari */
   width: 100%;
   max-width: 100%;
   box-sizing: border-box;
-
-  font-family: inherit;
+  font-family: var(--font-fira);
   -webkit-backdrop-filter: blur(10px);
   backdrop-filter: blur(10px);
   box-shadow: 0 2px 8px rgba(252, 108, 20, 0.1);
@@ -175,6 +173,7 @@
   letter-spacing: 0.025em;
   /* ✅ ADDED: Ensure text doesn't overflow */
   flex-shrink: 0;
+  font-family: var(--font-fira);
 }
 
 /* Ikona chevron */
@@ -196,7 +195,6 @@
 @media (max-width: 768px) {
   .toggleButton {
     padding: 0.6rem 1rem;
-    font-size: 0.95rem;
     gap: 0.4rem;
   }
 
@@ -214,7 +212,6 @@
   .toggleButton {
     padding: 0.5rem 0.8rem;
     margin-top: 0.75rem;
-    font-size: 0.9rem;
     gap: 0.3rem;
     /* ✅ ADDED: Ensure button fits on very small screens */
     min-width: 0;

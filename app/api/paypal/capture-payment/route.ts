@@ -12,17 +12,20 @@ import { isValidPayPalId } from "@/utils/paypalTypeGuards";
 import type { PayPalCaptureRequest } from "@/types";
 
 export async function POST(request: NextRequest) {
+  // Parse once — NextRequest body stream can only be consumed once
+  let orderId: string | undefined;
+
   try {
-    // Parse request body
     const body: PayPalCaptureRequest = await request.json();
+    orderId = body.order_id;
 
     // Walidacja
-    if (!isValidPayPalId(body.order_id)) {
+    if (!isValidPayPalId(orderId)) {
       return NextResponse.json({ error: "Invalid order ID" }, { status: 400 });
     }
 
     // Sprawdź czy donacja istnieje w naszej bazie
-    const donation = await getPayPalDonationByOrderId(body.order_id);
+    const donation = await getPayPalDonationByOrderId(orderId);
     if (!donation) {
       return NextResponse.json(
         { error: "Donation not found" },
@@ -40,7 +43,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Wykonaj capture w PayPal używając nowego SDK
-    const capture = await capturePayPalOrder(body.order_id);
+    const capture = await capturePayPalOrder(orderId);
 
     // Pobierz dane z capture response
     const captureResult = capture.result;
@@ -105,11 +108,10 @@ export async function POST(request: NextRequest) {
   } catch (error) {
     console.error("PayPal capture payment error:", error);
 
-    // Aktualizuj status na failed jeśli to możliwe
-    const requestBody = await request.json().catch(() => null);
-    if (requestBody?.order_id) {
+    // Aktualizuj status na failed jeśli to możliwe (orderId już sparsowany)
+    if (orderId) {
       try {
-        const donation = await getPayPalDonationByOrderId(requestBody.order_id);
+        const donation = await getPayPalDonationByOrderId(orderId);
         if (donation && donation.status !== "failed") {
           await updatePayPalDonationStatus(donation.id, {
             status: "failed",

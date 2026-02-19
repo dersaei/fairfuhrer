@@ -1,7 +1,7 @@
 // app/sparschwein/page.tsx - Z CONDITIONAL PAYPAL
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import {
   Heart,
   MapPin,
@@ -21,21 +21,11 @@ import type { PayPalDonation } from "@/types";
 import styles from "./sparschwein.module.css";
 
 export default function SparschweinsPage() {
-  // Check if we're on the client side (avoid hydration mismatch)
-  // This pattern is intentional to prevent SSR/client hydration mismatches with PayPal SDK
-  const [isClient, setIsClient] = useState(false);
   const [copiedField, setCopiedField] = useState<string>("");
   const [donationSuccess, setDonationSuccess] = useState<PayPalDonation | null>(
     null
   );
   const [donationError, setDonationError] = useState<string>("");
-
-  /* eslint-disable react-hooks/set-state-in-effect */
-  // Intentional hydration pattern for PayPal client-only rendering
-  useEffect(() => {
-    setIsClient(true);
-  }, []);
-  /* eslint-enable react-hooks/set-state-in-effect */
 
   const bankDetails = {
     name: "Seenergien GmbH",
@@ -73,17 +63,6 @@ export default function SparschweinsPage() {
       });
     }, 100);
   };
-
-  if (!isClient) {
-    return (
-      <div className={styles.container}>
-        <div className={styles.loading}>
-          <div className={styles.spinner}></div>
-          <span>Lädt...</span>
-        </div>
-      </div>
-    );
-  }
 
   return (
     <div className={styles.container}>

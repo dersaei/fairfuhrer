@@ -2,7 +2,7 @@
 "use server";
 
 import { cookies } from "next/headers";
-import { CookiePreferences } from "@/context/CookieContext";
+import type { CookiePreferences } from "@/types/cookies";
 
 /**
  * Server Action to save cookie preferences

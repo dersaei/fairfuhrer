@@ -10,11 +10,15 @@ import type { Place, Category } from "../types";
 interface MapWithFiltersProps {
   places: Place[];
   categories: Category[];
+  disableGeolocation?: boolean;
+  embedded?: boolean;
 }
 
 export default function MapWithFilters({
   places,
   categories,
+  disableGeolocation = false,
+  embedded = false,
 }: MapWithFiltersProps) {
   // Inicjalizacja z wszystkimi kategoriami
   const allCategoryIds = useMemo(
@@ -44,10 +48,12 @@ export default function MapWithFilters({
     );
   }, [places, selectedCategoryIds]);
 
+  const containerClass = `${styles.container}${embedded ? ` ${styles.containerEmbedded}` : ""}`;
+
   // Handle przypadku gdy brak kategorii
   if (categories.length === 0) {
     return (
-      <div className={styles.container}>
+      <div className={containerClass}>
         <div className={styles.errorMessage}>Keine Kategorien verfügbar</div>
       </div>
     );
@@ -56,27 +62,33 @@ export default function MapWithFilters({
   // Handle przypadku gdy brak miejsc
   if (places.length === 0) {
     return (
-      <div className={styles.container}>
+      <div className={containerClass}>
         <div className={styles.errorMessage}>Keine Orte verfügbar</div>
       </div>
     );
   }
 
   return (
-    <div className={styles.container}>
-      <MapBoxMap places={filteredPlaces} />
+    <div className={containerClass}>
+      <MapBoxMap
+        places={embedded ? places : filteredPlaces}
+        disableGeolocation={disableGeolocation}
+        embedded={embedded}
+      />
 
-      <div className={styles.filtersContainer}>
-        <h3 className={styles.legendTitle}>Legende</h3>
-        <p className={styles.legendSubtitle}>
-          Filtern Sie Orte nach Kategorien
-        </p>
-        <CategoryFilter
-          categories={categories}
-          selectedIds={selectedCategoryIds}
-          onToggle={handleToggleCategory}
-        />
-      </div>
+      {!embedded && (
+        <div className={styles.filtersContainer}>
+          <h3 className={styles.legendTitle}>Legende</h3>
+          <p className={styles.legendSubtitle}>
+            Filtern Sie Orte nach Kategorien
+          </p>
+          <CategoryFilter
+            categories={categories}
+            selectedIds={selectedCategoryIds}
+            onToggle={handleToggleCategory}
+          />
+        </div>
+      )}
     </div>
   );
 }

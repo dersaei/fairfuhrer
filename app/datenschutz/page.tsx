@@ -5,7 +5,7 @@ import { getDatenschutzContent } from "@/lib/directus";
 import { DatenschutzContent } from "@/types";
 import styles from "./datenschutz.module.css";
 
-// Generowanie metadanych dla SEO
+// Metadaten für SEO
 export async function generateMetadata(): Promise<Metadata> {
   const content = await getDatenschutzContent();
 
@@ -22,17 +22,17 @@ export default async function DatenschutzPage() {
     return (
       <div className={styles.container}>
         <h1>Datenschutz</h1>
-        <p>Treść strony jest obecnie niedostępna.</p>
+        <p>Der Seiteninhalt ist derzeit nicht verfügbar.</p>
       </div>
     );
   }
 
   return (
     <div className={styles.container}>
-      {/* Tytuł strony */}
+      {/* Seitentitel */}
       <h1 className={styles.title}>{content.title}</h1>
 
-      {/* Główna treść z WYSIWYG */}
+      {/* Hauptinhalt WYSIWYG */}
       <div className={styles.content}>
         <div dangerouslySetInnerHTML={{ __html: content.content }} />
       </div>
