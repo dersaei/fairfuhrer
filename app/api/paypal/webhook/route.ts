@@ -137,7 +137,7 @@ export async function POST(request: NextRequest) {
       webhook_id: webhookEvent.id,
       event_type: webhookEvent.event_type,
       resource_id: webhookEvent.resource.id,
-      verification_status: "VERIFIED",
+      verification_status: "SUCCESS",
       processing_result: {} as WebhookProcessingResult, // Wypełni się później
       raw_payload: rawBody,
       headers,
@@ -171,7 +171,7 @@ export async function POST(request: NextRequest) {
           webhook_id: webhookEvent.id,
           event_type: webhookEvent.event_type,
           resource_id: webhookEvent.resource.id,
-          verification_status: "VERIFIED",
+          verification_status: "SUCCESS",
           processing_result: {
             success: false,
             action_taken: "error_processing",

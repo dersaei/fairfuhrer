@@ -1,6 +1,6 @@
 # Pin Directus image to a specific version for stability
 
-FROM directus/directus:11.15.3
+FROM directus/directus:11.15.4
 
 # Working directory (Directus defaults to /directus)
 
