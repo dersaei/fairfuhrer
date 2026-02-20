@@ -319,19 +319,16 @@
     box-shadow: 1px 3px 18px 2px rgba(0, 0, 0, 0.5);
     opacity: 1;
   }
-  .section2Title {
-    font-size: 8vw;
+  .section2Title,
+  .section3Title {
+    font-size: 2.2rem !important;
     padding: 0;
   }
   .categoryName {
     font-size: 0.7rem;
   }
-  .section3Title {
-    font-size: 8vw;
-    padding: 0;
-  }
   .section4Title {
-    font-size: 2rem !important;
+    font-size: 2.2rem !important;
   }
   .section4Text {
     font-size: 1rem !important;
