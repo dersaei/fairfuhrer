@@ -43,7 +43,7 @@
 }
 
 .content.expanded {
-  max-height: none !important;
+  /* max-height jest ustawiany przez inline style jako wartość px — umożliwia animację */
 }
 
 /* Style dla zawartości HTML */

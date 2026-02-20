@@ -39,13 +39,13 @@
 
 .modal {
   position: fixed;
-  background: linear-gradient(135deg, #ecfdf5 0%, #dbeafe 100%);
+  background: white;
   box-shadow:
     0 20px 60px rgba(0, 0, 0, 0.2),
     0 8px 24px rgba(0, 0, 0, 0.12);
   width: 450px;
   max-width: calc(100vw - 40px);
-  max-height: 270px;
+  max-height: 280px;
   padding: 18px;
   box-sizing: border-box;
   font-family: var(--font-fira);

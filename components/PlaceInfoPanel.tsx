@@ -51,7 +51,7 @@ export default function PlaceInfoPanel({
 
       // 2. Nie zamykaj gdy kliknięto w:
       // - Galerię pełnoekranową
-      // - Panel
+      // - Panel (w tym przyciski wewnątrz panelu)
       // - Elementy Mapbox
       if (
         target.closest('[data-gallery-modal="true"]') ||
@@ -67,12 +67,12 @@ export default function PlaceInfoPanel({
       handleClose();
     };
 
+    // Używamy tylko "click" — na mobile przeglądarka syntetyzuje click po touchend,
+    // więc nasłuchiwanie obu zdarzeń powoduje double-fire
     document.addEventListener("click", handleClickOutside);
-    document.addEventListener("touchend", handleClickOutside);
 
     return () => {
       document.removeEventListener("click", handleClickOutside);
-      document.removeEventListener("touchend", handleClickOutside);
     };
   }, [isOpen, isVisible, isClosing, handleClose]);
 

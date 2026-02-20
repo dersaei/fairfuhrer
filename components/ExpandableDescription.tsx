@@ -18,27 +18,41 @@ export default function ExpandableDescription({
 }: ExpandableDescriptionProps) {
   const [isExpanded, setIsExpanded] = useState(false);
   const [shouldShowButton, setShouldShowButton] = useState(false);
+  const [collapsedHeight, setCollapsedHeight] = useState<number | null>(null);
+  const [expandedHeight, setExpandedHeight] = useState<number | null>(null);
   const contentRef = useRef<HTMLDivElement>(null);
   const fullContentRef = useRef<HTMLDivElement>(null);
 
   const sanitizedContent = cleanHtml(content);
 
-  // Sprawdź czy tekst jest dłuższy niż maksymalna liczba linii
+  // Zmierz wysokości raz po zamontowaniu/zmianie treści
   useEffect(() => {
-    if (fullContentRef.current) {
-      const lineHeight = parseInt(
-        window.getComputedStyle(fullContentRef.current).lineHeight
-      );
-      const maxHeight = lineHeight * maxLines;
-      const actualHeight = fullContentRef.current.scrollHeight;
+    if (!fullContentRef.current) return;
 
-      setShouldShowButton(actualHeight > maxHeight);
-    }
+    const lineHeight = parseFloat(
+      window.getComputedStyle(fullContentRef.current).lineHeight
+    );
+    const maxH = lineHeight * maxLines;
+    const actualH = fullContentRef.current.scrollHeight;
+
+    setShouldShowButton(actualH > maxH);
+    setCollapsedHeight(Math.min(maxH, actualH));
+    setExpandedHeight(actualH);
   }, [content, maxLines]);
 
-  const toggleExpanded = () => {
-    setIsExpanded(!isExpanded);
+  const toggleExpanded = (e: React.MouseEvent | React.TouchEvent) => {
+    // Zatrzymaj propagację, żeby document listener nie zinterpretował tego jako kliknięcia poza panelem
+    e.stopPropagation();
+    setIsExpanded((prev) => !prev);
   };
+
+  // Oblicz bieżącą wysokość dla animacji (unikamy animacji do "none")
+  const currentMaxHeight =
+    collapsedHeight !== null && expandedHeight !== null
+      ? isExpanded
+        ? expandedHeight
+        : collapsedHeight
+      : undefined;
 
   return (
     <div className={`${styles.expandableContainer} ${className}`}>
@@ -50,15 +64,17 @@ export default function ExpandableDescription({
         aria-hidden="true"
       />
 
-      {/* Widoczny tekst */}
+      {/* Widoczny tekst — animuje do konkretnych wartości px zamiast "none" */}
       <div
         ref={contentRef}
         className={`${styles.content} ${
           isExpanded ? styles.expanded : styles.collapsed
         }`}
-        style={{
-          maxHeight: isExpanded ? "none" : `${maxLines * 1.6}em`,
-        }}
+        style={
+          currentMaxHeight !== undefined
+            ? { maxHeight: `${currentMaxHeight}px` }
+            : { maxHeight: `${maxLines * 1.6}em` }
+        }
         dangerouslySetInnerHTML={{ __html: sanitizedContent }}
       />
 
@@ -67,12 +83,13 @@ export default function ExpandableDescription({
         <div className={styles.fadeOverlay} />
       )}
 
-      {/* Przycisk rozwiń/zwiń */}
+      {/* Przycisk rozwiń/zwiń — zawsze renderowany gdy shouldShowButton, nigdy nie znika */}
       {shouldShowButton && (
         <button
           type="button"
           className={styles.toggleButton}
           onClick={toggleExpanded}
+          onTouchEnd={toggleExpanded}
           aria-expanded={isExpanded}
           aria-label={
             isExpanded ? "Weniger anzeigen" : "Vollständigen Text anzeigen"

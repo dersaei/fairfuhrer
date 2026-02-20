@@ -204,13 +204,13 @@
   transform: scale(1.05);
 }
 
-/* ✅ POPRAWIONE AUDIO SECTION z płynnymi animacjami */
+/* ✅ POPRAWIONE AUDIO SECTION — nie wystaje poza obrazek, nie prześwituje przez header */
 .audioSection {
-  position: absolute;
-  bottom: -8vh;
-  left: 50%;
-  transform: translateX(-50%);
+  position: relative;
+  left: auto;
+  transform: none;
   width: 80%;
+  margin: -2rem auto 0;
   z-index: 10;
   opacity: 0;
   animation: slideUpFadeIn 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94) 0.4s
@@ -220,11 +220,11 @@
 @keyframes slideUpFadeIn {
   from {
     opacity: 0;
-    transform: translateX(-50%) translateY(20px);
+    transform: translateY(20px);
   }
   to {
     opacity: 1;
-    transform: translateX(-50%) translateY(0);
+    transform: translateY(0);
   }
 }
 
@@ -234,7 +234,8 @@
   flex-wrap: wrap;
   gap: 0.4rem;
   padding: 1rem 1.5rem 0;
-  margin-top: 9vh;
+  /* margin-top dostosowany do nakładki audio — mniejszy bo audio jest teraz relative */
+  margin-top: 1rem;
   opacity: 0;
   animation: fadeSlideUp 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94) 0.55s
     forwards;
@@ -491,13 +492,16 @@
     left: 0;
     width: 100%; /* ✅ FIXED: Explicit viewport width */
     max-width: none; /* ✅ FIXED: Remove max-width constraint on mobile */
-    height: 100%;
+    /* 100dvh uwzględnia dynamiczny pasek adresu przeglądarki (Chrome/Safari mobile) */
+    height: 100dvh;
     transform: translateY(100%);
     border-left: none;
     transition: transform 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94);
 
     /* ✅ FIXED: Apply safe area only on mobile and only to content */
     padding: 0;
+    /* Blokuj propagację scroll poza panel */
+    overscroll-behavior: contain;
   }
 
   .panelContent {

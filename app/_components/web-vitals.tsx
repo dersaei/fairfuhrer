@@ -1,7 +1,7 @@
 // app/_components/web-vitals.tsx
 "use client";
 
-import { useRef } from "react";
+import { useEffect, useRef } from "react";
 import { useReportWebVitals } from "next/web-vitals";
 import { useCookies } from "../../context/CookieContext";
 
@@ -22,7 +22,10 @@ export function WebVitals() {
   // useReportWebVitals registers the callback once and doesn't update it on re-renders.
   // Use a ref so the callback always reads the latest consent state without stale closure.
   const consentRef = useRef({ hasConsented, analytics: preferences.analytics });
-  consentRef.current = { hasConsented, analytics: preferences.analytics };
+
+  useEffect(() => {
+    consentRef.current = { hasConsented, analytics: preferences.analytics };
+  }, [hasConsented, preferences.analytics]);
 
   useReportWebVitals((metric) => {
     if (!consentRef.current.hasConsented || !consentRef.current.analytics) {
