@@ -192,10 +192,11 @@
   color: #1e7e34;
 }
 
-/* ✅ RESPONSYWNOŚĆ - Mobile */
+/* Mobile — używamy --vh zamiast dvh, bo --vh jest obliczane przez JS jako window.innerHeight
+   i nie zmienia się gdy pasek przeglądarki się chowa/pokazuje */
 @media (max-width: 768px) {
   .mapContainerWrapper {
-    height: calc(100dvh - 90px); /* svh = small viewport height */
+    height: calc(var(--vh, 1vh) * 100 - 90px);
     padding-left: env(safe-area-inset-left);
     padding-right: env(safe-area-inset-right);
   }
