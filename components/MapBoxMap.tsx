@@ -101,6 +101,10 @@ export default function MapBoxMap({
   // Refy dla stabilnych closures w eventach Mapboxa
   const placesRef = useRef<Place[]>(places);
   const popupDataMapRef = useRef<Map<number, string>>(new Map());
+  // Race condition prevention
+  const closePanelTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const isPanelOpenRef = useRef(false);
+  const isMapAnimatingRef = useRef(false);
 
   // Panel state
   const [selectedPlace, setSelectedPlace] = useState<Place | null>(null);
@@ -137,6 +141,7 @@ export default function MapBoxMap({
   const animateToLocation = useCallback(
     (location: [number, number], zoom: number, duration = 1500) => {
       if (mapRef.current) {
+        isMapAnimatingRef.current = true;
         mapRef.current.easeTo({
           center: location,
           zoom: zoom,
@@ -144,6 +149,10 @@ export default function MapBoxMap({
           easing: (t) => 1 - Math.pow(1 - t, 3),
           essential: true,
         });
+        // Zdejmij flagę po zakończeniu animacji (z marginesem 100ms)
+        setTimeout(() => {
+          isMapAnimatingRef.current = false;
+        }, duration + 100);
       }
     },
     [],
@@ -253,8 +262,16 @@ export default function MapBoxMap({
 
   const openPanel = useCallback(
     (place: Place) => {
+      // Anuluj aktywny timeout zamknięcia — zapobiega race condition
+      // gdy nowa pinezka jest klikana zanim 600ms timeout z closePanel dobiegnie końca
+      if (closePanelTimeoutRef.current) {
+        clearTimeout(closePanelTimeoutRef.current);
+        closePanelTimeoutRef.current = null;
+      }
+
       setSelectedPlace(place);
       setIsPanelOpen(true);
+      isPanelOpenRef.current = true;
 
       // Wyłącz interakcje dotykowe mapy gdy panel jest otwarty
       if (mapRef.current) {
@@ -284,6 +301,7 @@ export default function MapBoxMap({
   );
 
   const closePanel = useCallback(() => {
+    isPanelOpenRef.current = false;
     setIsPanelVisible(false);
     setSelectedGalleryImage(null);
     setCurrentImageIndex(0);
@@ -295,7 +313,10 @@ export default function MapBoxMap({
       mapRef.current.touchPitch.enable();
     }
 
-    setTimeout(() => {
+    // Zapisz timeout do refa — openPanel może go anulować jeśli nowa pinezka
+    // zostanie kliknięta przed upływem 600ms (race condition fix)
+    closePanelTimeoutRef.current = setTimeout(() => {
+      closePanelTimeoutRef.current = null;
       setIsPanelOpen(false);
     }, 600);
   }, []);
@@ -758,6 +779,12 @@ export default function MapBoxMap({
 
       // ---- KLIK w pustą mapę → zamknij panel ----
       map.on("click", (e) => {
+        // Ignoruj kliknięcia podczas programowej animacji mapy
+        // (easeTo emituje synthetic click events które zamknęłyby świeżo otwarty panel)
+        if (isMapAnimatingRef.current) return;
+        // Ignoruj jeśli panel i tak nie jest otwarty
+        if (!isPanelOpenRef.current) return;
+
         const features = map.queryRenderedFeatures(e.point, {
           layers: ["places-unclustered", "places-clusters"],
         });
@@ -800,6 +827,7 @@ export default function MapBoxMap({
 
     return () => {
       if (hoverTimeoutRef.current) clearTimeout(hoverTimeoutRef.current);
+      if (closePanelTimeoutRef.current) clearTimeout(closePanelTimeoutRef.current);
       if (hoverPopupRef.current) {
         hoverPopupRef.current.remove();
         hoverPopupRef.current = null;

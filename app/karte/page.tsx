@@ -37,6 +37,37 @@ function isValidCoordinate(lat: number, lng: number): boolean {
 }
 
 /**
+ * Czyści HTML przeklejony z Worda (lub innego edytora WYSIWYG).
+ * Zostawia tylko bezpieczne tagi z białej listy: p, br, strong, b, em, i, a.
+ * Usuwa: span, div, style=, class=, komentarze <!--[if gte mso]-->, &nbsp; sekwencje, puste tagi.
+ */
+function sanitizeWordHtml(html: string): string {
+  return (
+    html
+      // Usuń komentarze Word/IE (<!--[if gte mso 9]>...<![endif]-->)
+      .replace(/<!--\[if[\s\S]*?<!\[endif\]-->/gi, "")
+      // Usuń wszystkie komentarze HTML
+      .replace(/<!--[\s\S]*?-->/g, "")
+      // Usuń tagi spoza białej listy (zachowaj ich zawartość)
+      .replace(
+        /<(?!\/?(?:p|br|strong|b|em|i|a|ul|ol|li)(?:\s|\/?>))[^>]+>/gi,
+        "",
+      )
+      // Usuń style= i class= z pozostałych tagów
+      .replace(/\s(?:style|class|id|lang|xml:\w+)="[^"]*"/gi, "")
+      // Normalizuj &nbsp; → spacja, usuń wielokrotne niełamliwe spacje
+      .replace(/&nbsp;(\s*&nbsp;)+/gi, " ")
+      .replace(/&nbsp;/gi, " ")
+      // Usuń puste tagi (np. <p></p>, <p> </p>)
+      .replace(/<(p|li)>\s*<\/\1>/gi, "")
+      // Usuń wielokrotne puste linie
+      .replace(/(<br\s*\/?>\s*){3,}/gi, "<br><br>")
+      // Usuń białe znaki na początku i końcu
+      .trim()
+  );
+}
+
+/**
  * Transformacja Directus Orte do Place z walidacją - FIXED
  */
 function transformDirectusOrteToPlace(ort: DirectusOrte): Place | null {
@@ -61,7 +92,9 @@ function transformDirectusOrteToPlace(ort: DirectusOrte): Place | null {
       Name: ort.Name.trim(),
       Adresse: ort.Adresse.trim(),
       Telefon: ort.Telefon?.trim(),
-      Vollbeschreibung: ort.Vollbeschreibung?.trim(),
+      Vollbeschreibung: ort.Vollbeschreibung
+        ? sanitizeWordHtml(ort.Vollbeschreibung)
+        : undefined,
       Breite: latitude,
       Lange: longitude,
       // ✅ FIXED: Proper filtering and mapping
