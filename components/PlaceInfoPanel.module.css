@@ -27,12 +27,9 @@
   right: 0;
   width: min(400px, 100vw);
   max-width: 500px;
-  /* Brak height — panel rozciąga się między top:0 a bottom:0,
-     niezależnie od dynamicznego paska przeglądarki na mobile */
-  background: linear-gradient(135deg, #fffaf3 0%, #fdf6e3 100%);
-  box-shadow:
-    -8px 0 32px rgba(0, 0, 0, 0.15),
-    -4px 0 16px rgba(0, 0, 0, 0.08);
+  /* Flat color zamiast gradient — tańsze dla GPU, szczególnie na mobile z dużą mapą */
+  background: #fdf6e3;
+  box-shadow: -4px 0 20px rgba(0, 0, 0, 0.15);
   overflow-y: scroll;
   overflow-x: hidden;
   transform: translateX(100%);
@@ -318,7 +315,8 @@
     left: 0;
     width: 100%;
     max-width: none;
-    /* Brak height — rozciąga się między top:0 i bottom:0 */
+    /* box-shadow wyłączony na mobile — GPU jest zajęty przez mapę z markerami */
+    box-shadow: none;
     transform: translateY(100%);
     border-left: none;
     transition: transform 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94);
