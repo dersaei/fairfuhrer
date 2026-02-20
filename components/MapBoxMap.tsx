@@ -14,7 +14,7 @@ import mapboxgl from "mapbox-gl";
 import DOMPurify from "dompurify";
 import "mapbox-gl/dist/mapbox-gl.css";
 import styles from "./MapBoxMap.module.css";
-import MapSearch from "./MapSearch"; // ✅ IMPORT
+import MapSearch from "./MapSearch";
 import type { Place } from "../types";
 
 // LAZY LOADING komponentów
@@ -27,6 +27,62 @@ interface MapBoxMapProps {
   embedded?: boolean;
 }
 
+// ========================================
+// CZYSTE FUNKCJE POZA KOMPONENTEM
+// ========================================
+
+function placesToGeoJSON(places: Place[]) {
+  return {
+    type: "FeatureCollection" as const,
+    features: places
+      .filter((p) => p.Breite && p.Lange)
+      .map((p) => ({
+        type: "Feature" as const,
+        geometry: {
+          type: "Point" as const,
+          coordinates: [p.Lange, p.Breite],
+        },
+        properties: {
+          placeId: p.id,
+          categoryColor: p.Kategorie[0]?.color || "#3388ff",
+        },
+      })),
+  };
+}
+
+/**
+ * Ładuje SVG łezki jako SDF image do Mapboxa.
+ * SDF (Signed Distance Field) pozwala dynamicznie kolorować ikonę przez icon-color.
+ * fill="black" = obszar ikony, fill="white" = dziura (przezroczysta po konwersji SDF).
+ */
+function loadMarkerSDF(map: mapboxgl.Map, onLoaded: () => void): void {
+  const svg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 32" width="24" height="32">
+    <path d="M12,0 C5.372,0 0,5.372 0,12 C0,19.5 12,32 12,32 C12,32 24,19.5 24,12 C24,5.372 18.628,0 12,0 Z" fill="black"/>
+    <circle cx="12" cy="12" r="5" fill="white"/>
+  </svg>`;
+  const blob = new Blob([svg], { type: "image/svg+xml" });
+  const url = URL.createObjectURL(blob);
+  const img = new Image(24, 32);
+  img.onload = () => {
+    if (!map.hasImage("marker-pin")) {
+      map.addImage("marker-pin", img, { sdf: true });
+    }
+    URL.revokeObjectURL(url);
+    onLoaded();
+  };
+  img.onerror = () => {
+    URL.revokeObjectURL(url);
+    console.error("❌ Failed to load marker SDF image");
+    // Kontynuuj mimo błędu — piny będą bez ikony, ale mapa zadziała
+    onLoaded();
+  };
+  img.src = url;
+}
+
+// ========================================
+// KOMPONENT
+// ========================================
+
 export default function MapBoxMap({
   places,
   disableGeolocation = false,
@@ -34,10 +90,17 @@ export default function MapBoxMap({
 }: MapBoxMapProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const mapRef = useRef<mapboxgl.Map | null>(null);
-  const markersRef = useRef<mapboxgl.Marker[]>([]);
   const userLocationMarkerRef = useRef<mapboxgl.Marker | null>(null);
   const userLocationRequestedRef = useRef(false);
   const lastFittedPlacesRef = useRef<string>("");
+
+  // GL Layers refs (zastępują markersRef)
+  const layersInitializedRef = useRef(false);
+  const hoverPopupRef = useRef<mapboxgl.Popup | null>(null);
+  const hoverTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+  // Refy dla stabilnych closures w eventach Mapboxa
+  const placesRef = useRef<Place[]>(places);
+  const popupDataMapRef = useRef<Map<number, string>>(new Map());
 
   // Panel state
   const [selectedPlace, setSelectedPlace] = useState<Place | null>(null);
@@ -88,10 +151,8 @@ export default function MapBoxMap({
 
   const addUserLocationMarker = useCallback(
     (map: mapboxgl.Map, location: [number, number]) => {
-      console.log("🎯 addUserLocationMarker called with location:", location);
       try {
         if (userLocationMarkerRef.current) {
-          console.log("🗑️ Removing old user location marker");
           userLocationMarkerRef.current.remove();
           userLocationMarkerRef.current = null;
         }
@@ -100,7 +161,6 @@ export default function MapBoxMap({
           console.warn("⚠️ Map not loaded, skipping marker");
           return;
         }
-        console.log("✅ Map loaded, adding user marker...");
 
         if (!document.head.querySelector("#user-location-styles")) {
           const style = document.createElement("style");
@@ -151,7 +211,6 @@ export default function MapBoxMap({
           <div class="marker-pulse"></div>
         `;
 
-        // ✅ XSS PROTECTION: Sanityzacja HTML (choć to statyczny tekst)
         const userPopupHTML = DOMPurify.sanitize(`
           <div>
             <h3>Ihre Position</h3>
@@ -181,12 +240,11 @@ export default function MapBoxMap({
         });
 
         userLocationMarkerRef.current = userMarker;
-        console.log("✅ User location marker added successfully!");
       } catch (error) {
         console.error("❌ Błąd podczas dodawania markera użytkownika:", error);
       }
     },
-    [], // Empty deps is OK - this function doesn't depend on external state
+    [],
   );
 
   // ========================================
@@ -198,8 +256,7 @@ export default function MapBoxMap({
       setSelectedPlace(place);
       setIsPanelOpen(true);
 
-      // Wyłącz interakcje dotykowe mapy gdy panel jest otwarty —
-      // bez tego mapa przechwytuje touch events i panel scrolluje się z opóźnieniem
+      // Wyłącz interakcje dotykowe mapy gdy panel jest otwarty
       if (mapRef.current) {
         mapRef.current.dragPan.disable();
         mapRef.current.touchZoomRotate.disable();
@@ -231,7 +288,7 @@ export default function MapBoxMap({
     setSelectedGalleryImage(null);
     setCurrentImageIndex(0);
 
-    // Przywróć interakcje dotykowe mapy po zamknięciu panelu
+    // Przywróć interakcje dotykowe mapy
     if (mapRef.current) {
       mapRef.current.dragPan.enable();
       mapRef.current.touchZoomRotate.enable();
@@ -243,13 +300,9 @@ export default function MapBoxMap({
     }, 600);
   }, []);
 
-  // ✅ POPRAWIONY HANDLER DLA WYSZUKIWARKI
   const handleSearchPlaceSelect = useCallback(
     (place: Place) => {
-      // Najpierw otwórz panel
       openPanel(place);
-
-      // Następnie animuj do miejsca (po krótkim opóźnieniu)
       setTimeout(() => {
         animateToLocation([place.Lange, place.Breite], 14, 1200);
       }, 100);
@@ -290,7 +343,6 @@ export default function MapBoxMap({
   // ========================================
 
   const getUserLocation = useCallback(() => {
-    console.log("🔍 getUserLocation called, mapLoadingState:", mapLoadingState);
     userLocationRequestedRef.current = true;
 
     if (!navigator.geolocation) {
@@ -298,48 +350,66 @@ export default function MapBoxMap({
       return;
     }
 
-    console.log("📍 Requesting geolocation permission...");
     navigator.geolocation.getCurrentPosition(
       (position) => {
         const { latitude, longitude } = position.coords;
         const newLocation: [number, number] = [longitude, latitude];
-        console.log("✅ Location received:", newLocation);
         setUserLocation(newLocation);
 
         if (mapRef.current) {
-          console.log("🗺️ Map exists, animating to location...");
-          // Small delay to ensure smooth animation after location received
           setTimeout(() => {
             animateToLocation(newLocation, 14, 1800);
           }, 100);
-        } else {
-          console.warn("⚠️ Map not ready yet, location saved but not animated");
         }
       },
       (error) => {
         console.error("❌ Geolocation-Fehler:", error);
-        switch (error.code) {
-          case error.PERMISSION_DENIED:
-            console.warn(
-              "🚫 Benutzer hat den Zugriff auf die Position verweigert",
-            );
-            break;
-          case error.POSITION_UNAVAILABLE:
-            console.warn("📍 Positionsinformationen sind nicht verfügbar");
-            break;
-          case error.TIMEOUT:
-            console.warn("⏱️ Zeitüberschreitung beim Abrufen der Position");
-            break;
-          default:
-            console.warn(
-              "❓ Ein unbekannter Fehler beim Abrufen der Position ist aufgetreten",
-            );
-            break;
-        }
       },
       { enableHighAccuracy: true, timeout: 10000, maximumAge: 300000 },
     );
-  }, [mapLoadingState, animateToLocation]); // ✅ Include dependencies for React 19
+  }, [animateToLocation]);
+
+  // ========================================
+  // POPUP DATA (pre-computed, używane w hover tooltip)
+  // ========================================
+
+  const popupDataMap = useMemo<Map<number, string>>(() => {
+    const dataMap = new Map<number, string>();
+    places.forEach((place) => {
+      const safeName = DOMPurify.sanitize(place.Name, { ALLOWED_TAGS: [] });
+      const safeAddress = DOMPurify.sanitize(place.Adresse, {
+        ALLOWED_TAGS: [],
+      });
+      const safePhone = place.Telefon
+        ? DOMPurify.sanitize(place.Telefon, { ALLOWED_TAGS: [] })
+        : "";
+
+      const phoneHTML = safePhone
+        ? `<p class="${styles.popupPhone}"><a href="tel:${safePhone}" class="${styles.popupPhoneLink}">📞 ${safePhone}</a></p>`
+        : "";
+
+      const categoryBadgesHTML =
+        place.Kategorie.length > 0
+          ? `<div class="popup-category-badges">${place.Kategorie.map(
+              (cat) =>
+                `<span class="popup-category-badge" style="background-color:${DOMPurify.sanitize(cat.color, { ALLOWED_TAGS: [] })}">${DOMPurify.sanitize(cat.name, { ALLOWED_TAGS: [] })}</span>`,
+            ).join("")}</div>`
+          : "";
+
+      const html = DOMPurify.sanitize(
+        `<div class="${styles.modernPopup}">
+          ${categoryBadgesHTML}
+          <h3 class="${styles.popupTitle}">${safeName}</h3>
+          <p class="${styles.popupAddress}">📍 ${safeAddress}</p>
+          ${phoneHTML}
+        </div>`,
+        { ADD_ATTR: ["style", "href"] },
+      );
+
+      dataMap.set(place.id, html);
+    });
+    return dataMap;
+  }, [places]);
 
   // ========================================
   // MAP INITIALIZATION
@@ -347,6 +417,7 @@ export default function MapBoxMap({
 
   const initializeMap = useCallback(() => {
     if (mapRef.current || !containerRef.current) return;
+    if (layersInitializedRef.current) return;
 
     if (!isValidMapboxToken()) {
       setMapLoadingState("error");
@@ -359,8 +430,6 @@ export default function MapBoxMap({
 
       const map = new mapboxgl.Map({
         container: containerRef.current,
-        // ✅ Streets v12 - supports MapboxLanguage plugin for German labels
-        // Note: "standard" style does NOT support language changes via API
         style: "mapbox://styles/mapbox/streets-v12",
         center: userLocation || [9.0, 47.5],
         zoom: userLocation ? 12 : 6,
@@ -371,8 +440,7 @@ export default function MapBoxMap({
       map.on("load", () => {
         setMapLoadingState("success");
 
-        // ✅ Manual German language change for all symbol layers
-        // This works with streets-v12 style by changing {name} to {name_de}
+        // Ustaw język na niemiecki
         try {
           const layers = map.getStyle().layers;
           if (layers) {
@@ -383,16 +451,12 @@ export default function MapBoxMap({
                 "text-field" in layer.layout
               ) {
                 try {
-                  // Change text-field from {name} or {name_en} to {name_de}
                   map.setLayoutProperty(layer.id, "text-field", [
                     "get",
                     "name_de",
                   ]);
-                } catch (layerError) {
-                  console.warn(
-                    `Could not set German language for layer ${layer.id}:`,
-                    layerError,
-                  );
+                } catch {
+                  // Ignoruj błędy dla konkretnych warstw
                 }
               }
             });
@@ -401,12 +465,15 @@ export default function MapBoxMap({
           console.error("Error setting German language on map:", error);
         }
 
-        // Ukryj oznaczenia dróg (żółte tarcze Bundesstraßen / Autobahnen)
+        // Ukryj oznaczenia dróg
         try {
           const layers = map.getStyle().layers;
           if (layers) {
             layers.forEach((layer) => {
-              if (layer.id.includes("shield") || layer.id.includes("road-number")) {
+              if (
+                layer.id.includes("shield") ||
+                layer.id.includes("road-number")
+              ) {
                 map.setLayoutProperty(layer.id, "visibility", "none");
               }
             });
@@ -432,17 +499,17 @@ export default function MapBoxMap({
             const { longitude, latitude } = e.coords;
             const location: [number, number] = [longitude, latitude];
             setUserLocation(location);
-
             setTimeout(() => {
               animateToLocation(location, 14, 1800);
             }, 150);
           });
         }
 
-        // ✅ Usunięto - marker jest teraz dodawany przez osobny useEffect
-        // if (userLocation) {
-        //   addUserLocationMarker(map, userLocation);
-        // }
+        // Załaduj SDF łezki, następnie zainicjalizuj warstwy i eventy
+        loadMarkerSDF(map, () => {
+          initializePlacesLayer(map);
+          attachLayerEvents(map);
+        });
       });
 
       map.on("error", (e) => {
@@ -455,226 +522,308 @@ export default function MapBoxMap({
       console.error("Błąd inicjalizacji mapy:", error);
       setMapLoadingState("error");
     }
-    // ✅ REACT 19.2: Closure ma dostęp do początkowej wartości userLocation
-    // oraz do stabilnych referencji addUserLocationMarker i animateToLocation.
-    // Mapa jest inicjalizowana tylko raz - kolejne zmiany userLocation
-    // są obsługiwane przez geolocateControl.on("geolocate") i updateMarkers useEffect.
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []); // ✅ Inicjalizuj tylko raz przy mount
+  }, []); // Inicjalizuj tylko raz przy mount
 
   // ========================================
-  // MARKERS MANAGEMENT
+  // GL LAYERS: initializePlacesLayer
   // ========================================
 
-  // ✅ REACT 19.2: useMemo dla popup contents - generuj HTML tylko gdy places się zmienią
-  const popupContents = useMemo(() => {
-    return places.map((place) => {
-      // ✅ XSS PROTECTION: Escape user input before building HTML
-      const safeName = DOMPurify.sanitize(place.Name, { ALLOWED_TAGS: [] });
-      const safeAddress = DOMPurify.sanitize(place.Adresse, {
-        ALLOWED_TAGS: [],
-      });
-      const safePhone = place.Telefon
-        ? DOMPurify.sanitize(place.Telefon, { ALLOWED_TAGS: [] })
-        : "";
-      const phoneHTML = safePhone
-        ? `<p class="${styles.popupPhone}"><a href="tel:${safePhone}" class="${styles.popupPhoneLink}">📞 ${safePhone}</a></p>`
-        : "";
+  const initializePlacesLayer = useCallback(
+    (map: mapboxgl.Map) => {
+      if (layersInitializedRef.current) return;
 
-      const categoryBadgesHTML =
-        place.Kategorie.length > 0
-          ? `<div class="popup-category-badges">${place.Kategorie.map(
-              (cat) =>
-                `<span class="popup-category-badge" data-color="${DOMPurify.sanitize(cat.color, { ALLOWED_TAGS: [] })}">${DOMPurify.sanitize(cat.name, { ALLOWED_TAGS: [] })}</span>`,
-            ).join("")}</div>`
-          : "";
-
-      const popupContent = `
-        <div class="${styles.modernPopup}">
-          ${categoryBadgesHTML}
-          <h3 class="${styles.popupTitle}">${safeName}</h3>
-          <p class="${styles.popupAddress}">📍 ${safeAddress}</p>
-          ${phoneHTML}
-        </div>
-      `;
-
-      // ✅ XSS PROTECTION: Final sanitization - allow data-color attribute for category badges
-      const safePopupContent = DOMPurify.sanitize(popupContent, {
-        ADD_ATTR: ["data-color"],
+      // SOURCE z klastrowaniem
+      map.addSource("places-source", {
+        type: "geojson",
+        data: placesToGeoJSON(placesRef.current),
+        cluster: true,
+        clusterMaxZoom: 14,
+        clusterRadius: 50,
       });
 
-      return {
-        placeId: place.id,
-        color: place.Kategorie[0]?.color || "#3388ff",
-        content: safePopupContent,
-      };
-    });
-  }, [places]); // ✅ Tylko gdy places się zmienią
+      // LAYER: klastry (circle)
+      map.addLayer({
+        id: "places-clusters",
+        type: "circle",
+        source: "places-source",
+        filter: ["has", "point_count"],
+        paint: {
+          "circle-color": [
+            "step",
+            ["get", "point_count"],
+            "#51bbd6",
+            10,
+            "#f1f075",
+            30,
+            "#f28cb1",
+          ],
+          "circle-radius": [
+            "step",
+            ["get", "point_count"],
+            20,
+            10,
+            30,
+            30,
+            40,
+          ],
+          "circle-stroke-width": 2,
+          "circle-stroke-color": "#fff",
+        },
+      });
 
-  const updateMarkers = useCallback(() => {
+      // LAYER: liczba w klastrze (symbol)
+      map.addLayer({
+        id: "places-cluster-count",
+        type: "symbol",
+        source: "places-source",
+        filter: ["has", "point_count"],
+        layout: {
+          "text-field": ["get", "point_count_abbreviated"],
+          "text-font": ["DIN Offc Pro Medium", "Arial Unicode MS Bold"],
+          "text-size": 12,
+        },
+        paint: {
+          "text-color": "#fff",
+        },
+      });
+
+      // LAYER: pojedyncze piny (symbol SDF łezka)
+      map.addLayer({
+        id: "places-unclustered",
+        type: "symbol",
+        source: "places-source",
+        filter: ["!", ["has", "point_count"]],
+        layout: {
+          "icon-image": "marker-pin",
+          "icon-size": 0.85,
+          "icon-anchor": "bottom",
+          "icon-allow-overlap": true,
+        },
+        paint: {
+          "icon-color": ["get", "categoryColor"],
+          "icon-halo-color": "rgba(0,0,0,0.25)",
+          "icon-halo-width": 1,
+        },
+      });
+
+      layersInitializedRef.current = true;
+
+      // fitBounds przy pierwszym renderze
+      updatePlacesData();
+    },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [], // Inicjalizuj tylko raz
+  );
+
+  // ========================================
+  // GL LAYERS: updatePlacesData (zastępuje updateMarkers)
+  // ========================================
+
+  const updatePlacesData = useCallback(() => {
     const map = mapRef.current;
-    if (!map || !map.loaded()) return;
+    if (!map || !map.isStyleLoaded() || !layersInitializedRef.current) return;
 
-    try {
-      markersRef.current.forEach((marker) => marker.remove());
-      markersRef.current = [];
+    const source = map.getSource("places-source") as
+      | mapboxgl.GeoJSONSource
+      | undefined;
+    if (!source) return;
 
-      places.forEach((place, index) => {
-        if (!place.Breite || !place.Lange) return;
+    source.setData(
+      placesToGeoJSON(places) as GeoJSON.FeatureCollection<GeoJSON.Point>,
+    );
 
-        // ✅ REACT 19.2: Użyj pre-computed popup content z useMemo
-        const popupData = popupContents[index];
+    // fitBounds tylko gdy zmienił się zestaw miejsc
+    const placesKey = places
+      .map((p) => p.id)
+      .sort()
+      .join(",");
+    if (places.length > 0 && placesKey !== lastFittedPlacesRef.current) {
+      lastFittedPlacesRef.current = placesKey;
 
-        const popup = new mapboxgl.Popup({
-          offset: [0, -20],
+      const bounds = new mapboxgl.LngLatBounds();
+      places
+        .filter((p) => p.Breite && p.Lange)
+        .forEach((p) => bounds.extend([p.Lange, p.Breite]));
+      if (userLocation) bounds.extend(userLocation);
+
+      const padding =
+        window.innerWidth > 768
+          ? { top: 80, bottom: 80, left: 80, right: 80 }
+          : { top: 50, bottom: 50, left: 20, right: 20 };
+
+      map.fitBounds(bounds, { padding, duration: 1000, maxZoom: 12 });
+    }
+  }, [places, userLocation]);
+
+  // ========================================
+  // GL LAYERS: attachLayerEvents
+  // ========================================
+
+  const attachLayerEvents = useCallback(
+    (map: mapboxgl.Map) => {
+      // ---- KURSORY ----
+      map.on("mouseenter", "places-unclustered", () => {
+        map.getCanvas().style.cursor = "pointer";
+      });
+      map.on("mouseleave", "places-unclustered", () => {
+        map.getCanvas().style.cursor = "";
+      });
+      map.on("mouseenter", "places-clusters", () => {
+        map.getCanvas().style.cursor = "pointer";
+      });
+      map.on("mouseleave", "places-clusters", () => {
+        map.getCanvas().style.cursor = "";
+      });
+
+      // ---- HOVER TOOLTIP ----
+      map.on("mouseenter", "places-unclustered", (e) => {
+        if (!e.features?.length) return;
+        const feature = e.features[0];
+        const placeId = feature.properties?.placeId as number;
+        const html = popupDataMapRef.current.get(placeId);
+        if (!html) return;
+
+        // Wyczyść debounce (jeśli kursor wrócił szybko)
+        if (hoverTimeoutRef.current) {
+          clearTimeout(hoverTimeoutRef.current);
+          hoverTimeoutRef.current = null;
+        }
+
+        // Zamknij poprzedni popup
+        if (hoverPopupRef.current) {
+          hoverPopupRef.current.remove();
+          hoverPopupRef.current = null;
+        }
+
+        const geometry = feature.geometry as GeoJSON.Point;
+        const coords = geometry.coordinates as [number, number];
+
+        hoverPopupRef.current = new mapboxgl.Popup({
+          offset: [0, -36],
           closeButton: false,
           className: styles.popup,
           maxWidth: "320px",
-        }).setHTML(popupData.content);
-
-        popup.on("open", () => {
-          const el = popup.getElement();
-          if (!el) return;
-          el.querySelectorAll<HTMLElement>(".popup-category-badge").forEach(
-            (badge) => {
-              const color = badge.getAttribute("data-color");
-              if (color) badge.style.backgroundColor = color;
-            },
-          );
-        });
-
-        const marker = new mapboxgl.Marker({
-          color: popupData.color,
-          scale: 0.8,
         })
-          .setLngLat([place.Lange, place.Breite])
-          .setPopup(popup)
+          .setLngLat(coords)
+          .setHTML(html)
           .addTo(map);
-
-        const markerElement = marker.getElement();
-        markerElement.style.cursor = "pointer";
-
-        let popupTimeout: NodeJS.Timeout;
-        markerElement.addEventListener("mouseenter", () => {
-          clearTimeout(popupTimeout);
-          marker.togglePopup();
-        });
-
-        markerElement.addEventListener("mouseleave", () => {
-          popupTimeout = setTimeout(() => {
-            if (marker.getPopup()?.isOpen()) marker.togglePopup();
-          }, 300);
-        });
-
-        markerElement.addEventListener("click", (e) => {
-          e.preventDefault();
-          e.stopPropagation();
-          if (marker.getPopup()?.isOpen()) marker.togglePopup();
-          openPanel(place);
-        });
-
-        // Add touch support
-        markerElement.style.touchAction = "manipulation";
-        markerElement.style.setProperty(
-          "-webkit-tap-highlight-color",
-          "transparent",
-        );
-
-        markersRef.current.push(marker);
       });
 
-      // ✅ Dopasuj widok mapy aby pokazać wszystkie markery (tylko gdy zmieni się zestaw miejsc)
-      const placesKey = places
-        .map((p) => p.id)
-        .sort()
-        .join(",");
-      if (places.length > 0 && placesKey !== lastFittedPlacesRef.current) {
-        lastFittedPlacesRef.current = placesKey;
-
-        const bounds = new mapboxgl.LngLatBounds();
-        places.forEach((p) => {
-          if (p.Breite && p.Lange) {
-            bounds.extend([p.Lange, p.Breite]);
+      map.on("mouseleave", "places-unclustered", () => {
+        hoverTimeoutRef.current = setTimeout(() => {
+          if (hoverPopupRef.current) {
+            hoverPopupRef.current.remove();
+            hoverPopupRef.current = null;
           }
-        });
-        if (userLocation) bounds.extend(userLocation);
+          hoverTimeoutRef.current = null;
+        }, 300);
+      });
 
-        // ✅ Responsive padding - więcej na desktop, mniej na mobile
-        const padding =
-          window.innerWidth > 768
-            ? { top: 80, bottom: 80, left: 80, right: 80 }
-            : { top: 50, bottom: 50, left: 20, right: 20 };
+      // ---- KLIK na unclustered pin → otwórz panel ----
+      map.on("click", "places-unclustered", (e) => {
+        if (!e.features?.length) return;
+        const placeId = e.features[0].properties?.placeId as number;
+        const place = placesRef.current.find((p) => p.id === placeId);
+        if (!place) return;
 
-        map.fitBounds(bounds, {
-          padding,
-          duration: 1000, // Płynna animacja 1s
-          maxZoom: 12, // Nie zbliżaj zbyt mocno
+        // Zamknij hover popup
+        if (hoverPopupRef.current) {
+          hoverPopupRef.current.remove();
+          hoverPopupRef.current = null;
+        }
+
+        openPanel(place);
+        // Krytyczne: zatrzymaj propagację do ogólnego map.on("click")
+        e.originalEvent.stopPropagation();
+      });
+
+      // ---- KLIK na klaster → zoom in ----
+      map.on("click", "places-clusters", (e) => {
+        if (!e.features?.length) return;
+        const clusterId = e.features[0].properties?.cluster_id as number;
+        const source = map.getSource(
+          "places-source",
+        ) as mapboxgl.GeoJSONSource;
+        const geometry = e.features[0].geometry as GeoJSON.Point;
+        const coords = geometry.coordinates as [number, number];
+
+        source.getClusterExpansionZoom(clusterId, (err, zoom) => {
+          if (err || zoom == null) return;
+          map.easeTo({ center: coords, zoom });
         });
-      }
-    } catch (error) {
-      console.error("Błąd aktualizacji markerów:", error);
-    }
-  }, [places, popupContents, userLocation, openPanel]);
+
+        e.originalEvent.stopPropagation();
+      });
+
+      // ---- KLIK w pustą mapę → zamknij panel ----
+      map.on("click", (e) => {
+        const features = map.queryRenderedFeatures(e.point, {
+          layers: ["places-unclustered", "places-clusters"],
+        });
+        if (!features.length) {
+          closePanel();
+        }
+      });
+    },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [], // Stabilne — używa ref zamiast closures na places/openPanel/closePanel
+  );
 
   // ========================================
   // EFFECTS
   // ========================================
 
-  // ✅ Request user location automatically after map loads (React 19 compatible)
+  // Synchronizuj placesRef i popupDataMapRef z aktualnymi wartościami
+  useEffect(() => {
+    placesRef.current = places;
+  }, [places]);
+
+  useEffect(() => {
+    popupDataMapRef.current = popupDataMap;
+  }, [popupDataMap]);
+
+  // Request user location po załadowaniu mapy
   useEffect(() => {
     if (disableGeolocation) return;
     if (mapLoadingState === "success" && !userLocationRequestedRef.current) {
-      // Wait to ensure map is fully ready and loaded
       const timer = setTimeout(() => {
         getUserLocation();
       }, 500);
-
       return () => clearTimeout(timer);
     }
   }, [mapLoadingState, getUserLocation, disableGeolocation]);
 
+  // Inicjalizacja mapy
   useEffect(() => {
     initializeMap();
 
     return () => {
-      markersRef.current.forEach((marker) => marker.remove());
+      if (hoverTimeoutRef.current) clearTimeout(hoverTimeoutRef.current);
+      if (hoverPopupRef.current) {
+        hoverPopupRef.current.remove();
+        hoverPopupRef.current = null;
+      }
       if (userLocationMarkerRef.current) {
         userLocationMarkerRef.current.remove();
+        userLocationMarkerRef.current = null;
       }
       if (mapRef.current) {
         mapRef.current.remove();
         mapRef.current = null;
       }
+      layersInitializedRef.current = false;
     };
-    // ✅ REACT 19.2: initializeMap ma pustą deps array, więc jest stabilne.
-    // Ten Effect uruchamia się tylko raz przy mount i sprząta przy unmount.
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []); // ✅ Inicjalizuj tylko raz przy mount, cleanup przy unmount
+  }, []); // Inicjalizuj tylko raz przy mount, cleanup przy unmount
 
+  // Aktualizuj dane GL source gdy places się zmienią (np. filtry)
   useEffect(() => {
-    if (!mapRef.current) return;
+    if (!mapRef.current || !layersInitializedRef.current) return;
+    if (mapRef.current.isStyleLoaded()) updatePlacesData();
+  }, [updatePlacesData]);
 
-    const map = mapRef.current;
-
-    // ✅ POPRAWKA: Użyj isStyleLoaded() zamiast loaded()
-    // isStyleLoaded() jest bardziej niezawodne dla dodawania markerów
-    if (map.isStyleLoaded()) {
-      updateMarkers();
-    } else {
-      // ✅ Użyj 'idle' zamiast 'load' - bardziej niezawodne
-      const handleIdle = () => {
-        updateMarkers();
-        map.off("idle", handleIdle); // Usuń listener po pierwszym wywołaniu
-      };
-      map.on("idle", handleIdle);
-
-      return () => {
-        map.off("idle", handleIdle); // Cleanup
-      };
-    }
-  }, [updateMarkers]);
-
-  // ✅ REACT 19.2: Dodaj user location marker po każdej zmianie lokalizacji
+  // Dodaj user location marker po każdej zmianie lokalizacji
   useEffect(() => {
     if (!mapRef.current || !userLocation) return;
 
@@ -687,13 +836,6 @@ export default function MapBoxMap({
       });
     }
   }, [userLocation, addUserLocationMarker]);
-
-  // ✅ REACT 19.2: Usunięto ten useEffect - Activity zachowuje stan automatycznie
-  // useEffect(() => {
-  //   if (!isPanelOpen && selectedPlace) {
-  //     setSelectedPlace(null);
-  //   }
-  // }, [isPanelOpen, selectedPlace]);
 
   // ========================================
   // RENDER
@@ -732,7 +874,6 @@ export default function MapBoxMap({
 
       <div ref={containerRef} className={styles.mapContainer} />
 
-      {/* ✅ WYSZUKIWARKA - ukryta w trybie embedded */}
       {!embedded && (
         <MapSearch
           places={places}
@@ -741,7 +882,6 @@ export default function MapBoxMap({
         />
       )}
 
-      {/* ✅ REACT 19.2: Użyj Activity zamiast warunkowego renderowania */}
       <Activity mode={isPanelOpen ? "visible" : "hidden"}>
         <Suspense
           fallback={

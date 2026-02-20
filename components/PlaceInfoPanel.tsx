@@ -46,7 +46,6 @@ export default function PlaceInfoPanel({
       if (
         target.closest('[data-gallery-modal="true"]') ||
         (panelRef.current && panelRef.current.contains(target)) ||
-        target.closest(".mapboxgl-marker") ||
         target.closest(".mapboxgl-ctrl") ||
         target.closest(".mapboxgl-popup")
       ) {

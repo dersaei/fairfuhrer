@@ -201,3 +201,35 @@
     padding-right: env(safe-area-inset-right);
   }
 }
+
+/* ========================================
+   GL LAYERS: Popup i category badges
+   ======================================== */
+
+/* Nadpisanie domyślnego stylu Mapbox popup */
+:global(.mapboxgl-popup-content) {
+  padding: 12px !important;
+  border-radius: 8px !important;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15) !important;
+}
+
+/* Category badges w hover popupie (inline style zamiast data-color) */
+:global(.popup-category-badges) {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  justify-content: center;
+  margin-bottom: 6px;
+}
+
+:global(.popup-category-badge) {
+  color: white;
+  text-shadow: 0.5px 0.5px 1px black;
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  padding: 0.2rem 0.6rem;
+  border-radius: 9999px;
+  display: inline-block;
+}
