@@ -60,16 +60,12 @@
 }
 
 .supportTitle {
-  font-size: 4rem;
   font-weight: 400;
-  color: white;
   margin-bottom: 1rem;
   font-family: var(--font-anton);
 }
 
 .supportText {
-  font-size: 1.125rem;
-  color: #fff;
   line-height: 1.7;
   margin-bottom: 1.5rem;
   font-family: var(--font-fira);
@@ -77,33 +73,10 @@
 }
 
 .supportSecondText {
-  font-size: 1rem;
-  color: #fff;
   line-height: 1.7;
   margin-bottom: 2rem;
   font-family: var(--font-fira);
   font-weight: 400;
-}
-
-.supportButton {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.5rem;
-  background-color: white;
-  color: #fc6c14;
-  text-decoration: none;
-  padding: 1rem 2rem;
-  border-radius: 50px;
-  font-weight: 600;
-  font-size: 1.1rem;
-  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1) inset;
-  transition: all 0.5s ease-in-out;
-  font-family: var(--font-fira);
-}
-
-.supportButton:hover {
-  transform: translateY(-3px);
-  box-shadow: rgba(0, 0, 0, 0.2) 0px -3px 10px inset;
 }
 
 .paypalWrapper {
@@ -161,34 +134,16 @@
   }
 
   .supportTitle {
-    font-size: 1.75rem;
+    font-size: 3rem !important;
   }
 
   .supportText {
-    font-size: 1rem;
-  }
-
-  .supportButton {
-    padding: 0.875rem 1.75rem;
-    font-size: 1rem;
+    font-size: 1rem !important;
   }
 }
 
 @media (max-width: 600px) {
   .supportSection {
     padding: 2.5rem 1rem;
-  }
-
-  .supportTitle {
-    font-size: 1.5rem;
-  }
-
-  .supportText {
-    font-size: 0.95rem;
-  }
-
-  .supportButton {
-    padding: 0.75rem 1.5rem;
-    font-size: 0.95rem;
   }
 }
