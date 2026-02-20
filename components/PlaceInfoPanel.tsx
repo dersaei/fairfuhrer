@@ -2,7 +2,6 @@
 
 import { useRef, useEffect, useState, useCallback } from "react";
 import { AudioPlayer, ImageGallery, PlaceImage } from "./MediaComponents";
-import ExpandableDescription from "./ExpandableDescription";
 import type { Place } from "../types";
 import styles from "./PlaceInfoPanel.module.css";
 
@@ -25,34 +24,25 @@ export default function PlaceInfoPanel({
   const backdropRef = useRef<HTMLDivElement>(null);
   const [isClosing, setIsClosing] = useState(false);
 
-  // ✅ POPRAWIONA FUNKCJA ZAMYKANIA z płynną animacją
   const handleClose = useCallback(() => {
     setIsClosing(true);
-
-    // Rozpocznij animację zamykania
     setTimeout(() => {
       onCloseAction();
       setIsClosing(false);
-    }, 500); // Dopasowane do czasu animacji CSS (0.5s)
+    }, 500);
   }, [onCloseAction]);
 
-  // Poprawiona obsługa kliknięć poza panelem
   useEffect(() => {
     if (!isOpen || !isVisible || isClosing) return;
 
-    const handleClickOutside = (e: MouseEvent | TouchEvent) => {
+    const handleClickOutside = (e: MouseEvent) => {
       const target = e.target as HTMLElement;
 
-      // 1. Sprawdź czy kliknięto w backdrop
       if (backdropRef.current && backdropRef.current.contains(target)) {
         handleClose();
         return;
       }
 
-      // 2. Nie zamykaj gdy kliknięto w:
-      // - Galerię pełnoekranową
-      // - Panel (w tym przyciski wewnątrz panelu)
-      // - Elementy Mapbox
       if (
         target.closest('[data-gallery-modal="true"]') ||
         (panelRef.current && panelRef.current.contains(target)) ||
@@ -63,64 +53,24 @@ export default function PlaceInfoPanel({
         return;
       }
 
-      // 3. Zamknij w pozostałych przypadkach
       handleClose();
     };
 
-    // Używamy tylko "click" — na mobile przeglądarka syntetyzuje click po touchend,
-    // więc nasłuchiwanie obu zdarzeń powoduje double-fire
     document.addEventListener("click", handleClickOutside);
-
-    return () => {
-      document.removeEventListener("click", handleClickOutside);
-    };
+    return () => document.removeEventListener("click", handleClickOutside);
   }, [isOpen, isVisible, isClosing, handleClose]);
 
-  // Handle escape key
   useEffect(() => {
     if (!isOpen || isClosing) return;
-
     const handleEscape = (e: KeyboardEvent) => {
-      if (e.key === "Escape") {
-        handleClose();
-      }
+      if (e.key === "Escape") handleClose();
     };
-
     document.addEventListener("keydown", handleEscape);
     return () => document.removeEventListener("keydown", handleEscape);
   }, [isOpen, isClosing, handleClose]);
 
-  // ✅ POPRAWIONA ANIMACJA OTWIERANIA
-  useEffect(() => {
-    if (isOpen && isVisible && !isClosing) {
-      const panel = panelRef.current;
-      if (panel) {
-        // Force reflow dla gładkiej animacji
-        void panel.offsetHeight;
-
-        // Małe opóźnienie dla lepszego efektu
-        requestAnimationFrame(() => {
-          requestAnimationFrame(() => {
-            panel.style.transform =
-              window.innerWidth <= 768 ? "translateY(0)" : "translateX(0)";
-          });
-        });
-      }
-    }
-  }, [isOpen, isVisible, isClosing]);
-
-  // ✅ RESET STYLI przy zamykaniu
-  useEffect(() => {
-    if (isClosing && panelRef.current) {
-      const panel = panelRef.current;
-      panel.style.transform =
-        window.innerWidth <= 768 ? "translateY(100%)" : "translateX(100%)";
-    }
-  }, [isClosing]);
-
   return (
     <>
-      {/* Backdrop z płynną animacją */}
       <div
         ref={backdropRef}
         className={`${styles.panelBackdrop} ${
@@ -128,7 +78,6 @@ export default function PlaceInfoPanel({
         }`}
       />
 
-      {/* Panel informacyjny */}
       {isOpen && (
         <div
           ref={panelRef}
@@ -139,8 +88,26 @@ export default function PlaceInfoPanel({
           aria-modal="true"
           aria-labelledby={place ? `place-title-${place.id}` : undefined}
         >
-          {/* ✅ NOWOCZESNY PRZYCISK ZAMYKANIA */}
-          <CloseButton onClick={handleClose} />
+          {/* Przycisk zamknięcia — absolute nad obrazem, scrolluje razem z treścią */}
+          <button
+            type="button"
+            className={styles.closeButton}
+            onClick={handleClose}
+            aria-label="Schließen"
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            >
+              <line x1="18" y1="6" x2="6" y2="18" />
+              <line x1="6" y1="6" x2="18" y2="18" />
+            </svg>
+          </button>
 
           <div className={styles.panelContent}>
             {place ? (
@@ -155,36 +122,6 @@ export default function PlaceInfoPanel({
         </div>
       )}
     </>
-  );
-}
-
-// ✅ KOMPONENT PRZYCISKU ZAMYKANIA
-function CloseButton({ onClick }: { onClick: () => void }) {
-  // Zmień na true jeśli wolisz prostszy design
-  const useMinimalStyle = false;
-
-  return (
-    <button
-      type="button"
-      className={
-        useMinimalStyle ? styles.closeButtonMinimal : styles.closeButton
-      }
-      onClick={onClick}
-      aria-label="Schließen"
-    >
-      <svg
-        xmlns="http://www.w3.org/2000/svg"
-        viewBox="0 0 24 24"
-        fill="none"
-        stroke="currentColor"
-        strokeWidth="2"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      >
-        <line x1="18" y1="6" x2="6" y2="18" />
-        <line x1="6" y1="6" x2="18" y2="18" />
-      </svg>
-    </button>
   );
 }
 
@@ -243,13 +180,11 @@ function PlaceContent({
         )}
       </div>
 
-      {/* ✅ ZASTĄPIONE: Stary opis przez nowy komponent ExpandableDescription */}
       {place.Vollbeschreibung && (
         <div className={styles.infoSection}>
-          <ExpandableDescription
-            content={place.Vollbeschreibung}
-            maxLines={6}
+          <div
             className={styles.description}
+            dangerouslySetInnerHTML={{ __html: place.Vollbeschreibung }}
           />
         </div>
       )}

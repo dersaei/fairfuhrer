@@ -40,8 +40,7 @@ export default function ExpandableDescription({
     setExpandedHeight(actualH);
   }, [content, maxLines]);
 
-  const toggleExpanded = (e: React.MouseEvent | React.TouchEvent) => {
-    // Zatrzymaj propagację, żeby document listener nie zinterpretował tego jako kliknięcia poza panelem
+  const toggleExpanded = (e: React.MouseEvent) => {
     e.stopPropagation();
     setIsExpanded((prev) => !prev);
   };
@@ -89,7 +88,6 @@ export default function ExpandableDescription({
           type="button"
           className={styles.toggleButton}
           onClick={toggleExpanded}
-          onTouchEnd={toggleExpanded}
           aria-expanded={isExpanded}
           aria-label={
             isExpanded ? "Weniger anzeigen" : "Vollständigen Text anzeigen"

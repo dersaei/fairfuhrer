@@ -1,39 +1,31 @@
 /* components/PlaceInfoPanel.module.css */
-/* ✅ FIXED iPhone Safari width issues */
 
-/* Backdrop - płynne przejścia */
+/* Backdrop */
 .panelBackdrop {
   position: fixed;
   top: 0;
   left: 0;
   width: 100%;
-  height: 100vh;
+  height: 100dvh;
   background: rgba(0, 0, 0, 0.3);
   z-index: 9999;
   opacity: 0;
-  transition: opacity 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
   pointer-events: none;
-  -webkit-backdrop-filter: blur(0px);
-  backdrop-filter: blur(0px);
-  transition:
-    opacity 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94),
-    backdrop-filter 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  transition: opacity 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
 }
 
 .panelBackdrop.visible {
   opacity: 1;
   pointer-events: auto;
-  -webkit-backdrop-filter: blur(2px);
-  backdrop-filter: blur(2px);
 }
 
-/* Panel - FIXED for iPhone Safari */
+/* Panel — slidein z prawej na desktop, z dołu na mobile */
 .infoPanel {
   position: fixed;
   top: 0;
   right: 0;
-  width: min(400px, 100vw); /* ✅ FIXED: Prevent overflow on narrow screens */
-  max-width: 500px; /* ✅ ADDED: Explicit max-width */
+  width: min(400px, 100vw);
+  max-width: 500px;
   height: 100dvh;
   background: linear-gradient(135deg, #fffaf3 0%, #fdf6e3 100%);
   box-shadow:
@@ -41,35 +33,22 @@
     -4px 0 16px rgba(0, 0, 0, 0.08);
   overflow-y: auto;
   overflow-x: hidden;
+  overscroll-behavior: contain;
+  -webkit-overflow-scrolling: touch;
   transform: translateX(100%);
-  transition:
-    transform 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94),
-    box-shadow 0.3s ease;
+  transition: transform 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94);
   z-index: 10000;
-  will-change: transform;
-
-  /* ✅ FIXED: Remove conflicting safe area padding from desktop */
-  /* Safe areas will be handled in mobile media query only */
 }
 
 .infoPanel.open {
   transform: translateX(0);
-  box-shadow:
-    -12px 0 48px rgba(0, 0, 0, 0.2),
-    -6px 0 24px rgba(0, 0, 0, 0.1);
 }
 
-/* ✅ NOWOCZESNY PRZYCISK ZAMKNIĘCIA - with safe area fix */
+/* Przycisk zamknięcia — absolute nad obrazem, scrolluje z treścią */
 .closeButton {
   position: absolute;
-  top: max(
-    20px,
-    env(safe-area-inset-top, 20px)
-  ); /* ✅ FIXED: Proper safe area handling */
-  right: max(
-    20px,
-    env(safe-area-inset-right, 20px)
-  ); /* ✅ FIXED: Proper safe area handling */
+  top: 16px;
+  right: 16px;
   width: 44px;
   height: 44px;
   border-radius: 50%;
@@ -94,91 +73,32 @@
   background: rgba(252, 108, 20, 0.1);
   border-color: rgba(252, 108, 20, 0.3);
   transform: scale(1.1) rotate(90deg);
-  box-shadow:
-    0 6px 20px rgba(252, 108, 20, 0.25),
-    0 3px 10px rgba(0, 0, 0, 0.15);
 }
 
 .closeButton:active {
-  transform: scale(0.95) rotate(90deg);
+  transform: scale(0.95);
   transition: transform 0.1s ease;
 }
 
 .closeButton svg {
-  width: 24px;
-  height: 24px;
+  width: 22px;
+  height: 22px;
   stroke: #333;
   stroke-width: 2.5px;
-  transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  transition: stroke 0.3s ease;
 }
 
 .closeButton:hover svg {
   stroke: rgba(252, 108, 20, 1);
-  stroke-width: 3px;
 }
 
-/* ✅ ALTERNATYWNY STYL PRZYCISKU - with safe area fix */
-.closeButtonMinimal {
-  position: absolute;
-  top: max(
-    16px,
-    env(safe-area-inset-top, 16px)
-  ); /* ✅ FIXED: Proper safe area handling */
-  right: max(
-    16px,
-    env(safe-area-inset-right, 16px)
-  ); /* ✅ FIXED: Proper safe area handling */
-  width: 36px;
-  height: 36px;
-  border-radius: 8px;
-  background: rgba(255, 255, 255, 0.9);
-  border: 1px solid rgba(0, 0, 0, 0.1);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  z-index: 10;
-  transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-}
-
-.closeButtonMinimal:hover {
-  background: rgba(252, 108, 20, 0.95);
-  border-color: rgba(252, 108, 20, 1);
-  transform: scale(1.05);
-  box-shadow: 0 4px 16px rgba(252, 108, 20, 0.3);
-}
-
-.closeButtonMinimal svg {
-  width: 20px;
-  height: 20px;
-  stroke: #666;
-  stroke-width: 2px;
-  transition: stroke 0.3s ease;
-}
-
-.closeButtonMinimal:hover svg {
-  stroke: white;
-}
-
-/* Content - FIXED safe area handling */
+/* Treść panelu */
 .panelContent {
   padding: 0;
-  min-height: 100%;
-  /* ✅ REMOVED: Conflicting safe area padding - handled in mobile only */
-  opacity: 0;
-  transform: translateY(20px);
-  transition:
-    opacity 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94) 0.2s,
-    transform 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94) 0.2s;
+  padding-bottom: max(1rem, env(safe-area-inset-bottom));
 }
 
-.infoPanel.open .panelContent {
-  opacity: 1;
-  transform: translateY(0);
-}
-
-/* ✅ ZACHOWANE WSZYSTKIE ISTNIEJĄCE NAZWY KLAS */
+/* Kontener obrazu i audio */
 .imageAudioContainer {
   position: relative;
   width: 100%;
@@ -197,35 +117,16 @@
   height: 250px;
   object-fit: cover;
   display: block;
-  transition: transform 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94);
 }
 
-.mainImageSection:hover .mainImage {
-  transform: scale(1.05);
-}
-
-/* ✅ POPRAWIONE AUDIO SECTION — nie wystaje poza obrazek, nie prześwituje przez header */
+/* Audio — nakłada się na dolną krawędź obrazka */
 .audioSection {
-  position: relative;
-  left: auto;
-  transform: none;
+  position: absolute;
+  bottom: -3rem;
+  left: 50%;
+  transform: translateX(-50%);
   width: 80%;
-  margin: -2rem auto 0;
-  z-index: 10;
-  opacity: 0;
-  animation: slideUpFadeIn 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94) 0.4s
-    forwards;
-}
-
-@keyframes slideUpFadeIn {
-  from {
-    opacity: 0;
-    transform: translateY(20px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
+  z-index: 5;
 }
 
 .categoryBadges {
@@ -234,11 +135,7 @@
   flex-wrap: wrap;
   gap: 0.4rem;
   padding: 1rem 1.5rem 0;
-  /* margin-top dostosowany do nakładki audio — mniejszy bo audio jest teraz relative */
-  margin-top: 1rem;
-  opacity: 0;
-  animation: fadeSlideUp 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94) 0.55s
-    forwards;
+  margin-top: 3.5rem;
 }
 
 .categoryBadge {
@@ -257,23 +154,9 @@
 
 .placeNameSection {
   margin-top: 0.5rem;
-  margin-bottom: 2vh;
+  margin-bottom: 1.5rem;
   text-align: center;
   padding: 1rem 1.5rem 0 1.5rem;
-  opacity: 0;
-  transform: translateY(30px);
-  animation: fadeSlideUp 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94) 0.6s forwards;
-}
-
-@keyframes fadeSlideUp {
-  from {
-    opacity: 0;
-    transform: translateY(30px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
 }
 
 .placeName {
@@ -288,7 +171,7 @@
   margin: 5px 0 8px 0;
   color: #666;
   font-size: 15px;
-  padding: 1vh 3vw;
+  padding: 0.5rem 1rem;
   font-style: italic;
   font-family: var(--font-fira);
   font-weight: 500;
@@ -311,24 +194,11 @@
   color: #1e7e34;
   background: rgba(40, 167, 69, 0.1);
   border-color: rgba(40, 167, 69, 0.2);
-  text-decoration: none;
 }
 
 .infoSection {
   margin-bottom: 2rem;
   padding: 0 1.5rem;
-
-  opacity: 0;
-  transform: translateY(20px);
-  animation: fadeSlideUp 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94) 0.8s forwards;
-}
-
-.infoSection:nth-child(4) {
-  animation-delay: 1s;
-}
-
-.infoSection:nth-child(5) {
-  animation-delay: 1.2s;
 }
 
 .infoSection:last-child {
@@ -376,60 +246,23 @@
   color: #2c3e50;
 }
 
-/* ✅ POPRAWIONY EXTERNAL LINK z nowoczesnymi efektami */
 .externalLink {
   display: inline-block;
-  margin: 0 auto;
   padding: 0.75rem 1.5rem;
-  background: linear-gradient(
-    135deg,
-    rgba(252, 108, 20, 1) 0%,
-    rgba(252, 108, 20, 0.9) 100%
-  );
+  background: rgba(252, 108, 20, 1);
   color: white;
   text-decoration: none;
   font-family: var(--font-fira);
   font-weight: 500;
-  transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-  box-shadow:
-    0 4px 12px rgba(252, 108, 20, 0.3),
-    0 2px 6px rgba(252, 108, 20, 0.2);
-  position: relative;
-  overflow: hidden;
-}
-
-.externalLink::before {
-  content: "";
-  position: absolute;
-  top: 0;
-  left: -100%;
-  width: 100%;
-  height: 100%;
-  background: linear-gradient(
-    90deg,
-    transparent,
-    rgba(255, 255, 255, 0.3),
-    transparent
-  );
-  transition: left 0.6s ease;
-}
-
-.externalLink:hover::before {
-  left: 100%;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 12px rgba(252, 108, 20, 0.3);
 }
 
 .externalLink:hover {
-  transform: translateY(-2px) scale(1.02);
-  box-shadow:
-    0 8px 24px rgba(252, 108, 20, 0.4),
-    0 4px 12px rgba(252, 108, 20, 0.3);
+  background: rgba(220, 90, 10, 1);
+  box-shadow: 0 6px 20px rgba(252, 108, 20, 0.4);
   text-decoration: none;
   color: white;
-}
-
-.externalLink:active {
-  transform: translateY(0) scale(0.98);
-  transition: transform 0.1s ease;
 }
 
 .gallery {
@@ -445,12 +278,6 @@
   aspect-ratio: 1;
   overflow: hidden;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-  transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-}
-
-.galleryImageWrapper:hover {
-  transform: scale(1.05) rotate(1deg);
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
 }
 
 .galleryImage {
@@ -458,12 +285,11 @@
   height: 100%;
   object-fit: cover;
   cursor: pointer;
-  transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  transition: opacity 0.3s ease;
 }
 
 .galleryImage:hover {
-  opacity: 0.9;
-  transform: scale(1.1);
+  opacity: 0.85;
 }
 
 .emptyState {
@@ -483,32 +309,19 @@
   line-height: 1.5;
 }
 
-/* ✅ FIXED RESPONSYWNOŚĆ - iPhone Safari specific fixes */
+/* Mobile — panel wysuwa się z dołu */
 @media (max-width: 768px) {
   .infoPanel {
     top: auto;
     right: 0;
     bottom: 0;
     left: 0;
-    width: 100%; /* ✅ FIXED: Explicit viewport width */
-    max-width: none; /* ✅ FIXED: Remove max-width constraint on mobile */
-    /* 100dvh uwzględnia dynamiczny pasek adresu przeglądarki (Chrome/Safari mobile) */
+    width: 100%;
+    max-width: none;
     height: 100dvh;
     transform: translateY(100%);
     border-left: none;
     transition: transform 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-
-    /* ✅ FIXED: Apply safe area only on mobile and only to content */
-    padding: 0;
-    /* Blokuj propagację scroll poza panel */
-    overscroll-behavior: contain;
-  }
-
-  .panelContent {
-    /* ✅ FIXED: Apply safe area insets only to content, not panel itself */
-    padding-left: max(0px, env(safe-area-inset-left));
-    padding-right: max(0px, env(safe-area-inset-right));
-    padding-bottom: max(1rem, env(safe-area-inset-bottom));
   }
 
   .infoPanel.open {
@@ -530,9 +343,10 @@
     height: 44px;
   }
 
-  .closeButton svg {
-    width: 25px;
-    height: 25px;
+  .panelContent {
+    padding-left: max(0px, env(safe-area-inset-left));
+    padding-right: max(0px, env(safe-area-inset-right));
+    padding-bottom: max(1rem, env(safe-area-inset-bottom));
   }
 }
 
@@ -545,16 +359,14 @@
 
 @media (max-width: 480px) {
   .infoPanel {
-    height: 100dvh;
-    /* ✅ Ensure full width on very small screens */
     width: 100vw;
   }
 
   .closeButton {
     top: max(10px, env(safe-area-inset-top, 10px));
     right: max(10px, env(safe-area-inset-right, 10px));
-    width: 36px;
-    height: 36px;
+    width: 40px;
+    height: 40px;
   }
 
   .closeButton svg {
