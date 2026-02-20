@@ -415,7 +415,7 @@
 @media (max-width: 550px) {
   .searchContainer {
     top: 2vh;
-    right: 2vw;
+    right: 3vw;
     left: auto;
     max-width: calc(96vw - 60px);
   }
