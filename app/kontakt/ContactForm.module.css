@@ -1,6 +1,6 @@
 /* app/kontakt/ContactForm.module.css */
 .contactForm {
-  background-color: white;
+  background-color: #fdf6e3;
   padding: 10vh 2vw 4vh;
   height: fit-content;
 }
@@ -138,6 +138,7 @@
   width: 90%;
   margin: 3rem auto 0;
   justify-content: center;
+  background-color: white;
 }
 
 .contactMethod {
@@ -147,7 +148,6 @@
   text-align: center;
   gap: 1rem;
   padding: 1.5rem 1rem;
-  background: white;
   transition: all 0.5s ease-in-out;
   flex: 1;
   max-width: 300px;

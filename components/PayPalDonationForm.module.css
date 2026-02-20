@@ -4,7 +4,7 @@
   max-width: 500px;
   margin: 0 auto;
   padding: 2rem;
-  background: white;
+  background: #fdf6e3;
   border-radius: 12px;
   box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 1);
 }
@@ -101,7 +101,7 @@
 .optionalSection {
   margin-bottom: 2rem;
   padding-top: 1.5rem;
-  border-top: 1px solid #e5e7eb;
+  border-top: 1px solid black;
 }
 
 .optionalTitle {
@@ -127,7 +127,7 @@
 .formTextarea {
   width: 100%;
   padding: 0.75rem;
-  border: 1px solid #d1d5db;
+  border: 1px solid black;
   border-radius: 0.5rem;
   font-size: 0.875rem;
 }
@@ -192,12 +192,12 @@
 .securityInfo {
   text-align: center;
   padding-top: 1rem;
-  border-top: 1px solid #e5e7eb;
+  border-top: 1px solid black;
 }
 
 .securityInfo p {
   font-size: 0.75rem;
-  color: #6b7280;
+  color: blue;
   margin: 0;
 }
 /* Dodaj do PayPalDonationForm.module.css */
@@ -206,7 +206,7 @@
 .amountInput {
   width: 100%;
   padding: 12px 16px;
-  border: 2px solid #e5e7eb;
+  border: 2px solid black;
   border-radius: 8px;
   font-size: 18px;
   font-weight: 600;
@@ -296,9 +296,9 @@
 .amountSection {
   margin-bottom: 24px;
   padding: 20px;
-  background: #f9fafb;
+  background: ghostwhite;
   border-radius: 12px;
-  border: 1px solid #e5e7eb;
+  border: 1px solid black;
 }
 
 /* Error message styling */
