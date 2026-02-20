@@ -198,6 +198,14 @@ export default function MapBoxMap({
       setSelectedPlace(place);
       setIsPanelOpen(true);
 
+      // Wyłącz interakcje dotykowe mapy gdy panel jest otwarty —
+      // bez tego mapa przechwytuje touch events i panel scrolluje się z opóźnieniem
+      if (mapRef.current) {
+        mapRef.current.dragPan.disable();
+        mapRef.current.touchZoomRotate.disable();
+        mapRef.current.touchPitch.disable();
+      }
+
       requestAnimationFrame(() => {
         requestAnimationFrame(() => {
           setIsPanelVisible(true);
@@ -222,6 +230,13 @@ export default function MapBoxMap({
     setIsPanelVisible(false);
     setSelectedGalleryImage(null);
     setCurrentImageIndex(0);
+
+    // Przywróć interakcje dotykowe mapy po zamknięciu panelu
+    if (mapRef.current) {
+      mapRef.current.dragPan.enable();
+      mapRef.current.touchZoomRotate.enable();
+      mapRef.current.touchPitch.enable();
+    }
 
     setTimeout(() => {
       setIsPanelOpen(false);
