@@ -27,7 +27,6 @@
   right: 0;
   width: min(400px, 100vw);
   max-width: 500px;
-  /* Flat color zamiast gradient — tańsze dla GPU, szczególnie na mobile z dużą mapą */
   background: #fdf6e3;
   box-shadow: -4px 0 20px rgba(0, 0, 0, 0.15);
   overflow-y: scroll;
@@ -36,10 +35,13 @@
   transform: translateX(100%);
   transition: transform 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94);
   z-index: 10000;
+  /* Panel zawsze istnieje w DOM — gdy zamknięty jest poza ekranem i nieinteraktywny */
+  pointer-events: none;
 }
 
 .infoPanel.open {
   transform: translateX(0);
+  pointer-events: auto;
 }
 
 /* Przycisk zamknięcia — absolute nad obrazem, scrolluje z treścią */

@@ -69,58 +69,64 @@ export default function PlaceInfoPanel({
     return () => document.removeEventListener("keydown", handleEscape);
   }, [isOpen, isClosing, handleClose]);
 
+  useEffect(() => {
+    if (panelRef.current) {
+      panelRef.current.scrollTop = 0;
+    }
+  }, [place?.id]);
+
+  const isActuallyOpen = isVisible && !isClosing;
+
   return (
     <>
       <div
         ref={backdropRef}
-        className={`${styles.panelBackdrop} ${
-          isVisible && !isClosing ? styles.visible : ""
-        }`}
+        className={`${styles.panelBackdrop} ${isActuallyOpen ? styles.visible : ""}`}
       />
 
-      {isOpen && (
-        <div
-          ref={panelRef}
-          className={`${styles.infoPanel} ${
-            isVisible && !isClosing ? styles.open : ""
-          }`}
-          role="dialog"
-          aria-modal="true"
-          aria-labelledby={place ? `place-title-${place.id}` : undefined}
+      {/* Panel zawsze istnieje w DOM — <Activity> w MapBoxMap może trzymać go w pamięci.
+          Widoczność kontroluje wyłącznie CSS transform (.open) oraz pointer-events. */}
+      <div
+        ref={panelRef}
+        className={`${styles.infoPanel} ${isActuallyOpen ? styles.open : ""}`}
+        role="dialog"
+        aria-modal={isActuallyOpen}
+        aria-hidden={!isActuallyOpen}
+        aria-labelledby={place ? `place-title-${place.id}` : undefined}
+        inert={!isActuallyOpen ? "" : undefined}
+      >
+        <button
+          type="button"
+          className={styles.closeButton}
+          onClick={handleClose}
+          aria-label="Schließen"
         >
-          {/* Przycisk zamknięcia — absolute nad obrazem, scrolluje razem z treścią */}
-          <button
-            type="button"
-            className={styles.closeButton}
-            onClick={handleClose}
-            aria-label="Schließen"
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2"
+            strokeLinecap="round"
+            strokeLinejoin="round"
           >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            >
-              <line x1="18" y1="6" x2="6" y2="18" />
-              <line x1="6" y1="6" x2="18" y2="18" />
-            </svg>
-          </button>
+            <line x1="18" y1="6" x2="6" y2="18" />
+            <line x1="6" y1="6" x2="18" y2="18" />
+          </svg>
+        </button>
 
-          <div className={styles.panelContent}>
-            {place ? (
-              <PlaceContent
-                place={place}
-                onImageClickAction={onImageClickAction}
-              />
-            ) : (
-              <EmptyState />
-            )}
-          </div>
+        <div className={styles.panelContent}>
+          {place ? (
+            <PlaceContent
+              key={place.id}
+              place={place}
+              onImageClickAction={onImageClickAction}
+            />
+          ) : (
+            <EmptyState />
+          )}
         </div>
-      )}
+      </div>
     </>
   );
 }
