@@ -93,7 +93,7 @@ export default function PlaceInfoPanel({
         aria-modal={isActuallyOpen}
         aria-hidden={!isActuallyOpen}
         aria-labelledby={place ? `place-title-${place.id}` : undefined}
-        inert={!isActuallyOpen ? "" : undefined}
+        inert={!isActuallyOpen || undefined}
       >
         <button
           type="button"
