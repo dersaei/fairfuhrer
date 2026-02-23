@@ -7,7 +7,7 @@ import googlePlayBadge from "@/public/google-play-badge.png";
 import seenergienLogo from "@/public/seenergienlogo.png";
 import styles from "./page.module.css";
 import { getHomePageContent, getFeaturedPins } from "@/lib/directus";
-import { getPageAssetPath, getPageAssetUrl } from "@/lib/supabase";
+import { getPageAssetUrl } from "@/lib/supabase";
 import FeaturedPinsMap from "@/components/FeaturedPinsMap";
 
 const CATEGORIES = [
@@ -118,9 +118,7 @@ export default async function HomePage() {
     }),
   };
 
-  const heroSrc = content?.hero_image
-    ? getPageAssetPath(content.hero_image)
-    : heroImage;
+  const heroSrc = heroImage;
   const appStoreSrc = content?.badge_app_store
     ? getPageAssetUrl(content.badge_app_store)
     : appStoreBadge;
@@ -144,6 +142,7 @@ export default async function HomePage() {
               alt="FairFührer Guide Hero"
               fill
               priority
+              unoptimized
               style={{ objectFit: "cover" }}
             />
           </div>
