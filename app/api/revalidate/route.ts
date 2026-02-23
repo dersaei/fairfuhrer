@@ -31,7 +31,7 @@ export async function POST(request: NextRequest) {
     }
 
     for (const tag of tags) {
-      revalidateTag(tag, "default");
+      revalidateTag(tag, { expire: 0 });
       console.log(`Revalidated tag: ${tag}`);
     }
 

@@ -7,7 +7,7 @@ import googlePlayBadge from "@/public/google-play-badge.png";
 import seenergienLogo from "@/public/seenergienlogo.png";
 import styles from "./page.module.css";
 import { getHomePageContent, getFeaturedPins } from "@/lib/directus";
-import { getPageAssetPath } from "@/lib/supabase";
+import { getPageAssetPath, getPageAssetUrl } from "@/lib/supabase";
 import FeaturedPinsMap from "@/components/FeaturedPinsMap";
 
 const CATEGORIES = [
@@ -122,13 +122,13 @@ export default async function HomePage() {
     ? getPageAssetPath(content.hero_image)
     : heroImage;
   const appStoreSrc = content?.badge_app_store
-    ? getPageAssetPath(content.badge_app_store)
+    ? getPageAssetUrl(content.badge_app_store)
     : appStoreBadge;
   const googlePlaySrc = content?.badge_google_play
-    ? getPageAssetPath(content.badge_google_play)
+    ? getPageAssetUrl(content.badge_google_play)
     : googlePlayBadge;
   const partnerLogoSrc = content?.badge_partner_logo
-    ? getPageAssetPath(content.badge_partner_logo)
+    ? getPageAssetUrl(content.badge_partner_logo)
     : seenergienLogo;
 
   const featuredPlaces = featuredPins.map((fp) => fp.ort);
