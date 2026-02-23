@@ -1,9 +1,8 @@
 /* components/Footer.module.css */
 
 .footer {
-  background-color: #fc6c14;
-  color: #ffffff;
-  text-shadow: 1px 1px 2px black;
+  background-color: #fdf6e3;
+  color: black;
   margin-top: auto;
 }
 
@@ -24,24 +23,24 @@
 }
 
 .link {
-  color: wheat;
+  color: #fc6c14;
   text-decoration: none;
   font-size: 1rem;
   font-family: var(--font-fira);
-  font-weight: 400;
+  font-weight: 500;
   transition: color 0.2s ease;
 }
 
 .link:hover {
-  color: #ffffff;
+  color: #000000;
   text-decoration: underline;
 }
 
 .copyright {
   font-size: 1rem;
-  color: wheat;
+  color: #fc6c14;
   font-family: var(--font-fira);
-  font-weight: 500;
+  font-weight: 700;
   margin: 0;
 }
 

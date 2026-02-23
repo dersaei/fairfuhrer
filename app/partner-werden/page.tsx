@@ -64,38 +64,37 @@ export default async function PartnerWerdenPage() {
 
   return (
     <div className={styles.container}>
-      {/* SEKCJA 1 (bez zmian) */}
+      {/* SEKCJA 1 */}
       <section
         className={styles.section1}
         style={{
-          backgroundColor:
-            pageData.section1_right_background_color || undefined,
-          color: pageData.section1_right_text_color || undefined,
+          backgroundColor: pageData.section1_background_color || undefined,
+          color: pageData.section1_text_color || undefined,
         }}
       >
-        {pageData.section1_right_title && (
+        {pageData.section1_title && (
           <h1
             className={styles.section1Title}
             style={{
               color:
-                pageData.section1_right_title_color ||
-                pageData.section1_right_text_color ||
+                pageData.section1_title_color ||
+                pageData.section1_text_color ||
                 undefined,
             }}
           >
-            {pageData.section1_right_title}
+            {pageData.section1_title}
           </h1>
         )}
-        {pageData.section1_right_text && (
+        {pageData.section1_text && (
           <div
             className={styles.section1Text}
-            dangerouslySetInnerHTML={{ __html: pageData.section1_right_text }}
+            dangerouslySetInnerHTML={{ __html: pageData.section1_text }}
           />
         )}
-        {pageData.section1_right_image && (
+        {pageData.section1_image && (
           <div className={styles.section1ImageContainer}>
             <Image
-              src={getPageAssetPath(pageData.section1_right_image)}
+              src={getPageAssetPath(pageData.section1_image)}
               alt="Partnerschaft"
               width={300}
               height={90}
@@ -105,43 +104,42 @@ export default async function PartnerWerdenPage() {
         )}
       </section>
 
-      {/* ✅ SEKCJA 3 - MUX VIDEO OWRAPOWANE W CONDITIONAL MUX VIDEO */}
+      {/* SEKCJA 2 - MUX VIDEO OWRAPOWANE W CONDITIONAL MUX VIDEO */}
       <section
         className={styles.section3}
         style={{
-          backgroundColor: pageData.section3_background_color || undefined,
-          color: pageData.section3_text_color || undefined,
+          backgroundColor: pageData.section2_background_color || undefined,
+          color: pageData.section2_text_color || undefined,
         }}
       >
         <div className={styles.section3Left}>
-          {pageData.section3_left_title && (
+          {pageData.section2_left_title && (
             <h2
               className={styles.section3Title}
               style={{
                 color:
-                  pageData.section3_title_color ||
-                  pageData.section3_text_color ||
+                  pageData.section2_title_color ||
+                  pageData.section2_text_color ||
                   undefined,
               }}
             >
-              {pageData.section3_left_title}
+              {pageData.section2_left_title}
             </h2>
           )}
-          {pageData.section3_left_text && (
+          {pageData.section2_left_text && (
             <div
               className={styles.section3Text}
-              dangerouslySetInnerHTML={{ __html: pageData.section3_left_text }}
+              dangerouslySetInnerHTML={{ __html: pageData.section2_left_text }}
             />
           )}
         </div>
 
         <div className={styles.section3Right}>
-          {/* ✅ MUX VIDEO  */}
-          {pageData.section3_mux_playback_id ? (
+          {pageData.section2_mux_playback_id ? (
             <ConditionalMuxVideo>
               <MuxVideoEmbed
-                playbackId={pageData.section3_mux_playback_id}
-                poster={pageData.section3_video_poster}
+                playbackId={pageData.section2_mux_playback_id}
+                poster={pageData.section2_video_poster}
                 autoPlay={false}
                 muted={false}
                 className={styles.muxVideo}
@@ -156,26 +154,34 @@ export default async function PartnerWerdenPage() {
         </div>
       </section>
 
-      {/* SEKCJA 4 - FORMULARZ */}
+      {/* SEKCJA 3 - FORMULARZ */}
       <section
         className={styles.section4}
         style={{
-          backgroundColor: pageData.section4_background_color || undefined,
-          color: pageData.section4_text_color || undefined,
+          backgroundColor: pageData.section3_background_color || undefined,
         }}
       >
-        {pageData.section4_title && (
-          <h2 className={styles.section4Title}>{pageData.section4_title}</h2>
-        )}
-        {pageData.section4_subtitle && (
+        {pageData.section3_text && (
           <div
             className={styles.section4Subtitle}
-            dangerouslySetInnerHTML={{ __html: pageData.section4_subtitle }}
+            dangerouslySetInnerHTML={{ __html: pageData.section3_text }}
           />
         )}
       </section>
 
-      {/* SEKCJA 5 - KOŃCOWA (bez zmian) */}
+      {/* SEKCJA 4 - FORMULARZ PARTNERSKI */}
+      <section
+        className={styles.section5}
+        style={{
+          backgroundColor: pageData.section4_background_color || undefined,
+        }}
+      >
+        <div className={styles.partnerFormContainer}>
+          <PartnerForm />
+        </div>
+      </section>
+
+      {/* SEKCJA 5 - KOŃCOWA */}
       {(pageData.section5_title || pageData.section5_text) && (
         <section
           className={styles.section5}
@@ -184,9 +190,6 @@ export default async function PartnerWerdenPage() {
             color: pageData.section5_text_color || undefined,
           }}
         >
-          <div className={styles.partnerFormContainer}>
-            <PartnerForm />
-          </div>
           {pageData.section5_title && (
             <h2
               className={styles.section5Title}
@@ -211,8 +214,7 @@ export default async function PartnerWerdenPage() {
               <Image
                 src={getPageAssetPath(pageData.section5_image)}
                 alt="Partner werden"
-                width={300}
-                height={90}
+                fill
                 className={styles.section5Image}
               />
             </div>

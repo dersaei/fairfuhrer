@@ -327,28 +327,29 @@ export interface PartnerPageContent {
   page_slug: string;
 
   // SEKCJA 1
-  section1_right_title?: string;
-  section1_right_text?: string;
-  section1_right_image?: string;
-  section1_right_background_color?: string;
-  section1_right_text_color?: string;
-  section1_right_title_color?: string;
+  section1_title?: string;
+  section1_text?: string;
+  section1_image?: string;
+  section1_background_color?: string;
+  section1_text_color?: string;
+  section1_title_color?: string;
 
-  // SEKCJA 3 - Tekst + YouTube video + KOLORY
-  section3_left_title?: string;
-  section3_left_text?: string;
-  section3_mux_playback_id?: string;
-  section3_video_poster?: string; // Custom thumbnail (opcjonalne)
-  section3_video_title?: string; // Tytuł (opcjonalne)
+  // SEKCJA 2 - Tekst + Mux video + KOLORY
+  section2_left_title?: string;
+  section2_left_text?: string;
+  section2_mux_playback_id?: string;
+  section2_video_poster?: string;
+  section2_video_title?: string;
+  section2_background_color?: string;
+  section2_text_color?: string;
+  section2_title_color?: string;
+
+  // SEKCJA 3 - Formularz kontaktowy + KOLORY
+  section3_text?: string;
   section3_background_color?: string;
-  section3_text_color?: string;
-  section3_title_color?: string;
 
-  // SEKCJA 4 - Formularz kontaktowy + KOLORY
-  section4_title?: string;
-  section4_subtitle?: string;
+  // SEKCJA 4 - tylko kolor tła (formularz)
   section4_background_color?: string;
-  section4_text_color?: string;
 
   // SEKCJA 5 - Końcowa sekcja + KOLORY
   section5_title?: string;

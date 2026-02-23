@@ -204,12 +204,15 @@
   font-weight: 300;
   padding: 2vh 6vw;
 }
-.section5Image {
-  display: block;
+.section5ImageContainer {
   position: relative;
-  margin: 0 auto;
-  height: 90px;
   width: 300px;
+  height: 90px;
+  margin: 2rem auto 0;
+}
+
+.section5Image {
+  object-fit: contain;
 }
 .noVideo {
   padding: 3rem 2rem;
