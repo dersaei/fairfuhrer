@@ -96,7 +96,7 @@ export function AudioPlayer({
           type="button"
           className={styles.skipButton}
           onClick={skipBackward}
-          title="5 sekund wstecz"
+          title="5 Sekunden zurück"
         >
           <SkipBackIcon size={32} />
         </button>
@@ -105,7 +105,7 @@ export function AudioPlayer({
           type="button"
           className={`${styles.playButton} ${isPlaying ? styles.playing : ""}`}
           onClick={togglePlay}
-          title={isPlaying ? "Pauza" : "Odtwórz"}
+          title={isPlaying ? "Pause" : "Abspielen"}
         >
           {isPlaying ? <PauseIcon size={40} /> : <PlayIcon size={40} />}
         </button>
@@ -114,7 +114,7 @@ export function AudioPlayer({
           type="button"
           className={styles.skipButton}
           onClick={skipForward}
-          title="5 sekund do przodu"
+          title="5 Sekunden vor"
         >
           <SkipForwardIcon size={32} />
         </button>
@@ -130,8 +130,8 @@ export function AudioPlayer({
           value={currentTime}
           onChange={handleSeek}
           className={styles.progressBar}
-          aria-label="Pasek postępu audio"
-          title="Przeciągnij aby przesunąć się w nagraniu"
+          aria-label="Audio-Fortschrittsbalken"
+          title="Ziehen, um die Position in der Aufnahme zu verschieben"
         />
         <span className={styles.duration}>{formatTime(duration)}</span>
       </div>
