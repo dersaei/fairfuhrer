@@ -17,7 +17,7 @@ export default function Footer() {
     <footer className={styles.footer}>
       <div className={styles.bar}>
         <p className={styles.copyright}>
-          © {new Date().getFullYear()} Fair Führer Guide
+          © {new Date().getFullYear()} FAIRFÜHRER
         </p>
         <div className={styles.links}>
           <Link href="/impressum" className={styles.link}>

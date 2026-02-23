@@ -32,8 +32,8 @@ export const viewport: Viewport = {
 export const metadata: Metadata = {
   metadataBase: new URL("https://www.fairfuehrer.guide"),
   title: {
-    default: "Fair Führer Guide",
-    template: "%s | FairFührer Guide",
+    default: "FAIRFÜHRER",
+    template: "%s | FAIRFÜHRER",
   },
   description:
     "Der Reiseführer für nachhaltiges Leben & Reisen Am Bodensee Und Im Allgäu",
