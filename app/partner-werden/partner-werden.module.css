@@ -107,7 +107,7 @@
 
 /* SEKCJA 4 - FORMULARZ PARTNERSKI (bez zmian) */
 .section4 {
-  padding: 4vh 5vw;
+  padding: 4vh 6vw;
 }
 
 .section4Subtitle {
@@ -190,7 +190,8 @@
 }
 
 .section5Title {
-  font-size: 3rem;
+  font-size: 4rem;
+  text-shadow: 2px 4px 2px #fc6c14;
   padding: 0 6vw;
   font-weight: 400;
   margin: 7vh 0 2vh 0;
@@ -203,6 +204,7 @@
   font-family: var(--font-fira);
   font-weight: 300;
   padding: 2vh 6vw;
+  text-shadow: 2px 4px 2px #000;
 }
 .section5ImageContainer {
   position: relative;
@@ -254,7 +256,7 @@
     font-size: 1.5rem;
   }
 }
-@media (max-width: 500px) {
+@media (max-width: 600px) {
   .section1Title {
     font-size: 15vw;
   }
@@ -270,5 +272,8 @@
   .section4Subtitle ol,
   .section4Subtitle table {
     font-size: 1rem;
+  }
+  .section5Title {
+    font-size: 10vw;
   }
 }

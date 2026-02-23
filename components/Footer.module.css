@@ -42,6 +42,7 @@
   font-family: var(--font-fira);
   font-weight: 700;
   margin: 0;
+  text-shadow: 1px 1px 1px #000;
 }
 
 @media (max-width: 570px) {
