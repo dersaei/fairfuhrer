@@ -33,16 +33,14 @@
 
 .link:hover {
   color: #000000;
-  text-decoration: underline;
 }
 
 .copyright {
   font-size: 1rem;
   color: #fc6c14;
   font-family: var(--font-fira);
-  font-weight: 700;
+  font-weight: 500;
   margin: 0;
-  text-shadow: 1px 1px 1px #000;
 }
 
 @media (max-width: 570px) {

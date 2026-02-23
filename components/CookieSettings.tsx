@@ -10,11 +10,12 @@ export default function CookieSettings() {
 
   return (
     <button
+      type="button"
       className={styles.cookieSettingsButton}
       onClick={showSettings}
-      aria-label="Cookie-Einstellungen öffnen"
+      aria-label="Cookies"
     >
-      🍪 Cookie-Einstellungen
+      🍪 Cookies
     </button>
   );
 }
