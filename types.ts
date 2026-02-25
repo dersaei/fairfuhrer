@@ -375,33 +375,47 @@ export interface HomePageContent {
 
   // Hero section
   hero_title?: string;
+  hero_title_font_size?: string;
+  hero_title_color?: string;
+  hero_title_mobile_font_size?: string;
+  hero_title_mobile_color?: string;
   hero_subtitle?: string;
+  hero_subtitle_font_size?: string;
+  hero_subtitle_color?: string;
   hero_button_text?: string;
   hero_button_link?: string;
+  hero_button_color?: string;
+  hero_button_font_size?: string;
+  hero_button_background_color?: string;
+  hero_button_mobile_font_size?: string;
+  hero_button_mobile_color?: string;
+  hero_button_background_color_mobile?: string;
   hero_image?: string; // filename w Supabase
   hero_background_color?: string;
 
   // Badges bar
   badges_label?: string;
-  badge_app_store?: string; // filename w Supabase
-  badge_google_play?: string; // filename w Supabase
-  badge_partner_logo?: string; // filename w Supabase
+  badges_label_font_size?: string;
+  badges_label_color?: string;
 
   // Section 2 - Kategorie
   section2_background_color?: string;
   section2_title?: string;
   section2_title_font_size?: string;
   section2_title_color?: string;
-  section2_title_text_shadow?: string;
+  section2_title_mobile_font_size?: string;
 
   // Section 3
   section3_background_color?: string;
   section3_title?: string;
   section3_title_font_size?: string;
   section3_title_color?: string;
-  section3_title_text_shadow?: string;
+  section3_title_mobile_font_size?: string;
   section3_text?: string;
   section3_button_text?: string;
+  section3_button_color?: string;
+  section3_button_font_size?: string;
+  section3_button_background_color?: string;
 
   // Section 4 - Partner werden
   section4_background_color?: string;
@@ -409,14 +423,17 @@ export interface HomePageContent {
   section4_title?: string;
   section4_title_font_size?: string;
   section4_title_color?: string;
-  section4_title_text_shadow?: string;
+  section4_title_mobile_font_size?: string;
   section4_text?: string;
   section4_text_font_size?: string;
   section4_text_color?: string;
+  section4_text_mobile_font_size?: string;
   section4_button_text?: string;
   section4_button_link?: string;
   section4_button_color?: string;
   section4_button_font_size?: string;
+  section4_button_background_color?: string;
+  section4_button_mobile_font_size?: string;
 }
 
 // ✅ ImpressumContent

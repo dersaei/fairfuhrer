@@ -17,7 +17,7 @@
 }
 
 .section1Title {
-  font-size: 4rem;
+  font-size: 5rem;
   margin-bottom: 1rem;
   line-height: 1.2;
   letter-spacing: 3px;
@@ -97,12 +97,6 @@
 /* Style dla WYSIWYG w sekcji 3 */
 .section3Text p {
   margin-bottom: 1rem;
-}
-
-.section3Text h2,
-.section3Text h3 {
-  margin: 1.5rem 0 1rem 0;
-  font-weight: 600;
 }
 
 /* SEKCJA 4 - FORMULARZ PARTNERSKI (bez zmian) */

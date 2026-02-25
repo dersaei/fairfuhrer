@@ -1,3 +1,4 @@
+import React from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { Heart, Sparkles } from "lucide-react";
@@ -7,7 +8,6 @@ import googlePlayBadge from "@/public/google-play-badge.png";
 import seenergienLogo from "@/public/seenergienlogo.png";
 import styles from "./page.module.css";
 import { getHomePageContent, getFeaturedPins } from "@/lib/directus";
-import { getPageAssetUrl } from "@/lib/supabase";
 import FeaturedPinsMap from "@/components/FeaturedPinsMap";
 
 const CATEGORIES = [
@@ -53,6 +53,54 @@ export default async function HomePage() {
   const c = (val?: string) =>
     val ? (val.startsWith("#") ? val : `#${val}`) : undefined;
 
+  const heroTextSideStyle = {
+    ...(content?.hero_background_color && {
+      backgroundColor: c(content.hero_background_color),
+    }),
+  };
+  const heroTitleStyle = {
+    ...(content?.hero_title_font_size && {
+      fontSize: content.hero_title_font_size,
+    }),
+    ...(content?.hero_title_color && {
+      color: c(content.hero_title_color),
+    }),
+  };
+  const heroTitleMobileStyle = {
+    ...(content?.hero_title_mobile_font_size && {
+      fontSize: content.hero_title_mobile_font_size,
+    }),
+    ...(content?.hero_title_mobile_color && {
+      color: c(content.hero_title_mobile_color),
+    }),
+  };
+  const heroSubtitleStyle = {
+    ...(content?.hero_subtitle_font_size && {
+      fontSize: content.hero_subtitle_font_size,
+    }),
+    ...(content?.hero_subtitle_color && {
+      color: c(content.hero_subtitle_color),
+    }),
+  };
+  const heroButtonStyle = {
+    ...(content?.hero_button_color && {
+      color: c(content.hero_button_color),
+    }),
+    ...(content?.hero_button_font_size && {
+      fontSize: content.hero_button_font_size,
+    }),
+    ...(content?.hero_button_background_color && {
+      backgroundColor: c(content.hero_button_background_color),
+    }),
+  };
+  const badgesLabelStyle = {
+    ...(content?.badges_label_font_size && {
+      fontSize: content.badges_label_font_size,
+    }),
+    ...(content?.badges_label_color && {
+      color: c(content.badges_label_color),
+    }),
+  };
   const section2Style = {
     ...(content?.section2_background_color && {
       backgroundColor: c(content.section2_background_color),
@@ -64,9 +112,6 @@ export default async function HomePage() {
     }),
     ...(content?.section2_title_color && {
       color: c(content.section2_title_color),
-    }),
-    ...(content?.section2_title_text_shadow && {
-      textShadow: content.section2_title_text_shadow,
     }),
   };
   const section3Style = {
@@ -81,8 +126,16 @@ export default async function HomePage() {
     ...(content?.section3_title_color && {
       color: c(content.section3_title_color),
     }),
-    ...(content?.section3_title_text_shadow && {
-      textShadow: content.section3_title_text_shadow,
+  };
+  const section3ButtonStyle = {
+    ...(content?.section3_button_color && {
+      color: c(content.section3_button_color),
+    }),
+    ...(content?.section3_button_font_size && {
+      fontSize: content.section3_button_font_size,
+    }),
+    ...(content?.section3_button_background_color && {
+      backgroundColor: c(content.section3_button_background_color),
     }),
   };
   const section4Style = {
@@ -96,9 +149,6 @@ export default async function HomePage() {
     }),
     ...(content?.section4_title_color && {
       color: c(content.section4_title_color),
-    }),
-    ...(content?.section4_title_text_shadow && {
-      textShadow: content.section4_title_text_shadow,
     }),
   };
   const section4TextStyle = {
@@ -116,29 +166,49 @@ export default async function HomePage() {
     ...(content?.section4_button_font_size && {
       fontSize: content.section4_button_font_size,
     }),
+    ...(content?.section4_button_background_color && {
+      backgroundColor: c(content.section4_button_background_color),
+    }),
   };
 
-  const heroSrc = heroImage;
-  const appStoreSrc = content?.badge_app_store
-    ? getPageAssetUrl(content.badge_app_store)
-    : appStoreBadge;
-  const googlePlaySrc = content?.badge_google_play
-    ? getPageAssetUrl(content.badge_google_play)
-    : googlePlayBadge;
-  const partnerLogoSrc = content?.badge_partner_logo
-    ? getPageAssetUrl(content.badge_partner_logo)
-    : seenergienLogo;
+  // CSS custom properties dla mobile font-size (nadpisują !important w media query)
+  const mobileCssVars = {
+    ...(content?.hero_button_mobile_font_size && {
+      "--hero-btn-mobile-fs": content.hero_button_mobile_font_size,
+    }),
+    ...(content?.hero_button_mobile_color && {
+      "--hero-btn-mobile-color": c(content.hero_button_mobile_color),
+    }),
+    ...(content?.hero_button_background_color_mobile && {
+      "--hero-btn-mobile-bg": c(content.hero_button_background_color_mobile),
+    }),
+    ...(content?.section2_title_mobile_font_size && {
+      "--s2-title-mobile-fs": content.section2_title_mobile_font_size,
+    }),
+    ...(content?.section3_title_mobile_font_size && {
+      "--s3-title-mobile-fs": content.section3_title_mobile_font_size,
+    }),
+    ...(content?.section4_title_mobile_font_size && {
+      "--s4-title-mobile-fs": content.section4_title_mobile_font_size,
+    }),
+    ...(content?.section4_text_mobile_font_size && {
+      "--s4-text-mobile-fs": content.section4_text_mobile_font_size,
+    }),
+    ...(content?.section4_button_mobile_font_size && {
+      "--s4-btn-mobile-fs": content.section4_button_mobile_font_size,
+    }),
+  } as React.CSSProperties;
 
   const featuredPlaces = featuredPins.map((fp) => fp.ort);
 
   return (
     <>
-      <main className={styles.main}>
+      <main className={styles.main} style={mobileCssVars}>
         {/* SEKCJA 1: Hero */}
         <div className={styles.heroContainer}>
           <div className={styles.heroImageSide}>
             <Image
-              src={heroSrc}
+              src={heroImage}
               alt="FairFührer Guide Hero"
               fill
               priority
@@ -146,36 +216,36 @@ export default async function HomePage() {
               style={{ objectFit: "cover" }}
             />
           </div>
-          <div className={styles.heroTextSide}>
-            <h1 className={styles.heroTitle}>{heroTitle}</h1>
-            <h3 className={styles.heroSubtitle}>{heroSubtitle}</h3>
-            <Link href={heroButtonLink} className={styles.heroButton}>
+          <div className={styles.heroTextSide} style={heroTextSideStyle}>
+            <h1 className={styles.heroTitle} style={heroTitleStyle}>{heroTitle}</h1>
+            <h3 className={styles.heroSubtitle} style={heroSubtitleStyle}>{heroSubtitle}</h3>
+            <Link href={heroButtonLink} className={styles.heroButton} style={heroButtonStyle}>
               <span>{heroButtonText}</span>
             </Link>
           </div>
           {/* Mobile overlay — widoczne tylko poniżej 735px */}
-          <h1 className={styles.heroTitleMobile}>{heroTitle}</h1>
-          <Link href={heroButtonLink} className={styles.heroButtonMobile}>
+          <h1 className={styles.heroTitleMobile} style={heroTitleMobileStyle}>{heroTitle}</h1>
+          <Link href={heroButtonLink} className={styles.heroButtonMobile} style={heroButtonStyle}>
             <span>{heroButtonText}</span>
           </Link>
           <div className={styles.heroBadgesBar}>
-            <span className={styles.heroBadgesLabel}>{badgesLabel}</span>
+            <span className={styles.heroBadgesLabel} style={badgesLabelStyle}>{badgesLabel}</span>
             <div className={styles.heroBadgesIcons}>
               <Image
-                src={appStoreSrc}
+                src={appStoreBadge}
                 alt="App Store"
                 unoptimized
                 className={styles.heroBadgeImg}
               />
               <Image
-                src={googlePlaySrc}
+                src={googlePlayBadge}
                 alt="Google Play"
                 unoptimized
                 className={styles.heroBadgeImg}
               />
             </div>
             <Image
-              src={partnerLogoSrc}
+              src={seenergienLogo}
               alt="Seenergien"
               unoptimized
               className={styles.heroBadgePartner}
@@ -229,7 +299,7 @@ export default async function HomePage() {
             </h2>
             <FeaturedPinsMap places={featuredPlaces} />
             <div className={styles.section3ButtonRow}>
-              <Link href="/karte" className={styles.heroButton}>
+              <Link href="/karte" className={styles.heroButton} style={section3ButtonStyle}>
                 <span>
                   {content?.section3_button_text || "Mehr Orte entdecken"}
                 </span>
