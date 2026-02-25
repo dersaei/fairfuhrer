@@ -178,8 +178,8 @@
 }
 
 .section5Title {
-  font-size: 8vh;
-  margin-bottom: 1rem;
+  font-size: 7vh;
+  margin: 0 auto 1rem;
   line-height: 1.2;
   letter-spacing: 3px;
   font-family: var(--font-anton);
@@ -187,6 +187,7 @@
   font-weight: 400;
   font-style: normal;
   text-align: center;
+  width: 90%;
 }
 .section5Text {
   font-size: 1.125rem;
