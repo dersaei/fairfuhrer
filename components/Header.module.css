@@ -112,7 +112,7 @@
   right: 0;
   width: 100%;
   height: 100dvh;
-  background: #fdf6e3;
+  background-color: white;
   transform: translateX(100%);
   transition: transform 0.5s cubic-bezier(0.25, 0.1, 0.25, 1);
   z-index: 999;

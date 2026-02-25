@@ -132,14 +132,6 @@
   .supportSection {
     padding: 3rem 1.5rem;
   }
-
-  .supportTitle {
-    font-size: 3rem !important;
-  }
-
-  .supportText {
-    font-size: 1rem !important;
-  }
 }
 
 @media (max-width: 600px) {

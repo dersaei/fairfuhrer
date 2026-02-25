@@ -28,30 +28,6 @@ function parseFeatureBlocks(markdown: string): FeatureBlock[] {
 }
 
 // ---------------------------------------------------------------------------
-// Domyślna treść (fallback gdy brak rekordu w Directus)
-// ---------------------------------------------------------------------------
-const DEFAULTS = {
-  background_color: "#fc6c14",
-  title: "Über uns",
-  title_color: "black",
-  title_font_size: "4rem",
-  title_text_shadow: "1px 2px 2px white",
-  intro_features: `## Lokale Entdeckung
-Wir helfen Menschen dabei, versteckte Schätze in ihrer Umgebung zu entdecken.
-
-## Gemeinschaft stärken
-Unser Netzwerk verbindet gleichgesinnte Menschen und faire Unternehmen.
-
-## Faire Praktiken
-Wir fördern Transparenz und Fairness in der Geschäftswelt.`,
-  features_h2_color: "white",
-  features_h2_font_size: "1.5rem",
-  features_h2_text_shadow: "1px 2px 2px black",
-  features_p_color: "white",
-  features_p_font_size: "1.125rem",
-};
-
-// ---------------------------------------------------------------------------
 // Komponent
 // ---------------------------------------------------------------------------
 export default function ContactInfo({
@@ -59,40 +35,22 @@ export default function ContactInfo({
 }: {
   content: ContactInfoContent | null;
 }) {
-  const bg = content?.background_color ?? DEFAULTS.background_color;
-  const title = content?.title ?? DEFAULTS.title;
-  const titleColor = content?.title_color ?? DEFAULTS.title_color;
-  const titleFontSize = content?.title_font_size ?? DEFAULTS.title_font_size;
-  const titleTextShadow =
-    content?.title_text_shadow ?? DEFAULTS.title_text_shadow;
-  const featuresH2Color =
-    content?.features_h2_color ?? DEFAULTS.features_h2_color;
-  const featuresH2FontSize =
-    content?.features_h2_font_size ?? DEFAULTS.features_h2_font_size;
-  const featuresH2TextShadowRaw =
-    content?.features_h2_text_shadow ?? DEFAULTS.features_h2_text_shadow;
-  const featuresH2TextShadow = featuresH2TextShadowRaw
-    .replace(/^text-shadow\s*:\s*/i, "")
-    .trim();
-  const featuresPColor = content?.features_p_color ?? DEFAULTS.features_p_color;
-  const featuresPFontSize =
-    content?.features_p_font_size ?? DEFAULTS.features_p_font_size;
-
-  const featuresMarkdown = content?.intro_features ?? DEFAULTS.intro_features;
-  const featureBlocks = featuresMarkdown
-    ? parseFeatureBlocks(featuresMarkdown)
+  const featureBlocks = content?.intro_features
+    ? parseFeatureBlocks(content.intro_features)
     : [];
 
   return (
-    <div className={styles.contactInfo} style={{ background: bg }}>
+    <div
+      className={styles.contactInfo}
+      style={{ background: content?.background_color ?? undefined }}
+    >
       <h1
         style={{
-          color: titleColor,
-          fontSize: titleFontSize,
-          textShadow: titleTextShadow,
+          color: content?.title_color ?? undefined,
+          fontSize: content?.title_font_size ?? undefined,
         }}
       >
-        {title}
+        {content?.title}
       </h1>
 
       {featureBlocks.length > 0 && (
@@ -102,9 +60,8 @@ export default function ContactInfo({
               {block.heading && (
                 <h2
                   style={{
-                    color: featuresH2Color,
-                    fontSize: featuresH2FontSize,
-                    textShadow: featuresH2TextShadow || undefined,
+                    color: content?.features_h2_color ?? undefined,
+                    fontSize: content?.features_h2_font_size ?? undefined,
                   }}
                 >
                   {block.heading}
@@ -112,7 +69,10 @@ export default function ContactInfo({
               )}
               {block.body && (
                 <p
-                  style={{ color: featuresPColor, fontSize: featuresPFontSize }}
+                  style={{
+                    color: content?.features_p_color ?? undefined,
+                    fontSize: content?.features_p_font_size ?? undefined,
+                  }}
                 >
                   {block.body}
                 </p>

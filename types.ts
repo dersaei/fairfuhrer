@@ -484,11 +484,9 @@ export interface ContactInfoContent {
   title?: string;
   title_color?: string;
   title_font_size?: string;
-  title_text_shadow?: string;
   intro_features?: string; // Markdown: ## Heading\nText\n\n## Heading2\nText2
   features_h2_color?: string;
   features_h2_font_size?: string;
-  features_h2_text_shadow?: string;
   features_p_color?: string;
   features_p_font_size?: string;
 }

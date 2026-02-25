@@ -207,9 +207,7 @@
     justify-content: center;
     align-items: center;
   }
-  .contactForm h2 {
-    font-size: 6vw;
-  }
+
   .formGroup {
     width: 90%;
   }
