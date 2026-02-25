@@ -4,7 +4,7 @@ import ContactForm from "./ContactForm";
 import ContactInfo from "./ContactInfo";
 import SupportSection from "./SupportSection";
 import styles from "./kontakt.module.css";
-import { getContactInfoContent, getSupportSectionContent } from "@/lib/directus";
+import { getContactInfoContent, getSupportSectionContent, getContactFormContent } from "@/lib/directus";
 
 export const metadata: Metadata = {
   title: "Kontakt",
@@ -12,9 +12,10 @@ export const metadata: Metadata = {
 };
 
 export default async function KontaktPage() {
-  const [contactInfoContent, supportSectionContent] = await Promise.all([
+  const [contactInfoContent, supportSectionContent, contactFormContent] = await Promise.all([
     getContactInfoContent(),
     getSupportSectionContent(),
+    getContactFormContent(),
   ]);
 
   return (
@@ -22,7 +23,7 @@ export default async function KontaktPage() {
       <div className={styles.contactContent}>
         <ContactInfo content={contactInfoContent} />
         <SupportSection content={supportSectionContent} />
-        <ContactForm />
+        <ContactForm content={contactFormContent} />
       </div>
     </div>
   );

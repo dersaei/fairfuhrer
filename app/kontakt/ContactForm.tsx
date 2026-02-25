@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { Mail, AtSign, Phone, MapPin } from "lucide-react";
+import { ContactFormContent } from "@/types";
 import styles from "./ContactForm.module.css";
 
 interface FormData {
@@ -11,7 +12,11 @@ interface FormData {
   message: string;
 }
 
-export default function ContactForm() {
+export default function ContactForm({
+  content,
+}: {
+  content: ContactFormContent | null;
+}) {
   const [formData, setFormData] = useState<FormData>({
     name: "",
     email: "",
@@ -82,11 +87,23 @@ export default function ContactForm() {
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
+  const adresseLines = content?.adresse?.split("\n") ?? [];
+
   return (
-    <div className={styles.contactForm}>
+    <div
+      className={styles.contactForm}
+      style={{ background: content?.background_color ?? undefined }}
+    >
       <div className={styles.headerContainer}>
         <Mail size={48} className={styles.headerIcon} />
-        <h2>Senden Sie uns eine Nachricht</h2>
+        <h2
+          style={{
+            color: content?.title_color ?? undefined,
+            fontSize: content?.title_font_size ?? undefined,
+          }}
+        >
+          {content?.title}
+        </h2>
       </div>
 
       {submitStatus === "success" && (
@@ -167,45 +184,68 @@ export default function ContactForm() {
       </form>
 
       <div className={styles.contactMethods}>
-        <div className={styles.contactMethod}>
-          <div className={styles.methodIcon}>
-            <AtSign size={24} />
+        {content?.email && (
+          <div className={styles.contactMethod}>
+            <div className={styles.methodIcon}>
+              <AtSign size={24} />
+            </div>
+            <div className={styles.methodContent}>
+              <h3>Email</h3>
+              <p style={{
+                fontSize: content.contact_fields_font_size ?? undefined,
+                color: content.contact_fields_color ?? undefined,
+              }}>{content.email}</p>
+              {content.email_description && (
+                <span
+                  className={styles.responseTime}
+                  style={{
+                    fontSize: content.email_description_font_size ?? undefined,
+                    color: content.email_description_color ?? undefined,
+                  }}
+                >
+                  {content.email_description}
+                </span>
+              )}
+            </div>
           </div>
-          <div className={styles.methodContent}>
-            <h3>Email</h3>
-            <p>info@fairfuehrer.guide</p>
-            <span className={styles.responseTime}>
-              Wir antworten innerhalb von 48 Stunden
-            </span>
-          </div>
-        </div>
+        )}
 
-        <div className={styles.contactMethod}>
-          <div className={styles.methodIcon}>
-            <Phone size={24} />
+        {content?.telefon && (
+          <div className={styles.contactMethod}>
+            <div className={styles.methodIcon}>
+              <Phone size={24} />
+            </div>
+            <div className={styles.methodContent}>
+              <h3>Telefon</h3>
+              <p style={{
+                fontSize: content.contact_fields_font_size ?? undefined,
+                color: content.contact_fields_color ?? undefined,
+              }}>{content.telefon}</p>
+            </div>
           </div>
-          <div className={styles.methodContent}>
-            <h3>Telefon</h3>
-            <p>+49 1511 7656692</p>
-          </div>
-        </div>
+        )}
 
-        <div className={styles.contactMethod}>
-          <div className={styles.methodIcon}>
-            <MapPin size={24} />
+        {adresseLines.length > 0 && (
+          <div className={styles.contactMethod}>
+            <div className={styles.methodIcon}>
+              <MapPin size={24} />
+            </div>
+            <div className={styles.methodContent}>
+              <h3>Adresse</h3>
+              <p style={{
+                fontSize: content?.contact_fields_font_size ?? undefined,
+                color: content?.contact_fields_color ?? undefined,
+              }}>
+                {adresseLines.map((line, i) => (
+                  <span key={i}>
+                    {line}
+                    {i < adresseLines.length - 1 && <br />}
+                  </span>
+                ))}
+              </p>
+            </div>
           </div>
-          <div className={styles.methodContent}>
-            <h3>Adresse</h3>
-            <p>
-              Seenergien GmbH
-              <br />
-              Hintere Insel 1<br />
-              88131 Lindau
-              <br />
-              Deutschland
-            </p>
-          </div>
-        </div>
+        )}
       </div>
     </div>
   );

@@ -1,6 +1,5 @@
 /* app/kontakt/ContactForm.module.css */
 .contactForm {
-  background-color: white;
   padding: 10vh 2vw 4vh;
   height: fit-content;
 }
@@ -23,8 +22,6 @@
 }
 
 .contactForm h2 {
-  font-size: 3rem;
-  color: black;
   margin: 0;
   font-family: var(--font-anton);
   font-weight: 400;
@@ -138,7 +135,6 @@
   width: 90%;
   margin: 3rem auto 0;
   justify-content: center;
-  background-color: white;
 }
 
 .contactMethod {
@@ -159,7 +155,8 @@
 
 .methodIcon {
   color: #3b82f6;
-  background: rgba(59, 130, 246, 0.1);
+  opacity: 0.8;
+  background: white;
   padding: 1rem;
   border-radius: 50%;
   display: flex;
@@ -182,15 +179,11 @@
 }
 
 .methodContent p {
-  color: #374151;
   margin-bottom: 0.5rem;
-  font-size: 1rem;
   line-height: 1.4;
 }
 
 .responseTime {
-  font-size: 0.8rem;
-  color: #6b7280;
   font-style: italic;
 }
 

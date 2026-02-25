@@ -11,6 +11,7 @@ import type {
   FeaturedPin,
   ImpressumContent,
   DatenschutzContent,
+  ContactFormContent,
   ContactInfoContent,
   SupportSectionContent,
   PayPalDonation,
@@ -193,6 +194,33 @@ export async function getSupportSectionContent(): Promise<SupportSectionContent 
     return data.data?.[0] ?? null;
   } catch (error) {
     console.error("Error fetching support section content:", error);
+    return null;
+  }
+}
+
+export async function getContactFormContent(): Promise<ContactFormContent | null> {
+  const isDev = process.env.NODE_ENV === "development";
+  try {
+    const response = await fetch(
+      `${DIRECTUS_URL}/items/contact_form_content?filter[page_slug][_eq]=kontakt&fields=*&limit=1`,
+      {
+        headers: {
+          "Content-Type": "application/json",
+        },
+        ...(isDev
+          ? { cache: "no-store" as const }
+          : { next: { revalidate: 3600, tags: ["contact-form"] } }),
+      }
+    );
+
+    if (!response.ok) {
+      throw new Error("Failed to fetch contact form content");
+    }
+
+    const data = await response.json();
+    return data.data?.[0] ?? null;
+  } catch (error) {
+    console.error("Error fetching contact form content:", error);
     return null;
   }
 }

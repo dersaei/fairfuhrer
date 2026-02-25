@@ -476,6 +476,24 @@ export interface SupportSectionContent {
   second_text_color?: string;
 }
 
+// ✅ ContactFormContent - dla sekcji formularza kontaktowego strony /kontakt
+export interface ContactFormContent {
+  id: number;
+  page_slug: string;
+  background_color?: string;
+  title?: string;
+  title_font_size?: string;
+  title_color?: string;
+  email?: string;
+  email_description?: string;
+  email_description_font_size?: string;
+  email_description_color?: string;
+  telefon?: string;
+  adresse?: string; // plain text, linie oddzielone \n
+  contact_fields_font_size?: string; // wspólny font-size dla email, telefon, adresse
+  contact_fields_color?: string; // wspólny kolor dla email, telefon, adresse
+}
+
 // ✅ ContactInfoContent - dla sekcji nagłówkowej strony /kontakt
 export interface ContactInfoContent {
   id: number;

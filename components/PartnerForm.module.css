@@ -10,7 +10,7 @@
 }
 
 .formHeader {
-  background-color: black;
+  background-color: #18222f;
   color: white;
   padding: 2rem;
   text-align: center;
@@ -571,7 +571,7 @@
 }
 
 .submitButton {
-  background-color: black;
+  background-color: #18222f;
   color: white;
   border: none;
   padding: 1rem 3rem;
