@@ -19,191 +19,66 @@ const CATEGORIES = [
   { name: "Wirtschaft", color: "#E0D12E" },
 ] as const;
 
-const DEFAULTS = {
-  hero_title:
-    "Der Audioguide für nachhaltiges Leben und Reisen am Bodensee & im Allgäu",
-  hero_subtitle:
-    "Der FAIRFÜHRER erzählt auf über 600 Stationen gute Geschichten!",
-  hero_button_text: "Zur Karte",
-  hero_button_link: "/karte",
-  badges_label: "Bald verfügbar",
-  section2_title: "Entdecken Sie faire Orte in sechs Kategorien",
-  section4_title: "Unterstützen Sie unsere Mission",
-  section4_text:
-    "Helfen Sie uns dabei, ein Netzwerk fairer Geschäfte aufzubauen. Jede Spende trägt dazu bei, mehr nachhaltige und innovative Unternehmen in unserer Region zu vernetzen.",
-} as const;
-
 export default async function HomePage() {
   const [content, featuredPins] = await Promise.all([
     getHomePageContent(),
     getFeaturedPins(),
   ]);
 
-  const heroTitle = content?.hero_title || DEFAULTS.hero_title;
-  const heroSubtitle = content?.hero_subtitle || DEFAULTS.hero_subtitle;
-  const heroButtonText = content?.hero_button_text || DEFAULTS.hero_button_text;
-  const heroButtonLink = content?.hero_button_link || DEFAULTS.hero_button_link;
-  const badgesLabel = content?.badges_label || DEFAULTS.badges_label;
-  const section2Title = content?.section2_title || DEFAULTS.section2_title;
-  const section3Title = content?.section3_title || "Ausgewählte Stationen";
-  const section4Title = content?.section4_title || DEFAULTS.section4_title;
-  const section4Text = content?.section4_text || DEFAULTS.section4_text;
-
   // Directus Color interface zapisuje hex bez "#" — np. "000000" zamiast "#000000"
   const c = (val?: string) =>
     val ? (val.startsWith("#") ? val : `#${val}`) : undefined;
 
-  const heroTextSideStyle = {
-    ...(content?.hero_background_color && {
-      backgroundColor: c(content.hero_background_color),
-    }),
-  };
-  const heroTitleStyle = {
-    ...(content?.hero_title_font_size && {
-      fontSize: content.hero_title_font_size,
-    }),
-    ...(content?.hero_title_color && {
-      color: c(content.hero_title_color),
-    }),
-  };
-  const heroTitleMobileStyle = {
-    ...(content?.hero_title_mobile_font_size && {
-      fontSize: content.hero_title_mobile_font_size,
-    }),
-    ...(content?.hero_title_mobile_color && {
-      color: c(content.hero_title_mobile_color),
-    }),
-  };
-  const heroSubtitleStyle = {
-    ...(content?.hero_subtitle_font_size && {
-      fontSize: content.hero_subtitle_font_size,
-    }),
-    ...(content?.hero_subtitle_color && {
-      color: c(content.hero_subtitle_color),
-    }),
-  };
-  const heroButtonStyle = {
-    ...(content?.hero_button_color && {
-      color: c(content.hero_button_color),
-    }),
-    ...(content?.hero_button_font_size && {
-      fontSize: content.hero_button_font_size,
-    }),
-    ...(content?.hero_button_background_color && {
-      backgroundColor: c(content.hero_button_background_color),
-    }),
-  };
-  const badgesLabelStyle = {
-    ...(content?.badges_label_font_size && {
-      fontSize: content.badges_label_font_size,
-    }),
-    ...(content?.badges_label_color && {
-      color: c(content.badges_label_color),
-    }),
-  };
-  const section2Style = {
-    ...(content?.section2_background_color && {
-      backgroundColor: c(content.section2_background_color),
-    }),
-  };
-  const section2TitleStyle = {
-    ...(content?.section2_title_font_size && {
-      fontSize: content.section2_title_font_size,
-    }),
-    ...(content?.section2_title_color && {
-      color: c(content.section2_title_color),
-    }),
-  };
-  const section3Style = {
-    ...(content?.section3_background_color && {
-      backgroundColor: c(content.section3_background_color),
-    }),
-  };
-  const section3TitleStyle = {
-    ...(content?.section3_title_font_size && {
-      fontSize: content.section3_title_font_size,
-    }),
-    ...(content?.section3_title_color && {
-      color: c(content.section3_title_color),
-    }),
-  };
-  const section3ButtonStyle = {
-    ...(content?.section3_button_color && {
-      color: c(content.section3_button_color),
-    }),
-    ...(content?.section3_button_font_size && {
-      fontSize: content.section3_button_font_size,
-    }),
-    ...(content?.section3_button_background_color && {
-      backgroundColor: c(content.section3_button_background_color),
-    }),
-  };
-  const section4Style = {
-    ...(content?.section4_background_color && {
-      backgroundColor: c(content.section4_background_color),
-    }),
-  };
-  const section4TitleStyle = {
-    ...(content?.section4_title_font_size && {
-      fontSize: content.section4_title_font_size,
-    }),
-    ...(content?.section4_title_color && {
-      color: c(content.section4_title_color),
-    }),
-  };
-  const section4TextStyle = {
-    ...(content?.section4_text_font_size && {
-      fontSize: content.section4_text_font_size,
-    }),
-    ...(content?.section4_text_color && {
-      color: c(content.section4_text_color),
-    }),
-  };
-  const section4ButtonStyle = {
-    ...(content?.section4_button_color && {
-      color: c(content.section4_button_color),
-    }),
-    ...(content?.section4_button_font_size && {
-      fontSize: content.section4_button_font_size,
-    }),
-    ...(content?.section4_button_background_color && {
-      backgroundColor: c(content.section4_button_background_color),
-    }),
-  };
-
-  // CSS custom properties dla mobile font-size (nadpisują !important w media query)
-  const mobileCssVars = {
-    ...(content?.hero_button_mobile_font_size && {
-      "--hero-btn-mobile-fs": content.hero_button_mobile_font_size,
-    }),
-    ...(content?.hero_button_mobile_color && {
-      "--hero-btn-mobile-color": c(content.hero_button_mobile_color),
-    }),
-    ...(content?.hero_button_background_color_mobile && {
-      "--hero-btn-mobile-bg": c(content.hero_button_background_color_mobile),
-    }),
-    ...(content?.section2_title_mobile_font_size && {
-      "--s2-title-mobile-fs": content.section2_title_mobile_font_size,
-    }),
-    ...(content?.section3_title_mobile_font_size && {
-      "--s3-title-mobile-fs": content.section3_title_mobile_font_size,
-    }),
-    ...(content?.section4_title_mobile_font_size && {
-      "--s4-title-mobile-fs": content.section4_title_mobile_font_size,
-    }),
-    ...(content?.section4_text_mobile_font_size && {
-      "--s4-text-mobile-fs": content.section4_text_mobile_font_size,
-    }),
-    ...(content?.section4_button_mobile_font_size && {
-      "--s4-btn-mobile-fs": content.section4_button_mobile_font_size,
-    }),
+  // Wszystkie wartości font-size i kolory jako CSS vars na <main>.
+  // Desktop font-size: var(--fs-*), mobile font-size: var(--fs-*-mobile) — odczytywane przez media query w CSS.
+  const cssVars = {
+    ...(content?.hero_background_color && { "--hero-bg": c(content.hero_background_color) }),
+    ...(content?.hero_title_font_size && { "--fs-hero-title": content.hero_title_font_size }),
+    ...(content?.hero_title_color && { "--color-hero-title": c(content.hero_title_color) }),
+    ...(content?.hero_title_mobile_font_size && { "--fs-hero-title-mobile": content.hero_title_mobile_font_size }),
+    ...(content?.hero_title_mobile_color && { "--color-hero-title-mobile": c(content.hero_title_mobile_color) }),
+    ...(content?.hero_subtitle_font_size && { "--fs-hero-subtitle": content.hero_subtitle_font_size }),
+    ...(content?.hero_subtitle_color && { "--color-hero-subtitle": c(content.hero_subtitle_color) }),
+    ...(content?.hero_button_font_size && { "--fs-hero-btn": content.hero_button_font_size }),
+    ...(content?.hero_button_color && { "--color-hero-btn": c(content.hero_button_color) }),
+    ...(content?.hero_button_background_color && { "--bg-hero-btn": c(content.hero_button_background_color) }),
+    ...(content?.hero_button_mobile_font_size && { "--fs-hero-btn-mobile": content.hero_button_mobile_font_size }),
+    ...(content?.hero_button_mobile_color && { "--color-hero-btn-mobile": c(content.hero_button_mobile_color) }),
+    ...(content?.hero_button_background_color_mobile && { "--bg-hero-btn-mobile": c(content.hero_button_background_color_mobile) }),
+    ...(content?.badges_label_font_size && { "--fs-badges-label": content.badges_label_font_size }),
+    ...(content?.badges_label_color && { "--color-badges-label": c(content.badges_label_color) }),
+    ...(content?.section2_background_color && { "--bg-s2": c(content.section2_background_color) }),
+    ...(content?.section2_title_font_size && { "--fs-s2-title": content.section2_title_font_size }),
+    ...(content?.section2_title_color && { "--color-s2-title": c(content.section2_title_color) }),
+    ...(content?.section2_title_mobile_font_size && { "--fs-s2-title-mobile": content.section2_title_mobile_font_size }),
+    ...(content?.category_name_font_size && { "--fs-cat-name": content.category_name_font_size }),
+    ...(content?.category_name_color && { "--color-cat-name": c(content.category_name_color) }),
+    ...(content?.category_name_mobile_font_size && { "--fs-cat-name-mobile": content.category_name_mobile_font_size }),
+    ...(content?.section3_background_color && { "--bg-s3": c(content.section3_background_color) }),
+    ...(content?.section3_title_font_size && { "--fs-s3-title": content.section3_title_font_size }),
+    ...(content?.section3_title_color && { "--color-s3-title": c(content.section3_title_color) }),
+    ...(content?.section3_title_mobile_font_size && { "--fs-s3-title-mobile": content.section3_title_mobile_font_size }),
+    ...(content?.section3_button_color && { "--color-s3-btn": c(content.section3_button_color) }),
+    ...(content?.section3_button_font_size && { "--fs-s3-btn": content.section3_button_font_size }),
+    ...(content?.section3_button_background_color && { "--bg-s3-btn": c(content.section3_button_background_color) }),
+    ...(content?.section4_background_color && { "--bg-s4": c(content.section4_background_color) }),
+    ...(content?.section4_title_font_size && { "--fs-s4-title": content.section4_title_font_size }),
+    ...(content?.section4_title_color && { "--color-s4-title": c(content.section4_title_color) }),
+    ...(content?.section4_title_mobile_font_size && { "--fs-s4-title-mobile": content.section4_title_mobile_font_size }),
+    ...(content?.section4_text_font_size && { "--fs-s4-text": content.section4_text_font_size }),
+    ...(content?.section4_text_color && { "--color-s4-text": c(content.section4_text_color) }),
+    ...(content?.section4_text_mobile_font_size && { "--fs-s4-text-mobile": content.section4_text_mobile_font_size }),
+    ...(content?.section4_button_color && { "--color-s4-btn": c(content.section4_button_color) }),
+    ...(content?.section4_button_font_size && { "--fs-s4-btn": content.section4_button_font_size }),
+    ...(content?.section4_button_background_color && { "--bg-s4-btn": c(content.section4_button_background_color) }),
+    ...(content?.section4_button_mobile_font_size && { "--fs-s4-btn-mobile": content.section4_button_mobile_font_size }),
   } as React.CSSProperties;
 
   const featuredPlaces = featuredPins.map((fp) => fp.ort);
 
   return (
     <>
-      <main className={styles.main} style={mobileCssVars}>
+      <main className={styles.main} style={cssVars}>
         {/* SEKCJA 1: Hero */}
         <div className={styles.heroContainer}>
           <div className={styles.heroImageSide}>
@@ -216,20 +91,20 @@ export default async function HomePage() {
               style={{ objectFit: "cover" }}
             />
           </div>
-          <div className={styles.heroTextSide} style={heroTextSideStyle}>
-            <h1 className={styles.heroTitle} style={heroTitleStyle}>{heroTitle}</h1>
-            <h3 className={styles.heroSubtitle} style={heroSubtitleStyle}>{heroSubtitle}</h3>
-            <Link href={heroButtonLink} className={styles.heroButton} style={heroButtonStyle}>
-              <span>{heroButtonText}</span>
+          <div className={styles.heroTextSide}>
+            <h1 className={styles.heroTitle}>{content?.hero_title}</h1>
+            <h3 className={styles.heroSubtitle}>{content?.hero_subtitle}</h3>
+            <Link href={content?.hero_button_link ?? "#"} className={styles.heroButton}>
+              <span>{content?.hero_button_text}</span>
             </Link>
           </div>
           {/* Mobile overlay — widoczne tylko poniżej 735px */}
-          <h1 className={styles.heroTitleMobile} style={heroTitleMobileStyle}>{heroTitle}</h1>
-          <Link href={heroButtonLink} className={styles.heroButtonMobile} style={heroButtonStyle}>
-            <span>{heroButtonText}</span>
+          <h1 className={styles.heroTitleMobile}>{content?.hero_title}</h1>
+          <Link href={content?.hero_button_link ?? "#"} className={styles.heroButtonMobile}>
+            <span>{content?.hero_button_text}</span>
           </Link>
           <div className={styles.heroBadgesBar}>
-            <span className={styles.heroBadgesLabel} style={badgesLabelStyle}>{badgesLabel}</span>
+            <span className={styles.heroBadgesLabel}>{content?.badges_label}</span>
             <div className={styles.heroBadgesIcons}>
               <Image
                 src={appStoreBadge}
@@ -254,10 +129,10 @@ export default async function HomePage() {
         </div>
 
         {/* SEKCJA 2: Kategorie */}
-        <section className={styles.section2} style={section2Style}>
+        <section className={styles.section2}>
           <div className={styles.section2Content}>
-            <h2 className={styles.section2Title} style={section2TitleStyle}>
-              {section2Title}
+            <h2 className={styles.section2Title}>
+              {content?.section2_title}
             </h2>
             <div className={styles.categoriesList}>
               {CATEGORIES.map((cat) => (
@@ -293,15 +168,15 @@ export default async function HomePage() {
 
         {/* SEKCJA 3: Mapa z featured pins */}
         {featuredPlaces.length > 0 && (
-          <section className={styles.section3} style={section3Style}>
-            <h2 className={styles.section3Title} style={section3TitleStyle}>
-              {section3Title}
+          <section className={styles.section3}>
+            <h2 className={styles.section3Title}>
+              {content?.section3_title}
             </h2>
             <FeaturedPinsMap places={featuredPlaces} />
             <div className={styles.section3ButtonRow}>
-              <Link href="/karte" className={styles.heroButton} style={section3ButtonStyle}>
+              <Link href="/karte" className={styles.section3Button}>
                 <span>
-                  {content?.section3_button_text || "Mehr Orte entdecken"}
+                  {content?.section3_button_text}
                 </span>
               </Link>
             </div>
@@ -309,20 +184,19 @@ export default async function HomePage() {
         )}
 
         {/* SEKCJA 4: Wsparcie */}
-        <section className={styles.section4} style={section4Style}>
+        <section className={styles.section4}>
           <div className={styles.section4Content}>
             <div className={styles.section4IconContainer}>
               <Heart size={32} className={styles.section4HeartIcon} />
               <Sparkles size={20} className={styles.section4SparkleIcon} />
             </div>
-            <h2 className={styles.section4Title} style={section4TitleStyle}>
-              {section4Title}
+            <h2 className={styles.section4Title}>
+              {content?.section4_title}
             </h2>
-            {section4Text.split("\n\n").map((paragraph, i) => (
+            {content?.section4_text?.split("\n\n").map((paragraph: string, i: number) => (
               <p
                 key={i}
                 className={styles.section4Text}
-                style={section4TextStyle}
               >
                 {paragraph}
               </p>
@@ -331,7 +205,6 @@ export default async function HomePage() {
               <Link
                 href={content.section4_button_link}
                 className={styles.section4Button}
-                style={section4ButtonStyle}
               >
                 {content.section4_button_text}
               </Link>

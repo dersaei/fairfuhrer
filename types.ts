@@ -404,6 +404,9 @@ export interface HomePageContent {
   section2_title_font_size?: string;
   section2_title_color?: string;
   section2_title_mobile_font_size?: string;
+  category_name_font_size?: string;
+  category_name_color?: string;
+  category_name_mobile_font_size?: string;
 
   // Section 3
   section3_background_color?: string;

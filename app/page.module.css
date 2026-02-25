@@ -23,6 +23,7 @@
 .heroTextSide {
   width: 50%;
   height: 100%;
+  background-color: var(--hero-bg);
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -31,13 +32,18 @@
 }
 
 .heroTitle {
+  font-size: var(--fs-hero-title);
+  color: var(--color-hero-title);
   font-weight: 400;
   text-align: center;
   line-height: 1.3;
   margin: 0 0 1.5rem 0;
   font-family: var(--font-anton);
 }
+
 .heroSubtitle {
+  font-size: var(--fs-hero-subtitle);
+  color: var(--color-hero-subtitle);
   font-family: var(--font-fira);
   font-weight: 400;
   line-height: 1.2;
@@ -46,6 +52,9 @@
 }
 
 .heroButton {
+  font-size: var(--fs-hero-btn);
+  color: var(--color-hero-btn);
+  background-color: var(--bg-hero-btn);
   display: inline-block;
   text-decoration: none;
   padding: 1rem 2.5rem;
@@ -84,6 +93,8 @@
 }
 
 .heroBadgesLabel {
+  font-size: var(--fs-badges-label);
+  color: var(--color-badges-label);
   font-family: var(--font-fira);
   text-transform: uppercase;
   letter-spacing: 0.05em;
@@ -110,6 +121,7 @@
 
 /* ===== SEKCJA 2: Kategorie ===== */
 .section2 {
+  background-color: var(--bg-s2);
   padding: 3rem 2rem;
 }
 
@@ -120,6 +132,8 @@
 }
 
 .section2Title {
+  font-size: var(--fs-s2-title);
+  color: var(--color-s2-title);
   font-weight: 400;
   margin: 0 0 3rem;
   line-height: 1.3;
@@ -143,14 +157,15 @@
 }
 
 .categoryName {
-  font-size: 1rem;
+  font-size: var(--fs-cat-name);
+  color: var(--color-cat-name);
   font-weight: 500;
-  color: white;
   font-family: var(--font-fira);
 }
 
 /* ===== SEKCJA 3: Mapa Featured Pins ===== */
 .section3 {
+  background-color: var(--bg-s3);
   padding: 3rem 0 0;
 }
 
@@ -161,6 +176,8 @@
 }
 
 .section3Title {
+  font-size: var(--fs-s3-title);
+  color: var(--color-s3-title);
   font-weight: 400;
   margin: 0 0 2rem 0;
   line-height: 1.3;
@@ -169,8 +186,30 @@
   padding: 0 4vw;
 }
 
+.section3Button {
+  font-size: var(--fs-s3-btn);
+  color: var(--color-s3-btn);
+  background-color: var(--bg-s3-btn);
+  display: inline-block;
+  text-decoration: none;
+  padding: 1rem 2.5rem;
+  border-radius: 9999px;
+  border: 2px solid black;
+  font-weight: 400;
+  font-family: var(--font-fira);
+  transition: all 1s ease;
+  opacity: 0.9;
+  box-shadow: 0px 0px 0px 0px black;
+}
+
+.section3Button:hover {
+  box-shadow: 1px 3px 18px 2px rgba(0, 0, 0, 0.2);
+  opacity: 1;
+}
+
 /* ===== SEKCJA 4: Wsparcie ===== */
 .section4 {
+  background-color: var(--bg-s4);
   padding: 3rem 2rem;
   text-align: center;
   position: relative;
@@ -215,6 +254,8 @@
 }
 
 .section4Title {
+  font-size: var(--fs-s4-title);
+  color: var(--color-s4-title);
   font-weight: 400;
   margin-bottom: 1rem;
   font-family: var(--font-anton);
@@ -222,6 +263,8 @@
 }
 
 .section4Text {
+  font-size: var(--fs-s4-text);
+  color: var(--color-s4-text);
   line-height: 1.7;
   margin-bottom: 2rem;
   font-family: var(--font-fira);
@@ -229,6 +272,9 @@
 }
 
 .section4Button {
+  font-size: var(--fs-s4-btn);
+  color: var(--color-s4-btn);
+  background-color: var(--bg-s4-btn);
   display: inline-flex;
   align-items: center;
   gap: 0.5rem;
@@ -271,11 +317,12 @@
     transform: translateY(-50%);
     width: 40%;
     margin: 0;
+    font-size: var(--fs-hero-title-mobile);
+    color: var(--color-hero-title-mobile);
     font-weight: 400;
     text-align: left;
     font-family: var(--font-anton);
     line-height: 1.3;
-    text-shadow: 1px 2px 4px rgba(0, 0, 0, 0.6);
     z-index: 2;
   }
 
@@ -286,6 +333,9 @@
     left: 50%;
     transform: translateX(-50%);
     z-index: 2;
+    font-size: var(--fs-hero-btn-mobile);
+    color: var(--color-hero-btn-mobile);
+    background-color: var(--bg-hero-btn-mobile);
     text-decoration: none;
     padding: 1rem 2.5rem;
     border-radius: 9999px;
@@ -302,8 +352,30 @@
     opacity: 1;
   }
 
+  .section2Title {
+    font-size: var(--fs-s2-title-mobile);
+    padding: 0;
+  }
+
+  .section3Title {
+    font-size: var(--fs-s3-title-mobile);
+    padding: 0;
+  }
+
   .categoryName {
-    font-size: 0.7rem;
+    font-size: var(--fs-cat-name-mobile);
+  }
+
+  .section4Title {
+    font-size: var(--fs-s4-title-mobile);
+  }
+
+  .section4Text {
+    font-size: var(--fs-s4-text-mobile);
+  }
+
+  .section4Button {
+    font-size: var(--fs-s4-btn-mobile);
   }
 }
 
