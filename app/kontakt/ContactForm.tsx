@@ -190,11 +190,15 @@ export default function ContactForm({
               <AtSign size={24} />
             </div>
             <div className={styles.methodContent}>
-              <h3>Email</h3>
-              <p style={{
-                fontSize: content.contact_fields_font_size ?? undefined,
-                color: content.contact_fields_color ?? undefined,
-              }}>{content.email}</p>
+              <h3>E-mail</h3>
+              <p
+                style={{
+                  fontSize: content.contact_fields_font_size ?? undefined,
+                  color: content.contact_fields_color ?? undefined,
+                }}
+              >
+                {content.email}
+              </p>
               {content.email_description && (
                 <span
                   className={styles.responseTime}
@@ -217,10 +221,14 @@ export default function ContactForm({
             </div>
             <div className={styles.methodContent}>
               <h3>Telefon</h3>
-              <p style={{
-                fontSize: content.contact_fields_font_size ?? undefined,
-                color: content.contact_fields_color ?? undefined,
-              }}>{content.telefon}</p>
+              <p
+                style={{
+                  fontSize: content.contact_fields_font_size ?? undefined,
+                  color: content.contact_fields_color ?? undefined,
+                }}
+              >
+                {content.telefon}
+              </p>
             </div>
           </div>
         )}
@@ -232,10 +240,12 @@ export default function ContactForm({
             </div>
             <div className={styles.methodContent}>
               <h3>Adresse</h3>
-              <p style={{
-                fontSize: content?.contact_fields_font_size ?? undefined,
-                color: content?.contact_fields_color ?? undefined,
-              }}>
+              <p
+                style={{
+                  fontSize: content?.contact_fields_font_size ?? undefined,
+                  color: content?.contact_fields_color ?? undefined,
+                }}
+              >
                 {adresseLines.map((line, i) => (
                   <span key={i}>
                     {line}
