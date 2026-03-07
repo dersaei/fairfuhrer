@@ -165,7 +165,7 @@ export function ImageGallery({
             width={300}
             height={200}
             style={{ objectFit: "cover" }}
-            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 300px"
+            sizes="(max-width: 768px) 50vw, 300px"
             onClick={() => {
               // ✅ POPRAWKA: Przekaż path zamiast pełnego URL
               onImageClickAction(
@@ -218,6 +218,7 @@ export function PlaceImage({
         height={height}
         style={{ objectFit: "cover" }}
         sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 400px"
+        loading={type === "main" ? "eager" : "lazy"}
         onLoad={() => setImageLoaded(true)}
         onError={() => setImageError(true)}
         priority={type === "main"} // ✅ Priority dla głównych obrazków

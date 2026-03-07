@@ -3,6 +3,7 @@ import type { Metadata } from "next";
 import MapWithFilters from "../../components/MapWithFilters";
 import { ErrorBoundary } from "../../components/ErrorBoundary";
 import { ConditionalMapbox } from "../../components/ConditionalMapbox";
+import MapRealtimeRefresh from "../../components/MapRealtimeRefresh";
 import type {
   Place,
   Category,
@@ -328,6 +329,7 @@ export default async function KartePage() {
 
         {/* MAPA OWRAPOWANA W CONDITIONAL MAPBOX */}
         <ConditionalMapbox>
+          <MapRealtimeRefresh />
           <ErrorBoundary
             fallback={
               <div
