@@ -1,7 +1,7 @@
 // components/MediaComponents.tsx
 "use client";
 
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import Image from "next/image";
 import { getAudioUrl, getOptimizedImagePath } from "../lib/supabase";
 import styles from "./MediaComponents.module.css";
@@ -11,6 +11,9 @@ import {
   SkipBackIcon,
   SkipForwardIcon,
 } from "./AudioIcons";
+
+const SPEED_OPTIONS = [1, 1.25, 1.5, 1.75, 2] as const;
+type SpeedOption = (typeof SPEED_OPTIONS)[number];
 
 interface AudioPlayerProps {
   placeId: number;
@@ -26,6 +29,7 @@ export function AudioPlayer({
   const [isPlaying, setIsPlaying] = useState(false);
   const [currentTime, setCurrentTime] = useState(0);
   const [duration, setDuration] = useState(0);
+  const [playbackSpeed, setPlaybackSpeed] = useState<number>(1);
   const audioRef = useRef<HTMLAudioElement>(null);
 
   const togglePlay = () => {
@@ -71,6 +75,20 @@ export function AudioPlayer({
       setCurrentTime(newTime);
     }
   };
+
+  const handleSpeedChange = (speed: SpeedOption) => {
+    setPlaybackSpeed(speed);
+    if (audioRef.current) {
+      audioRef.current.playbackRate = speed;
+    }
+  };
+
+  useEffect(() => {
+    setPlaybackSpeed(1);
+    if (audioRef.current) {
+      audioRef.current.playbackRate = 1;
+    }
+  }, [filename]);
 
   const formatTime = (time: number) => {
     const minutes = Math.floor(time / 60);
@@ -134,6 +152,21 @@ export function AudioPlayer({
           title="Ziehen, um die Position in der Aufnahme zu verschieben"
         />
         <span className={styles.duration}>{formatTime(duration)}</span>
+      </div>
+
+      <div className={styles.speedControl}>
+        {SPEED_OPTIONS.map((speed) => (
+          <button
+            key={speed}
+            type="button"
+            className={`${styles.speedButton} ${playbackSpeed === speed ? styles.speedButtonActive : ""}`}
+            onClick={() => handleSpeedChange(speed)}
+            aria-pressed={playbackSpeed === speed}
+            title={`Wiedergabegeschwindigkeit: ${speed}x`}
+          >
+            {speed}x
+          </button>
+        ))}
       </div>
     </div>
   );
