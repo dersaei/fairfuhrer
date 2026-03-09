@@ -1,7 +1,7 @@
 // components/MediaComponents.tsx
 "use client";
 
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef } from "react";
 import Image from "next/image";
 import { getAudioUrl, getOptimizedImagePath } from "../lib/supabase";
 import styles from "./MediaComponents.module.css";
@@ -82,13 +82,6 @@ export function AudioPlayer({
       audioRef.current.playbackRate = speed;
     }
   };
-
-  useEffect(() => {
-    setPlaybackSpeed(1);
-    if (audioRef.current) {
-      audioRef.current.playbackRate = 1;
-    }
-  }, [filename]);
 
   const formatTime = (time: number) => {
     const minutes = Math.floor(time / 60);
