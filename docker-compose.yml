@@ -5,6 +5,10 @@ services:
       DATABASE_URL: ${DATABASE_URL}
       ADMIN_EMAIL: ${DIRECTUS_ADMIN_EMAIL}
       ADMIN_PASSWORD: ${DIRECTUS_ADMIN_PASSWORD}
-      CONTENT_SECURITY_POLICY_DIRECTIVES__FRAME_SRC: localhost:3000
+      SECRET: ${DIRECTUS_SECRET}
+      PUBLIC_URL: ${PUBLIC_URL:-http://localhost:8055}
+      CONTENT_SECURITY_POLICY_DIRECTIVES__FRAME_SRC: ${FRAME_SRC:-localhost:3000}
     ports:
       - "8055:8055"
+    volumes:
+      - ./uploads:/directus/uploads
