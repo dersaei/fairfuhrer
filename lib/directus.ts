@@ -70,7 +70,8 @@ export async function getHomePageContent(): Promise<HomePageContent | null> {
     );
 
     if (!response.ok) {
-      throw new Error("Failed to fetch home page content");
+      const body = await response.text().catch(() => "(unreadable)");
+      throw new Error(`Failed to fetch home page content: ${response.status} ${response.statusText} — ${body}`);
     }
 
     const data = await response.json();
@@ -102,7 +103,8 @@ export async function getFeaturedPins(): Promise<FeaturedPin[]> {
     );
 
     if (!response.ok) {
-      throw new Error("Failed to fetch featured pins");
+      const body = await response.text().catch(() => "(unreadable)");
+      throw new Error(`Failed to fetch featured pins: ${response.status} ${response.statusText} — ${body}`);
     }
 
     const data = await response.json();
@@ -187,7 +189,8 @@ export async function getSupportSectionContent(): Promise<SupportSectionContent 
     );
 
     if (!response.ok) {
-      throw new Error("Failed to fetch support section content");
+      const body = await response.text().catch(() => "(unreadable)");
+      throw new Error(`Failed to fetch support section content: ${response.status} ${response.statusText} — ${body}`);
     }
 
     const data = await response.json();
@@ -214,7 +217,8 @@ export async function getContactFormContent(): Promise<ContactFormContent | null
     );
 
     if (!response.ok) {
-      throw new Error("Failed to fetch contact form content");
+      const body = await response.text().catch(() => "(unreadable)");
+      throw new Error(`Failed to fetch contact form content: ${response.status} ${response.statusText} — ${body}`);
     }
 
     const data = await response.json();
@@ -238,7 +242,8 @@ export async function getContactInfoContent(): Promise<ContactInfoContent | null
     );
 
     if (!response.ok) {
-      throw new Error("Failed to fetch contact info content");
+      const body = await response.text().catch(() => "(unreadable)");
+      throw new Error(`Failed to fetch contact info content: ${response.status} ${response.statusText} — ${body}`);
     }
 
     const data = await response.json();
