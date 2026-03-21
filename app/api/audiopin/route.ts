@@ -147,6 +147,14 @@ export async function POST(request: NextRequest) {
       }
     }
 
+    // Zapisz pin_id w partner_profiles
+    if (pinId) {
+      await supabase
+        .from("partner_profiles")
+        .update({ pin_id: pinId })
+        .eq("id", user.id);
+    }
+
     return NextResponse.json({ success: true, id: pinId }, { status: 201 });
   } catch (error) {
     console.error("API audiopin error:", error);

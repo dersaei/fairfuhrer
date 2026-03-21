@@ -53,9 +53,14 @@ export default function AudiopinPage() {
   // Adres i lokalizacja
   const [adresse, setAdresse] = useState("");
   const [stadt, setStadt] = useState("");
-  const [coordinates, setCoordinates] = useState<{ lat: number; lng: number } | null>(null);
+  const [coordinates, setCoordinates] = useState<{
+    lat: number;
+    lng: number;
+  } | null>(null);
   const [geoQuery, setGeoQuery] = useState("");
-  const [geoSuggestions, setGeoSuggestions] = useState<GeocodingSuggestion[]>([]);
+  const [geoSuggestions, setGeoSuggestions] = useState<GeocodingSuggestion[]>(
+    [],
+  );
   const [geoLoading, setGeoLoading] = useState(false);
   const geoDebounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
@@ -97,18 +102,21 @@ export default function AudiopinPage() {
   const [submitSuccess, setSubmitSuccess] = useState(false);
   const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
 
-  // Sprawdź premium status
+  // Sprawdź premium status i czy pin już wysłany
   useEffect(() => {
     if (!user) return;
     const supabase = getSupabaseBrowserClient();
     supabase
       .from("partner_profiles")
-      .select("premium_until")
+      .select("premium_until, pin_id")
       .eq("id", user.id)
       .single()
       .then(({ data }) => {
         if (data?.premium_until) {
           setIsPremium(new Date(data.premium_until) > new Date());
+        }
+        if (data?.pin_id) {
+          setSubmitSuccess(true);
         }
         setPremiumChecked(true);
       });
@@ -148,8 +156,8 @@ export default function AudiopinPage() {
     const adressPart = suggestion.address
       ? `${suggestion.text} ${suggestion.address}`
       : suggestion.text;
-    const cityContext = suggestion.context?.find(
-      (c) => c.id.startsWith("place.")
+    const cityContext = suggestion.context?.find((c) =>
+      c.id.startsWith("place."),
     );
 
     setAdresse(adressPart);
@@ -159,7 +167,9 @@ export default function AudiopinPage() {
   }
 
   function toggleMulti<T>(list: T[], value: T): T[] {
-    return list.includes(value) ? list.filter((v) => v !== value) : [...list, value];
+    return list.includes(value)
+      ? list.filter((v) => v !== value)
+      : [...list, value];
   }
 
   async function handleTitelbildUpload(e: React.ChangeEvent<HTMLInputElement>) {
@@ -239,7 +249,8 @@ export default function AudiopinPage() {
     if (!name.trim()) errors.name = "Name ist erforderlich.";
     if (!adresse.trim()) errors.adresse = "Adresse ist erforderlich.";
     if (!stadt.trim()) errors.stadt = "Stadt ist erforderlich.";
-    if (kategorien.length === 0) errors.kategorien = "Bitte mindestens eine Kategorie wählen.";
+    if (kategorien.length === 0)
+      errors.kategorien = "Bitte mindestens eine Kategorie wählen.";
     if (Object.keys(errors).length > 0) {
       setFieldErrors(errors);
       return;
@@ -257,14 +268,15 @@ export default function AudiopinPage() {
           Stadt: stadt.trim(),
           Breite: coordinates?.lat ?? null,
           Lange: coordinates?.lng ?? null,
-          Telefon: isPremium ? (telefon.trim() || null) : null,
+          Telefon: isPremium ? telefon.trim() || null : null,
           Vollbeschreibung: vollbeschreibung.trim() || null,
-          Link_URL: isPremium ? (linkUrl.trim() || null) : null,
-          Link_Text: isPremium ? (linkText.trim() || null) : null,
+          Link_URL: isPremium ? linkUrl.trim() || null : null,
+          Link_Text: isPremium ? linkText.trim() || null : null,
           Kategorie: kategorien,
           Zertifizierungen: zertifizierungen,
           Titelbild: titelbildId ?? null,
-          Galerie_Bilder: isPremium && galerieIds.length > 0 ? galerieIds : null,
+          Galerie_Bilder:
+            isPremium && galerieIds.length > 0 ? galerieIds : null,
           Audio: audioId ?? null,
         }),
       });
@@ -294,7 +306,9 @@ export default function AudiopinPage() {
       setAudioId(null);
       setAudioPreview(null);
     } catch {
-      setSubmitError("Es ist ein Fehler aufgetreten. Bitte versuchen Sie es erneut.");
+      setSubmitError(
+        "Es ist ein Fehler aufgetreten. Bitte versuchen Sie es erneut.",
+      );
     } finally {
       setSubmitting(false);
     }
@@ -304,10 +318,24 @@ export default function AudiopinPage() {
 
   return (
     <div className={styles.wrapper}>
-      <p className={styles.intro}>
-        Füllen Sie das Formular aus, um Ihren Audiopin einzureichen. Nach der Prüfung
-        durch unser Team wird er auf der Karte veröffentlicht.
-      </p>
+      <h3 className={styles.intro}>
+        Du kannst unser Formular ausfüllen und deinen eigenen Audiopin
+        erstellen, der auf unsere Karte kommt.
+        <br />
+        Wir freuen uns auf deine Einsendung.
+      </h3>
+
+      {!isPremium && (
+        <p className={styles.freeAccountInfo}>
+          Mit deinem kostenlosen Konto kannst du einen Audiopin nur einmal
+          einreichen und hast nur begrenzte Felder zum Ausfüllen. Nach der
+          Einreichung lässt sich der Audiopin nicht mehr bearbeiten. Dein Pin
+          wird zunächst von unserem Team geprüft und erst nach Freigabe auf der
+          Karte sichtbar. Wenn du mehr Funktionen brauchst und deinen Pin sofort
+          veröffentlichen möchtest, upgradiere zu unserem{" "}
+          <strong className={styles.premiumBadge}>Premium-Plan</strong>.
+        </p>
+      )}
 
       {!isPremium && !submitSuccess && (
         <div className={styles.premiumBanner}>
@@ -323,8 +351,11 @@ export default function AudiopinPage() {
         </div>
       )}
 
-      <form onSubmit={handleSubmit} className={`${styles.form} ${submitSuccess ? styles.formDisabled : ""}`} noValidate>
-
+      <form
+        onSubmit={handleSubmit}
+        className={`${styles.form} ${submitSuccess ? styles.formDisabled : ""}`}
+        noValidate
+      >
         {/* Grunddaten */}
         <fieldset className={styles.fieldset}>
           <legend className={styles.legend}>Grunddaten</legend>
@@ -340,7 +371,9 @@ export default function AudiopinPage() {
               value={name}
               onChange={(e) => setName(e.target.value)}
             />
-            {fieldErrors.name && <span className={styles.fieldError}>{fieldErrors.name}</span>}
+            {fieldErrors.name && (
+              <span className={styles.fieldError}>{fieldErrors.name}</span>
+            )}
           </div>
 
           {/* Adresse — autocomplete via Mapbox Geocoding API */}
@@ -352,7 +385,7 @@ export default function AudiopinPage() {
               <input
                 id="pin-geo"
                 type="text"
-                className={`${styles.input} ${(fieldErrors.adresse || fieldErrors.stadt) ? styles.inputError : ""}`}
+                className={`${styles.input} ${fieldErrors.adresse || fieldErrors.stadt ? styles.inputError : ""}`}
                 value={geoQuery}
                 onChange={(e) => handleGeoQueryChange(e.target.value)}
                 onBlur={() => setTimeout(() => setGeoSuggestions([]), 150)}
@@ -374,6 +407,11 @@ export default function AudiopinPage() {
                 </ul>
               )}
             </div>
+            {!coordinates && !fieldErrors.adresse && !fieldErrors.stadt && (
+              <span className={styles.geoHint}>
+                Bitte wählen Sie eine Adresse aus der Vorschlagsliste aus.
+              </span>
+            )}
             {(fieldErrors.adresse || fieldErrors.stadt) && (
               <span className={styles.fieldError}>
                 Bitte wählen Sie eine Adresse aus der Vorschlagsliste.
@@ -381,40 +419,45 @@ export default function AudiopinPage() {
             )}
           </div>
 
-          {/* Manualne pola — auto-wypełniane przez autocomplete, edytowalne */}
-          <div className={styles.fieldRow}>
-            <div className={styles.field}>
-              <label htmlFor="pin-adresse" className={styles.label}>
-                Straße und Hausnummer
-              </label>
-              <input
-                id="pin-adresse"
-                type="text"
-                className={`${styles.input} ${fieldErrors.adresse ? styles.inputError : ""}`}
-                value={adresse}
-                onChange={(e) => setAdresse(e.target.value)}
-                placeholder="Straße und Hausnummer"
-              />
+          {/* Pola wypełniane automatycznie przez autocomplete — readonly */}
+          {coordinates && (
+            <div className={styles.fieldRow}>
+              <div className={styles.field}>
+                <label htmlFor="pin-adresse" className={styles.label}>
+                  Straße und Hausnummer
+                </label>
+                <input
+                  id="pin-adresse"
+                  type="text"
+                  className={`${styles.input} ${styles.inputReadonly}`}
+                  value={adresse}
+                  readOnly
+                />
+              </div>
+              <div className={styles.field}>
+                <label htmlFor="pin-stadt" className={styles.label}>
+                  Stadt
+                </label>
+                <input
+                  id="pin-stadt"
+                  type="text"
+                  className={`${styles.input} ${styles.inputReadonly}`}
+                  value={stadt}
+                  readOnly
+                />
+              </div>
             </div>
-            <div className={styles.field}>
-              <label htmlFor="pin-stadt" className={styles.label}>
-                Stadt
-              </label>
-              <input
-                id="pin-stadt"
-                type="text"
-                className={`${styles.input} ${fieldErrors.stadt ? styles.inputError : ""}`}
-                value={stadt}
-                onChange={(e) => setStadt(e.target.value)}
-              />
-            </div>
-          </div>
+          )}
 
           {/* Telefon — tylko premium */}
-          <div className={`${styles.field} ${!isPremium ? styles.premiumLocked : ""}`}>
+          <div
+            className={`${styles.field} ${!isPremium ? styles.premiumLocked : ""}`}
+          >
             <label htmlFor="pin-telefon" className={styles.label}>
               Telefon
-              {!isPremium && <span className={styles.premiumBadge}>Premium</span>}
+              {!isPremium && (
+                <span className={styles.premiumBadge}>Premium</span>
+              )}
             </label>
             <input
               id="pin-telefon"
@@ -433,7 +476,9 @@ export default function AudiopinPage() {
           <legend className={styles.legend}>Beschreibung</legend>
 
           <div className={styles.field}>
-            <label htmlFor="pin-beschreibung" className={styles.label}>Vollständige Beschreibung</label>
+            <label htmlFor="pin-beschreibung" className={styles.label}>
+              Vollständige Beschreibung
+            </label>
             <textarea
               id="pin-beschreibung"
               className={styles.textarea}
@@ -444,11 +489,15 @@ export default function AudiopinPage() {
           </div>
 
           {/* Link — tylko premium */}
-          <div className={`${styles.fieldRow} ${!isPremium ? styles.premiumLocked : ""}`}>
+          <div
+            className={`${styles.fieldRow} ${!isPremium ? styles.premiumLocked : ""}`}
+          >
             <div className={styles.field}>
               <label htmlFor="pin-link-url" className={styles.label}>
                 Website-Link (URL)
-                {!isPremium && <span className={styles.premiumBadge}>Premium</span>}
+                {!isPremium && (
+                  <span className={styles.premiumBadge}>Premium</span>
+                )}
               </label>
               <input
                 id="pin-link-url"
@@ -456,14 +505,18 @@ export default function AudiopinPage() {
                 className={styles.input}
                 value={linkUrl}
                 onChange={(e) => setLinkUrl(e.target.value)}
-                placeholder={!isPremium ? "Nur für Premium-Konten" : "https://…"}
+                placeholder={
+                  !isPremium ? "Nur für Premium-Konten" : "https://…"
+                }
                 disabled={!isPremium}
               />
             </div>
             <div className={styles.field}>
               <label htmlFor="pin-link-text" className={styles.label}>
                 Link-Text
-                {!isPremium && <span className={styles.premiumBadge}>Premium</span>}
+                {!isPremium && (
+                  <span className={styles.premiumBadge}>Premium</span>
+                )}
               </label>
               <input
                 id="pin-link-text"
@@ -471,7 +524,9 @@ export default function AudiopinPage() {
                 className={styles.input}
                 value={linkText}
                 onChange={(e) => setLinkText(e.target.value)}
-                placeholder={!isPremium ? "Nur für Premium-Konten" : "z.B. Unsere Website"}
+                placeholder={
+                  !isPremium ? "Nur für Premium-Konten" : "z.B. Unsere Website"
+                }
                 disabled={!isPremium}
               />
             </div>
@@ -480,9 +535,7 @@ export default function AudiopinPage() {
 
         {/* Kategorien */}
         <fieldset className={styles.fieldset}>
-          <legend className={styles.legend}>
-            Kategorien
-          </legend>
+          <legend className={styles.legend}>Kategorien</legend>
           {fieldErrors.kategorien && (
             <span className={styles.fieldError}>{fieldErrors.kategorien}</span>
           )}
@@ -493,7 +546,9 @@ export default function AudiopinPage() {
                   type="checkbox"
                   className={styles.checkbox}
                   checked={kategorien.includes(kat.id)}
-                  onChange={() => setKategorien((prev) => toggleMulti(prev, kat.id))}
+                  onChange={() =>
+                    setKategorien((prev) => toggleMulti(prev, kat.id))
+                  }
                 />
                 {kat.name}
               </label>
@@ -530,11 +585,18 @@ export default function AudiopinPage() {
           {titelbildPreview && (
             <div className={styles.titelbildPreview}>
               {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img src={titelbildPreview} alt="Titelbild" className={styles.titelbildImg} />
+              <img
+                src={titelbildPreview}
+                alt="Titelbild"
+                className={styles.titelbildImg}
+              />
               <button
                 type="button"
                 className={styles.removeButton}
-                onClick={() => { setTitelbildId(null); setTitelbildPreview(null); }}
+                onClick={() => {
+                  setTitelbildId(null);
+                  setTitelbildPreview(null);
+                }}
               >
                 Entfernen
               </button>
@@ -550,7 +612,9 @@ export default function AudiopinPage() {
               {titelbildUploading ? "Wird hochgeladen…" : "Bild hochladen"}
             </button>
           )}
-          {titelbildError && <p className={styles.uploadError}>{titelbildError}</p>}
+          {titelbildError && (
+            <p className={styles.uploadError}>{titelbildError}</p>
+          )}
           <input
             ref={titelbildRef}
             type="file"
@@ -562,7 +626,9 @@ export default function AudiopinPage() {
         </fieldset>
 
         {/* Galerie — tylko premium */}
-        <fieldset className={`${styles.fieldset} ${!isPremium ? styles.premiumLocked : ""}`}>
+        <fieldset
+          className={`${styles.fieldset} ${!isPremium ? styles.premiumLocked : ""}`}
+        >
           <legend className={styles.legend}>
             Bildergalerie (max. 6 Bilder)
             {!isPremium && <span className={styles.premiumBadge}>Premium</span>}
@@ -605,7 +671,9 @@ export default function AudiopinPage() {
                     : `Bilder hinzufügen (${galerieIds.length}/6)`}
                 </button>
               )}
-              {galerieError && <p className={styles.uploadError}>{galerieError}</p>}
+              {galerieError && (
+                <p className={styles.uploadError}>{galerieError}</p>
+              )}
               <input
                 ref={galerieRef}
                 type="file"
@@ -623,15 +691,23 @@ export default function AudiopinPage() {
         <fieldset className={styles.fieldset}>
           <legend className={styles.legend}>Audiodatei</legend>
           <p className={styles.hint}>
-            Laden Sie eine Audiodatei für den Audiopin hoch (MP3, M4A, WAV — max. 50 MB).
+            Laden Sie eine Audiodatei für den Audiopin hoch (MP3, M4A, WAV —
+            max. 50 MB).
           </p>
           {audioPreview ? (
             <div className={styles.audioPreview}>
-              <audio controls src={audioPreview} className={styles.audioPlayer} />
+              <audio
+                controls
+                src={audioPreview}
+                className={styles.audioPlayer}
+              />
               <button
                 type="button"
                 className={styles.removeButton}
-                onClick={() => { setAudioId(null); setAudioPreview(null); }}
+                onClick={() => {
+                  setAudioId(null);
+                  setAudioPreview(null);
+                }}
               >
                 Entfernen
               </button>
@@ -658,13 +734,18 @@ export default function AudiopinPage() {
         </fieldset>
 
         {!submitSuccess && (
-          <button type="submit" className={styles.submitButton} disabled={submitting}>
+          <button
+            type="submit"
+            className={styles.submitButton}
+            disabled={submitting}
+          >
             {submitting ? "Wird eingereicht…" : "Audiopin einreichen"}
           </button>
         )}
         {submitSuccess && (
           <p className={styles.successMessage}>
-            Ihr Audiopin wurde erfolgreich eingereicht und wird in Kürze geprüft.
+            Ihr Audiopin wurde erfolgreich eingereicht und wird in Kürze
+            geprüft.
           </p>
         )}
         {submitError && <p className={styles.errorMessage}>{submitError}</p>}
