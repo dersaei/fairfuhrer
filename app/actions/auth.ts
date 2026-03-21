@@ -55,7 +55,7 @@ export async function loginWithMagicLink(
   const { error } = await supabase.auth.signInWithOtp({
     email,
     options: {
-      emailRedirectTo: `${process.env.NEXT_PUBLIC_SITE_URL}/callback`,
+      emailRedirectTo: `${process.env.SITE_URL ?? process.env.NEXT_PUBLIC_SITE_URL}/callback`,
     },
   });
 
@@ -77,7 +77,7 @@ export async function loginWithOAuth(
   const { data, error } = await supabase.auth.signInWithOAuth({
     provider,
     options: {
-      redirectTo: `${process.env.NEXT_PUBLIC_SITE_URL}/callback`,
+      redirectTo: `${process.env.SITE_URL ?? process.env.NEXT_PUBLIC_SITE_URL}/callback`,
     },
   });
 
@@ -118,7 +118,7 @@ export async function registerConsumer(
         role: "consumer",
         username,
       },
-      emailRedirectTo: `${process.env.NEXT_PUBLIC_SITE_URL}/callback`,
+      emailRedirectTo: `${process.env.SITE_URL ?? process.env.NEXT_PUBLIC_SITE_URL}/callback`,
     },
   });
 
@@ -168,7 +168,7 @@ export async function registerPartner(formData: FormData): Promise<AuthResult> {
         first_name: firstName,
         last_name: lastName,
       },
-      emailRedirectTo: `${process.env.NEXT_PUBLIC_SITE_URL}/callback`,
+      emailRedirectTo: `${process.env.SITE_URL ?? process.env.NEXT_PUBLIC_SITE_URL}/callback`,
     },
   });
 
@@ -246,7 +246,7 @@ export async function resetPassword(email: string): Promise<AuthResult> {
 
   const supabase = await getSupabaseServerClient();
   const { error } = await supabase.auth.resetPasswordForEmail(email, {
-    redirectTo: `${process.env.NEXT_PUBLIC_SITE_URL}/passwort-zuruecksetzen`,
+    redirectTo: `${process.env.SITE_URL ?? process.env.NEXT_PUBLIC_SITE_URL}/passwort-zuruecksetzen`,
   });
 
   if (error) {
@@ -261,7 +261,7 @@ export async function updateEmail(newEmail: string): Promise<AuthResult> {
   const supabase = await getSupabaseServerClient();
   const { error } = await supabase.auth.updateUser(
     { email: newEmail },
-    { emailRedirectTo: `${process.env.NEXT_PUBLIC_SITE_URL}/konto` }
+    { emailRedirectTo: `${process.env.SITE_URL ?? process.env.NEXT_PUBLIC_SITE_URL}/konto` }
   );
   if (error) {
     console.error("updateEmail error:", error.message);
