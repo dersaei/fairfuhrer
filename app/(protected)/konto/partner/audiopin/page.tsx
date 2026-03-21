@@ -320,9 +320,8 @@ export default function AudiopinPage() {
     <div className={styles.wrapper}>
       <h3 className={styles.intro}>
         Du kannst unser Formular ausfüllen und deinen eigenen Audiopin
-        erstellen, der auf unsere Karte kommt.
-        <br />
-        Wir freuen uns auf deine Einsendung.
+        erstellen, der auf unsere Karte kommt. Wir freuen uns auf deine
+        Einsendung.
       </h3>
 
       {!isPremium && (
