@@ -1,0 +1,238 @@
+.wrapper {
+  width: 600px;
+  display: flex;
+  flex-direction: column;
+}
+
+.currentValue {
+  font-family: var(--font-fira);
+  font-size: 1rem;
+  color: #18222f;
+  margin: 0 0 1rem;
+}
+
+.fieldHintStandalone {
+  font-family: var(--font-fira);
+  font-size: 0.8rem;
+  color: #1d1515;
+  margin: 0 0 1rem;
+}
+
+.back {
+  display: inline-block;
+  font-family: var(--font-fira);
+  font-size: 0.875rem;
+  color: #1d0d0d;
+  text-decoration: none;
+  margin-bottom: 1.5rem;
+  transition: color 0.2s;
+}
+
+.back:hover {
+  color: #100803;
+}
+
+.title {
+  font-family: var(--font-fira);
+  font-weight: 700;
+  font-size: 2rem;
+  color: #18222f;
+  margin: 0 0 2rem;
+}
+
+.section {
+  margin-bottom: 2rem;
+  padding-bottom: 2rem;
+  border-bottom: 2px solid black;
+}
+
+.section:last-child {
+  border-bottom: none;
+}
+
+.sectionTitle {
+  font-family: var(--font-fira);
+  font-weight: 700;
+  font-size: 1.5rem;
+  color: #18222f;
+  margin: 0 0 1rem;
+}
+
+.email {
+  font-family: var(--font-fira);
+  font-size: 1rem;
+  color: #150a0a;
+  margin: 0;
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+.label {
+  font-family: var(--font-fira);
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: #18222f;
+}
+
+.hint {
+  font-weight: 400;
+  color: #201313;
+}
+
+.fieldHint {
+  font-family: var(--font-fira);
+  font-size: 0.8rem;
+  color: #160e0e;
+}
+
+.input {
+  width: 100%;
+  padding: 0.75rem 1rem;
+  border: 1.5px solid #000;
+  font-family: var(--font-fira);
+  font-size: 1rem;
+  color: #18222f;
+  background-color: #f0fff4;
+  transition:
+    border-color 0.2s,
+    box-shadow 0.2s;
+  box-sizing: border-box;
+}
+
+.input:focus {
+  outline: none;
+  border-color: #fc6c14;
+  box-shadow: 0 0 0 3px rgba(252, 108, 20, 0.12);
+  background-color: #fff;
+}
+
+.inputError {
+  border-color: #e74c3c;
+}
+
+.fieldError {
+  font-family: var(--font-fira);
+  font-size: 0.8rem;
+  color: #e74c3c;
+}
+
+.button {
+  padding: 0.75rem 1.5rem;
+  background-color: firebrick;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  font-family: var(--font-fira);
+  font-size: 0.9rem;
+  font-weight: 700;
+  cursor: pointer;
+  align-self: flex-start;
+  transition: background-color 0.2s;
+}
+
+.button:hover:not(:disabled) {
+  background: #341c02;
+}
+
+.button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.buttonSecondary {
+  padding: 0.75rem 1.5rem;
+  background-color: transparent;
+  color: #c0392b;
+  border: 1.5px solid #c0392b;
+  border-radius: 8px;
+  font-family: var(--font-fira);
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition:
+    background-color 0.2s,
+    color 0.2s;
+}
+
+.buttonSecondary:hover {
+  background-color: #c0392b;
+  color: #fff;
+}
+
+.errorMessage {
+  background: #fff0f0;
+  color: #c0392b;
+  border: 1px solid #f5c6c6;
+  border-radius: 8px;
+  padding: 0.75rem 1rem;
+  font-family: var(--font-fira);
+  font-size: 0.875rem;
+  margin-bottom: 0.5rem;
+}
+
+.successMessage {
+  background: #f0fff4;
+  color: #27ae60;
+  border: 1px solid #b7e5c8;
+  border-radius: 8px;
+  padding: 0.75rem 1rem;
+  font-family: var(--font-fira);
+  font-size: 0.875rem;
+  margin-bottom: 0.5rem;
+}
+
+.dangerZone {
+  border-color: #fdd;
+}
+
+.sectionTitleDanger {
+  font-family: var(--font-anton);
+  font-size: 1.5rem;
+  font-weight: 400;
+  color: #140503;
+  margin: 0 0 0.75rem;
+}
+
+.dangerText {
+  font-family: var(--font-fira);
+  font-size: 0.9rem;
+  color: #2a2121;
+  margin: 0 0 1rem;
+  line-height: 1.5;
+}
+
+.buttonDanger {
+  padding: 0.75rem 1.5rem;
+  background-color: #140503;
+  color: #c0392b;
+  border: 1.5px solid #c0392b;
+  border-radius: 8px;
+  font-family: var(--font-fira);
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition:
+    background-color 0.2s,
+    color 0.2s;
+  margin-top: 0.75rem;
+}
+
+.buttonDanger:hover:not(:disabled) {
+  background-color: #c0392b;
+  color: #fff;
+}
+
+.buttonDanger:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}

@@ -1,0 +1,130 @@
+.loginLink {
+  font-family: var(--font-fira);
+  font-size: 0.9rem;
+  font-weight: 600;
+  background-color: transparent;
+  color: #fc6c14;
+  text-decoration: none;
+  padding: 0.4rem 1rem;
+  border: 1.5px solid #fc6c14;
+  border-radius: 6px;
+  transition:
+    background-color 0.2s,
+    color 0.2s;
+}
+
+.loginLink:hover {
+  background-color: #fc6c14;
+  color: #fff;
+}
+
+.wrapper {
+  position: relative;
+  display: flex;
+  justify-content: center;
+}
+
+.trigger {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 0.5rem;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0.25rem 0.5rem;
+  border-radius: 8px;
+  transition: background 0.2s;
+}
+
+.trigger:hover {
+  background: rgba(0, 0, 0, 0.05);
+}
+
+.avatar {
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid #fc6c14;
+}
+
+.avatarFallback {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: #fc6c14;
+  color: #fff;
+  font-family: var(--font-fira);
+  font-size: 0.9rem;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.name {
+  font-family: var(--font-fira);
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: #18222f;
+  max-width: 120px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.chevron {
+  font-size: 0.6rem;
+  color: #888;
+}
+
+.dropdown {
+  position: absolute;
+  top: calc(100% + 0.5rem);
+  right: 0;
+  background: #fff;
+  border: 1px solid #e8e8e8;
+  border-radius: 10px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+  min-width: 180px;
+  z-index: 1100;
+  overflow: hidden;
+}
+
+@media screen and (max-width: 420px) {
+  .dropdown {
+    right: auto;
+    left: 50%;
+    transform: translateX(-50%);
+  }
+}
+
+.item {
+  display: block;
+  position: relative;
+  text-align: center;
+  width: 100%;
+  padding: 0.75rem 1rem;
+  font-family: var(--font-fira);
+  font-size: 0.875rem;
+  color: #18222f;
+  text-decoration: none;
+  background-color: none;
+  border: none;
+  cursor: pointer;
+  transition: background-color 0.15s;
+}
+
+.item:hover {
+  background-color: #f5f5f0;
+}
+
+.divider {
+  height: 1px;
+  background: #eee;
+  margin: 0.25rem 0;
+}
+
+.logout {
+  color: #c0392b;
+  font-weight: 600;
+}

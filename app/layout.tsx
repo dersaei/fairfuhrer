@@ -8,6 +8,7 @@ import Footer from "../components/Footer";
 import ScrollToTop from "../components/ScrollToTop";
 import { PayPalProvider } from "../components/PayPalProvider";
 import { CookieProvider } from "../context/CookieContext";
+import { AuthProvider } from "../context/AuthContext";
 import CookieBanner from "../components/CookieBanner";
 import HotjarTag from "../components/HotjarTag";
 import GlobalLoadingIndicator from "../components/GlobalLoadingIndicator";
@@ -100,12 +101,14 @@ export default function RootLayout({
           {/* Hotjar Tag */}
           {HOTJAR_SITE_ID && <HotjarTag siteId={HOTJAR_SITE_ID} />}
 
-          <PayPalProvider>
-            <Header />
-            <main>{children}</main>
-            <Footer />
-            <ScrollToTop />
-          </PayPalProvider>
+          <AuthProvider>
+            <PayPalProvider>
+              <Header />
+              <main>{children}</main>
+              <Footer />
+              <ScrollToTop />
+            </PayPalProvider>
+          </AuthProvider>
 
           <CookieBanner />
         </CookieProvider>

@@ -1,0 +1,143 @@
+"use client";
+
+import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
+import { getSupabaseBrowserClient } from "@/lib/supabase-browser";
+import { updatePassword } from "@/app/actions/auth";
+import type { FormErrors } from "@/types/auth";
+import styles from "./reset-password.module.css";
+
+export default function ResetPasswordPage() {
+  const router = useRouter();
+  const [isReady, setIsReady] = useState(false);
+  const [isInvalidLink, setIsInvalidLink] = useState(false);
+  const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const [errors, setErrors] = useState<FormErrors>({});
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [success, setSuccess] = useState(false);
+
+  useEffect(() => {
+    const supabase = getSupabaseBrowserClient();
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      if (session) {
+        setIsReady(true);
+      } else {
+        setIsInvalidLink(true);
+      }
+    });
+  }, []);
+
+  async function handleSubmit(e: React.FormEvent) {
+    e.preventDefault();
+    setErrors({});
+
+    if (password !== confirmPassword) {
+      setErrors({ confirmPassword: "Passwörter stimmen nicht überein." });
+      return;
+    }
+
+    if (password.length < 8) {
+      setErrors({ password: "Das Passwort muss mindestens 8 Zeichen lang sein." });
+      return;
+    }
+
+    setIsSubmitting(true);
+    const result = await updatePassword(password);
+    setIsSubmitting(false);
+
+    if (!result.success) {
+      setErrors({ general: result.error });
+      return;
+    }
+
+    setSuccess(true);
+    setTimeout(() => router.push("/konto"), 2000);
+  }
+
+  if (isInvalidLink) {
+    return (
+      <div className={styles.card}>
+        <p className={styles.errorMessage}>
+          Dieser Link ist ungültig oder abgelaufen. Bitte fordern Sie einen neuen{" "}
+          <a href="/passwort-vergessen" className={styles.link}>
+            Passwort-Reset-Link
+          </a>{" "}
+          an.
+        </p>
+      </div>
+    );
+  }
+
+  if (!isReady) {
+    return (
+      <div className={styles.card}>
+        <p className={styles.loading}>Wird geladen…</p>
+      </div>
+    );
+  }
+
+  if (success) {
+    return (
+      <div className={styles.card}>
+        <p className={styles.successMessage}>
+          Passwort erfolgreich geändert. Sie werden zu Ihrem Konto weitergeleitet…
+        </p>
+      </div>
+    );
+  }
+
+  return (
+    <div className={styles.card}>
+      <h1 className={styles.title}>Neues Passwort festlegen</h1>
+
+      {errors.general && (
+        <p className={styles.errorMessage}>{errors.general}</p>
+      )}
+
+      <form onSubmit={handleSubmit} className={styles.form} noValidate>
+        <div className={styles.field}>
+          <label htmlFor="password" className={styles.label}>
+            Neues Passwort <span className={styles.hint}>(min. 8 Zeichen)</span>
+          </label>
+          <input
+            id="password"
+            type="password"
+            className={`${styles.input} ${errors.password ? styles.inputError : ""}`}
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            autoComplete="new-password"
+          />
+          {errors.password && (
+            <span className={styles.fieldError}>{errors.password}</span>
+          )}
+        </div>
+
+        <div className={styles.field}>
+          <label htmlFor="confirmPassword" className={styles.label}>
+            Passwort bestätigen
+          </label>
+          <input
+            id="confirmPassword"
+            type="password"
+            className={`${styles.input} ${errors.confirmPassword ? styles.inputError : ""}`}
+            value={confirmPassword}
+            onChange={(e) => setConfirmPassword(e.target.value)}
+            autoComplete="new-password"
+          />
+          {errors.confirmPassword && (
+            <span className={styles.fieldError}>{errors.confirmPassword}</span>
+          )}
+        </div>
+
+        <button
+          type="submit"
+          className={styles.submitButton}
+          disabled={isSubmitting}
+        >
+          {isSubmitting ? "Wird gespeichert…" : "Passwort speichern"}
+        </button>
+      </form>
+    </div>
+  );
+}

@@ -1,0 +1,138 @@
+.wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+  max-width: 600px;
+}
+
+.avatarSection {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.avatarTitle {
+  font-family: var(--font-fira);
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: #18222f;
+  margin: 0;
+}
+
+.avatarText {
+  font-family: var(--font-fira);
+  font-size: 0.875rem;
+  color: #18222f;
+  line-height: 1.6;
+  margin: 0;
+}
+
+.avatarActions {
+  display: flex;
+  gap: 0.75rem;
+  margin-top: 0.25rem;
+  flex-wrap: wrap;
+}
+
+.uploadButton {
+  padding: 0.5rem 1rem;
+  background-color: #18222f;
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  font-family: var(--font-fira);
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: opacity 0.2s;
+}
+
+.uploadButton:hover:not(:disabled) {
+  opacity: 0.8;
+}
+
+.uploadButton:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.deleteButton {
+  padding: 0.5rem 1rem;
+  background-color: transparent;
+  color: #18222f;
+  border: 1.5px solid #18222f;
+  border-radius: 6px;
+  font-family: var(--font-fira);
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: opacity 0.2s;
+}
+
+.deleteButton:hover:not(:disabled) {
+  opacity: 0.7;
+  background-color: #fff;
+}
+
+.deleteButton:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.uploadError {
+  font-family: var(--font-fira);
+  font-size: 0.8rem;
+  color: #c0392b;
+  margin: 0;
+}
+
+.hiddenInput {
+  display: none;
+}
+
+/* Pola */
+.sectionLabel {
+  font-family: var(--font-fira);
+  font-size: 1rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: #18222f;
+  padding: 0.5rem 0;
+  border-bottom: 2px solid #18222f;
+  margin-bottom: 0;
+}
+
+.fields {
+  display: flex;
+  flex-direction: column;
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+  padding: 0.875rem 0;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.12);
+}
+
+.field:first-child {
+  border-top: 1px solid rgba(0, 0, 0, 0.12);
+}
+
+.label {
+  font-family: var(--font-fira);
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: #2d2c2d;
+}
+
+.value {
+  font-family: var(--font-fira);
+  font-size: 1rem;
+  color: #18222f;
+}

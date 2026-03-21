@@ -1,0 +1,28 @@
+.nav {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.25rem 2rem;
+  margin-bottom: 0;
+}
+
+.navItem {
+  font-family: var(--font-anton);
+  font-weight: 400;
+  font-size: 1.5rem;
+  color: #18222f;
+  text-decoration: none;
+  padding: 0.25rem 0;
+  transition: color 0.2s;
+}
+
+.navItem:hover {
+  color: #fff;
+}
+
+.navItemActive {
+  color: #fff;
+  text-decoration: underline;
+  text-underline-offset: 4px;
+}

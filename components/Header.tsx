@@ -3,6 +3,7 @@
 import styles from "./Header.module.css";
 import Image from "next/image";
 import Link from "next/link";
+import UserMenu from "./auth/UserMenu";
 import { useState, useEffect } from "react";
 import logoFairfuehrer from "../public/logo-fairfuehrer.png";
 import appStoreBadge from "../public/app-store-badge.png";
@@ -57,6 +58,8 @@ export default function Header() {
           Über uns
         </Link>
 
+        <UserMenu />
+
         {/* Social media - Desktop */}
         <div className={styles.social}>
           <a
@@ -99,6 +102,11 @@ export default function Header() {
           </a>
         </div>
       </nav>
+      {/* UserMenu w headerze — widoczny na mobile, ukryty na desktop (desktop ma go w nav) */}
+      <div className={styles.mobileHeaderUserMenu}>
+        <UserMenu />
+      </div>
+
       {/* Hamburger Button */}
       <button
         type="button"

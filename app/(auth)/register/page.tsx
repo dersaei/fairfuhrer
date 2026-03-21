@@ -1,0 +1,76 @@
+import Link from "next/link";
+import styles from "./register.module.css";
+
+export default function RegisterPage() {
+  return (
+    <div className={styles.wrapper}>
+      <h1 className={styles.title}>Konto erstellen</h1>
+      <p className={styles.subtitle}>
+        Wählen Sie aus, wie Sie Fairführer nutzen möchten.
+      </p>
+      <div className={styles.cards}>
+        <Link href="/register/consumer" className={styles.card}>
+          <div className={styles.cardIcon}>
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="44"
+              height="44"
+              viewBox="0 0 24 24"
+              fill="#ff3700"
+              stroke="#000000"
+              strokeWidth="1"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              className="lucide lucide-user-icon lucide-user"
+            >
+              <path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2" />
+              <circle cx="12" cy="7" r="4" />
+            </svg>
+          </div>
+          <h2 className={styles.cardTitle}>Als Reisender</h2>
+          <p className={styles.cardDesc}>
+            Entdecken Sie nachhaltige Orte, folgen Sie Partnern und
+            kommunizieren Sie mit der Community.
+          </p>
+          <span className={styles.cardCta}>Weiter →</span>
+        </Link>
+
+        <Link href="/register/partner" className={styles.card}>
+          <div className={styles.cardIcon}>
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="44"
+              height="44"
+              viewBox="0 0 24 24"
+              fill="#ffdd00"
+              stroke="#000000"
+              strokeWidth="1"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              className="lucide lucide-handshake-icon lucide-handshake"
+            >
+              <path d="m11 17 2 2a1 1 0 1 0 3-3" />
+              <path d="m14 14 2.5 2.5a1 1 0 1 0 3-3l-3.88-3.88a3 3 0 0 0-4.24 0l-.88.88a1 1 0 1 1-3-3l2.81-2.81a5.79 5.79 0 0 1 7.06-.87l.47.28a2 2 0 0 0 1.42.25L21 4" />
+              <path d="m21 3 1 11h-2" />
+              <path d="M3 3 2 14l6.5 6.5a1 1 0 1 0 3-3" />
+              <path d="M3 4h8" />
+            </svg>
+          </div>
+          <h2 className={styles.cardTitle}>Als Partner</h2>
+          <p className={styles.cardDesc}>
+            Präsentieren Sie Ihr nachhaltiges Unternehmen, teilen Sie
+            Neuigkeiten und erreichen Sie unsere Community.
+          </p>
+          <span className={styles.cardCta}>Weiter →</span>
+        </Link>
+      </div>
+
+      <p className={styles.loginLink}>
+        Bereits registriert?{" "}
+        <Link href="/login" className={styles.link}>
+          Anmelden
+        </Link>
+      </p>
+    </div>
+  );
+}
