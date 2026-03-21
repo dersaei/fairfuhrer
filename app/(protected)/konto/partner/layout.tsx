@@ -13,9 +13,8 @@ export default async function PartnerLayout({
   if (!user) redirect("/login");
   if (user.profile?.role !== "partner") redirect("/konto/reisender");
 
-  const { profile } = user;
   const displayName =
-    [profile?.first_name, profile?.last_name].filter(Boolean).join(" ") ||
+    user.partnerProfile?.company_name ||
     user.email ||
     "Partner";
 

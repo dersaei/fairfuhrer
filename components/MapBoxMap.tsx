@@ -35,12 +35,12 @@ function placesToGeoJSON(places: Place[]) {
   return {
     type: "FeatureCollection" as const,
     features: places
-      .filter((p) => p.Breite && p.Lange)
+      .filter((p) => p.location?.coordinates)
       .map((p) => ({
         type: "Feature" as const,
         geometry: {
           type: "Point" as const,
-          coordinates: [p.Lange, p.Breite],
+          coordinates: p.location.coordinates,
         },
         properties: {
           placeId: p.id,
@@ -288,7 +288,7 @@ export default function MapBoxMap({
             const currentZoom = mapRef.current.getZoom();
             setTimeout(() => {
               animateToLocation(
-                [place.Lange, place.Breite],
+                place.location.coordinates,
                 Math.max(currentZoom, 12),
                 1200,
               );
@@ -325,7 +325,7 @@ export default function MapBoxMap({
     (place: Place) => {
       openPanel(place);
       setTimeout(() => {
-        animateToLocation([place.Lange, place.Breite], 14, 1200);
+        animateToLocation(place.location.coordinates, 14, 1200);
       }, 100);
     },
     [openPanel, animateToLocation],
@@ -650,22 +650,26 @@ export default function MapBoxMap({
       | undefined;
     if (!source) return;
 
+    // Używamy placesRef.current zamiast places z closure — bo ta funkcja
+    // może być wywołana z initializePlacesLayer (stała closure bez dostępu do places).
+    const currentPlaces = placesRef.current;
+
     source.setData(
-      placesToGeoJSON(places) as GeoJSON.FeatureCollection<GeoJSON.Point>,
+      placesToGeoJSON(currentPlaces) as GeoJSON.FeatureCollection<GeoJSON.Point>,
     );
 
-    // fitBounds tylko gdy zmienił się zestaw miejsc
-    const placesKey = places
+    // fitBounds tylko gdy zmienił się zestaw miejsc.
+    const placesKey = currentPlaces
       .map((p) => p.id)
       .sort()
       .join(",");
-    if (places.length > 0 && placesKey !== lastFittedPlacesRef.current) {
+    if (currentPlaces.length > 0 && placesKey !== lastFittedPlacesRef.current) {
       lastFittedPlacesRef.current = placesKey;
 
       const bounds = new mapboxgl.LngLatBounds();
-      places
-        .filter((p) => p.Breite && p.Lange)
-        .forEach((p) => bounds.extend([p.Lange, p.Breite]));
+      currentPlaces
+        .filter((p) => p.location?.coordinates)
+        .forEach((p) => bounds.extend(p.location.coordinates));
       if (userLocation) bounds.extend(userLocation);
 
       const padding =
@@ -673,7 +677,7 @@ export default function MapBoxMap({
           ? { top: 80, bottom: 80, left: 80, right: 80 }
           : { top: 50, bottom: 50, left: 20, right: 20 };
 
-      map.fitBounds(bounds, { padding, duration: 1000, maxZoom: 12 });
+      map.fitBounds(bounds, { padding, duration: 1000 });
     }
   }, [places, userLocation]);
 

@@ -15,6 +15,12 @@ export interface Category {
 // Alias dla niemieckiej nazwy kolekcji w Directus
 export type Kategorie = Category;
 
+// ✅ GeoJSON Point — format zwracany przez Directus Map field
+export interface GeoJSONPoint {
+  type: "Point";
+  coordinates: [number, number]; // [longitude, latitude]
+}
+
 // ✅ Place - niemieckie nazwy pól
 export interface Place {
   id: number;
@@ -22,8 +28,7 @@ export interface Place {
   Adresse: string;
   Telefon?: string;
   Vollbeschreibung?: string;
-  Breite: number; // Już sparsowane do number
-  Lange: number; // Już sparsowane do number
+  location: GeoJSONPoint; // PostGIS Point z Directus Map field
   Kategorie: Category[];
   // Pola dla mediów i dodatkowych informacji
   Hauptbild?: string;
@@ -132,8 +137,7 @@ export interface DirectusOrte {
   Adresse: string;
   Telefon?: string;
   Vollbeschreibung?: string;
-  Breite: string; // String from API - needs parsing
-  Lange: string; // String from API - needs parsing
+  location?: GeoJSONPoint; // PostGIS Point z Directus Map field
   Kategorie?: DirectusOrteKategorie[];
   Hauptbild?: string;
   Audio_Datei?: string;

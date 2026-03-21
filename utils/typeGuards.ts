@@ -29,8 +29,10 @@ export function isValidPlace(place: unknown): place is Place {
     typeof p.id === "number" &&
     typeof p.Name === "string" &&
     typeof p.Adresse === "string" &&
-    typeof p.Breite === "number" &&
-    typeof p.Lange === "number" &&
+    typeof p.location === "object" &&
+    p.location !== null &&
+    (p.location as Record<string, unknown>).type === "Point" &&
+    Array.isArray((p.location as Record<string, unknown>).coordinates) &&
     Array.isArray(p.Kategorie) &&
     // Optional fields
     (p.Vollbeschreibung === undefined ||

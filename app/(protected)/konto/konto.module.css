@@ -8,7 +8,8 @@
 
 .header {
   display: flex;
-  align-items: flex-start;
+  flex-direction: column;
+  align-items: center;
   justify-content: center;
   flex-wrap: wrap;
   gap: 1.5rem;
@@ -48,7 +49,7 @@
 
 .role {
   display: inline-block;
-  background-color: #18222f;
+  background-color: darkred;
   color: #fff;
   font-family: var(--font-fira);
   font-size: 1rem;

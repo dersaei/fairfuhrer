@@ -31,6 +31,7 @@ export default function UserMenu() {
   }
 
   const displayName =
+    (user.profile?.role === "partner" ? user.partnerProfile?.company_name : null) ||
     user.profile?.username ||
     [user.profile?.first_name, user.profile?.last_name]
       .filter(Boolean)

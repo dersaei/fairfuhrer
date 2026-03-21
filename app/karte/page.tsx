@@ -21,14 +21,6 @@ export const revalidate = 86400; // 24 hours
 // ========================================
 
 /**
- * Bezpieczne parsowanie współrzędnych z string do number
- */
-function parseCoordinate(value: string, fallback: number = 0): number {
-  const parsed = parseFloat(value);
-  return isNaN(parsed) ? fallback : parsed;
-}
-
-/**
  * Walidacja współrzędnych geograficznych
  */
 function isValidCoordinate(lat: number, lng: number): boolean {
@@ -73,8 +65,12 @@ function sanitizeWordHtml(html: string): string {
  */
 function transformDirectusOrteToPlace(ort: DirectusOrte): Place | null {
   try {
-    const latitude = parseCoordinate(ort.Breite);
-    const longitude = parseCoordinate(ort.Lange);
+    if (!ort.location || ort.location.type !== "Point" || !ort.location.coordinates) {
+      console.error(`Fehlende Location für Ort ${ort.id}`);
+      return null;
+    }
+
+    const [longitude, latitude] = ort.location.coordinates;
 
     if (!isValidCoordinate(latitude, longitude)) {
       console.error(
@@ -96,8 +92,7 @@ function transformDirectusOrteToPlace(ort: DirectusOrte): Place | null {
       Vollbeschreibung: ort.Vollbeschreibung
         ? sanitizeWordHtml(ort.Vollbeschreibung)
         : undefined,
-      Breite: latitude,
-      Lange: longitude,
+      location: ort.location,
       // ✅ FIXED: Proper filtering and mapping
       Kategorie:
         ort.Kategorie?.filter((k) => {
@@ -197,8 +192,7 @@ export default async function KartePage() {
         "Adresse",
         "Telefon",
         "Vollbeschreibung",
-        "Breite",
-        "Lange",
+        "location",
         "Hauptbild",
         "Audio_Datei",
         "Link_URL",
