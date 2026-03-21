@@ -28,6 +28,8 @@ if (!DIRECTUS_URL) {
   throw new Error("❌ Missing required environment variable: DIRECTUS_URL");
 }
 
+const DIRECTUS_TOKEN = process.env.DIRECTUS_TOKEN;
+
 export const directus = createDirectus(DIRECTUS_URL).with(
   rest({
     onRequest: (opts) => ({
@@ -269,6 +271,7 @@ export async function createPayPalDonation(
       method: "POST",
       headers: {
         "Content-Type": "application/json",
+        ...(DIRECTUS_TOKEN && { Authorization: `Bearer ${DIRECTUS_TOKEN}` }),
       },
       body: JSON.stringify(donation),
     });
@@ -277,6 +280,12 @@ export async function createPayPalDonation(
       throw new Error(
         `Failed to create PayPal donation: ${response.statusText}`
       );
+    }
+
+    // Directus może zwrócić 204 bez body — wtedy odczytujemy po order_id
+    if (response.status === 204 || response.headers.get("content-length") === "0") {
+      const byOrderId = await getPayPalDonationByOrderId(donation.paypal_order_id);
+      return byOrderId;
     }
 
     const data = await response.json();
@@ -301,6 +310,7 @@ export async function updatePayPalDonationStatus(
         method: "PATCH",
         headers: {
           "Content-Type": "application/json",
+          ...(DIRECTUS_TOKEN && { Authorization: `Bearer ${DIRECTUS_TOKEN}` }),
         },
         body: JSON.stringify(updates),
       }
@@ -332,6 +342,7 @@ export async function getPayPalDonation(
       {
         headers: {
           "Content-Type": "application/json",
+          ...(DIRECTUS_TOKEN && { Authorization: `Bearer ${DIRECTUS_TOKEN}` }),
         },
       }
     );
@@ -365,6 +376,7 @@ export async function getPayPalDonationByOrderId(
       {
         headers: {
           "Content-Type": "application/json",
+          ...(DIRECTUS_TOKEN && { Authorization: `Bearer ${DIRECTUS_TOKEN}` }),
         },
       }
     );
@@ -399,6 +411,7 @@ export async function logWebhookEvent(
       method: "POST",
       headers: {
         "Content-Type": "application/json",
+        ...(DIRECTUS_TOKEN && { Authorization: `Bearer ${DIRECTUS_TOKEN}` }),
       },
       body: JSON.stringify(webhookLog),
     });

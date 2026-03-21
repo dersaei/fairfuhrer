@@ -6,7 +6,7 @@ import { Euro, CreditCard } from "lucide-react";
 import Image from "next/image";
 import paypalLogo from "@/public/paypal-logo-fair-fuehrer-guide.png";
 import { PayPalButtons } from "./PayPalButtons";
-import { isValidEURAmount, convertEURToCents } from "@/utils/paypalTypeGuards";
+import { convertEURToCents } from "@/utils/paypalTypeGuards";
 import type {
   PayPalDonationFormData,
   PayPalDonationFormErrors,
@@ -34,41 +34,6 @@ export function PayPalDonationForm({
 
   const [errors, setErrors] = useState<PayPalDonationFormErrors>({});
   const [isSubmitting, setIsSubmitting] = useState(false);
-
-  // Validation
-  const validateForm = (): boolean => {
-    const newErrors: PayPalDonationFormErrors = {};
-
-    // ✅ POPRAWKA: Sprawdź czy amount > 0 (bo teraz default to 0)
-    if (formData.amount <= 0 || !isValidEURAmount(formData.amount)) {
-      newErrors.amount =
-        "Bitte geben Sie einen Betrag zwischen 1 und 10.000 EUR ein";
-    }
-
-    if (
-      formData.donor_email &&
-      !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.donor_email)
-    ) {
-      newErrors.donor_email = "Bitte geben Sie eine gültige E-Mail-Adresse ein";
-    }
-
-    if (formData.donor_message && formData.donor_message.length > 500) {
-      newErrors.donor_message =
-        "Die Nachricht darf maximal 500 Zeichen lang sein";
-    }
-
-    setErrors(newErrors);
-    return Object.keys(newErrors).length === 0;
-  };
-
-  // Handle form submission
-  const handleSubmit = () => {
-    if (!validateForm()) {
-      return false;
-    }
-    setIsSubmitting(true);
-    return true;
-  };
 
   // Handle success
   const handleSuccess = (donation: PayPalDonation) => {
@@ -232,7 +197,6 @@ export function PayPalDonationForm({
               name: formData.donor_name || undefined,
               message: formData.donor_message || undefined,
             }}
-            onApprove={handleSubmit}
             onSuccess={handleSuccess}
             onError={handleError}
             onCancel={handleCancel}

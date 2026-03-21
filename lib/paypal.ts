@@ -38,22 +38,7 @@ export const paypalConfig: PayPalConfig = {
   currency: process.env.PAYPAL_CURRENCY || "EUR",
   min_amount: parseInt(process.env.PAYPAL_MIN_AMOUNT || "100"),
   max_amount: parseInt(process.env.PAYPAL_MAX_AMOUNT || "1000000"),
-  return_url:
-    process.env.PAYPAL_RETURN_URL ||
-    "http://localhost:3000/sparschwein/success",
-  cancel_url:
-    process.env.PAYPAL_CANCEL_URL || "http://localhost:3000/sparschwein/cancel",
 };
-
-// PayPal Script Options (dla React komponentów) - BEZ server SDK
-export function getPayPalScriptOptions() {
-  return {
-    clientId: paypalConfig.client_id,
-    currency: paypalConfig.currency,
-    intent: "capture",
-    locale: "de_DE", // Niemiecka lokalizacja
-  };
-}
 
 // Helper functions
 export function formatAmount(amountInCents: number): string {

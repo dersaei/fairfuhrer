@@ -1,7 +1,11 @@
 // components/PayPalButtons.tsx
 "use client";
 
-import { PayPalButtons as PayPalButtonsSDK } from "@paypal/react-paypal-js";
+import {
+  PayPalOneTimePaymentButton,
+  type OnApproveDataOneTimePayments,
+  type OnErrorData,
+} from "@paypal/react-paypal-js/sdk-v6";
 import { useState } from "react";
 import type { PayPalDonation } from "@/types";
 import styles from "./PayPalButtons.module.css";
@@ -15,7 +19,6 @@ interface DonorData {
 interface PayPalButtonsProps {
   amount: number; // w centach
   donorData?: DonorData;
-  onApprove?: () => boolean; // return false to cancel
   onSuccess?: (donation: PayPalDonation) => void;
   onError?: (error: string) => void;
   onCancel?: () => void;
@@ -25,42 +28,29 @@ interface PayPalButtonsProps {
 export function PayPalButtons({
   amount,
   donorData,
-  onApprove,
   onSuccess,
   onError,
   onCancel,
   disabled = false,
 }: PayPalButtonsProps) {
   const [isProcessing, setIsProcessing] = useState(false);
-  // Przechowuj orderId żeby cancel-order mógł go użyć
   const [currentOrderId, setCurrentOrderId] = useState<string | null>(null);
 
   return (
     <div className={styles.paypalButtonsContainer}>
-      {disabled && (
+      {(disabled || isProcessing) && (
         <div className={styles.processingOverlay}>
           <div className={styles.spinner}></div>
           <span>Zahlung wird verarbeitet...</span>
         </div>
       )}
 
-      <PayPalButtonsSDK
+      <PayPalOneTimePaymentButton
         disabled={disabled || isProcessing}
-        style={{
-          layout: "vertical",
-          color: "gold",
-          shape: "rect",
-          label: "donate",
-          tagline: false,
-          height: 45,
-        }}
-        forceReRender={[amount]}
+        type="donate"
+        presentationMode="auto"
         createOrder={async () => {
           try {
-            if (onApprove && !onApprove()) {
-              throw new Error("Validation failed");
-            }
-
             setIsProcessing(true);
 
             const response = await fetch("/api/paypal/create-order", {
@@ -82,7 +72,7 @@ export function PayPalButtons({
 
             const data = await response.json();
             setCurrentOrderId(data.order_id);
-            return data.order_id;
+            return { orderId: data.order_id };
           } catch (error) {
             setIsProcessing(false);
             const errorMessage =
@@ -91,12 +81,12 @@ export function PayPalButtons({
             throw error;
           }
         }}
-        onApprove={async (data) => {
+        onApprove={async ({ orderId }: OnApproveDataOneTimePayments) => {
           try {
             const response = await fetch("/api/paypal/capture-payment", {
               method: "POST",
               headers: { "Content-Type": "application/json" },
-              body: JSON.stringify({ order_id: data.orderID }),
+              body: JSON.stringify({ order_id: orderId }),
             });
 
             if (!response.ok) {
@@ -110,7 +100,7 @@ export function PayPalButtons({
               id: `temp_${Date.now()}`,
               amount,
               currency: "EUR",
-              paypal_order_id: data.orderID,
+              paypal_order_id: orderId,
               paypal_payment_id: captureData.payment_id,
               donor_email: donorData?.email,
               donor_name: donorData?.name,
@@ -134,7 +124,6 @@ export function PayPalButtons({
         onCancel={() => {
           setIsProcessing(false);
 
-          // Aktualizuj status w Directus — używaj order_id, nie amount
           if (currentOrderId) {
             fetch("/api/paypal/cancel-order", {
               method: "POST",
@@ -148,12 +137,10 @@ export function PayPalButtons({
 
           onCancel?.();
         }}
-        onError={(error) => {
+        onError={(data: OnErrorData) => {
           setIsProcessing(false);
-          console.error("PayPal error:", error);
-          const errorMessage =
-            typeof error === "string" ? error : "PayPal error occurred";
-          onError?.(errorMessage);
+          console.error("PayPal error:", data);
+          onError?.("PayPal error occurred");
         }}
       />
     </div>

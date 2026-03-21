@@ -113,7 +113,7 @@ export async function POST(request: NextRequest) {
     const donation = await createPayPalDonation(donationData);
 
     if (!donation) {
-      throw new Error("Failed to create donation record");
+      console.error("Failed to create donation record in Directus — PayPal order exists:", orderId);
     }
 
     // Znajdź approval URL
@@ -122,12 +122,12 @@ export async function POST(request: NextRequest) {
         (link: { rel: string; href: string }) => link.rel === "approve"
       )?.href || "";
 
-    // Zwróć odpowiedź
+    // Zwróć odpowiedź — nawet jeśli Directus zawiódł, order_id jest ważny
     return NextResponse.json({
       order_id: orderId,
       status: orderStatus,
       approval_url: approvalUrl,
-      donation_id: donation.id,
+      donation_id: donation?.id,
     });
   } catch (error) {
     console.error("PayPal create order error:", error);

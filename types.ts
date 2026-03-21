@@ -878,8 +878,6 @@ export interface PayPalConfig {
   currency: string; // Domyślnie 'EUR'
   min_amount: number; // Minimalna kwota w centach (np. 100 = 1 EUR)
   max_amount: number; // Maksymalna kwota w centach (np. 100000 = 1000 EUR)
-  return_url: string;
-  cancel_url: string;
 }
 
 // Typy dla Directus integration

@@ -1,7 +1,7 @@
-// components/PayPalProvider.tsx - CZYSTY KOD BEZ DIAGNOSTYKI
+// components/PayPalProvider.tsx
 "use client";
 
-import { PayPalScriptProvider } from "@paypal/react-paypal-js";
+import { PayPalProvider as PayPalSDKProvider } from "@paypal/react-paypal-js/sdk-v6";
 import type { ReactNode } from "react";
 
 interface PayPalProviderProps {
@@ -9,22 +9,21 @@ interface PayPalProviderProps {
 }
 
 export function PayPalProvider({ children }: PayPalProviderProps) {
-  const scriptOptions = {
-    clientId: process.env.NEXT_PUBLIC_PAYPAL_CLIENT_ID || "",
-    currency: "EUR",
-    intent: "capture" as const,
-    disableFunding: ["card", "p24"],
-    locale: "de_DE",
-  };
+  const clientId = process.env.NEXT_PUBLIC_PAYPAL_CLIENT_ID || "";
 
-  if (!scriptOptions.clientId) {
+  if (!clientId) {
     console.warn("PayPal Client ID not found - PayPal functionality disabled");
     return <>{children}</>;
   }
 
   return (
-    <PayPalScriptProvider options={scriptOptions} deferLoading={false}>
+    <PayPalSDKProvider
+      clientId={clientId}
+      components={["paypal-payments"]}
+      pageType="checkout"
+      locale="de-DE"
+    >
       {children}
-    </PayPalScriptProvider>
+    </PayPalSDKProvider>
   );
 }
