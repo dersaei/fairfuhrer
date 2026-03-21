@@ -129,7 +129,77 @@
 .successText {
   font-family: var(--font-fira);
   font-size: 1rem;
-  color: #18222f;
+  color: wheat;
   line-height: 1.6;
+  margin: 0;
+  text-align: center;
+  font-weight: 400;
+}
+
+.premiumInfo {
+  font-family: var(--font-fira);
+  font-size: 0.9rem;
+  color: #000;
+  font-weight: 400;
+  text-align: center;
+  line-height: 1.7;
+  padding: 0.75rem 1rem;
+  margin: 0;
+}
+
+.formDisabled {
+  pointer-events: none;
+  opacity: 0.5;
+}
+
+.premiumBadge {
+  display: inline-block;
+  margin-left: 0.5rem;
+  font-size: 0.7rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  background-color: #ffd700;
+  color: #000;
+  border: 1px solid black;
+  padding: 0.15rem 0.5rem;
+  border-radius: 4px;
+  vertical-align: middle;
+}
+
+.pricingSection {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  padding: 1.5rem;
+  border: 1.5px solid #000;
+  background-color: #f9f9f9;
+}
+
+.pricingTitle {
+  font-family: var(--font-fira);
+  font-size: 1rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: #18222f;
+  margin: 0;
+}
+
+.pricingText {
+  font-family: var(--font-fira);
+  font-size: 0.875rem;
+  color: #444;
+  line-height: 1.7;
+  margin: 0;
+}
+
+.pricingComingSoon {
+  font-family: var(--font-fira);
+  font-size: 0.8rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: #fc6c14;
   margin: 0;
 }

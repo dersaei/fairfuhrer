@@ -1,0 +1,105 @@
+.wrapper {
+  max-width: 600px;
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+.intro {
+  font-family: var(--font-fira);
+  font-size: 1.4rem;
+  font-weight: 500;
+  color: #18222f;
+  line-height: 1.6;
+  margin: 0;
+  padding-bottom: 1.5rem;
+  border-bottom: 2px solid black;
+  text-align: center;
+}
+
+.lead {
+  font-family: var(--font-fira);
+  font-size: 1rem;
+  color: #18222f;
+  line-height: 1.7;
+  margin: 0;
+}
+
+.featureList {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.featureTitle {
+  font-family: var(--font-fira);
+  font-size: 0.875rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: #18222f;
+  margin: 0;
+}
+
+.features {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.features li {
+  font-family: var(--font-fira);
+  font-size: 0.95rem;
+  color: #18222f;
+  padding-left: 1.25rem;
+  position: relative;
+  line-height: 1.5;
+}
+
+.features li::before {
+  content: "✓";
+  position: absolute;
+  left: 0;
+  color: gold;
+  font-weight: 700;
+}
+
+.pricingBox {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  padding: 1.5rem;
+  border: 1.5px solid #000;
+  background-color: #f9f9f9;
+}
+
+.pricingTitle {
+  font-family: var(--font-fira);
+  font-size: 0.875rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: #18222f;
+  margin: 0;
+}
+
+.pricingText {
+  font-family: var(--font-fira);
+  font-size: 0.875rem;
+  color: #444;
+  line-height: 1.7;
+  margin: 0;
+}
+
+.comingSoon {
+  font-family: var(--font-fira);
+  font-size: 0.8rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: #fc6c14;
+  margin: 0;
+}

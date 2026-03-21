@@ -8,6 +8,7 @@ const links = [
   { href: "/konto/reisender/profil", label: "Mein Profil" },
   { href: "/konto/reisender/einstellungen", label: "Einstellungen" },
   { href: "/konto/reisender/ort-vorschlagen", label: "Neuen Ort vorschlagen" },
+  { href: "/konto/reisender/premium", label: "Premium" },
 ];
 
 export default function ReisenderNav() {
