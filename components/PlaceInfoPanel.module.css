@@ -165,8 +165,8 @@
 
 .placeAddress {
   margin: 5px 0 8px 0;
-  color: #666;
-  font-size: 15px;
+  color: #2c3e50;
+  font-size: 1.1rem;
   padding: 0.5rem 1rem;
   font-style: italic;
   font-family: var(--font-fira);
@@ -205,9 +205,9 @@
   margin: 0;
   font-size: 1rem;
   line-height: 1.6;
-  color: #343a40;
+  color: #000;
   font-family: var(--font-fira);
-  font-weight: 300;
+  font-weight: 400;
 }
 
 .description {
