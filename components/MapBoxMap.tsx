@@ -16,6 +16,7 @@ import "mapbox-gl/dist/mapbox-gl.css";
 import styles from "./MapBoxMap.module.css";
 import MapSearch from "./MapSearch";
 import type { Place } from "../types";
+import { getCategoryIconPaths, DEFAULT_ICON_PATHS } from "../lib/categoryIcons";
 
 // LAZY LOADING komponentów
 const PlaceInfoPanel = lazy(() => import("./PlaceInfoPanel"));
@@ -45,38 +46,89 @@ function placesToGeoJSON(places: Place[]) {
         properties: {
           placeId: p.id,
           categoryColor: p.Kategorie[0]?.color || "#3388ff",
+          categoryId: p.Kategorie[0]?.id ?? 0,
         },
       })),
   };
 }
 
+// Wymiary pinu: 40×56px (viewBox), renderowany przy icon-size:1
+const PIN_W = 40;
+const PIN_H = 56;
+
 /**
- * Ładuje SVG łezki jako SDF image do Mapboxa.
- * SDF (Signed Distance Field) pozwala dynamicznie kolorować ikonę przez icon-color.
- * fill="black" = obszar ikony, fill="white" = dziura (przezroczysta po konwersji SDF).
+ * Buduje kompletny SVG pinu per kategoria — identyczny design jak CategoryPin w legendzie:
+ * kolorowe wypełnienie łezki + białe kółko w środku + kolorowa ikona Lucide.
  */
-function loadMarkerSDF(map: mapboxgl.Map, onLoaded: () => void): void {
-  const svg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 32" width="24" height="32">
-    <path d="M12,0 C5.372,0 0,5.372 0,12 C0,19.5 12,32 12,32 C12,32 24,19.5 24,12 C24,5.372 18.628,0 12,0 Z" fill="black"/>
-    <circle cx="12" cy="12" r="5" fill="white"/>
-  </svg>`;
+function buildPinSVG(color: string, iconPaths: string): string {
+  return (
+    `<svg xmlns="http://www.w3.org/2000/svg" width="${PIN_W}" height="${PIN_H}" viewBox="0 0 40 56">` +
+    // Łezka w kolorze kategorii
+    `<path d="M20,2 C10.611,2 3,9.611 3,19 C3,31 20,54 20,54 C20,54 37,31 37,19 C37,9.611 29.389,2 20,2 Z" fill="${color}"/>` +
+    // Białe kółko w środku
+    `<circle cx="20" cy="19" r="11" fill="white"/>` +
+    // Ikona Lucide w kolorze kategorii, skalowana z 24×24, wycentrowana w kółku
+    `<g transform="translate(12,11) scale(0.667)" fill="none" stroke="${color}" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">` +
+    iconPaths +
+    `</g>` +
+    `</svg>`
+  );
+}
+
+function loadImageFromSVG(
+  map: mapboxgl.Map,
+  imageId: string,
+  svg: string,
+  w: number,
+  h: number,
+  onDone: () => void,
+): void {
+  if (map.hasImage(imageId)) {
+    onDone();
+    return;
+  }
   const blob = new Blob([svg], { type: "image/svg+xml" });
   const url = URL.createObjectURL(blob);
-  const img = new Image(24, 32);
+  const img = new Image(w, h);
   img.onload = () => {
-    if (!map.hasImage("marker-pin")) {
-      map.addImage("marker-pin", img, { sdf: true });
+    if (!map.hasImage(imageId)) {
+      map.addImage(imageId, img, { sdf: false });
     }
     URL.revokeObjectURL(url);
-    onLoaded();
+    onDone();
   };
   img.onerror = () => {
     URL.revokeObjectURL(url);
-    console.error("❌ Failed to load marker SDF image");
-    // Kontynuuj mimo błędu — piny będą bez ikony, ale mapa zadziała
-    onLoaded();
+    onDone();
   };
   img.src = url;
+}
+
+/**
+ * Ładuje jeden kompletny obraz pinu per kategoria ("pin-{id}").
+ * Kolor i ikona są wbudowane w SVG — nie potrzeba SDF ani osobnych warstw.
+ */
+function loadCategoryMarkerSDFs(
+  map: mapboxgl.Map,
+  categories: Array<{ id: number; color: string }>,
+  onLoaded: () => void,
+): void {
+  const allCategories = [
+    { id: 0, color: "#3388ff" },
+    ...categories,
+  ];
+  let remaining = allCategories.length;
+
+  const done = () => {
+    remaining--;
+    if (remaining === 0) onLoaded();
+  };
+
+  allCategories.forEach(({ id, color }) => {
+    const paths = id === 0 ? DEFAULT_ICON_PATHS : getCategoryIconPaths(id);
+    const svg = buildPinSVG(color, paths);
+    loadImageFromSVG(map, `pin-${id}`, svg, PIN_W, PIN_H, done);
+  });
 }
 
 // ========================================
@@ -526,8 +578,13 @@ export default function MapBoxMap({
           });
         }
 
-        // Załaduj SDF łezki, następnie zainicjalizuj warstwy i eventy
-        loadMarkerSDF(map, () => {
+        // Załaduj piny dla każdej kategorii, następnie zainicjalizuj warstwy i eventy
+        const categoryMap = new Map<number, string>();
+        placesRef.current.forEach((p) =>
+          p.Kategorie.forEach((cat) => categoryMap.set(cat.id, cat.color)),
+        );
+        const categories = Array.from(categoryMap.entries()).map(([id, color]) => ({ id, color }));
+        loadCategoryMarkerSDFs(map, categories, () => {
           initializePlacesLayer(map);
           attachLayerEvents(map);
         });
@@ -609,23 +666,28 @@ export default function MapBoxMap({
         },
       });
 
-      // LAYER: pojedyncze piny (symbol SDF łezka)
+      // LAYER: kompletny pin per kategoria (białe tło + kolorowy stroke + ikona)
       map.addLayer({
         id: "places-unclustered",
         type: "symbol",
         source: "places-source",
         filter: ["!", ["has", "point_count"]],
         layout: {
-          "icon-image": "marker-pin",
-          "icon-size": 0.85,
+          "icon-image": [
+            "match",
+            ["get", "categoryId"],
+            1, "pin-1",
+            2, "pin-2",
+            3, "pin-3",
+            5, "pin-5",
+            8, "pin-8",
+            "pin-0",
+          ],
+          "icon-size": 1,
           "icon-anchor": "bottom",
           "icon-allow-overlap": true,
         },
-        paint: {
-          "icon-color": ["get", "categoryColor"],
-          "icon-halo-color": "rgba(0,0,0,0.25)",
-          "icon-halo-width": 1,
-        },
+        paint: {},
       });
 
       layersInitializedRef.current = true;

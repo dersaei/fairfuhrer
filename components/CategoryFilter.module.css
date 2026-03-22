@@ -67,10 +67,10 @@
 }
 
 .filterName {
-  font-size: 1rem;
+  font-size: 1.1rem;
   font-weight: 400;
   font-family: var(--font-fira);
-  color: #333;
+  color: #000;
   transition: color 0.2s ease;
   flex: 1;
 }
@@ -110,6 +110,24 @@
   width: 18px !important; /* Larger icon */
   height: 18px !important;
   stroke-width: 2.5 !important; /* Thicker lines for better visibility */
+}
+
+.categoryPin {
+  flex-shrink: 0;
+  transition: opacity 0.2s ease;
+}
+
+.categoryPinActive {
+  opacity: 1;
+}
+
+.categoryPinInactive {
+  opacity: 0.45;
+}
+
+.infoButtonActive {
+  opacity: 0.7;
+  transform: scale(1.1);
 }
 
 .noCategories {

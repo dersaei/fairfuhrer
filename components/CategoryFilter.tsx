@@ -3,6 +3,46 @@ import React, { useCallback, useState } from "react";
 import CategoryInfoModal from "./CategoryInfoModal";
 import styles from "./CategoryFilter.module.css";
 import type { Category } from "../types";
+import { getCategoryIconPaths, DEFAULT_ICON_PATHS } from "../lib/categoryIcons";
+
+function CategoryPin({
+  category,
+  isActive,
+}: {
+  category: Category;
+  isActive: boolean;
+}) {
+  const iconPaths = getCategoryIconPaths(category.id) ?? DEFAULT_ICON_PATHS;
+  const color = isActive ? category.color : "#ccc";
+
+  // Ikona Lucide ma viewBox 0 0 24 24.
+  // Kółko w łezce: cx=20 cy=19 r=11 → środek (20,19), dostępna przestrzeń ~18×18px.
+  // Skalujemy 24→16px (scale=0.667) i przesuwamy do środka kółka: translate(20-8, 19-8)=(12,11)
+  return (
+    <svg
+      width="28"
+      height="38"
+      viewBox="0 0 40 56"
+      aria-hidden="true"
+      className={`${styles.categoryPin} ${isActive ? styles.categoryPinActive : styles.categoryPinInactive}`}
+    >
+      <path
+        d="M20,2 C10.611,2 3,9.611 3,19 C3,31 20,54 20,54 C20,54 37,31 37,19 C37,9.611 29.389,2 20,2 Z"
+        fill={color}
+      />
+      <circle cx="20" cy="19" r="11" fill="white" />
+      <g
+        transform="translate(12,11) scale(0.667)"
+        fill="none"
+        stroke={color}
+        strokeWidth="2.2"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        dangerouslySetInnerHTML={{ __html: iconPaths }}
+      />
+    </svg>
+  );
+}
 
 interface CategoryFilterProps {
   categories: Category[];
@@ -102,34 +142,20 @@ const CategoryFilter: React.FC<CategoryFilterProps> = ({
                   isActive ? "ausblenden" : "anzeigen"
                 }`}
               >
-                <div
-                  className={`${styles.checkmark} ${
-                    isActive ? styles.active : ""
-                  }`}
-                  style={
-                    {
-                      "--category-color": category.color,
-                    } as React.CSSProperties
-                  }
-                />
+                <CategoryPin category={category} isActive={isActive} />
                 <span className={styles.filterName}>{category.name}</span>
               </div>
 
               {/* Info button - only if description exists */}
               {hasDescription && (
                 <button
-                  className={styles.infoButton}
+                  className={`${styles.infoButton} ${isModalOpenForThis ? styles.infoButtonActive : ""}`}
                   onClick={(e) => handleInfoClick(e, category)}
                   aria-label={`Informationen zu ${category.name} ${
                     isModalOpenForThis ? "schließen" : "öffnen"
                   }`}
                   aria-expanded={isModalOpenForThis ? "true" : "false"}
                   type="button"
-                  style={{
-                    // Visual feedback when modal is open for this category
-                    opacity: isModalOpenForThis ? 0.7 : 1,
-                    transform: isModalOpenForThis ? "scale(1.1)" : "scale(1)",
-                  }}
                 >
                   <svg
                     width="18"
