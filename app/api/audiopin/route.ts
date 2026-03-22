@@ -105,6 +105,16 @@ export async function POST(request: NextRequest) {
       pinData.Titelbild = body.Titelbild;
     }
 
+    // Audio (UUID z directus_files)
+    if (body.Audio) {
+      pinData.Audio = body.Audio;
+    }
+
+    // Galerie (tablica UUID z directus_files) — tylko premium
+    if (isPremium && Array.isArray(body.Galerie) && body.Galerie.length > 0) {
+      pinData.Galerie = body.Galerie;
+    }
+
     // Tworzymy pin w Directus
     console.log("Sending to Directus:", JSON.stringify(pinData, null, 2));
     const response = await fetch(`${directusUrl}/items/Orte`, {

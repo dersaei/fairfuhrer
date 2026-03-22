@@ -22,7 +22,9 @@ const CategoryInfoModal: React.FC<CategoryInfoModalProps> = ({
   const [isVisible, setIsVisible] = useState(false);
   const [isClosing, setIsClosing] = useState(false);
   const [modalStyle, setModalStyle] = useState<React.CSSProperties>({});
-  const [closeTimeoutId, setCloseTimeoutId] = useState<NodeJS.Timeout | null>(null);
+  const [closeTimeoutId, setCloseTimeoutId] = useState<NodeJS.Timeout | null>(
+    null,
+  );
 
   /* eslint-disable react-hooks/set-state-in-effect */
   // Intentional mount detection for portal rendering
@@ -80,7 +82,7 @@ const CategoryInfoModal: React.FC<CategoryInfoModalProps> = ({
         handleClose();
       }
     },
-    [handleClose]
+    [handleClose],
   );
 
   /* eslint-disable react-hooks/set-state-in-effect */
@@ -166,7 +168,7 @@ const CategoryInfoModal: React.FC<CategoryInfoModalProps> = ({
           <button
             className={styles.closeButton}
             onClick={handleClose}
-            aria-label="Zamknij"
+            aria-label="Schliessen"
             type="button"
           >
             <svg

@@ -32,10 +32,13 @@ export interface Place {
   Kategorie: Category[];
   // Pola dla mediów i dodatkowych informacji
   Hauptbild?: string;
-  Audio_Datei?: string;
+  Titelbild?: string; // UUID z directus_files (nowe piny partnerów)
+  Audio_Datei?: string; // stare piny: nazwa pliku w Supabase Storage
+  Audio?: string; // nowe piny: UUID z directus_files
   Link_URL?: string;
   Link_Text?: string;
-  Galerie_Bilder?: string[];
+  Galerie_Bilder?: string[]; // stare piny: nazwy plików w Supabase Storage
+  Galerie?: string[]; // nowe piny: UUID[] z directus_files
 }
 
 // Alias dla niemieckiej nazwy kolekcji w Directus

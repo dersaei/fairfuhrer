@@ -1,7 +1,7 @@
 "use client";
 
 import { useRef, useEffect, useState, useCallback } from "react";
-import { AudioPlayer, ImageGallery, PlaceImage } from "./MediaComponents";
+import { AudioPlayer, DirectusAudioPlayer, DirectusImage, DirectusImageGallery, ImageGallery, PlaceImage } from "./MediaComponents";
 import type { Place } from "../types";
 import styles from "./PlaceInfoPanel.module.css";
 
@@ -140,21 +140,33 @@ function PlaceContent({
   return (
     <>
       <div className={styles.imageAudioContainer}>
-        {place.Hauptbild && (
+        {(place.Titelbild || place.Hauptbild) && (
           <div className={styles.mainImageSection}>
-            <PlaceImage
-              placeId={place.id}
-              filename={place.Hauptbild}
-              alt={place.Name}
-              type="main"
-              className={styles.mainImage}
-            />
+            {place.Titelbild ? (
+              <DirectusImage
+                uuid={place.Titelbild}
+                alt={place.Name}
+                className={styles.mainImage}
+              />
+            ) : (
+              <PlaceImage
+                placeId={place.id}
+                filename={place.Hauptbild!}
+                alt={place.Name}
+                type="main"
+                className={styles.mainImage}
+              />
+            )}
           </div>
         )}
 
-        {place.Audio_Datei && (
+        {(place.Audio || place.Audio_Datei) && (
           <div className={styles.audioSection}>
-            <AudioPlayer placeId={place.id} filename={place.Audio_Datei} />
+            {place.Audio ? (
+              <DirectusAudioPlayer uuid={place.Audio} />
+            ) : (
+              <AudioPlayer placeId={place.id} filename={place.Audio_Datei!} />
+            )}
           </div>
         )}
       </div>
@@ -207,17 +219,24 @@ function PlaceContent({
         </div>
       )}
 
-      {place.Galerie_Bilder && place.Galerie_Bilder.length > 0 && (
+      {place.Galerie && place.Galerie.length > 0 && (
         <div className={styles.infoSection}>
           <h4>Bildergalerie</h4>
+          <DirectusImageGallery
+            uuids={place.Galerie}
+            onImageClickAction={onImageClickAction}
+          />
+        </div>
+      )}
+
+      {place.Galerie_Bilder && place.Galerie_Bilder.length > 0 && (
+        <div className={styles.infoSection}>
+          {!place.Galerie?.length && <h4>Bildergalerie</h4>}
           <ImageGallery
             placeId={place.id}
             images={place.Galerie_Bilder}
             onImageClickAction={(imagePath) => {
-              const index =
-                place.Galerie_Bilder?.findIndex((img) =>
-                  imagePath.includes(img)
-                ) ?? 0;
+              const index = place.Galerie_Bilder?.findIndex((img) => imagePath.includes(img)) ?? 0;
               onImageClickAction?.(imagePath, index);
             }}
           />

@@ -38,10 +38,13 @@ export function isValidPlace(place: unknown): place is Place {
     (p.Vollbeschreibung === undefined ||
       typeof p.Vollbeschreibung === "string") &&
     (p.Hauptbild === undefined || typeof p.Hauptbild === "string") &&
+    (p.Titelbild === undefined || typeof p.Titelbild === "string") &&
     (p.Audio_Datei === undefined || typeof p.Audio_Datei === "string") &&
+    (p.Audio === undefined || typeof p.Audio === "string") &&
     (p.Link_URL === undefined || typeof p.Link_URL === "string") &&
     (p.Link_Text === undefined || typeof p.Link_Text === "string") &&
-    (p.Galerie_Bilder === undefined || Array.isArray(p.Galerie_Bilder))
+    (p.Galerie_Bilder === undefined || Array.isArray(p.Galerie_Bilder)) &&
+    (p.Galerie === undefined || Array.isArray(p.Galerie))
   );
 }
 

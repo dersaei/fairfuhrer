@@ -275,7 +275,7 @@ export default function AudiopinPage() {
           Kategorie: kategorien,
           Zertifizierungen: zertifizierungen,
           Titelbild: titelbildId ?? null,
-          Galerie_Bilder:
+          Galerie:
             isPremium && galerieIds.length > 0 ? galerieIds : null,
           Audio: audioId ?? null,
         }),

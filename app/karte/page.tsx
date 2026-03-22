@@ -108,12 +108,15 @@ function transformDirectusOrteToPlace(ort: DirectusOrte): Place | null {
           })
         ) ?? [],
       Hauptbild: ort.Hauptbild?.trim(),
+      Titelbild: typeof ort.Titelbild === "string" ? ort.Titelbild.trim() : undefined,
       Audio_Datei: ort.Audio_Datei?.trim(),
+      Audio: typeof ort.Audio === "string" ? ort.Audio.trim() : undefined,
       Link_URL: ort.Link_URL?.trim(),
       Link_Text: ort.Link_Text?.trim(),
       Galerie_Bilder: ort.Galerie_Bilder?.filter(
         (img) => img.trim().length > 0
       ),
+      Galerie: Array.isArray(ort.Galerie) ? ort.Galerie.filter(Boolean) : undefined,
     };
   } catch (error) {
     console.error(`Fehler bei der Transformation von Ort ${ort.id}:`, error);
@@ -194,10 +197,13 @@ export default async function KartePage() {
         "Vollbeschreibung",
         "location",
         "Hauptbild",
+        "Titelbild",
         "Audio_Datei",
+        "Audio",
         "Link_URL",
         "Link_Text",
         "Galerie_Bilder",
+        "Galerie",
         "Kategorie.Kategorie_id.id",
         "Kategorie.Kategorie_id.Name",
         "Kategorie.Kategorie_id.Farbe",
@@ -217,9 +223,9 @@ export default async function KartePage() {
     // ========================================
 
     const kategorieUrl = new URL(`${baseUrl}/items/Kategorie`);
-    kategorieUrl.searchParams.set("fields", "id,Name,Farbe,Beschreibung"); // Added Beschreibung
+    kategorieUrl.searchParams.set("fields", "id,Name,Farbe,Beschreibung,Reihenfolge");
     kategorieUrl.searchParams.set("limit", "-1");
-    kategorieUrl.searchParams.set("sort", "Name");
+    kategorieUrl.searchParams.set("sort", "Reihenfolge");
 
     const kategorieData = await fetchFromDirectus<DirectusKategorie>(
       kategorieUrl.toString(),
