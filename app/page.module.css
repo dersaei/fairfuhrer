@@ -385,6 +385,12 @@
     top: 35%;
   }
 }
+@media screen and (max-width: 330px) {
+  .heroButtonMobile {
+    font-size: 95%;
+    padding: 0.8rem 2rem;
+  }
+}
 
 /* Fallback dla starszych przeglądarek */
 @supports not (height: 100dvh) {

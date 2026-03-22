@@ -128,6 +128,11 @@ export default function Header() {
           isMenuOpen ? styles.mobileMenuOpen : ""
         }`}
       >
+        {/* Anmeldung / UserMenu — tylko dla max 500px */}
+        <div className={styles.mobileMenuUserMenu}>
+          <UserMenu />
+        </div>
+
         <nav className={styles.mobileNav}>
           <Link href="/" className={styles.mobileNavLink} onClick={closeMenu}>
             Entdecken
