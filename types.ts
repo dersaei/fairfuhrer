@@ -142,11 +142,14 @@ export interface DirectusOrte {
   Vollbeschreibung?: string;
   location?: GeoJSONPoint; // PostGIS Point z Directus Map field
   Kategorie?: DirectusOrteKategorie[];
-  Hauptbild?: string;
-  Audio_Datei?: string;
+  Hauptbild?: string;       // stare piny: nazwa pliku w Supabase Storage
+  Titelbild?: string;       // nowe piny: UUID z directus_files
+  Audio_Datei?: string;     // stare piny: nazwa pliku w Supabase Storage
+  Audio?: string;           // nowe piny: UUID z directus_files
   Link_URL?: string;
   Link_Text?: string;
-  Galerie_Bilder?: string[];
+  Galerie_Bilder?: string[]; // stare piny: nazwy plików w Supabase Storage
+  Galerie?: string[];        // nowe piny: UUID[] z directus_files
 }
 
 // ========================================
