@@ -1,5 +1,5 @@
 # Pin Directus image to a specific version for stability
-FROM directus/directus:11.16.1
+FROM directus/directus:11.17.1
 
 WORKDIR /directus
 
