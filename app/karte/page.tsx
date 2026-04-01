@@ -7,9 +7,11 @@ import MapRealtimeRefresh from "../../components/MapRealtimeRefresh";
 import type {
   Place,
   Category,
+  Zertifizierung,
   DirectusCollectionResponse,
   DirectusKategorie,
   DirectusOrte,
+  DirectusZertifizierungItem,
 } from "../../types";
 
 // ISR revalidation - dane będą odświeżane co 24 godziny
@@ -117,6 +119,14 @@ function transformDirectusOrteToPlace(ort: DirectusOrte): Place | null {
         (img) => img.trim().length > 0
       ),
       Galerie: Array.isArray(ort.Galerie) ? ort.Galerie.filter(Boolean) : undefined,
+      Zertifizierungen: ort.Zertifizierungen
+        ?.filter((z: DirectusZertifizierungItem) => z.Zertifizierungen_id !== null)
+        .map((z: DirectusZertifizierungItem): Zertifizierung => ({
+          id: z.Zertifizierungen_id!.id,
+          name: z.Zertifizierungen_id!.Name,
+          imageUuid: z.Zertifizierungen_id!.Image ?? undefined,
+          slug: z.Zertifizierungen_id!.slug ?? undefined,
+        })),
     };
   } catch (error) {
     console.error(`Fehler bei der Transformation von Ort ${ort.id}:`, error);
@@ -207,7 +217,11 @@ export default async function KartePage() {
         "Kategorie.Kategorie_id.id",
         "Kategorie.Kategorie_id.Name",
         "Kategorie.Kategorie_id.Farbe",
-        "Kategorie.Kategorie_id.Beschreibung", // Added description field
+        "Kategorie.Kategorie_id.Beschreibung",
+        "Zertifizierungen.Zertifizierungen_id.id",
+        "Zertifizierungen.Zertifizierungen_id.Name",
+        "Zertifizierungen.Zertifizierungen_id.Image",
+        "Zertifizierungen.Zertifizierungen_id.slug",
       ].join(",")
     );
     orteUrl.searchParams.set("limit", "-1");

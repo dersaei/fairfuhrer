@@ -242,6 +242,32 @@ function PlaceContent({
           />
         </div>
       )}
+
+      {place.Zertifizierungen && place.Zertifizierungen.length > 0 && (
+        <div className={styles.infoSection}>
+          <h4>Zertifizierungen &amp; Labels</h4>
+          <div className={styles.zertifizierungenGrid}>
+            {place.Zertifizierungen.map((zert) => {
+              const directusUrl = process.env.NEXT_PUBLIC_DIRECTUS_URL;
+              return (
+                <div key={zert.id} className={styles.zertifizierungItem}>
+                  {zert.imageUuid && directusUrl ? (
+                    // eslint-disable-next-line @next/next/no-img-element
+                    <img
+                      src={`${directusUrl}/assets/${zert.imageUuid}`}
+                      alt={zert.name}
+                      className={styles.zertifizierungLogo}
+                      title={zert.name}
+                    />
+                  ) : (
+                    <span className={styles.zertifizierungName}>{zert.name}</span>
+                  )}
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      )}
     </>
   );
 }

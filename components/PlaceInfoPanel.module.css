@@ -288,6 +288,33 @@
   opacity: 0.85;
 }
 
+.zertifizierungenGrid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1rem;
+  margin-top: 0.75rem;
+}
+
+.zertifizierungItem {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.zertifizierungLogo {
+  max-width: 100%;
+  max-height: 80px;
+  width: auto;
+  height: auto;
+  display: block;
+}
+
+.zertifizierungName {
+  font-size: 0.8rem;
+  text-align: center;
+  color: #555;
+}
+
 .emptyState {
   padding: 2rem 1.5rem;
   text-align: center;

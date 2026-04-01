@@ -12,6 +12,13 @@ export interface Category {
   description?: string;
 }
 
+export interface Zertifizierung {
+  id: string;
+  name: string;
+  imageUuid?: string;
+  slug?: string;
+}
+
 // Alias dla niemieckiej nazwy kolekcji w Directus
 export type Kategorie = Category;
 
@@ -39,6 +46,7 @@ export interface Place {
   Link_Text?: string;
   Galerie_Bilder?: string[]; // stare piny: nazwy plików w Supabase Storage
   Galerie?: string[]; // nowe piny: UUID[] z directus_files
+  Zertifizierungen?: Zertifizierung[];
 }
 
 // Alias dla niemieckiej nazwy kolekcji w Directus
@@ -134,6 +142,15 @@ export interface DirectusOrteKategorie {
   Kategorie_id: DirectusKategorie;
 }
 
+export interface DirectusZertifizierungItem {
+  Zertifizierungen_id: {
+    id: string;
+    Name: string;
+    Image?: string;
+    slug?: string;
+  } | null;
+}
+
 export interface DirectusOrte {
   id: number;
   Name: string;
@@ -150,6 +167,7 @@ export interface DirectusOrte {
   Link_Text?: string;
   Galerie_Bilder?: string[]; // stare piny: nazwy plików w Supabase Storage
   Galerie?: string[];        // nowe piny: UUID[] z directus_files
+  Zertifizierungen?: DirectusZertifizierungItem[];
 }
 
 // ========================================
