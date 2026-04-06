@@ -186,6 +186,11 @@
 .responseTime {
   font-style: italic;
 }
+.formTurnstile {
+  margin: 3rem auto;
+  display: flex;
+  justify-content: center;
+}
 
 @media (max-width: 750px) {
   .formGroup {

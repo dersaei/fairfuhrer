@@ -189,12 +189,6 @@ export default function ContactForm({
           />
         </div>
 
-        <TurnstileWidget
-          siteKey={process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY!}
-          onVerify={handleTurnstileVerify}
-          onExpire={handleTurnstileExpire}
-        />
-
         <button
           type="submit"
           disabled={isSubmitting || !turnstileToken}
@@ -202,6 +196,13 @@ export default function ContactForm({
         >
           {isSubmitting ? "Wird gesendet ..." : "Nachricht senden"}
         </button>
+        <div className={styles.formTurnstile}>
+          <TurnstileWidget
+            siteKey={process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY!}
+            onVerify={handleTurnstileVerify}
+            onExpire={handleTurnstileExpire}
+          />
+        </div>
       </form>
 
       <div className={styles.contactMethods}>
