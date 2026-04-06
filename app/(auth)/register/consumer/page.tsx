@@ -1,9 +1,10 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useCallback } from "react";
 import Link from "next/link";
 import { registerConsumer } from "@/app/actions/auth";
 import type { FormErrors } from "@/types/auth";
+import TurnstileWidget from "@/components/TurnstileWidget";
 import styles from "./consumer.module.css";
 
 function validatePassword(password: string): string | null {
@@ -30,6 +31,15 @@ export default function RegisterConsumerPage() {
   const [errors, setErrors] = useState<FormErrors>({});
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [success, setSuccess] = useState(false);
+  const [turnstileToken, setTurnstileToken] = useState<string | null>(null);
+
+  const handleTurnstileVerify = useCallback((token: string) => {
+    setTurnstileToken(token);
+  }, []);
+
+  const handleTurnstileExpire = useCallback(() => {
+    setTurnstileToken(null);
+  }, []);
 
   function set(key: keyof typeof fields) {
     return (e: React.ChangeEvent<HTMLInputElement>) =>
@@ -57,9 +67,15 @@ export default function RegisterConsumerPage() {
       return;
     }
 
+    if (!turnstileToken) {
+      setErrors({ general: "Bitte bestätigen Sie, dass Sie kein Roboter sind" });
+      return;
+    }
+
     setIsSubmitting(true);
     const formData = new FormData();
     Object.entries(fields).forEach(([k, v]) => formData.set(k, v));
+    formData.set("turnstileToken", turnstileToken);
 
     const result = await registerConsumer(formData);
     setIsSubmitting(false);
@@ -192,10 +208,16 @@ export default function RegisterConsumerPage() {
           )}
         </div>
 
+        <TurnstileWidget
+          siteKey={process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY!}
+          onVerify={handleTurnstileVerify}
+          onExpire={handleTurnstileExpire}
+        />
+
         <button
           type="submit"
           className={styles.submitButton}
-          disabled={isSubmitting}
+          disabled={isSubmitting || !turnstileToken}
         >
           {isSubmitting ? "Wird registriert…" : "Konto erstellen"}
         </button>

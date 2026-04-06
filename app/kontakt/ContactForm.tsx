@@ -1,8 +1,9 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useCallback } from "react";
 import { Mail, AtSign, Phone, MapPin } from "lucide-react";
 import { ContactFormContent } from "@/types";
+import TurnstileWidget from "@/components/TurnstileWidget";
 import styles from "./ContactForm.module.css";
 
 interface FormData {
@@ -28,6 +29,15 @@ export default function ContactForm({
   const [submitStatus, setSubmitStatus] = useState<
     "idle" | "success" | "error"
   >("idle");
+  const [turnstileToken, setTurnstileToken] = useState<string | null>(null);
+
+  const handleTurnstileVerify = useCallback((token: string) => {
+    setTurnstileToken(token);
+  }, []);
+
+  const handleTurnstileExpire = useCallback(() => {
+    setTurnstileToken(null);
+  }, []);
 
   const handleSubmit = async (e: React.SyntheticEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -51,7 +61,11 @@ export default function ContactForm({
         return;
       }
 
-      // POPRAWKA: Używamy lokalnego API route zamiast bezpośredniego Directus
+      if (!turnstileToken) {
+        alert("Bitte bestätigen Sie, dass Sie kein Roboter sind");
+        return;
+      }
+
       const response = await fetch("/api/contact", {
         method: "POST",
         headers: {
@@ -62,6 +76,7 @@ export default function ContactForm({
           email: formData.email,
           subject: formData.subject,
           message: formData.message,
+          turnstileToken,
         }),
       });
 
@@ -174,9 +189,15 @@ export default function ContactForm({
           />
         </div>
 
+        <TurnstileWidget
+          siteKey={process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY!}
+          onVerify={handleTurnstileVerify}
+          onExpire={handleTurnstileExpire}
+        />
+
         <button
           type="submit"
-          disabled={isSubmitting}
+          disabled={isSubmitting || !turnstileToken}
           className={styles.submitButton}
         >
           {isSubmitting ? "Wird gesendet ..." : "Nachricht senden"}

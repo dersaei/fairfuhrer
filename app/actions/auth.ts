@@ -2,9 +2,11 @@
 
 import "server-only";
 
+import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 import { getSupabaseServerClient } from "@/lib/supabase-server";
 import { supabaseAdmin } from "@/lib/supabase-admin";
+import { verifyTurnstileToken } from "@/lib/turnstile";
 import type {
   AuthResult,
   AuthUser,
@@ -14,12 +16,24 @@ import type {
 } from "@/types/auth";
 
 
+async function getRemoteIp(): Promise<string | undefined> {
+  const h = await headers();
+  return (
+    h.get("CF-Connecting-IP") ?? h.get("X-Forwarded-For") ?? undefined
+  );
+}
+
 export async function loginWithEmail(formData: FormData): Promise<AuthResult> {
   const email = formData.get("email") as string;
   const password = formData.get("password") as string;
+  const turnstileToken = formData.get("turnstileToken") as string;
 
   if (!email || !password) {
     return { success: false, error: "E-Mail und Passwort sind erforderlich." };
+  }
+
+  if (!turnstileToken || !(await verifyTurnstileToken(turnstileToken, await getRemoteIp()))) {
+    return { success: false, error: "Sicherheitsüberprüfung fehlgeschlagen. Bitte versuchen Sie es erneut." };
   }
 
   const supabase = await getSupabaseServerClient();
@@ -46,9 +60,14 @@ export async function loginWithMagicLink(
   formData: FormData
 ): Promise<AuthResult> {
   const email = formData.get("email") as string;
+  const turnstileToken = formData.get("turnstileToken") as string;
 
   if (!email) {
     return { success: false, error: "Bitte geben Sie Ihre E-Mail-Adresse ein." };
+  }
+
+  if (!turnstileToken || !(await verifyTurnstileToken(turnstileToken, await getRemoteIp()))) {
+    return { success: false, error: "Sicherheitsüberprüfung fehlgeschlagen. Bitte versuchen Sie es erneut." };
   }
 
   const supabase = await getSupabaseServerClient();
@@ -96,9 +115,14 @@ export async function registerConsumer(
   const password = formData.get("password") as string;
   const confirmPassword = formData.get("confirmPassword") as string;
   const username = formData.get("username") as string;
+  const turnstileToken = formData.get("turnstileToken") as string;
 
   if (!email || !password || !username) {
     return { success: false, error: "Alle Pflichtfelder müssen ausgefüllt werden." };
+  }
+
+  if (!turnstileToken || !(await verifyTurnstileToken(turnstileToken, await getRemoteIp()))) {
+    return { success: false, error: "Sicherheitsüberprüfung fehlgeschlagen. Bitte versuchen Sie es erneut." };
   }
 
   if (password !== confirmPassword) {
@@ -145,9 +169,14 @@ export async function registerPartner(formData: FormData): Promise<AuthResult> {
   const city = formData.get("city") as string;
   const country = formData.get("country") as string;
   const businessEmail = formData.get("businessEmail") as string;
+  const turnstileToken = formData.get("turnstileToken") as string;
 
   if (!email || !password || !firstName || !lastName || !companyName || !street || !postalCode || !city) {
     return { success: false, error: "Alle Pflichtfelder müssen ausgefüllt werden." };
+  }
+
+  if (!turnstileToken || !(await verifyTurnstileToken(turnstileToken, await getRemoteIp()))) {
+    return { success: false, error: "Sicherheitsüberprüfung fehlgeschlagen. Bitte versuchen Sie es erneut." };
   }
 
   if (password !== confirmPassword) {

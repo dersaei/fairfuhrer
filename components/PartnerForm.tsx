@@ -2,7 +2,7 @@
 
 "use client";
 
-import { useState, ChangeEvent, FormEvent } from "react";
+import { useState, useCallback, ChangeEvent, FormEvent } from "react";
 
 import type {
   PartnerFormData,
@@ -12,6 +12,7 @@ import type {
   CategoryOption,
 } from "../types";
 
+import TurnstileWidget from "./TurnstileWidget";
 import styles from "./PartnerForm.module.css";
 
 // Cele zrównoważonego rozwoju bez zmian
@@ -147,6 +148,16 @@ export default function PartnerForm() {
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const [submitSuccess, setSubmitSuccess] = useState(false);
+
+  const [turnstileToken, setTurnstileToken] = useState<string | null>(null);
+
+  const handleTurnstileVerify = useCallback((token: string) => {
+    setTurnstileToken(token);
+  }, []);
+
+  const handleTurnstileExpire = useCallback(() => {
+    setTurnstileToken(null);
+  }, []);
 
   // USUNIĘTE: refs dla file inputs
 
@@ -327,6 +338,11 @@ export default function PartnerForm() {
       return;
     }
 
+    if (!turnstileToken) {
+      setErrors({ general: "Bitte bestätigen Sie, dass Sie kein Roboter sind" });
+      return;
+    }
+
     setIsSubmitting(true);
 
     setErrors({});
@@ -382,7 +398,7 @@ export default function PartnerForm() {
 
       submitFormData.append("companySize", formData.companySize);
 
-      // USUNIĘTE: dodawanie plików
+      submitFormData.append("turnstileToken", turnstileToken);
 
       // Wyślij do API
 
@@ -963,9 +979,15 @@ export default function PartnerForm() {
       </section>
 
       <div className={styles.submitSection}>
+        <TurnstileWidget
+          siteKey={process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY!}
+          onVerify={handleTurnstileVerify}
+          onExpire={handleTurnstileExpire}
+        />
+
         <button
           type="submit"
-          disabled={isSubmitting}
+          disabled={isSubmitting || !turnstileToken}
           className={styles.submitButton}
         >
           {isSubmitting ? "Wird gesendet..." : "Bewerbung senden"}

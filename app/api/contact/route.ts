@@ -3,17 +3,39 @@
 import "server-only";
 
 import { NextRequest, NextResponse } from "next/server";
+import { verifyTurnstileToken } from "@/lib/turnstile";
 
 interface ContactFormData {
   name: string;
   email: string;
   subject: string;
   message: string;
+  turnstileToken: string;
 }
 
 export async function POST(request: NextRequest) {
   try {
     const body: ContactFormData = await request.json();
+
+    // Turnstile verification
+    if (!body.turnstileToken) {
+      return NextResponse.json(
+        { error: "Bitte bestätigen Sie, dass Sie kein Roboter sind" },
+        { status: 400 }
+      );
+    }
+
+    const remoteip =
+      request.headers.get("CF-Connecting-IP") ??
+      request.headers.get("X-Forwarded-For") ??
+      undefined;
+    const isHuman = await verifyTurnstileToken(body.turnstileToken, remoteip);
+    if (!isHuman) {
+      return NextResponse.json(
+        { error: "Sicherheitsüberprüfung fehlgeschlagen. Bitte versuchen Sie es erneut." },
+        { status: 403 }
+      );
+    }
 
     // Walidacja
     if (!body.name || !body.email || !body.subject || !body.message) {

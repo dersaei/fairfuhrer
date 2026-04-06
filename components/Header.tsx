@@ -46,7 +46,7 @@ export default function Header() {
       {/* Desktop Navigation */}
       <nav className={styles.nav}>
         <Link href="/" className={styles.navLink}>
-          Entdecken
+          Home
         </Link>
         <Link href="/karte" className={styles.navLink}>
           Karte
@@ -135,7 +135,7 @@ export default function Header() {
 
         <nav className={styles.mobileNav}>
           <Link href="/" className={styles.mobileNavLink} onClick={closeMenu}>
-            Entdecken
+            Home
           </Link>
           <Link
             href="/karte"

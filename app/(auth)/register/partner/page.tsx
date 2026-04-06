@@ -1,10 +1,11 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useCallback } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { registerPartner } from "@/app/actions/auth";
 import type { FormErrors } from "@/types/auth";
+import TurnstileWidget from "@/components/TurnstileWidget";
 import styles from "./partner.module.css";
 import { COUNTRIES } from "@/lib/countries";
 
@@ -41,6 +42,15 @@ export default function RegisterPartnerPage() {
   const [errors, setErrors] = useState<FormErrors>({});
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [success, setSuccess] = useState(false);
+  const [turnstileToken, setTurnstileToken] = useState<string | null>(null);
+
+  const handleTurnstileVerify = useCallback((token: string) => {
+    setTurnstileToken(token);
+  }, []);
+
+  const handleTurnstileExpire = useCallback(() => {
+    setTurnstileToken(null);
+  }, []);
 
   function set(key: keyof typeof fields) {
     return (
@@ -81,11 +91,17 @@ export default function RegisterPartnerPage() {
       return;
     }
 
+    if (!turnstileToken) {
+      setErrors({ general: "Bitte bestätigen Sie, dass Sie kein Roboter sind" });
+      return;
+    }
+
     setIsSubmitting(true);
     const formData = new FormData();
     Object.entries(fields).forEach(([k, v]) => formData.set(k, v));
     // map contactEmail → businessEmail for server action
     formData.set("businessEmail", fields.contactEmail);
+    formData.set("turnstileToken", turnstileToken);
 
     const result = await registerPartner(formData);
     setIsSubmitting(false);
@@ -232,7 +248,13 @@ export default function RegisterPartnerPage() {
           {errors.confirmPassword && <span className={styles.fieldError}>{errors.confirmPassword}</span>}
         </div>
 
-        <button type="submit" className={styles.submitButton} disabled={isSubmitting}>
+        <TurnstileWidget
+          siteKey={process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY!}
+          onVerify={handleTurnstileVerify}
+          onExpire={handleTurnstileExpire}
+        />
+
+        <button type="submit" className={styles.submitButton} disabled={isSubmitting || !turnstileToken}>
           {isSubmitting ? "Wird registriert…" : "Partnerkonto erstellen"}
         </button>
       </form>

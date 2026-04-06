@@ -1,10 +1,11 @@
 "use client";
 
-import { Suspense, useState } from "react";
+import { Suspense, useState, useCallback } from "react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { loginWithEmail, loginWithMagicLink } from "@/app/actions/auth";
 import type { FormErrors } from "@/types/auth";
+import TurnstileWidget from "@/components/TurnstileWidget";
 import styles from "./login.module.css";
 
 function LoginForm() {
@@ -23,15 +24,31 @@ function LoginForm() {
   );
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [magicSent, setMagicSent] = useState(false);
+  const [turnstileToken, setTurnstileToken] = useState<string | null>(null);
+
+  const handleTurnstileVerify = useCallback((token: string) => {
+    setTurnstileToken(token);
+  }, []);
+
+  const handleTurnstileExpire = useCallback(() => {
+    setTurnstileToken(null);
+  }, []);
 
   async function handlePasswordLogin(e: React.FormEvent) {
     e.preventDefault();
     setErrors({});
+
+    if (!turnstileToken) {
+      setErrors({ general: "Bitte bestätigen Sie, dass Sie kein Roboter sind" });
+      return;
+    }
+
     setIsSubmitting(true);
 
     const formData = new FormData();
     formData.set("email", email);
     formData.set("password", password);
+    formData.set("turnstileToken", turnstileToken);
 
     const result = await loginWithEmail(formData);
     setIsSubmitting(false);
@@ -47,10 +64,17 @@ function LoginForm() {
   async function handleMagicLink(e: React.FormEvent) {
     e.preventDefault();
     setErrors({});
+
+    if (!turnstileToken) {
+      setErrors({ general: "Bitte bestätigen Sie, dass Sie kein Roboter sind" });
+      return;
+    }
+
     setIsSubmitting(true);
 
     const formData = new FormData();
     formData.set("email", email);
+    formData.set("turnstileToken", turnstileToken);
 
     const result = await loginWithMagicLink(formData);
     setIsSubmitting(false);
@@ -124,10 +148,15 @@ function LoginForm() {
               Passwort vergessen?
             </Link>
           </div>
+          <TurnstileWidget
+            siteKey={process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY!}
+            onVerify={handleTurnstileVerify}
+            onExpire={handleTurnstileExpire}
+          />
           <button
             type="submit"
             className={styles.submitButton}
-            disabled={isSubmitting}
+            disabled={isSubmitting || !turnstileToken}
           >
             {isSubmitting ? "Wird angemeldet…" : "Anmelden"}
           </button>
@@ -164,10 +193,15 @@ function LoginForm() {
                   autoComplete="email"
                 />
               </div>
+              <TurnstileWidget
+                siteKey={process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY!}
+                onVerify={handleTurnstileVerify}
+                onExpire={handleTurnstileExpire}
+              />
               <button
                 type="submit"
                 className={styles.submitButton}
-                disabled={isSubmitting}
+                disabled={isSubmitting || !turnstileToken}
               >
                 {isSubmitting ? "Wird gesendet…" : "Magic Link senden"}
               </button>

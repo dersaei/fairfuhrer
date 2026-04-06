@@ -4,6 +4,7 @@ import "server-only";
 
 import { NextRequest, NextResponse } from "next/server";
 import type { PartnerSubmissionData } from "@/types";
+import { verifyTurnstileToken } from "@/lib/turnstile";
 
 // ========================================
 // Environment Variable Validation
@@ -52,6 +53,27 @@ async function saveToDirectus(data: Partial<PartnerSubmissionData>) {
 export async function POST(request: NextRequest) {
   try {
     const formData = await request.formData();
+
+    // Turnstile verification
+    const turnstileToken = formData.get("turnstileToken") as string;
+    if (!turnstileToken) {
+      return NextResponse.json(
+        { error: "Bitte bestätigen Sie, dass Sie kein Roboter sind" },
+        { status: 400 }
+      );
+    }
+
+    const remoteip =
+      request.headers.get("CF-Connecting-IP") ??
+      request.headers.get("X-Forwarded-For") ??
+      undefined;
+    const isHuman = await verifyTurnstileToken(turnstileToken, remoteip);
+    if (!isHuman) {
+      return NextResponse.json(
+        { error: "Sicherheitsüberprüfung fehlgeschlagen. Bitte versuchen Sie es erneut." },
+        { status: 403 }
+      );
+    }
 
     // Parsowanie sustainability_goals
     let sustainabilityGoals: number[] = [];
