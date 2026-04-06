@@ -13,7 +13,9 @@ interface SupportSectionProps {
 }
 
 export default function SupportSection({ content }: SupportSectionProps) {
-  const [donationSuccess, setDonationSuccess] = useState<PayPalDonation | null>(null);
+  const [donationSuccess, setDonationSuccess] = useState<PayPalDonation | null>(
+    null,
+  );
   const [donationError, setDonationError] = useState<string>("");
 
   const handleDonationSuccess = (donation: PayPalDonation) => {
@@ -54,7 +56,9 @@ export default function SupportSection({ content }: SupportSectionProps) {
 
   const secondTextStyle: React.CSSProperties = {
     ...(content?.second_text_color ? { color: content.second_text_color } : {}),
-    ...(content?.second_text_font_size ? { fontSize: content.second_text_font_size } : {}),
+    ...(content?.second_text_font_size
+      ? { fontSize: content.second_text_font_size }
+      : {}),
   };
 
   return (
@@ -72,12 +76,6 @@ export default function SupportSection({ content }: SupportSectionProps) {
           </p>
         )}
 
-        {content?.second_text && (
-          <p className={styles.supportSecondText} style={secondTextStyle}>
-            {content.second_text}
-          </p>
-        )}
-
         {(donationSuccess || donationError) && (
           <div id="support-donation-result" className={styles.donationResult}>
             {donationSuccess && (
@@ -86,12 +84,13 @@ export default function SupportSection({ content }: SupportSectionProps) {
                 <div>
                   <h3>Vielen Dank für Ihre Spende!</h3>
                   <p>
-                    Ihre Spende von{" "}
-                    {(donationSuccess.amount / 100).toFixed(2)} EUR wurde
-                    erfolgreich verarbeitet.
+                    Ihre Spende von {(donationSuccess.amount / 100).toFixed(2)}{" "}
+                    EUR wurde erfolgreich verarbeitet.
                   </p>
                   {donationSuccess.donor_name && (
-                    <p>Liebe/r {donationSuccess.donor_name}, herzlichen Dank!</p>
+                    <p>
+                      Liebe/r {donationSuccess.donor_name}, herzlichen Dank!
+                    </p>
                   )}
                 </div>
               </div>
@@ -131,6 +130,11 @@ export default function SupportSection({ content }: SupportSectionProps) {
             <span>Sicher & verschlüsselt</span>
           </div>
         </div>
+        {content?.second_text && (
+          <p className={styles.supportSecondText} style={secondTextStyle}>
+            {content.second_text}
+          </p>
+        )}
       </div>
     </div>
   );

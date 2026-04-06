@@ -188,14 +188,6 @@ export default function ContactForm({
             placeholder="Beschreiben Sie Ihr Anliegen im Detail ..."
           />
         </div>
-
-        <button
-          type="submit"
-          disabled={isSubmitting || !turnstileToken}
-          className={styles.submitButton}
-        >
-          {isSubmitting ? "Wird gesendet ..." : "Nachricht senden"}
-        </button>
         <div className={styles.formTurnstile}>
           <TurnstileWidget
             siteKey={process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY!}
@@ -203,6 +195,13 @@ export default function ContactForm({
             onExpire={handleTurnstileExpire}
           />
         </div>
+        <button
+          type="submit"
+          disabled={isSubmitting || !turnstileToken}
+          className={styles.submitButton}
+        >
+          {isSubmitting ? "Wird gesendet ..." : "Nachricht senden"}
+        </button>
       </form>
 
       <div className={styles.contactMethods}>
