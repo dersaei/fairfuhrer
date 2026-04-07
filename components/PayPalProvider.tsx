@@ -10,6 +10,11 @@ interface PayPalProviderProps {
 
 export function PayPalProvider({ children }: PayPalProviderProps) {
   const clientId = process.env.NEXT_PUBLIC_PAYPAL_CLIENT_ID || "";
+  const environment =
+    (process.env.NEXT_PUBLIC_PAYPAL_ENVIRONMENT as
+      | "production"
+      | "sandbox"
+      | undefined) || "sandbox";
 
   if (!clientId) {
     console.warn("PayPal Client ID not found - PayPal functionality disabled");
@@ -22,6 +27,7 @@ export function PayPalProvider({ children }: PayPalProviderProps) {
       components={["paypal-payments"]}
       pageType="checkout"
       locale="de-DE"
+      environment={environment}
     >
       {children}
     </PayPalSDKProvider>
