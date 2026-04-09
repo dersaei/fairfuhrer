@@ -17,7 +17,7 @@
 }
 
 .section1Title {
-  font-size: 5rem;
+  font-size: clamp(3rem, 5vw, 5rem);
   margin-bottom: 1rem;
   line-height: 1.2;
   letter-spacing: 3px;
@@ -52,11 +52,12 @@
   font-size: 1.2rem;
 }
 
-.section1Image {
-  height: 90px;
-  width: 300px;
+.section1Image,
+.section5Image {
   display: block;
-  position: relative;
+  width: 300px;
+  height: 90px;
+  object-fit: contain;
   margin: 0 auto;
 }
 
@@ -178,7 +179,7 @@
 }
 
 .section5Title {
-  font-size: 7vh;
+  font-size: clamp(2.5rem, 5vw, 5rem);
   margin: 0 auto 1rem;
   line-height: 1.2;
   letter-spacing: 3px;
@@ -199,16 +200,7 @@
   font-style: normal;
   text-align: justify;
 }
-.section5ImageContainer {
-  position: relative;
-  width: 300px;
-  height: 90px;
-  margin: 2rem auto 0;
-}
 
-.section5Image {
-  object-fit: contain;
-}
 .noVideo {
   padding: 3rem 2rem;
   background: #f8fafc;
@@ -233,6 +225,186 @@
   font-weight: 600;
 }
 
+/* ============================================================
+   ABSCHNITT 3 — dwukolumnowy: 40% tytuł (lewa) | 60% tekst (prawa)
+   ============================================================ */
+.abschnitt3 {
+  display: grid;
+  grid-template-columns: 2fr 3fr;
+  min-height: 280px;
+}
+
+.abschnitt3Links {
+  padding: 4rem 3rem;
+  display: flex;
+  align-items: center;
+}
+
+.abschnitt3Rechts {
+  padding: 4rem 3rem;
+  display: flex;
+  align-items: center;
+}
+
+.abschnitt3Titel {
+  font-family: var(--font-anton);
+  font-size: clamp(2rem, 6vw, 5rem);
+  font-weight: 400;
+  font-style: normal;
+  line-height: 1.2;
+  letter-spacing: 1px;
+  margin: 0;
+  text-align: left;
+}
+
+.abschnitt3Text {
+  font-family: var(--font-fira);
+  font-size: clamp(1rem, 2vw, 2rem);
+  font-weight: 400;
+  line-height: 1.7;
+  text-align: justify;
+}
+
+.abschnitt3Text p {
+  margin-bottom: 1rem;
+}
+
+.abschnitt3Text p:last-child {
+  margin-bottom: 0;
+}
+
+/* ============================================================
+   ABSCHNITT 4 — dwie karty obok siebie z gapem
+   lewa: białe tło + czarne obramowanie
+   prawa: żółte tło + czarne obramowanie
+   ============================================================ */
+.abschnitt4 {
+  display: flex;
+  gap: 2rem;
+  padding: 4rem 4vw;
+  align-items: stretch;
+}
+
+.abschnitt4KarteLinks {
+  flex: 1;
+  background-color: #ffffff;
+  border: 10px solid #000000;
+  padding: 2rem 2.5rem;
+}
+
+.abschnitt4KarteRechts {
+  flex: 1;
+  background-color: #fde047;
+  border: 10px solid #000000;
+  padding: 2rem 2.5rem;
+}
+
+.abschnitt4Text {
+  font-family: var(--font-fira);
+  font-size: 1.125rem;
+  font-weight: 400;
+  line-height: 1.7;
+}
+
+.abschnitt4Text p {
+  margin-bottom: 1rem;
+}
+
+.abschnitt4Text p:last-child {
+  margin-bottom: 0;
+}
+
+.abschnitt4Text h2,
+.abschnitt4Text h3 {
+  font-family: var(--font-anton);
+  font-weight: 400;
+  margin-bottom: 1rem;
+}
+
+.abschnitt4Text h2 {
+  font-size: 2rem;
+}
+
+.abschnitt4Text h3 {
+  font-size: 1.5rem;
+}
+
+/* ============================================================
+   ABSCHNITT 5 — pełna szerokość: tytuł + tekst pionowo,
+   potem 4 karty poziomo (białe tło + obramowanie w kolorze logo)
+   ============================================================ */
+.abschnitt5 {
+  padding: 5rem 4vw;
+  text-align: center;
+}
+
+.abschnitt5Titel {
+  font-family: var(--font-anton);
+  font-size: 5rem;
+  font-weight: 400;
+  font-style: normal;
+  line-height: 1.2;
+  letter-spacing: 2px;
+  margin-bottom: 1.5rem;
+}
+
+.abschnitt5Text {
+  font-family: var(--font-fira);
+  font-size: 1.3rem;
+  font-weight: 400;
+  line-height: 1.7;
+  max-width: 800px;
+  margin: 0 auto 3rem;
+}
+
+.abschnitt5Text p {
+  margin-bottom: 1rem;
+}
+
+.abschnitt5Karten {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1.5rem;
+  justify-content: flex-end;
+}
+
+.abschnitt5Karte {
+  border: 1px dashed #ffffff;
+  padding: 1.75rem 1.5rem;
+  font-family: var(--font-fira);
+  font-size: 1rem;
+  font-weight: 400;
+  line-height: 1.6;
+}
+
+.abschnitt5Karte p {
+  margin-bottom: 0.75rem;
+  color: #fff;
+  font-size: 2rem;
+  font-family: var(--font-anton);
+  font-weight: 400;
+}
+
+.abschnitt5Karte p:last-child {
+  margin-bottom: 0;
+}
+
+.abschnitt5Karte h2,
+.abschnitt5Karte h3 {
+  font-family: var(--font-anton);
+  font-weight: 400;
+  color: #fff;
+  margin-bottom: 0.75rem;
+}
+
+.abschnitt5Karte h2 {
+  font-size: 1.5rem;
+}
+
+.abschnitt5Karte h3 {
+  font-size: 1.25rem;
+}
+
 /* RESPONSIVE DESIGN - ZMODYFIKOWANE */
 @media (max-width: 968px) {
   .section3 {
@@ -240,12 +412,39 @@
     gap: 2rem;
     padding: 3rem 2rem;
   }
+
+  .abschnitt3 {
+    grid-template-columns: 1fr;
+  }
+  .abschnitt3Titel {
+    text-align: center;
+  }
+
+  .abschnitt4 {
+    flex-direction: column;
+  }
+
+  .abschnitt5Karten {
+    grid-template-columns: repeat(2, 1fr);
+  }
 }
+
 @media (max-width: 700px) {
   .section4Subtitle h2 {
     font-size: 8vw;
   }
   .section4Subtitle h3 {
     font-size: 1.5rem;
+  }
+
+  .abschnitt5Karten {
+    grid-template-columns: 1fr;
+  }
+  .abschnitt5Text {
+    font-size: 1.125rem;
+  }
+  .section1Image,
+  .section5Image {
+    width: 90%;
   }
 }

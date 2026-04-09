@@ -138,9 +138,7 @@ export function isValidPayPalOrderRequest(
     // Opcjonalne pola
     (r.donor_email === undefined || isValidEmail(r.donor_email)) &&
     (r.donor_name === undefined || isNonEmptyString(r.donor_name)) &&
-    (r.donor_message === undefined || isValidMessage(r.donor_message)) &&
-    (r.return_url === undefined || isValidUrl(r.return_url)) &&
-    (r.cancel_url === undefined || isValidUrl(r.cancel_url))
+    (r.donor_message === undefined || isValidMessage(r.donor_message))
   );
 }
 

@@ -1,10 +1,9 @@
 // app/partner-werden/page.tsx - Z CONDITIONAL MUX VIDEO
 import { Metadata } from "next";
-import Image from "next/image";
 import type { PartnerPageContent } from "../../types";
-import { getPageAssetPath } from "../../lib/supabase";
-import PartnerForm from "../../components/PartnerForm";
 import MuxVideoEmbed from "../../components/MuxVideoEmbed";
+
+const directusUrl = process.env.NEXT_PUBLIC_DIRECTUS_URL!;
 import { ConditionalMuxVideo } from "../../components/ConditionalMuxVideo";
 import styles from "./partner-werden.module.css";
 
@@ -91,10 +90,11 @@ export default async function PartnerWerdenPage() {
             dangerouslySetInnerHTML={{ __html: pageData.section1_text }}
           />
         )}
-        {pageData.section1_image && (
+        {pageData.bild_1 && (
           <div className={styles.section1ImageContainer}>
-            <Image
-              src={getPageAssetPath(pageData.section1_image)}
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src={`${directusUrl}/assets/${pageData.bild_1}`}
               alt="Partnerschaft"
               width={300}
               height={90}
@@ -154,32 +154,129 @@ export default async function PartnerWerdenPage() {
         </div>
       </section>
 
-      {/* SEKCJA 3 - FORMULARZ */}
-      <section
-        className={styles.section4}
-        style={{
-          backgroundColor: pageData.section3_background_color || undefined,
-        }}
-      >
-        {pageData.section3_text && (
+      {/* ABSCHNITT 3 - dwukolumnowy: 40% tytuł (lewa) | 60% tekst (prawa) */}
+      {(pageData.abschnitt_3_titel || pageData.abschnitt_3_text) && (
+        <section className={styles.abschnitt3}>
           <div
-            className={styles.section4Subtitle}
-            dangerouslySetInnerHTML={{ __html: pageData.section3_text }}
-          />
-        )}
-      </section>
+            className={styles.abschnitt3Links}
+            style={{
+              backgroundColor:
+                pageData.abschnitt_3_hintergrundfarbe_links || undefined,
+            }}
+          >
+            {pageData.abschnitt_3_titel && (
+              <h2
+                className={styles.abschnitt3Titel}
+                style={{
+                  color: pageData.abschnitt_3_titel_farbe || undefined,
+                }}
+              >
+                {pageData.abschnitt_3_titel}
+              </h2>
+            )}
+          </div>
+          <div
+            className={styles.abschnitt3Rechts}
+            style={{
+              backgroundColor:
+                pageData.abschnitt_3_hintergrundfarbe_rechts || undefined,
+            }}
+          >
+            {pageData.abschnitt_3_text && (
+              <div
+                className={styles.abschnitt3Text}
+                style={{ color: pageData.abschnitt_3_text_farbe || undefined }}
+                dangerouslySetInnerHTML={{ __html: pageData.abschnitt_3_text }}
+              />
+            )}
+          </div>
+        </section>
+      )}
 
-      {/* SEKCJA 4 - FORMULARZ PARTNERSKI */}
-      <section
-        className={styles.section5}
-        style={{
-          backgroundColor: pageData.section4_background_color || undefined,
-        }}
-      >
-        <div className={styles.partnerFormContainer}>
-          <PartnerForm />
-        </div>
-      </section>
+      {/* ABSCHNITT 4 - dwie karty obok siebie */}
+      {(pageData.abschnitt_4_text_links ||
+        pageData.abschnitt_4_text_rechts) && (
+        <section
+          className={styles.abschnitt4}
+          style={{
+            backgroundColor: pageData.abschnitt_4_hintergrundfarbe || undefined,
+          }}
+        >
+          <div className={styles.abschnitt4KarteLinks}>
+            {pageData.abschnitt_4_text_links && (
+              <div
+                className={styles.abschnitt4Text}
+                dangerouslySetInnerHTML={{
+                  __html: pageData.abschnitt_4_text_links,
+                }}
+              />
+            )}
+          </div>
+          <div className={styles.abschnitt4KarteRechts}>
+            {pageData.abschnitt_4_text_rechts && (
+              <div
+                className={styles.abschnitt4Text}
+                dangerouslySetInnerHTML={{
+                  __html: pageData.abschnitt_4_text_rechts,
+                }}
+              />
+            )}
+          </div>
+        </section>
+      )}
+
+      {/* ABSCHNITT 5 - pełna szerokość + tytuł/tekst + 4 karty */}
+      {(pageData.abschnitt_5_titel ||
+        pageData.abschnitt_5_text ||
+        pageData.abschnitt_5_1 ||
+        pageData.abschnitt_5_2 ||
+        pageData.abschnitt_5_3 ||
+        pageData.abschnitt_5_4) && (
+        <section
+          className={styles.abschnitt5}
+          style={{
+            backgroundColor: pageData.abschnitt_5_hintergrundfarbe || undefined,
+            color: pageData.abschnitt_5_text_farbe || undefined,
+          }}
+        >
+          {pageData.abschnitt_5_titel && (
+            <h2
+              className={styles.abschnitt5Titel}
+              style={{ color: pageData.abschnitt_5_titel_farbe || undefined }}
+            >
+              {pageData.abschnitt_5_titel}
+            </h2>
+          )}
+          {pageData.abschnitt_5_text && (
+            <div
+              className={styles.abschnitt5Text}
+              dangerouslySetInnerHTML={{ __html: pageData.abschnitt_5_text }}
+            />
+          )}
+          {(pageData.abschnitt_5_1 ||
+            pageData.abschnitt_5_2 ||
+            pageData.abschnitt_5_3 ||
+            pageData.abschnitt_5_4) && (
+            <div className={styles.abschnitt5Karten}>
+              {[
+                pageData.abschnitt_5_1,
+                pageData.abschnitt_5_2,
+                pageData.abschnitt_5_3,
+                pageData.abschnitt_5_4,
+              ].map(
+                (karte, i) =>
+                  karte && (
+                    <div
+                      key={i}
+                      className={styles.abschnitt5Karte}
+                      dangerouslySetInnerHTML={{ __html: karte }}
+                    />
+                  ),
+              )}
+            </div>
+          )}
+        </section>
+      )}
 
       {/* SEKCJA 5 - KOŃCOWA */}
       {(pageData.section5_title || pageData.section5_text) && (
@@ -209,12 +306,14 @@ export default async function PartnerWerdenPage() {
               dangerouslySetInnerHTML={{ __html: pageData.section5_text }}
             />
           )}
-          {pageData.section5_image && (
+          {pageData.bild_2 && (
             <div className={styles.section5ImageContainer}>
-              <Image
-                src={getPageAssetPath(pageData.section5_image)}
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                src={`${directusUrl}/assets/${pageData.bild_2}`}
                 alt="Partner werden"
-                fill
+                width={300}
+                height={90}
                 className={styles.section5Image}
               />
             </div>

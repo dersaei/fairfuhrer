@@ -15,8 +15,6 @@ export function logRenderEnvironment() {
     );
     console.log("PayPal Webhook ID present:", !!process.env.PAYPAL_WEBHOOK_ID);
     console.log("Directus URL:", process.env.DIRECTUS_URL);
-    console.log("Return URL:", process.env.PAYPAL_RETURN_URL);
-    console.log("Cancel URL:", process.env.PAYPAL_CANCEL_URL);
     console.log("Current time:", new Date().toISOString());
     console.log("=== END ENVIRONMENT CHECK ===");
   } else {
@@ -47,12 +45,6 @@ export function validateRenderConfig(): { isValid: boolean; errors: string[] } {
     if (!process.env.DIRECTUS_URL) errors.push("DIRECTUS_URL missing");
 
     // Sprawdź URLs
-    if (process.env.PAYPAL_RETURN_URL?.includes("localhost")) {
-      errors.push("PAYPAL_RETURN_URL still uses localhost");
-    }
-    if (process.env.PAYPAL_CANCEL_URL?.includes("localhost")) {
-      errors.push("PAYPAL_CANCEL_URL still uses localhost");
-    }
   } else {
     // Sprawdź client-side ENV
     if (!process.env.NEXT_PUBLIC_PAYPAL_CLIENT_ID) {

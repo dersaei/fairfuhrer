@@ -372,8 +372,7 @@ export interface PartnerPageContent {
   section2_text_color?: string;
   section2_title_color?: string;
 
-  // SEKCJA 3 - Formularz kontaktowy + KOLORY
-  section3_text?: string;
+  // SEKCJA 3 - (usunięte section3_text, zastąpione abschnitt_3)
   section3_background_color?: string;
 
   // SEKCJA 4 - tylko kolor tła (formularz)
@@ -386,6 +385,34 @@ export interface PartnerPageContent {
   section5_background_color?: string;
   section5_text_color?: string;
   section5_title_color?: string;
+
+  // ABSCHNITT 3 - dwukolumnowy układ (40% tytuł | 60% tekst)
+  abschnitt_3_titel?: string;
+  abschnitt_3_text?: string;
+  abschnitt_3_titel_farbe?: string;
+  abschnitt_3_text_farbe?: string;
+  abschnitt_3_hintergrundfarbe_links?: string;
+  abschnitt_3_hintergrundfarbe_rechts?: string;
+
+  // ABSCHNITT 4 - dwie karty obok siebie (lewa: białe tło, prawa: żółte tło)
+  abschnitt_4_text_links?: string;
+  abschnitt_4_text_rechts?: string;
+  abschnitt_4_hintergrundfarbe?: string;
+
+  // ABSCHNITT 5 - pełna szerokość + 4 karty poziomo
+  abschnitt_5_titel?: string;
+  abschnitt_5_text?: string;
+  abschnitt_5_titel_farbe?: string;
+  abschnitt_5_text_farbe?: string;
+  abschnitt_5_hintergrundfarbe?: string;
+  abschnitt_5_1?: string;
+  abschnitt_5_2?: string;
+  abschnitt_5_3?: string;
+  abschnitt_5_4?: string;
+
+  // OBRAZY
+  bild_1?: string;
+  bild_2?: string;
 }
 
 // ✅ FeaturedPin - kolekcja "Featured Pins" w Directus (M2O → Orte)
@@ -719,8 +746,6 @@ export interface PayPalOrderRequest {
   donor_email?: string;
   donor_name?: string;
   donor_message?: string;
-  return_url?: string; // URL powrotu po płatności
-  cancel_url?: string; // URL anulowania
 }
 
 export interface PayPalOrderResponse {
