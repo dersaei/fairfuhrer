@@ -60,7 +60,7 @@ export async function getHomePageContent(): Promise<HomePageContent | null> {
   const isDev = process.env.NODE_ENV === "development";
   try {
     const response = await fetch(
-      `${DIRECTUS_URL}/items/home_page_content?filter[page_slug][_eq]=home&fields=*&limit=1`,
+      `${DIRECTUS_URL}/items/home_page_content?fields=*&limit=1`,
       {
         headers: {
           "Content-Type": "application/json",
@@ -78,8 +78,8 @@ export async function getHomePageContent(): Promise<HomePageContent | null> {
 
     const data = await response.json();
 
-    if (data.data && data.data.length > 0) {
-      return data.data[0] as HomePageContent;
+    if (data.data) {
+      return (Array.isArray(data.data) ? data.data[0] : data.data) as HomePageContent;
     }
 
     return null;

@@ -1,6 +1,6 @@
 {
   "name": "fairguide",
-  "version": "3.5.5",
+  "version": "3.7.5",
   "private": true,
   "scripts": {
     "dev": "next dev",
@@ -9,7 +9,7 @@
     "lint": "eslint ."
   },
   "dependencies": {
-    "@directus/sdk": "^21.2.2",
+    "@directus/sdk": "^21.3.0",
     "@hotjar/browser": "^1.0.9",
     "@mapbox/search-js-react": "^1.5.1",
     "@mux/mux-player-react": "^3.13.0",
@@ -18,7 +18,7 @@
     "@paypal/react-paypal-js": "^9.2.0",
     "@supabase/ssr": "^0.10.2",
     "@supabase/supabase-js": "^2.105.1",
-    "dompurify": "^3.4.1",
+    "dompurify": "^3.4.2",
     "focus-trap-react": "^12.0.1",
     "lucide-react": "^1.14.0",
     "mapbox-gl": "^3.23.0",

@@ -7,6 +7,7 @@
   position: relative;
 }
 
+/* ===== SEKCJA 1: Hero ===== */
 .heroContainer {
   position: relative;
   width: 100%;
@@ -72,13 +73,11 @@
   opacity: 1;
 }
 
-/* Mobile-only overlay elements — hidden on desktop */
 .heroTitleMobile,
 .heroButtonMobile {
   display: none;
 }
 
-/* Store Badges Bar - bottom of hero, full width */
 .heroBadgesBar {
   position: absolute;
   bottom: 0;
@@ -165,46 +164,85 @@
 
 /* ===== SEKCJA 3: Mapa Featured Pins ===== */
 .section3 {
-  background-color: var(--bg-s3);
-  padding: 3rem 0 0;
+  background-color: var(--bg-s3, #ffffff);
+  padding: 0;
 }
 
-.section3ButtonRow {
+/* ===== SEKCJA 3b: Traveler & Partner CTA ===== */
+.section3b {
+  background-color: #ffffff;
+}
+
+.ctaBlock {
   display: flex;
+  align-items: stretch;
+  min-height: 340px;
+}
+
+.ctaBlockReverse {
+  background-color: #f7f4f0;
+}
+
+.ctaImage {
+  flex: 0 0 28%;
+  max-width: 28%;
+  overflow: hidden;
+}
+
+.ctaImage img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.ctaContent {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
   justify-content: center;
-  padding: 3rem 0;
+  padding: 3rem 4rem;
 }
 
-.section3Title {
-  font-size: var(--fs-s3-title);
-  color: var(--color-s3-title);
+.ctaTitle {
+  font-size: clamp(1.6rem, 3.5vw, 3rem);
   font-weight: 400;
-  margin: 0 0 2rem 0;
-  line-height: 1.3;
   font-family: var(--font-anton);
-  text-align: center;
-  padding: 0 4vw;
+  color: #fc6c14;
+  margin: 0 0 1.2rem 0;
+  line-height: 1.2;
 }
 
-.section3Button {
-  font-size: var(--fs-s3-btn);
-  color: var(--color-s3-btn);
-  background-color: var(--bg-s3-btn);
-  display: inline-block;
-  text-decoration: none;
-  padding: 1rem 2.5rem;
-  border-radius: 9999px;
-  border: 2px solid black;
-  font-weight: 400;
+.ctaText {
+  font-size: 1.05rem;
   font-family: var(--font-fira);
-  transition: all 1s ease;
-  opacity: 0.9;
-  box-shadow: 0px 0px 0px 0px black;
+  font-weight: 500;
+  color: #3a3a3a;
+  line-height: 1.75;
+  margin: 0 0 2rem 0;
+  max-width: 600px;
 }
 
-.section3Button:hover {
-  box-shadow: 1px 3px 18px 2px rgba(0, 0, 0, 0.2);
-  opacity: 1;
+.ctaButton {
+  display: inline-block;
+  align-self: flex-start;
+  font-family: var(--font-fira);
+  font-size: 1rem;
+  font-weight: 600;
+  text-decoration: none;
+  color: #fff;
+  background-color: #18222f;
+  border: 2px solid #18222f;
+  padding: 0.75rem 2rem;
+  border-radius: 9999px;
+  transition:
+    background-color 0.25s ease,
+    color 0.25s ease;
+}
+
+.ctaButton:hover {
+  background-color: #fc6c14;
+  color: #18222f;
 }
 
 /* ===== SEKCJA 4: Wsparcie ===== */
@@ -289,11 +327,8 @@
   transform: translateY(-3px);
 }
 
+/* ===== MOBILE ===== */
 @media screen and (max-width: 735px) {
-  .heroContainer {
-    height: calc(100dvh - 90px);
-  }
-
   .heroImageSide {
     position: absolute;
     inset: 0;
@@ -344,7 +379,6 @@
     font-family: var(--font-fira);
     transition: all 1s ease;
     opacity: 0.8;
-    box-shadow: 0px 0px 0px 0px black;
   }
 
   .heroButtonMobile:hover {
@@ -354,11 +388,6 @@
 
   .section2Title {
     font-size: var(--fs-s2-title-mobile);
-    padding: 0;
-  }
-
-  .section3Title {
-    font-size: var(--fs-s3-title-mobile);
     padding: 0;
   }
 
@@ -377,6 +406,24 @@
   .section4Button {
     font-size: var(--fs-s4-btn-mobile);
   }
+
+  .ctaBlock,
+  .ctaBlockReverse {
+    flex-direction: column;
+  }
+
+  .ctaImage {
+    flex: none;
+    max-width: 100%;
+    width: 100%;
+    height: 220px;
+    order: 2;
+  }
+
+  .ctaContent {
+    order: 1;
+    padding: 2rem 1.5rem;
+  }
 }
 
 @media (max-width: 500px) {
@@ -385,6 +432,7 @@
     top: 35%;
   }
 }
+
 @media screen and (max-width: 330px) {
   .heroButtonMobile {
     font-size: 95%;
@@ -392,7 +440,6 @@
   }
 }
 
-/* Fallback dla starszych przeglądarek */
 @supports not (height: 100dvh) {
   .heroContainer {
     height: calc(100vh - 90px);

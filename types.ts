@@ -430,7 +430,6 @@ export interface FeaturedPin {
 // ✅ HomePageContent - kolekcja "Home Page Content" w Directus
 export interface HomePageContent {
   id: number;
-  page_slug: string;
 
   // Hero section
   hero_title?: string;
@@ -496,6 +495,18 @@ export interface HomePageContent {
   section4_button_font_size?: string;
   section4_button_background_color?: string;
   section4_button_mobile_font_size?: string;
+
+  // Section 3 - Traveler & Partner CTA
+  traveler_title?: string;
+  traveler_content?: string;
+  traveler_cta_label?: string;
+  traveler_cta_url?: string;
+  traveler_image?: string;
+  partner_title?: string;
+  partner_content?: string;
+  partner_cta_label?: string;
+  partner_cta_url?: string;
+  partner_image?: string;
 }
 
 // ✅ ImpressumContent
