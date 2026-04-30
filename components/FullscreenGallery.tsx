@@ -2,7 +2,7 @@
 "use client";
 
 import { useEffect } from "react";
-import { getOptimizedImagePath } from "../lib/supabase";
+import { getImageUrl } from "../lib/supabase";
 import type { Place } from "../types";
 import styles from "./FullscreenGallery.module.css";
 
@@ -60,10 +60,10 @@ export default function FullscreenGallery({
     };
   }, [isOpen]);
 
-  // Preferuj nowe Directus Galerie, fallback na stare Supabase Galerie_Bilder
-  const images: string[] = place.Galerie?.length
-    ? place.Galerie
-    : place.Galerie_Bilder ?? [];
+  // Galerie_Bilder (stare Supabase piny) ma priorytet — fallback na Galerie (Directus)
+  const images: string[] = place.Galerie_Bilder?.length
+    ? place.Galerie_Bilder
+    : place.Galerie ?? [];
 
   if (!isOpen || images.length === 0) {
     return null;
@@ -75,7 +75,7 @@ export default function FullscreenGallery({
   const isUuid = UUID_REGEX.test(currentImage);
   const src = isUuid
     ? `${directusUrl}/assets/${currentImage}`
-    : getOptimizedImagePath(place.id, currentImage, "gallery");
+    : getImageUrl(place.id, currentImage, "gallery");
 
   return (
     <div className={styles.gallery} data-gallery-modal="true">

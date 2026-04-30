@@ -223,29 +223,26 @@ function PlaceContent({
         </div>
       )}
 
-      {place.Galerie && place.Galerie.length > 0 && (
+      {(place.Galerie_Bilder?.length || place.Galerie?.length) ? (
         <div className={styles.infoSection}>
           <h4>Bildergalerie</h4>
-          <DirectusImageGallery
-            uuids={place.Galerie}
-            onImageClickAction={onImageClickAction}
-          />
+          {place.Galerie_Bilder?.length ? (
+            <ImageGallery
+              placeId={place.id}
+              images={place.Galerie_Bilder}
+              onImageClickAction={(imagePath) => {
+                const index = place.Galerie_Bilder?.findIndex((img) => imagePath.includes(img)) ?? 0;
+                onImageClickAction?.(imagePath, index);
+              }}
+            />
+          ) : (
+            <DirectusImageGallery
+              uuids={place.Galerie!}
+              onImageClickAction={onImageClickAction}
+            />
+          )}
         </div>
-      )}
-
-      {place.Galerie_Bilder && place.Galerie_Bilder.length > 0 && (
-        <div className={styles.infoSection}>
-          {!place.Galerie?.length && <h4>Bildergalerie</h4>}
-          <ImageGallery
-            placeId={place.id}
-            images={place.Galerie_Bilder}
-            onImageClickAction={(imagePath) => {
-              const index = place.Galerie_Bilder?.findIndex((img) => imagePath.includes(img)) ?? 0;
-              onImageClickAction?.(imagePath, index);
-            }}
-          />
-        </div>
-      )}
+      ) : null}
 
       {place.Zertifizierungen && place.Zertifizierungen.length > 0 && (
         <div className={styles.infoSection}>

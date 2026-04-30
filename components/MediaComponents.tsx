@@ -1,7 +1,7 @@
 // components/MediaComponents.tsx
 "use client";
 
-import { useState, useRef } from "react";
+import { useState, useRef, useId } from "react";
 import Image from "next/image";
 import { getAudioUrl, getOptimizedImagePath } from "../lib/supabase";
 import styles from "./MediaComponents.module.css";
@@ -31,6 +31,7 @@ export function AudioPlayer({
   const [duration, setDuration] = useState(0);
   const [playbackSpeed, setPlaybackSpeed] = useState<number>(1);
   const audioRef = useRef<HTMLAudioElement>(null);
+  const progressId = useId();
 
   const togglePlay = () => {
     if (!audioRef.current) return;
@@ -134,7 +135,7 @@ export function AudioPlayer({
       <div className={styles.progressContainer}>
         <span className={styles.currentTime}>{formatTime(currentTime)}</span>
         <input
-          id={`audio-progress-${placeId}-${filename}`}
+          id={progressId}
           type="range"
           min="0"
           max={duration || 0}
@@ -264,6 +265,7 @@ export function DirectusAudioPlayer({ uuid, className = "" }: DirectusAudioPlaye
   const [duration, setDuration] = useState(0);
   const [playbackSpeed, setPlaybackSpeed] = useState<number>(1);
   const audioRef = useRef<HTMLAudioElement>(null);
+  const progressId = useId();
 
   const directusUrl = process.env.NEXT_PUBLIC_DIRECTUS_URL!;
   const src = `${directusUrl}/assets/${uuid}`;
@@ -324,7 +326,7 @@ export function DirectusAudioPlayer({ uuid, className = "" }: DirectusAudioPlaye
       <div className={styles.progressContainer}>
         <span className={styles.currentTime}>{formatTime(currentTime)}</span>
         <input
-          id={`audio-directus-${uuid}`}
+          id={progressId}
           type="range"
           min="0"
           max={duration || 0}

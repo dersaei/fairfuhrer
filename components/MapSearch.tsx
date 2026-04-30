@@ -14,7 +14,7 @@ interface MapSearchProps {
 
 interface SearchResult {
   place: Place;
-  matchType: "name" | "address";
+  matchType: "name" | "address" | "location";
   highlightedText: string;
 }
 
@@ -69,15 +69,31 @@ export default function MapSearch({
     places.forEach((place) => {
       const nameLower = place.Name.toLowerCase();
       const adresseLower = place.Adresse.toLowerCase();
+      const stadtLower = (place.Stadt ?? "").toLowerCase();
+      const landLower = (place.Land ?? "").toLowerCase();
+      const locationText = [place.Stadt, place.Land].filter(Boolean).join(", ");
+      const locationLower = locationText.toLowerCase();
 
       const nameMatches = words.every((w) => nameLower.includes(w));
+      const locationMatches = locationText.length > 0 && words.every((w) =>
+        stadtLower.includes(w) || landLower.includes(w) || locationLower.includes(w)
+      );
       const addressMatches = words.every((w) => adresseLower.includes(w));
 
-      if (!nameMatches && !addressMatches) return;
+      if (!nameMatches && !locationMatches && !addressMatches) return;
 
-      const matchType: "name" | "address" = nameMatches ? "name" : "address";
-      // Podświetl każde słowo osobno
-      const sourceText = nameMatches ? place.Name : place.Adresse;
+      const matchType: "name" | "address" | "location" = nameMatches
+        ? "name"
+        : locationMatches
+        ? "location"
+        : "address";
+
+      const sourceText = nameMatches
+        ? place.Name
+        : locationMatches
+        ? locationText
+        : place.Adresse;
+
       const highlightedText = words.reduce(
         (text, word) => highlightSearchTerm(text, word),
         sourceText
@@ -87,7 +103,7 @@ export default function MapSearch({
     });
 
     return results.sort((a, b) => {
-      const priority = { name: 2, address: 1 };
+      const priority = { name: 3, location: 2, address: 1 };
       return priority[b.matchType] - priority[a.matchType];
     });
   }, [debouncedQuery, places, highlightSearchTerm]);
@@ -363,14 +379,20 @@ export default function MapSearch({
                   </div>
 
                   <div className={styles.suggestionMeta}>
-                    {result.matchType === "address" ? (
+                    {result.matchType === "location" ? (
+                      <span
+                        dangerouslySetInnerHTML={{
+                          __html: result.highlightedText,
+                        }}
+                      />
+                    ) : result.matchType === "address" ? (
                       <span
                         dangerouslySetInnerHTML={{
                           __html: result.highlightedText,
                         }}
                       />
                     ) : (
-                      result.place.Adresse
+                      [result.place.Stadt, result.place.Land].filter(Boolean).join(", ") || result.place.Adresse
                     )}
                   </div>
 

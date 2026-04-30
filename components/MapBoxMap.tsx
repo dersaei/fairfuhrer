@@ -431,17 +431,17 @@ export default function MapBoxMap({
   }, []);
 
   const handleNextImage = useCallback(() => {
-    const images = selectedPlace?.Galerie?.length
-      ? selectedPlace.Galerie
-      : selectedPlace?.Galerie_Bilder;
+    const images = selectedPlace?.Galerie_Bilder?.length
+      ? selectedPlace.Galerie_Bilder
+      : selectedPlace?.Galerie;
     if (!images?.length) return;
     setCurrentImageIndex((prev) => (prev + 1) % images.length);
   }, [selectedPlace?.Galerie, selectedPlace?.Galerie_Bilder]);
 
   const handlePrevImage = useCallback(() => {
-    const images = selectedPlace?.Galerie?.length
-      ? selectedPlace.Galerie
-      : selectedPlace?.Galerie_Bilder;
+    const images = selectedPlace?.Galerie_Bilder?.length
+      ? selectedPlace.Galerie_Bilder
+      : selectedPlace?.Galerie;
     if (!images?.length) return;
     setCurrentImageIndex((prev) =>
       prev === 0 ? images.length - 1 : prev - 1,
