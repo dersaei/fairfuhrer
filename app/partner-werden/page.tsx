@@ -5,6 +5,7 @@ import MuxVideoEmbed from "../../components/MuxVideoEmbed";
 
 const directusUrl = process.env.NEXT_PUBLIC_DIRECTUS_URL!;
 import { ConditionalMuxVideo } from "../../components/ConditionalMuxVideo";
+import Link from "next/link";
 import styles from "./partner-werden.module.css";
 
 export const revalidate = 604800; // 7 dni fallback, główna rewalidacja przez Directus Flow
@@ -21,7 +22,7 @@ async function getPartnerPageContent(): Promise<PartnerPageContent | null> {
     }
 
     const response = await fetch(
-      `${directusUrl}/items/partner_page_content?filter[page_slug][_eq]=partner-werden&fields=*&limit=1`,
+      `${directusUrl}/items/partner_page_content?fields=*&limit=1`,
       { next: { tags: ["partner-werden"] } },
     );
 
@@ -32,7 +33,7 @@ async function getPartnerPageContent(): Promise<PartnerPageContent | null> {
     }
 
     const result: DirectusResponse<PartnerPageContent> = await response.json();
-    return result.data[0] || null;
+    return (Array.isArray(result.data) ? result.data[0] : result.data) || null;
   } catch (error) {
     console.error("Error fetching partner page content:", error);
     return null;
@@ -139,7 +140,6 @@ export default async function PartnerWerdenPage() {
             <ConditionalMuxVideo>
               <MuxVideoEmbed
                 playbackId={pageData.section2_mux_playback_id}
-                poster={pageData.section2_video_poster}
                 autoPlay={false}
                 muted={false}
                 className={styles.muxVideo}
@@ -273,6 +273,17 @@ export default async function PartnerWerdenPage() {
                     />
                   ),
               )}
+            </div>
+          )}
+          {pageData.button_parner_werden && pageData.url_button_partner_werden && (
+            <div className={styles.ctaRow}>
+              <Link
+                href={pageData.url_button_partner_werden}
+                className={styles.ctaButton}
+                style={{ backgroundColor: pageData.color_button_partner_werden || undefined }}
+              >
+                {pageData.button_parner_werden}
+              </Link>
             </div>
           )}
         </section>

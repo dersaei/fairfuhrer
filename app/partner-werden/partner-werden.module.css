@@ -1,5 +1,28 @@
 /* app/partner-werden/partner-werden.module.css - zmodyfikowana wersja */
 
+.ctaRow {
+  display: flex;
+  justify-content: center;
+  padding: 4rem 2rem 0;
+}
+
+.ctaButton {
+  display: inline-block;
+  font-family: var(--font-fira);
+  font-size: 1.3rem;
+  font-weight: 600;
+  text-decoration: none;
+  color: #18222f;
+  background-color: #fc6c14;
+  padding: 1rem 2.5rem;
+  border-radius: 9999px;
+  transition: opacity 0.2s ease;
+}
+
+.ctaButton:hover {
+  opacity: 0.85;
+}
+
 .errorMessage {
   text-align: center;
   background: white;

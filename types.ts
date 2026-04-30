@@ -356,12 +356,10 @@ export interface CompanySizeOption {
 // ✅ ROZSZERZONE - PartnerPageContent z kolorami dla każdej sekcji
 export interface PartnerPageContent {
   id: number;
-  page_slug: string;
 
   // SEKCJA 1
   section1_title?: string;
   section1_text?: string;
-  section1_image?: string;
   section1_background_color?: string;
   section1_text_color?: string;
   section1_title_color?: string;
@@ -370,8 +368,6 @@ export interface PartnerPageContent {
   section2_left_title?: string;
   section2_left_text?: string;
   section2_mux_playback_id?: string;
-  section2_video_poster?: string;
-  section2_video_title?: string;
   section2_background_color?: string;
   section2_text_color?: string;
   section2_title_color?: string;
@@ -385,7 +381,6 @@ export interface PartnerPageContent {
   // SEKCJA 5 - Końcowa sekcja + KOLORY
   section5_title?: string;
   section5_text?: string;
-  section5_image?: string;
   section5_background_color?: string;
   section5_text_color?: string;
   section5_title_color?: string;
@@ -417,6 +412,11 @@ export interface PartnerPageContent {
   // OBRAZY
   bild_1?: string;
   bild_2?: string;
+
+  // PRZYCISK CTA
+  button_parner_werden?: string;
+  color_button_partner_werden?: string;
+  url_button_partner_werden?: string;
 }
 
 // ✅ FeaturedPin - kolekcja "Featured Pins" w Directus (M2O → Orte)
