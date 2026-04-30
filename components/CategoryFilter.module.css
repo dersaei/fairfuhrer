@@ -67,7 +67,7 @@
 }
 
 .filterName {
-  font-size: 1.1rem;
+  font-size: 1rem;
   font-weight: 400;
   font-family: var(--font-fira);
   color: #000;
@@ -163,7 +163,7 @@
   }
 
   .filterName {
-    font-size: 14px;
+    font-size: 0.8rem;
   }
 
   .filterWrapper .infoButton svg {

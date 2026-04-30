@@ -157,6 +157,7 @@ export default function MapBoxMap({
   const closePanelTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   const isPanelOpenRef = useRef(false);
   const isMapAnimatingRef = useRef(false);
+  const selectedPlaceIdRef = useRef<number | null>(null);
 
   // Panel state
   const [selectedPlace, setSelectedPlace] = useState<Place | null>(null);
@@ -324,12 +325,18 @@ export default function MapBoxMap({
       setSelectedPlace(place);
       setIsPanelOpen(true);
       isPanelOpenRef.current = true;
+      selectedPlaceIdRef.current = place.id;
 
       // Wyłącz interakcje dotykowe mapy gdy panel jest otwarty
       if (mapRef.current) {
         mapRef.current.dragPan.disable();
         mapRef.current.touchZoomRotate.disable();
         mapRef.current.touchPitch.disable();
+      }
+
+      // Podświetl wybrany pin — powiększony layer na wierzchu
+      if (mapRef.current?.getLayer("places-selected")) {
+        mapRef.current.setFilter("places-selected", ["==", ["get", "placeId"], place.id]);
       }
 
       requestAnimationFrame(() => {
@@ -341,7 +348,7 @@ export default function MapBoxMap({
             setTimeout(() => {
               animateToLocation(
                 place.location.coordinates,
-                Math.max(currentZoom, 12),
+                Math.max(currentZoom, 14),
                 1200,
               );
             }, 300);
@@ -354,9 +361,15 @@ export default function MapBoxMap({
 
   const closePanel = useCallback(() => {
     isPanelOpenRef.current = false;
+    selectedPlaceIdRef.current = null;
     setIsPanelVisible(false);
     setSelectedGalleryImage(null);
     setCurrentImageIndex(0);
+
+    // Reset podświetlonego pinu
+    if (mapRef.current?.getLayer("places-selected")) {
+      mapRef.current.setFilter("places-selected", ["==", ["get", "placeId"], -1]);
+    }
 
     // Przywróć interakcje dotykowe mapy
     if (mapRef.current) {
@@ -691,6 +704,30 @@ export default function MapBoxMap({
             "pin-0",
           ],
           "icon-size": 1,
+          "icon-anchor": "bottom",
+          "icon-allow-overlap": true,
+        },
+        paint: {},
+      });
+
+      // LAYER: wybrany pin — powiększony, renderowany na wierzchu
+      map.addLayer({
+        id: "places-selected",
+        type: "symbol",
+        source: "places-source",
+        filter: ["==", ["get", "placeId"], -1],
+        layout: {
+          "icon-image": [
+            "match",
+            ["get", "categoryId"],
+            1, "pin-1",
+            2, "pin-2",
+            3, "pin-3",
+            5, "pin-5",
+            8, "pin-8",
+            "pin-0",
+          ],
+          "icon-size": 1.45,
           "icon-anchor": "bottom",
           "icon-allow-overlap": true,
         },
