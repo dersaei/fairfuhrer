@@ -26,6 +26,9 @@ export default function Footer() {
           <Link href="/datenschutz" className={styles.link}>
             Datenschutz
           </Link>
+          <Link href="/agb" className={styles.link}>
+            AGB
+          </Link>
           <CookieSettings />
         </div>
       </div>

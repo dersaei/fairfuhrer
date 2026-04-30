@@ -61,17 +61,6 @@
   justify-content: center;
 }
 
-.name {
-  font-family: var(--font-fira);
-  font-size: 0.9rem;
-  font-weight: 600;
-  color: #18222f;
-  max-width: 120px;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
 .chevron {
   font-size: 0.6rem;
   color: #888;
@@ -88,14 +77,6 @@
   min-width: 180px;
   z-index: 1100;
   overflow: hidden;
-}
-
-@media screen and (max-width: 420px) {
-  .dropdown {
-    right: auto;
-    left: 50%;
-    transform: translateX(-50%);
-  }
 }
 
 .item {

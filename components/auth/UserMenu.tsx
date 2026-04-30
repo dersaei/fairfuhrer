@@ -65,7 +65,6 @@ export default function UserMenu() {
             {displayName.charAt(0).toUpperCase()}
           </span>
         )}
-        <span className={styles.name}>{displayName}</span>
         <span className={styles.chevron}>{isOpen ? "▲" : "▼"}</span>
       </button>
 
@@ -88,14 +87,32 @@ export default function UserMenu() {
             Einstellungen
           </Link>
           {isPartner ? (
-            <Link
-              href="/konto/partner/audiopin"
-              className={styles.item}
-              scroll={false}
-              onClick={() => setIsOpen(false)}
-            >
-              Mein Audiopin
-            </Link>
+            <>
+              <Link
+                href="/konto/partner/audiopin"
+                className={styles.item}
+                scroll={false}
+                onClick={() => setIsOpen(false)}
+              >
+                Mein Audiopin
+              </Link>
+              <Link
+                href="/konto/partner/premium"
+                className={styles.item}
+                scroll={false}
+                onClick={() => setIsOpen(false)}
+              >
+                Premium
+              </Link>
+              <Link
+                href="/konto/partner/hilfe"
+                className={styles.item}
+                scroll={false}
+                onClick={() => setIsOpen(false)}
+              >
+                Hilfe
+              </Link>
+            </>
           ) : (
             <Link
               href="/konto/reisender/ort-vorschlagen"

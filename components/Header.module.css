@@ -242,30 +242,8 @@
   }
 }
 
-@media screen and (max-width: 500px) {
-  /* UserMenu znika z headera — przeniesiony do mobile menu */
-  .mobileHeaderUserMenu {
-    display: none;
-  }
-}
-
-/* UserMenu wewnątrz mobile menu — tylko dla max 500px */
-.mobileMenuUserMenu {
-  display: none;
-}
-
-@media screen and (max-width: 500px) {
-  .mobileMenuUserMenu {
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-    padding: 1rem 0;
-    border-bottom: 1px solid #f0f0f0;
-    margin-bottom: 0.5rem;
-  }
-}
 @media screen and (max-width: 375px) {
-  .logo {
-    scale: calc(0.9);
+  .logo img {
+    width: 170px !important;
   }
 }
