@@ -344,11 +344,10 @@ export default function MapBoxMap({
           setIsPanelVisible(true);
 
           if (mapRef.current) {
-            const currentZoom = mapRef.current.getZoom();
             setTimeout(() => {
               animateToLocation(
                 place.location.coordinates,
-                Math.max(currentZoom, 14),
+                16,
                 1200,
               );
             }, 300);
@@ -389,11 +388,8 @@ export default function MapBoxMap({
   const handleSearchPlaceSelect = useCallback(
     (place: Place) => {
       openPanel(place);
-      setTimeout(() => {
-        animateToLocation(place.location.coordinates, 14, 1200);
-      }, 100);
     },
-    [openPanel, animateToLocation],
+    [openPanel],
   );
 
   // ========================================
