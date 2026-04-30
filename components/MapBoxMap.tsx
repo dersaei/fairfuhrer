@@ -60,14 +60,12 @@ const PIN_H = 56;
  * Buduje kompletny SVG pinu per kategoria — identyczny design jak CategoryPin w legendzie:
  * kolorowe wypełnienie łezki + białe kółko w środku + kolorowa ikona Lucide.
  */
-function buildPinSVG(color: string, iconPaths: string): string {
+function buildPinSVG(color: string, iconPaths: string, selected = false): string {
+  const stroke = selected ? ` stroke="rgba(0,0,0,0.75)" stroke-width="2"` : "";
   return (
     `<svg xmlns="http://www.w3.org/2000/svg" width="${PIN_W}" height="${PIN_H}" viewBox="0 0 40 56">` +
-    // Łezka w kolorze kategorii
-    `<path d="M20,2 C10.611,2 3,9.611 3,19 C3,31 20,54 20,54 C20,54 37,31 37,19 C37,9.611 29.389,2 20,2 Z" fill="${color}"/>` +
-    // Białe kółko w środku
+    `<path d="M20,2 C10.611,2 3,9.611 3,19 C3,31 20,54 20,54 C20,54 37,31 37,19 C37,9.611 29.389,2 20,2 Z" fill="${color}"${stroke}/>` +
     `<circle cx="20" cy="19" r="11" fill="white"/>` +
-    // Ikona Lucide w kolorze kategorii, skalowana z 24×24, wycentrowana w kółku
     `<g transform="translate(12,11) scale(0.667)" fill="none" stroke="${color}" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">` +
     iconPaths +
     `</g>` +
@@ -126,8 +124,9 @@ function loadCategoryMarkerSDFs(
 
   allCategories.forEach(({ id, color }) => {
     const paths = id === 0 ? DEFAULT_ICON_PATHS : getCategoryIconPaths(id);
-    const svg = buildPinSVG(color, paths);
-    loadImageFromSVG(map, `pin-${id}`, svg, PIN_W, PIN_H, done);
+    loadImageFromSVG(map, `pin-${id}`, buildPinSVG(color, paths), PIN_W, PIN_H, done);
+    remaining++;
+    loadImageFromSVG(map, `pin-${id}-selected`, buildPinSVG(color, paths, true), PIN_W, PIN_H, done);
   });
 }
 
@@ -158,6 +157,7 @@ export default function MapBoxMap({
   const isPanelOpenRef = useRef(false);
   const isMapAnimatingRef = useRef(false);
   const selectedPlaceIdRef = useRef<number | null>(null);
+  const pinSizeAnimFrameRef = useRef<number | null>(null);
 
   // Panel state
   const [selectedPlace, setSelectedPlace] = useState<Place | null>(null);
@@ -210,6 +210,28 @@ export default function MapBoxMap({
     },
     [],
   );
+
+  const animatePinSize = useCallback((from: number, to: number, duration = 280) => {
+    if (pinSizeAnimFrameRef.current) {
+      cancelAnimationFrame(pinSizeAnimFrameRef.current);
+      pinSizeAnimFrameRef.current = null;
+    }
+    const start = performance.now();
+    const easeOutCubic = (t: number) => 1 - Math.pow(1 - t, 3);
+    const tick = (now: number) => {
+      const t = Math.min((now - start) / duration, 1);
+      const size = from + (to - from) * easeOutCubic(t);
+      if (mapRef.current?.getLayer("places-selected")) {
+        mapRef.current.setLayoutProperty("places-selected", "icon-size", size);
+      }
+      if (t < 1) {
+        pinSizeAnimFrameRef.current = requestAnimationFrame(tick);
+      } else {
+        pinSizeAnimFrameRef.current = null;
+      }
+    };
+    pinSizeAnimFrameRef.current = requestAnimationFrame(tick);
+  }, []);
 
   const addUserLocationMarker = useCallback(
     (map: mapboxgl.Map, location: [number, number]) => {
@@ -334,9 +356,11 @@ export default function MapBoxMap({
         mapRef.current.touchPitch.disable();
       }
 
-      // Podświetl wybrany pin — powiększony layer na wierzchu
+      // Podświetl wybrany pin — płynne powiększenie
       if (mapRef.current?.getLayer("places-selected")) {
+        mapRef.current.setLayoutProperty("places-selected", "icon-size", 1);
         mapRef.current.setFilter("places-selected", ["==", ["get", "placeId"], place.id]);
+        animatePinSize(1, 1.45);
       }
 
       requestAnimationFrame(() => {
@@ -355,7 +379,7 @@ export default function MapBoxMap({
         });
       });
     },
-    [animateToLocation],
+    [animateToLocation, animatePinSize],
   );
 
   const closePanel = useCallback(() => {
@@ -365,9 +389,14 @@ export default function MapBoxMap({
     setSelectedGalleryImage(null);
     setCurrentImageIndex(0);
 
-    // Reset podświetlonego pinu
+    // Reset podświetlonego pinu — płynne zmniejszenie, potem ukrycie
     if (mapRef.current?.getLayer("places-selected")) {
-      mapRef.current.setFilter("places-selected", ["==", ["get", "placeId"], -1]);
+      animatePinSize(1.45, 1);
+      setTimeout(() => {
+        if (mapRef.current?.getLayer("places-selected")) {
+          mapRef.current.setFilter("places-selected", ["==", ["get", "placeId"], -1]);
+        }
+      }, 280);
     }
 
     // Przywróć interakcje dotykowe mapy
@@ -383,7 +412,7 @@ export default function MapBoxMap({
       closePanelTimeoutRef.current = null;
       setIsPanelOpen(false);
     }, 600);
-  }, []);
+  }, [animatePinSize]);
 
   const handleSearchPlaceSelect = useCallback(
     (place: Place) => {
@@ -706,7 +735,7 @@ export default function MapBoxMap({
         paint: {},
       });
 
-      // LAYER: wybrany pin — powiększony, renderowany na wierzchu
+      // LAYER: wybrany pin — powiększony z obramowaniem, renderowany na wierzchu
       map.addLayer({
         id: "places-selected",
         type: "symbol",
@@ -716,12 +745,12 @@ export default function MapBoxMap({
           "icon-image": [
             "match",
             ["get", "categoryId"],
-            1, "pin-1",
-            2, "pin-2",
-            3, "pin-3",
-            5, "pin-5",
-            8, "pin-8",
-            "pin-0",
+            1, "pin-1-selected",
+            2, "pin-2-selected",
+            3, "pin-3-selected",
+            5, "pin-5-selected",
+            8, "pin-8-selected",
+            "pin-0-selected",
           ],
           "icon-size": 1.45,
           "icon-anchor": "bottom",

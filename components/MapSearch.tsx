@@ -62,34 +62,30 @@ export default function MapSearch({
       return [];
     }
 
-    const query = debouncedQuery.toLowerCase();
+    // Rozbij query na słowa — każde musi pasować (AND logic)
+    const words = debouncedQuery.toLowerCase().split(/\s+/).filter(Boolean);
     const results: SearchResult[] = [];
 
     places.forEach((place) => {
-      let matchType: "name" | "address" | null = null;
-      let highlightedText = "";
+      const nameLower = place.Name.toLowerCase();
+      const adresseLower = place.Adresse.toLowerCase();
 
-      // Search in name (highest priority)
-      if (place.Name.toLowerCase().includes(query)) {
-        matchType = "name";
-        highlightedText = highlightSearchTerm(place.Name, query);
-      }
-      // Search in address (medium priority)
-      else if (place.Adresse.toLowerCase().includes(query)) {
-        matchType = "address";
-        highlightedText = highlightSearchTerm(place.Adresse, query);
-      }
+      const nameMatches = words.every((w) => nameLower.includes(w));
+      const addressMatches = words.every((w) => adresseLower.includes(w));
 
-      if (matchType) {
-        results.push({
-          place,
-          matchType,
-          highlightedText,
-        });
-      }
+      if (!nameMatches && !addressMatches) return;
+
+      const matchType: "name" | "address" = nameMatches ? "name" : "address";
+      // Podświetl każde słowo osobno
+      const sourceText = nameMatches ? place.Name : place.Adresse;
+      const highlightedText = words.reduce(
+        (text, word) => highlightSearchTerm(text, word),
+        sourceText
+      );
+
+      results.push({ place, matchType, highlightedText });
     });
 
-    // Sort by relevance: name matches first, then address
     return results.sort((a, b) => {
       const priority = { name: 2, address: 1 };
       return priority[b.matchType] - priority[a.matchType];
