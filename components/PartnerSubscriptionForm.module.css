@@ -1,0 +1,423 @@
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.stepLabel {
+  font-family: var(--font-fira);
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: black;
+  margin: 0;
+}
+
+.stepTitle {
+  font-family: var(--font-fira);
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: #18222f;
+  margin: 0;
+}
+
+.stepHint {
+  font-family: var(--font-fira);
+  font-size: 0.9rem;
+  color: #2c2a2a;
+  line-height: 1.6;
+  margin: 0;
+}
+
+/* Size selection */
+
+.sizeOptions {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.sizeOption {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1rem 1.25rem;
+  border: 1.5px solid #000;
+  background-color: #fff;
+  cursor: pointer;
+  text-align: left;
+  transition:
+    border-color 0.15s,
+    background-color 0.15s;
+  gap: 1rem;
+}
+
+.sizeOption:hover {
+  border-color: #fc6c14;
+  background-color: #fff8f4;
+}
+
+.sizeOptionSelected {
+  border-color: #fc6c14;
+  background-color: #fff8f4;
+}
+
+.sizeOptionLeft {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+}
+
+.sizeOptionLabel {
+  font-family: var(--font-fira);
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: #18222f;
+}
+
+.sizeOptionDesc {
+  font-family: var(--font-fira);
+  font-size: 0.8rem;
+  color: #252323;
+}
+
+.sizeOptionPriceBox {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 0.15rem;
+  flex-shrink: 0;
+}
+
+.sizeOptionPrice {
+  font-family: var(--font-fira);
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: #000;
+  white-space: nowrap;
+}
+
+.sizeOptionVat {
+  font-family: var(--font-fira);
+  font-size: 0.72rem;
+  color: #333;
+  white-space: nowrap;
+}
+
+/* Summary box */
+
+.summaryBox {
+  display: flex;
+  flex-direction: column;
+  border: 1.5px solid #000;
+  background-color: #fff8f4;
+}
+
+.summaryRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.75rem 1.25rem;
+  border-bottom: 1px solid #eee;
+  gap: 1rem;
+}
+
+.summaryRow:last-child {
+  border-bottom: none;
+}
+
+.summaryRowTotal {
+  background: #fff;
+}
+
+.summaryLabel {
+  font-family: var(--font-fira);
+  font-size: 0.8rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: #180808;
+}
+
+.summaryValue {
+  font-family: var(--font-fira);
+  font-size: 0.9rem;
+  color: #18222f;
+  text-align: right;
+}
+
+.summaryValueBold {
+  font-family: var(--font-fira);
+  font-size: 1rem;
+  font-weight: 700;
+  color: #18222f;
+}
+
+/* VAT field */
+
+.fieldGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.fieldLabel {
+  font-family: var(--font-fira);
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: #18222f;
+}
+
+.required {
+  color: #c0392b;
+}
+
+.fieldInput {
+  font-family: var(--font-fira);
+  font-size: 0.95rem;
+  color: #18222f;
+  border: 1.5px solid #000;
+  padding: 0.65rem 0.9rem;
+  background: #fff;
+  outline: none;
+  transition: border-color 0.15s;
+}
+
+.fieldInput:focus {
+  border-color: #fc6c14;
+}
+
+.fieldInputError {
+  border-color: #c0392b;
+}
+
+.fieldError {
+  font-family: var(--font-fira);
+  font-size: 0.8rem;
+  color: #c0392b;
+  margin: 0;
+}
+
+.fieldHint {
+  font-family: var(--font-fira);
+  font-size: 0.78rem;
+  color: #1b1818;
+  line-height: 1.5;
+  margin: 0;
+}
+
+/* Summary VAT */
+
+.summaryVat {
+  font-size: 0.8rem;
+  font-weight: 400;
+  color: #666;
+}
+
+.summaryNote {
+  font-family: var(--font-fira);
+  font-size: 0.78rem;
+  color: #666;
+  text-align: right;
+}
+
+/* PayPal info block */
+
+.paypalInfo {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.75rem;
+  padding: 1rem;
+  background: #fffbf4;
+  border: 1px solid #f0e0c0;
+}
+
+.paypalInfoText {
+  font-family: var(--font-fira);
+  font-size: 0.82rem;
+  color: #555;
+  line-height: 1.6;
+  margin: 0;
+}
+
+/* Buttons */
+
+.primaryButton {
+  font-family: var(--font-fira);
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: #fff;
+  background: #18222f;
+  border: none;
+  padding: 0.9rem 1.5rem;
+  cursor: pointer;
+  transition: background 0.15s;
+  letter-spacing: 0.03em;
+}
+
+.primaryButton:hover:not(:disabled) {
+  background: firebrick;
+}
+
+.primaryButton:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.paypalButton {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.6rem;
+  font-family: var(--font-fira);
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: #18222f;
+  background-color: #ffc439;
+  border: none;
+  padding: 0.9rem 1.5rem;
+  cursor: pointer;
+  transition: background-color 0.15s;
+  letter-spacing: 0.03em;
+}
+
+.paypalButton:hover:not(:disabled) {
+  background-color: #e6b030;
+}
+
+.paypalButton:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.backButton {
+  font-family: var(--font-fira);
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: #393737;
+  background: none;
+  border: none;
+  padding: 0.4rem 0;
+  cursor: pointer;
+  text-align: left;
+  transition: color 0.15s;
+}
+
+.backButton:hover:not(:disabled) {
+  color: firebrick;
+}
+
+.backButton:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+/* Activating spinner */
+
+.activatingBox {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+  padding: 2rem;
+  border: 1.5px solid #000;
+  background-color: #f9f9f9;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+.activatingSpinner {
+  display: block;
+  width: 2rem;
+  height: 2rem;
+  border: 3px solid #e0e0e0;
+  border-top-color: #fc6c14;
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+.activatingText {
+  font-family: var(--font-fira);
+  font-size: 0.95rem;
+  color: #18222f;
+  margin: 0;
+}
+
+/* Active state */
+
+.activeBox {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.75rem;
+  padding: 1.5rem;
+  border: 1.5px solid #000;
+  background-color: #f9f9f9;
+}
+
+.activeIcon {
+  font-size: 1.5rem;
+  color: #2e7d32;
+  font-weight: 700;
+  line-height: 1;
+}
+
+.activeSuccess {
+  font-family: var(--font-fira);
+  font-size: 0.9rem;
+  color: #1b5e20;
+  background: #e8f5e9;
+  border: 1px solid #a5d6a7;
+  padding: 0.75rem 1rem;
+  margin: 0;
+  line-height: 1.5;
+}
+
+.activeTitle {
+  font-family: var(--font-fira);
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: #18222f;
+  margin: 0;
+}
+
+.activeUntil {
+  font-family: var(--font-fira);
+  font-size: 0.9rem;
+  color: #444;
+  margin: 0;
+}
+
+.activeHint {
+  font-family: var(--font-fira);
+  font-size: 0.85rem;
+  color: #211f1f;
+  line-height: 1.6;
+  margin: 0;
+}
+
+.activeLink {
+  color: #18222f;
+  text-decoration: underline;
+}
+
+.activeLink:hover {
+  color: #fc6c14;
+}
+
+/* Error */
+
+.error {
+  font-family: var(--font-fira);
+  font-size: 0.875rem;
+  color: #c0392b;
+  background: #fff0ee;
+  border: 1px solid #fcd5cf;
+  padding: 0.75rem 1rem;
+  margin: 0;
+}

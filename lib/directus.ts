@@ -257,6 +257,146 @@ export async function getContactInfoContent(): Promise<ContactInfoContent | null
 }
 
 // ========================================
+// IMPRESSUM
+// ========================================
+
+export interface ImpressumNew {
+  id: string;
+  date_updated: string | null;
+  content: string;
+}
+
+export async function getImpressumNew(): Promise<ImpressumNew | null> {
+  const isDev = process.env.NODE_ENV === "development";
+  try {
+    const response = await fetch(`${DIRECTUS_URL}/items/impressum`, {
+      headers: {
+        "Content-Type": "application/json",
+        ...(DIRECTUS_TOKEN && { Authorization: `Bearer ${DIRECTUS_TOKEN}` }),
+      },
+      ...(isDev
+        ? { cache: "no-store" as const }
+        : { next: { revalidate: 86400, tags: ["impressum"] } }),
+    });
+    if (!response.ok) throw new Error(`Failed to fetch impressum: ${response.statusText}`);
+    const data = await response.json();
+    return (data.data as ImpressumNew) ?? null;
+  } catch (error) {
+    console.error("Error fetching impressum:", error);
+    return null;
+  }
+}
+
+// ========================================
+// DATENSCHUTZ
+// ========================================
+
+export interface DatenschutzNew {
+  id: string;
+  date_updated: string | null;
+  content: string;
+}
+
+export async function getDatenschutzNew(): Promise<DatenschutzNew | null> {
+  const isDev = process.env.NODE_ENV === "development";
+  try {
+    const response = await fetch(`${DIRECTUS_URL}/items/datenschutz`, {
+      headers: {
+        "Content-Type": "application/json",
+        ...(DIRECTUS_TOKEN && { Authorization: `Bearer ${DIRECTUS_TOKEN}` }),
+      },
+      ...(isDev
+        ? { cache: "no-store" as const }
+        : { next: { revalidate: 86400, tags: ["datenschutz"] } }),
+    });
+    if (!response.ok) throw new Error(`Failed to fetch datenschutz: ${response.statusText}`);
+    const data = await response.json();
+    return (data.data as DatenschutzNew) ?? null;
+  } catch (error) {
+    console.error("Error fetching datenschutz:", error);
+    return null;
+  }
+}
+
+// ========================================
+// AGB
+// ========================================
+
+export interface AgbContent {
+  id: string;
+  date_updated: string | null;
+  content: string;
+}
+
+export async function getAgbContent(): Promise<AgbContent | null> {
+  const isDev = process.env.NODE_ENV === "development";
+  try {
+    const response = await fetch(
+      `${DIRECTUS_URL}/items/agb`,
+      {
+        headers: {
+          "Content-Type": "application/json",
+          ...(DIRECTUS_TOKEN && { Authorization: `Bearer ${DIRECTUS_TOKEN}` }),
+        },
+        ...(isDev
+          ? { cache: "no-store" as const }
+          : { next: { revalidate: 86400, tags: ["agb"] } }),
+      }
+    );
+
+    if (!response.ok) {
+      throw new Error(`Failed to fetch agb: ${response.statusText}`);
+    }
+
+    const data = await response.json();
+    return (data.data as AgbContent) ?? null;
+  } catch (error) {
+    console.error("Error fetching agb:", error);
+    return null;
+  }
+}
+
+// ========================================
+// HILFE WEB
+// ========================================
+
+export interface HilfeWebItem {
+  id: string;
+  sort: number;
+  frage: string;
+  antwort: string;
+}
+
+export async function getHilfeWebItems(): Promise<HilfeWebItem[]> {
+  const isDev = process.env.NODE_ENV === "development";
+
+  try {
+    const response = await fetch(
+      `${DIRECTUS_URL}/items/hilfe_web?filter[status][_eq]=published&sort=sort&fields=id,sort,frage,antwort`,
+      {
+        headers: {
+          "Content-Type": "application/json",
+          ...(DIRECTUS_TOKEN && { Authorization: `Bearer ${DIRECTUS_TOKEN}` }),
+        },
+        ...(isDev
+          ? { cache: "no-store" as const }
+          : { next: { revalidate: 3600, tags: ["hilfe-web"] } }),
+      }
+    );
+
+    if (!response.ok) {
+      throw new Error(`Failed to fetch hilfe_web: ${response.statusText}`);
+    }
+
+    const data = await response.json();
+    return (data.data as HilfeWebItem[]) ?? [];
+  } catch (error) {
+    console.error("Error fetching hilfe_web:", error);
+    return [];
+  }
+}
+
+// ========================================
 // NOWE FUNKCJE DLA PAYPAL DONACJI
 // ========================================
 

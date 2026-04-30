@@ -22,8 +22,8 @@
 }
 
 .title {
-  font-family: var(--font-fira);
-  font-weight: 700;
+  font-family: var(--font-anton);
+  font-weight: 400;
   font-size: 2rem;
   color: #18222f;
   margin: 0 0 0.5rem;
@@ -32,6 +32,7 @@
 .subtitle {
   font-family: var(--font-fira);
   font-size: 0.9rem;
+  font-weight: 600;
   color: #888;
   margin: 0 0 1.5rem;
 }
@@ -193,4 +194,32 @@
 
 .link:hover {
   text-decoration: underline;
+}
+
+.checkboxField {
+  margin-top: -0.25rem;
+}
+
+.checkboxLabel {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.5rem;
+  cursor: pointer;
+  font-family: var(--font-fira);
+  font-weight: 400;
+  font-size: 0.875rem;
+  color: #18222f;
+  line-height: 1.4;
+}
+
+.checkbox {
+  margin-top: 0.15rem;
+  width: 1rem;
+  height: 1rem;
+  flex-shrink: 0;
+}
+
+.checkboxHint {
+  color: #888;
+  font-size: 0.8rem;
 }

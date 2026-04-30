@@ -1,5 +1,9 @@
 export type UserRole = "consumer" | "partner";
 
+export type CompanySize = "nonprofit" | "micro" | "small" | "medium";
+
+export type { TaxBucket, TaxGroup, TaxIdFieldKey } from "@/lib/countries";
+
 export interface Profile {
   id: string;
   role: UserRole;
@@ -7,6 +11,8 @@ export interface Profile {
   first_name: string | null;
   last_name: string | null;
   avatar_url: string | null;
+  premium_until: string | null;
+  company_size: CompanySize | null;
   created_at: string;
   updated_at: string;
 }
@@ -31,6 +37,13 @@ export interface PartnerProfile {
   tiktok_url: string | null;
   youtube_url: string | null;
   gallery_paths: string[] | null;
+  // VAT / tax fields (new)
+  tax_group: import("@/lib/countries").TaxGroup | null;
+  tax_bucket: import("@/lib/countries").TaxBucket | null;
+  tax_id_field_key: import("@/lib/countries").TaxIdFieldKey | null;
+  tax_id_value: string | null;
+  no_eu_vat: boolean;
+  cross_border_b2c: boolean;
   created_at: string;
   updated_at: string;
 }

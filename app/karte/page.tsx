@@ -90,6 +90,8 @@ function transformDirectusOrteToPlace(ort: DirectusOrte): Place | null {
       id: ort.id,
       Name: ort.Name.trim(),
       Adresse: ort.Adresse.trim(),
+      Stadt: ort.Stadt?.trim() || undefined,
+      Land: ort.Land?.trim() || undefined,
       Telefon: ort.Telefon?.trim(),
       Vollbeschreibung: ort.Vollbeschreibung
         ? sanitizeWordHtml(ort.Vollbeschreibung)
@@ -118,7 +120,11 @@ function transformDirectusOrteToPlace(ort: DirectusOrte): Place | null {
       Galerie_Bilder: ort.Galerie_Bilder?.filter(
         (img) => img.trim().length > 0
       ),
-      Galerie: Array.isArray(ort.Galerie) ? ort.Galerie.filter(Boolean) : undefined,
+      Galerie: Array.isArray(ort.Galerie)
+        ? ort.Galerie.map((g) =>
+            typeof g === "string" ? g : g?.directus_files_id
+          ).filter((id): id is string => !!id)
+        : undefined,
       Zertifizierungen: ort.Zertifizierungen
         ?.filter((z: DirectusZertifizierungItem) => z.Zertifizierungen_id !== null)
         .map((z: DirectusZertifizierungItem): Zertifizierung => ({
@@ -141,6 +147,7 @@ async function fetchFromDirectus<T>(
   url: string,
   entityName: string
 ): Promise<DirectusCollectionResponse<T>> {
+  const directusToken = process.env.DIRECTUS_TOKEN;
   try {
     const response = await fetch(url, {
       next: {
@@ -150,6 +157,7 @@ async function fetchFromDirectus<T>(
       headers: {
         Accept: "application/json",
         "Content-Type": "application/json",
+        ...(directusToken ? { Authorization: `Bearer ${directusToken}` } : {}),
       },
     });
 
@@ -203,6 +211,8 @@ export default async function KartePage() {
         "id",
         "Name",
         "Adresse",
+        "Stadt",
+        "Land",
         "Telefon",
         "Vollbeschreibung",
         "location",
@@ -213,7 +223,7 @@ export default async function KartePage() {
         "Link_URL",
         "Link_Text",
         "Galerie_Bilder",
-        "Galerie",
+        "Galerie.directus_files_id",
         "Kategorie.Kategorie_id.id",
         "Kategorie.Kategorie_id.Name",
         "Kategorie.Kategorie_id.Farbe",
@@ -226,6 +236,8 @@ export default async function KartePage() {
     );
     orteUrl.searchParams.set("limit", "-1");
     orteUrl.searchParams.set("sort", "Name");
+    orteUrl.searchParams.set("filter[_or][0][Bearbeitungsstatus][_eq]", "veroeffentlicht");
+    orteUrl.searchParams.set("filter[_or][1][Bearbeitungsstatus][_null]", "true");
 
     const orteData = await fetchFromDirectus<DirectusOrte>(
       orteUrl.toString(),

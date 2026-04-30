@@ -189,7 +189,11 @@ function PlaceContent({
         <h2 id={`place-title-${place.id}`} className={styles.placeName}>
           {place.Name}
         </h2>
-        <p className={styles.placeAddress}>{place.Adresse}</p>
+        <p className={styles.placeAddress}>
+          {place.Adresse}
+          {place.Stadt ? `, ${place.Stadt}` : ""}
+          {place.Land ? ` (${place.Land})` : ""}
+        </p>
         {place.Telefon && (
           <a href={`tel:${place.Telefon}`} className={styles.placePhone}>
             📞 {place.Telefon}

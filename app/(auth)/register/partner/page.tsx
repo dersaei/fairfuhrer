@@ -7,7 +7,7 @@ import { registerPartner } from "@/app/actions/auth";
 import type { FormErrors } from "@/types/auth";
 import TurnstileWidget from "@/components/TurnstileWidget";
 import styles from "./partner.module.css";
-import { COUNTRIES } from "@/lib/countries";
+import { COUNTRIES, getCountry } from "@/lib/countries";
 
 function validatePassword(password: string): string | null {
   if (password.length < 8) return "Das Passwort muss mindestens 8 Zeichen lang sein.";
@@ -32,13 +32,12 @@ export default function RegisterPartnerPage() {
     postalCode: "",
     country: "DE",
     contactEmail: "",
-    // unused but kept for server action compatibility
-    countryOfRegistration: "DE",
     phone: "",
     businessEmail: "",
-    taxId: "",
+    taxIdValue: "",
     websiteUrl: "",
   });
+  const [noEuVat, setNoEuVat] = useState(false);
   const [errors, setErrors] = useState<FormErrors>({});
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [success, setSuccess] = useState(false);
@@ -53,10 +52,17 @@ export default function RegisterPartnerPage() {
   }, []);
 
   function set(key: keyof typeof fields) {
-    return (
-      e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
-    ) => setFields((prev) => ({ ...prev, [key]: e.target.value }));
+    return (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) =>
+      setFields((prev) => ({ ...prev, [key]: e.target.value }));
   }
+
+  function handleCountryChange(e: React.ChangeEvent<HTMLSelectElement>) {
+    setFields((prev) => ({ ...prev, country: e.target.value, taxIdValue: "" }));
+    setNoEuVat(false);
+    setErrors((prev) => ({ ...prev, taxIdValue: undefined }));
+  }
+
+  const selectedCountry = getCountry(fields.country);
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -64,18 +70,26 @@ export default function RegisterPartnerPage() {
 
     const newErrors: FormErrors = {};
 
-    // Unternehmensdaten
     if (!fields.companyName) newErrors.companyName = "Pflichtfeld";
     if (!fields.street) newErrors.street = "Pflichtfeld";
     if (!fields.postalCode) newErrors.postalCode = "Pflichtfeld";
     if (!fields.city) newErrors.city = "Pflichtfeld";
 
-    // Kontaktdaten
+    // Steuer-ID Validierung: Pflicht für DE, optional für alle anderen wenn kein Checkbox
+    if (selectedCountry?.taxGroup === "DE" && !fields.taxIdValue) {
+      newErrors.taxIdValue = "Pflichtfeld";
+    } else if (
+      selectedCountry?.taxGroup === "EU" &&
+      !noEuVat &&
+      !fields.taxIdValue
+    ) {
+      newErrors.taxIdValue = "Bitte geben Sie Ihre EU-USt-IdNr. ein oder aktivieren Sie die Checkbox unten.";
+    }
+
     if (!fields.firstName) newErrors.firstName = "Pflichtfeld";
     if (!fields.lastName) newErrors.lastName = "Pflichtfeld";
     if (!fields.contactEmail) newErrors.contactEmail = "Pflichtfeld";
 
-    // Zugangsdaten
     if (!fields.email) newErrors.email = "Pflichtfeld";
     if (!fields.password) {
       newErrors.password = "Pflichtfeld";
@@ -92,15 +106,15 @@ export default function RegisterPartnerPage() {
     }
 
     if (!turnstileToken) {
-      setErrors({ general: "Bitte bestätigen Sie, dass Sie kein Roboter sind" });
+      setErrors({ general: "Bitte bestätigen Sie, dass Sie kein Roboter sind." });
       return;
     }
 
     setIsSubmitting(true);
     const formData = new FormData();
     Object.entries(fields).forEach(([k, v]) => formData.set(k, v));
-    // map contactEmail → businessEmail for server action
     formData.set("businessEmail", fields.contactEmail);
+    formData.set("noEuVat", noEuVat ? "true" : "false");
     formData.set("turnstileToken", turnstileToken);
 
     const result = await registerPartner(formData);
@@ -112,7 +126,7 @@ export default function RegisterPartnerPage() {
     }
 
     setSuccess(true);
-    setTimeout(() => router.push(result.redirectTo ?? "/konto/profil?complete=1"), 2000);
+    setTimeout(() => router.push(result.redirectTo ?? "/konto/partner"), 2000);
   }
 
   if (success) {
@@ -175,15 +189,86 @@ export default function RegisterPartnerPage() {
           </div>
         </div>
 
+        {/* Land — zmiana kraju resetuje pole podatkowe */}
         <div className={styles.field}>
           <label htmlFor="country" className={styles.label}>Land *</label>
-          <select id="country" className={styles.select} value={fields.country} onChange={set("country")}>
+          <select id="country" className={styles.select} value={fields.country} onChange={handleCountryChange}>
             {COUNTRIES.map((c) => (
               <option key={c.code} value={c.code}>{c.label}</option>
             ))}
           </select>
-          <span className={styles.hint}>Bitte aus der Liste wählen.</span>
         </div>
+
+        {/* Dynamiczne pole podatkowe — zależy od wybranego kraju */}
+        {selectedCountry && (
+          <div className={styles.field}>
+            <label htmlFor="taxIdValue" className={styles.label}>
+              {selectedCountry.taxIdLabel}
+              {selectedCountry.taxIdRequired || (selectedCountry.taxGroup === "EU" && !noEuVat) ? " *" : ""}
+              {selectedCountry.taxGroup === "THIRD" || selectedCountry.taxGroup === "EEA_NON_EU" || selectedCountry.taxGroup === "SPECIAL"
+                ? <span className={styles.optional}> (optional)</span>
+                : null}
+            </label>
+            <input
+              id="taxIdValue"
+              type="text"
+              className={`${styles.input} ${errors.taxIdValue ? styles.inputError : ""}`}
+              value={fields.taxIdValue}
+              onChange={set("taxIdValue")}
+              placeholder={selectedCountry.taxIdPlaceholder}
+              autoComplete="off"
+              disabled={selectedCountry.taxGroup === "EU" && noEuVat}
+            />
+            {selectedCountry.taxGroup === "DE" && (
+              <span className={styles.hint}>
+                Ihre Steuernummer vom Finanzamt. Wird für die Rechnungsstellung benötigt.
+              </span>
+            )}
+            {selectedCountry.taxGroup === "EU" && !noEuVat && (
+              <span className={styles.hint}>
+                Mit gültiger EU-USt-IdNr. gilt das Reverse-Charge-Verfahren — keine deutsche MwSt.
+              </span>
+            )}
+            {selectedCountry.taxGroup === "EU" && noEuVat && (
+              <span className={styles.hint}>
+                Ohne EU-USt-IdNr. wird deutsche MwSt. 19% berechnet (Kleinunternehmer o.ä.).
+              </span>
+            )}
+            {(selectedCountry.taxGroup === "SPECIAL" || selectedCountry.taxGroup === "EEA_NON_EU") && (
+              <span className={styles.hint}>
+                Keine deutsche Umsatzsteuer — Leistungsort im Empfängerland.
+              </span>
+            )}
+            {selectedCountry.taxGroup === "THIRD" && (
+              <span className={styles.hint}>
+                Keine deutsche Umsatzsteuer. Steuerliche Behandlung nach dem Recht des Empfängerlandes.
+              </span>
+            )}
+            {errors.taxIdValue && <span className={styles.fieldError}>{errors.taxIdValue}</span>}
+          </div>
+        )}
+
+        {/* Checkbox "kein EU-VAT" — nur für EU-Länder außer DE */}
+        {selectedCountry?.hasEuVatOption && (
+          <div className={styles.checkboxField}>
+            <label className={styles.checkboxLabel}>
+              <input
+                type="checkbox"
+                className={styles.checkbox}
+                checked={noEuVat}
+                onChange={(e) => {
+                  setNoEuVat(e.target.checked);
+                  if (e.target.checked) {
+                    setFields((prev) => ({ ...prev, taxIdValue: "" }));
+                    setErrors((prev) => ({ ...prev, taxIdValue: undefined }));
+                  }
+                }}
+              />
+              Ich habe keine EU-USt-IdNr.{" "}
+              <span className={styles.checkboxHint}>(z.B. Kleinunternehmer, steuerbefreite Organisation)</span>
+            </label>
+          </div>
+        )}
 
         {/* ── 2. Kontaktdaten ── */}
         <h2 className={styles.sectionTitle}>Kontaktdaten</h2>

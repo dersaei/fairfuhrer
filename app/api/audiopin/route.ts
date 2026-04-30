@@ -76,7 +76,7 @@ export async function POST(request: NextRequest) {
       Name: body.Name,
       Adresse: body.Adresse,
       Stadt: body.Stadt,
-      Land: partnerProfile?.country ? getCountryLabel(partnerProfile.country) : null,
+      Land: body.Land ?? (partnerProfile?.country ? getCountryLabel(partnerProfile.country) : null),
       Telefon: body.Telefon ?? null,
       Vollbeschreibung: body.Vollbeschreibung ?? null,
       Link_URL: body.Link_URL ?? null,
@@ -89,7 +89,7 @@ export async function POST(request: NextRequest) {
       Partner_ID: user.id,
       Unternehmensname: partnerProfile?.company_name ?? null,
       Pin_Typ: isPremium ? "premium" : "standard",
-      Bearbeitungsstatus: "ausstehend",
+      Bearbeitungsstatus: isPremium ? "veroeffentlicht" : "ausstehend",
     };
 
     // Lokalizacja — tylko jeśli wybrano adres z autocomplete
@@ -110,9 +110,11 @@ export async function POST(request: NextRequest) {
       pinData.Audio = body.Audio;
     }
 
-    // Galerie (tablica UUID z directus_files) — tylko premium
+    // Galerie (m2m przez Orte_files, junction field: directus_files_id) — tylko premium
     if (isPremium && Array.isArray(body.Galerie) && body.Galerie.length > 0) {
-      pinData.Galerie = body.Galerie;
+      pinData.Galerie = {
+        create: body.Galerie.map((fileId: string) => ({ directus_files_id: fileId })),
+      };
     }
 
     // Tworzymy pin w Directus

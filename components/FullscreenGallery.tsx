@@ -2,10 +2,11 @@
 "use client";
 
 import { useEffect } from "react";
-import Image from "next/image";
 import { getOptimizedImagePath } from "../lib/supabase";
 import type { Place } from "../types";
 import styles from "./FullscreenGallery.module.css";
+
+const UUID_REGEX = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 
 interface FullscreenGalleryProps {
   place: Place;
@@ -59,17 +60,28 @@ export default function FullscreenGallery({
     };
   }, [isOpen]);
 
-  if (!isOpen || !place.Galerie_Bilder || place.Galerie_Bilder.length === 0) {
+  // Preferuj nowe Directus Galerie, fallback na stare Supabase Galerie_Bilder
+  const images: string[] = place.Galerie?.length
+    ? place.Galerie
+    : place.Galerie_Bilder ?? [];
+
+  if (!isOpen || images.length === 0) {
     return null;
   }
 
-  const images = place.Galerie_Bilder;
+  const directusUrl = process.env.NEXT_PUBLIC_DIRECTUS_URL ?? "";
   const hasMultipleImages = images.length > 1;
+  const currentImage = images[currentIndex] ?? images[0];
+  const isUuid = UUID_REGEX.test(currentImage);
+  const src = isUuid
+    ? `${directusUrl}/assets/${currentImage}`
+    : getOptimizedImagePath(place.id, currentImage, "gallery");
 
   return (
     <div className={styles.gallery} data-gallery-modal="true">
-      {/* Close Button - TYLKO TO zamyka galerię */}
+      {/* Close Button */}
       <button
+        type="button"
         className={styles.closeButton}
         onClick={onCloseAction}
         aria-label="Galerie schließen"
@@ -86,9 +98,9 @@ export default function FullscreenGallery({
 
       {/* Main Image Container */}
       <div className={styles.imageContainer}>
-        {/* Previous Button */}
         {hasMultipleImages && (
           <button
+            type="button"
             className={`${styles.navButton} ${styles.prevButton}`}
             onClick={onPrevAction}
             aria-label="Vorheriges Bild"
@@ -97,20 +109,17 @@ export default function FullscreenGallery({
           </button>
         )}
 
-        {/* Current Image - wyśrodkowany */}
-        <Image
-          src={getOptimizedImagePath(place.id, images[currentIndex], "gallery")}
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img
+          src={src}
           alt={`Galeriebild ${currentIndex + 1} von ${place.Name}`}
-          width={1200}
-          height={800}
           className={styles.image}
-          style={{ objectFit: "contain" }}
-          priority
+          style={{ objectFit: "contain", maxWidth: "100%", maxHeight: "100%" }}
         />
 
-        {/* Next Button */}
         {hasMultipleImages && (
           <button
+            type="button"
             className={`${styles.navButton} ${styles.nextButton}`}
             onClick={onNextAction}
             aria-label="Nächstes Bild"

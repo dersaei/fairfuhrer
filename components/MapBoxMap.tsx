@@ -393,18 +393,22 @@ export default function MapBoxMap({
   }, []);
 
   const handleNextImage = useCallback(() => {
-    if (!selectedPlace?.Galerie_Bilder) return;
-    setCurrentImageIndex(
-      (prev) => (prev + 1) % selectedPlace.Galerie_Bilder!.length,
-    );
-  }, [selectedPlace?.Galerie_Bilder]);
+    const images = selectedPlace?.Galerie?.length
+      ? selectedPlace.Galerie
+      : selectedPlace?.Galerie_Bilder;
+    if (!images?.length) return;
+    setCurrentImageIndex((prev) => (prev + 1) % images.length);
+  }, [selectedPlace?.Galerie, selectedPlace?.Galerie_Bilder]);
 
   const handlePrevImage = useCallback(() => {
-    if (!selectedPlace?.Galerie_Bilder) return;
+    const images = selectedPlace?.Galerie?.length
+      ? selectedPlace.Galerie
+      : selectedPlace?.Galerie_Bilder;
+    if (!images?.length) return;
     setCurrentImageIndex((prev) =>
-      prev === 0 ? selectedPlace.Galerie_Bilder!.length - 1 : prev - 1,
+      prev === 0 ? images.length - 1 : prev - 1,
     );
-  }, [selectedPlace?.Galerie_Bilder]);
+  }, [selectedPlace?.Galerie, selectedPlace?.Galerie_Bilder]);
 
   const closeGalleryOnly = useCallback(() => {
     setSelectedGalleryImage(null);
@@ -450,9 +454,12 @@ export default function MapBoxMap({
     const dataMap = new Map<number, string>();
     places.forEach((place) => {
       const safeName = DOMPurify.sanitize(place.Name, { ALLOWED_TAGS: [] });
-      const safeAddress = DOMPurify.sanitize(place.Adresse, {
-        ALLOWED_TAGS: [],
-      });
+      const safeAddress = DOMPurify.sanitize(
+        [place.Adresse, place.Stadt, place.Land ? `(${place.Land})` : ""]
+          .filter(Boolean)
+          .join(", "),
+        { ALLOWED_TAGS: [] }
+      );
       const safePhone = place.Telefon
         ? DOMPurify.sanitize(place.Telefon, { ALLOWED_TAGS: [] })
         : "";
@@ -994,7 +1001,7 @@ export default function MapBoxMap({
         </Suspense>
       </Activity>
 
-      {selectedGalleryImage && selectedPlace?.Galerie_Bilder && (
+      {selectedGalleryImage && (selectedPlace?.Galerie?.length || selectedPlace?.Galerie_Bilder?.length) && (
         <Suspense
           fallback={
             <div className={styles.loadingOverlayGallery}>

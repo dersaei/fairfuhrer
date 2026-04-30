@@ -458,3 +458,257 @@
   font-family: var(--font-fira);
   font-size: 0.875rem;
 }
+
+/* Per-field view/edit */
+.viewBox {
+  display: flex;
+  flex-direction: column;
+  border: 1.5px solid #000;
+}
+
+.viewField {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  padding: 0.9rem 1.25rem;
+  border-bottom: 1px solid #eee;
+}
+
+.viewField:last-child {
+  border-bottom: none;
+}
+
+.viewFieldHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.viewFieldLabel {
+  font-family: var(--font-fira);
+  font-size: 0.72rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: #555;
+}
+
+.viewFieldValue {
+  font-family: var(--font-fira);
+  font-size: 0.95rem;
+  color: #18222f;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.viewFieldLong {
+  font-family: var(--font-fira);
+  font-size: 0.9rem;
+  color: #18222f;
+  line-height: 1.5;
+  white-space: pre-wrap;
+}
+
+.viewFieldEmpty {
+  color: #aaa;
+  font-style: italic;
+}
+
+.viewLink {
+  color: #18222f;
+  text-decoration: underline;
+  font-family: var(--font-fira);
+  font-size: 0.95rem;
+}
+
+.viewLink:hover {
+  color: #fc6c14;
+}
+
+.viewFieldEdit {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.viewFieldActions {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+}
+
+.editFieldBtn {
+  font-family: var(--font-fira);
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: #18222f;
+  background: none;
+  border: 1px solid #18222f;
+  padding: 0.25rem 0.65rem;
+  cursor: pointer;
+  transition: background 0.12s, color 0.12s;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.editFieldBtn:hover {
+  background: #18222f;
+  color: #fff;
+}
+
+.saveFieldBtn {
+  font-family: var(--font-fira);
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: #fff;
+  background: #18222f;
+  border: none;
+  padding: 0.4rem 0.9rem;
+  cursor: pointer;
+  transition: background 0.12s;
+}
+
+.saveFieldBtn:hover:not(:disabled) {
+  background: #fc6c14;
+}
+
+.saveFieldBtn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.cancelFieldBtn {
+  font-family: var(--font-fira);
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: #555;
+  background: none;
+  border: 1px solid #ccc;
+  padding: 0.4rem 0.75rem;
+  cursor: pointer;
+  transition: color 0.12s;
+}
+
+.cancelFieldBtn:hover:not(:disabled) {
+  color: #000;
+}
+
+.savedBadge {
+  font-family: var(--font-fira);
+  font-size: 0.75rem;
+  color: #27ae60;
+  font-weight: 600;
+}
+
+.fieldGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+.galerieAddBtn {
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  background: #f5f5f5;
+  border: 1.5px dashed #aaa;
+  font-size: 2rem;
+  color: #aaa;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: border-color 0.15s, color 0.15s;
+}
+
+.galerieAddBtn:hover:not(:disabled) {
+  border-color: #fc6c14;
+  color: #fc6c14;
+}
+
+/* Podsumowanie po wysłaniu */
+.submittedBox {
+  border: 1.5px solid #000;
+  display: flex;
+  flex-direction: column;
+}
+
+.submittedRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 1rem;
+  padding: 0.65rem 1rem;
+  border-bottom: 1px solid #eee;
+}
+
+.submittedRow:last-child {
+  border-bottom: none;
+}
+
+.submittedLabel {
+  font-family: var(--font-fira);
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: #444;
+  flex-shrink: 0;
+}
+
+.submittedValue {
+  font-family: var(--font-fira);
+  font-size: 0.9rem;
+  color: #18222f;
+  text-align: right;
+}
+
+/* Przycisk edycji */
+.editButton {
+  padding: 0.75rem 1.5rem;
+  background-color: #18222f;
+  color: #fff;
+  border: none;
+  font-family: var(--font-fira);
+  font-size: 0.95rem;
+  font-weight: 700;
+  cursor: pointer;
+  align-self: flex-start;
+  transition: background-color 0.15s;
+  letter-spacing: 0.02em;
+}
+
+.editButton:hover {
+  background-color: #fc6c14;
+}
+
+/* Przyciski formularza edycji */
+.formActions {
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.cancelButton {
+  padding: 0.875rem 1.5rem;
+  background-color: transparent;
+  color: #18222f;
+  border: 1.5px solid #18222f;
+  font-family: var(--font-fira);
+  font-size: 0.95rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: opacity 0.15s;
+}
+
+.cancelButton:hover:not(:disabled) {
+  opacity: 0.7;
+}
+
+.cancelButton:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}

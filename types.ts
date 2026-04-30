@@ -33,6 +33,8 @@ export interface Place {
   id: number;
   Name: string; // niemieckie nazwy pół jak w Directus
   Adresse: string;
+  Stadt?: string;
+  Land?: string;
   Telefon?: string;
   Vollbeschreibung?: string;
   location: GeoJSONPoint; // PostGIS Point z Directus Map field
@@ -155,6 +157,8 @@ export interface DirectusOrte {
   id: number;
   Name: string;
   Adresse: string;
+  Stadt?: string;
+  Land?: string;
   Telefon?: string;
   Vollbeschreibung?: string;
   location?: GeoJSONPoint; // PostGIS Point z Directus Map field
@@ -166,7 +170,7 @@ export interface DirectusOrte {
   Link_URL?: string;
   Link_Text?: string;
   Galerie_Bilder?: string[]; // stare piny: nazwy plików w Supabase Storage
-  Galerie?: string[];        // nowe piny: UUID[] z directus_files
+  Galerie?: ({ id: number; directus_files_id: string } | string)[];
   Zertifizierungen?: DirectusZertifizierungItem[];
 }
 

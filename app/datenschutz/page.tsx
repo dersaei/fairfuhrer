@@ -1,41 +1,45 @@
-// app/datenschutz/page.tsx
-
 import { Metadata } from "next";
-import { getDatenschutzContent } from "@/lib/directus";
-import { DatenschutzContent } from "@/types";
+import { getDatenschutzNew } from "@/lib/directus";
+import { marked } from "marked";
 import styles from "./datenschutz.module.css";
 
-// Metadaten für SEO
-export async function generateMetadata(): Promise<Metadata> {
-  const content = await getDatenschutzContent();
-
-  return {
-    title: content?.title || "Datenschutz",
-    description: "Datenschutzerklärung - Informationen zum Datenschutz",
-  };
-}
+export const metadata: Metadata = {
+  title: "Datenschutz – FairFührer",
+  description: "Datenschutzerklärung – Informationen zum Datenschutz bei FairFührer",
+};
 
 export default async function DatenschutzPage() {
-  const content: DatenschutzContent | null = await getDatenschutzContent();
+  const content = await getDatenschutzNew();
 
   if (!content) {
     return (
       <div className={styles.container}>
-        <h1>Datenschutz</h1>
+        <h1 className={styles.title}>Datenschutzerklärung</h1>
         <p>Der Seiteninhalt ist derzeit nicht verfügbar.</p>
       </div>
     );
   }
 
+  const html = await marked(content.content);
+
+  const dateUpdated = content.date_updated
+    ? new Date(content.date_updated).toLocaleDateString("de-DE", {
+        day: "2-digit",
+        month: "long",
+        year: "numeric",
+      })
+    : null;
+
   return (
     <div className={styles.container}>
-      {/* Seitentitel */}
-      <h1 className={styles.title}>{content.title}</h1>
-
-      {/* Hauptinhalt WYSIWYG */}
-      <div className={styles.content}>
-        <div dangerouslySetInnerHTML={{ __html: content.content }} />
-      </div>
+      <h1 className={styles.title}>Datenschutzerklärung</h1>
+      {dateUpdated && (
+        <p className={styles.updated}>Stand: {dateUpdated}</p>
+      )}
+      <div
+        className={styles.content}
+        dangerouslySetInnerHTML={{ __html: html }}
+      />
     </div>
   );
 }

@@ -208,7 +208,7 @@ hr {
 }
 
 /* iPhone Safari: Enhanced form element styling */
-input,
+input:not([type="checkbox"]):not([type="radio"]),
 select,
 textarea {
   vertical-align: middle;
@@ -224,6 +224,13 @@ textarea {
 
   /* Better touch response */
   touch-action: manipulation;
+}
+
+/* Checkboxes and radios keep native appearance but get accent color */
+input[type="checkbox"],
+input[type="radio"] {
+  accent-color: #fc6c14;
+  cursor: pointer;
 }
 
 /* iPhone Safari: Enhanced button styling */

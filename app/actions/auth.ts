@@ -14,6 +14,7 @@ import type {
   PartnerProfile,
   Profile,
 } from "@/types/auth";
+import { getCountry, getTaxBucket } from "@/lib/countries";
 
 
 async function getRemoteIp(): Promise<string | undefined> {
@@ -212,8 +213,20 @@ export async function registerPartner(formData: FormData): Promise<AuthResult> {
   // Zapisz dane firmy do partner_profiles (przez admin client — user nie jest jeszcze zalogowany)
   if (signUpData.user) {
     const phone = formData.get("phone") as string;
-    const taxId = formData.get("taxId") as string;
+    const taxIdValue = (formData.get("taxIdValue") as string)?.trim() || null;
+    const noEuVat = formData.get("noEuVat") === "true";
     const websiteUrl = formData.get("websiteUrl") as string;
+
+    const countryCode = country || "DE";
+    const countryMeta = getCountry(countryCode);
+    const taxGroup = countryMeta?.taxGroup ?? "THIRD";
+    const hasEuVatId = taxGroup === "EU" && !noEuVat && !!taxIdValue;
+    const taxBucket = getTaxBucket(countryCode, hasEuVatId);
+    const crossBorderB2c = taxBucket === "eu_no_vat";
+
+    // Mapuj tax_id_value na właściwe pole legacy (vat_eu lub tax_id)
+    const vatEu = taxGroup === "EU" && !noEuVat ? taxIdValue : null;
+    const taxId = taxGroup === "DE" ? taxIdValue : null;
 
     const { error: upsertError } = await supabaseAdmin.from("partner_profiles").upsert({
       id: signUpData.user.id,
@@ -221,11 +234,19 @@ export async function registerPartner(formData: FormData): Promise<AuthResult> {
       street,
       postal_code: postalCode,
       city,
-      country: country || "DE",
+      country: countryCode,
       business_email: businessEmail || null,
       phone_number: phone || null,
-      tax_id: taxId || null,
+      tax_id: taxId,
+      vat_eu: vatEu,
       website_url: websiteUrl || null,
+      // nowe kolumny VAT
+      tax_group: taxGroup,
+      tax_bucket: taxBucket,
+      tax_id_field_key: countryMeta?.taxIdFieldKey ?? "foreign_tax_id",
+      tax_id_value: taxIdValue,
+      no_eu_vat: noEuVat,
+      cross_border_b2c: crossBorderB2c,
     });
     if (upsertError) {
       console.error("registerPartner upsert error:", upsertError.message);

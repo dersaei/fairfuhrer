@@ -1,38 +1,65 @@
-"use client";
+import { getCurrentUser } from "@/app/actions/auth";
+import { PartnerSubscriptionForm } from "@/components/PartnerSubscriptionForm";
+import { getTaxBucket } from "@/lib/countries";
+import styles from "./premium.module.css";
 
-import styles from "@/app/(protected)/konto/reisender/premium/premium.module.css";
+export default async function PartnerPremiumPage() {
+  const user = await getCurrentUser();
 
-export default function PartnerPremiumPage() {
+  const companySize = user?.profile?.company_size ?? null;
+  const partner = user?.partnerProfile;
+
+  const premiumUntil = user?.profile?.premium_until ?? null;
+  const isPremiumActive = premiumUntil
+    ? new Date(premiumUntil) > new Date()
+    : false;
+
+  // Koszyk VAT z zapisanych danych profilu lub obliczony na bieżąco
+  const taxBucket =
+    partner?.tax_bucket ??
+    getTaxBucket(partner?.country, !partner?.no_eu_vat && !!partner?.vat_eu);
+
+  const taxIdValue = partner?.tax_id_value ?? partner?.vat_eu ?? partner?.tax_id ?? null;
+
   return (
     <div className={styles.wrapper}>
       <h3 className={styles.intro}>Premium-Partnerschaft</h3>
 
-      <p className={styles.lead}>
-        Mit einem Premium-Partner-Konto erhältst du Zugang zu erweiterten
-        Funktionen für deinen Audiopin und präsentierst dein Unternehmen noch
-        wirkungsvoller auf der Fairführer-Karte.
-      </p>
-
       <div className={styles.featureList}>
-        <h4 className={styles.featureTitle}>Das bekommst du mit Premium:</h4>
+        <h4 className={styles.featureTitle}>
+          Das bekommst du mit dem Partner Pin:
+        </h4>
         <ul className={styles.features}>
-          <li>Sofortige Veröffentlichung deines Audiopins ohne Wartezeit</li>
-          <li>Bearbeitung deines Audiopins jederzeit möglich</li>
-          <li>Telefonnummer mit Anruf-Button auf deinem Pin</li>
-          <li>Link zu deiner Website</li>
+          <li>Sofortige Veröffentlichung ohne Wartezeit</li>
+          <li>Jederzeit bearbeitbar</li>
+          <li>Telefonnummer mit Anruf-Button</li>
+          <li>Link zu Ihrer Website</li>
           <li>Bildergalerie mit bis zu 6 Fotos</li>
+          <li>Hochladen eines eigenen Audiobeitrags</li>
+          <li>Weitere Zertifizierungen & Labels</li>
         </ul>
       </div>
 
-      <div className={styles.pricingBox}>
-        <h4 className={styles.pricingTitle}>Preise</h4>
-        <p className={styles.pricingText}>
-          Wir arbeiten derzeit an unserem Premium-Modell mit jährlicher
-          Abonnement-Option. Bald kannst du hier dein Premium-Konto erwerben
-          und alle Vorteile für Partner freischalten.
+      <div className={styles.divider} />
+
+      <PartnerSubscriptionForm
+        initialCompanySize={companySize}
+        taxBucket={taxBucket}
+        taxIdValue={taxIdValue}
+        isPremiumActive={isPremiumActive}
+        premiumUntil={premiumUntil}
+      />
+
+      {!isPremiumActive && (
+        <p className={styles.legalNote}>
+          Mit dem Abschluss der Partnerschaft stimmen Sie unseren{" "}
+          <a href="/agb" className={styles.legalLink}>
+            Allgemeinen Geschäftsbedingungen
+          </a>{" "}
+          zu. Die Zahlung erfolgt jährlich und verlängert sich automatisch, bis
+          Sie kündigen.
         </p>
-        <p className={styles.comingSoon}>Demnächst verfügbar</p>
-      </div>
+      )}
     </div>
   );
 }

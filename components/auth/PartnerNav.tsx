@@ -9,6 +9,7 @@ const links = [
   { href: "/konto/partner/einstellungen", label: "Einstellungen" },
   { href: "/konto/partner/audiopin", label: "Mein Audiopin" },
   { href: "/konto/partner/premium", label: "Premium" },
+  { href: "/konto/partner/hilfe", label: "Hilfe" },
 ];
 
 export default function PartnerNav() {

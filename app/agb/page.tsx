@@ -1,20 +1,20 @@
 import { Metadata } from "next";
-import { getImpressumNew } from "@/lib/directus";
+import { getAgbContent } from "@/lib/directus";
 import { marked } from "marked";
-import styles from "./impressum.module.css";
+import styles from "./agb.module.css";
 
 export const metadata: Metadata = {
-  title: "Impressum – FairFührer",
-  description: "Impressum – Rechtliche Informationen zu FairFührer",
+  title: "Allgemeine Geschäftsbedingungen – FairFührer",
+  description: "AGB der Plattform FairFührer",
 };
 
-export default async function ImpressumPage() {
-  const content = await getImpressumNew();
+export default async function AgbPage() {
+  const content = await getAgbContent();
 
   if (!content) {
     return (
       <div className={styles.container}>
-        <h1 className={styles.title}>Impressum</h1>
+        <h1 className={styles.title}>Allgemeine Geschäftsbedingungen</h1>
         <p>Der Seiteninhalt ist derzeit nicht verfügbar.</p>
       </div>
     );
@@ -32,7 +32,7 @@ export default async function ImpressumPage() {
 
   return (
     <div className={styles.container}>
-      <h1 className={styles.title}>Impressum</h1>
+      <h1 className={styles.title}>Allgemeine Geschäftsbedingungen</h1>
       {dateUpdated && (
         <p className={styles.updated}>Stand: {dateUpdated}</p>
       )}
