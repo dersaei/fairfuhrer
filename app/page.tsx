@@ -15,7 +15,7 @@ const CATEGORIES = [
   { id: 3, name: "Einkaufen", color: "#F0873D" },
   { id: 5, name: "Engagement", color: "#42D742" },
   { id: 8, name: "Unternehmen", color: "#E0D12E" },
-  { id: 2, name: "Gastronomie & Übernachten", color: "#6477E3" },
+  { id: 2, name: "Essen &\nÜbernachten", color: "#6477E3" },
 ] as const;
 
 export default async function HomePage() {
@@ -25,40 +25,108 @@ export default async function HomePage() {
     val ? (val.startsWith("#") ? val : `#${val}`) : undefined;
 
   const cssVars = {
-    ...(content?.hero_background_color && { "--hero-bg": c(content.hero_background_color) }),
-    ...(content?.hero_title_font_size && { "--fs-hero-title": content.hero_title_font_size }),
-    ...(content?.hero_title_color && { "--color-hero-title": c(content.hero_title_color) }),
-    ...(content?.hero_title_mobile_font_size && { "--fs-hero-title-mobile": content.hero_title_mobile_font_size }),
-    ...(content?.hero_title_mobile_color && { "--color-hero-title-mobile": c(content.hero_title_mobile_color) }),
-    ...(content?.hero_subtitle_font_size && { "--fs-hero-subtitle": content.hero_subtitle_font_size }),
-    ...(content?.hero_subtitle_color && { "--color-hero-subtitle": c(content.hero_subtitle_color) }),
-    ...(content?.hero_button_font_size && { "--fs-hero-btn": content.hero_button_font_size }),
-    ...(content?.hero_button_color && { "--color-hero-btn": c(content.hero_button_color) }),
-    ...(content?.hero_button_background_color && { "--bg-hero-btn": c(content.hero_button_background_color) }),
-    ...(content?.hero_button_mobile_font_size && { "--fs-hero-btn-mobile": content.hero_button_mobile_font_size }),
-    ...(content?.hero_button_mobile_color && { "--color-hero-btn-mobile": c(content.hero_button_mobile_color) }),
-    ...(content?.hero_button_background_color_mobile && { "--bg-hero-btn-mobile": c(content.hero_button_background_color_mobile) }),
-    ...(content?.badges_label_font_size && { "--fs-badges-label": content.badges_label_font_size }),
-    ...(content?.badges_label_color && { "--color-badges-label": c(content.badges_label_color) }),
-    ...(content?.section2_background_color && { "--bg-s2": c(content.section2_background_color) }),
-    ...(content?.section2_title_font_size && { "--fs-s2-title": content.section2_title_font_size }),
-    ...(content?.section2_title_color && { "--color-s2-title": c(content.section2_title_color) }),
-    ...(content?.section2_title_mobile_font_size && { "--fs-s2-title-mobile": content.section2_title_mobile_font_size }),
-    ...(content?.category_name_font_size && { "--fs-cat-name": content.category_name_font_size }),
-    ...(content?.category_name_color && { "--color-cat-name": c(content.category_name_color) }),
-    ...(content?.category_name_mobile_font_size && { "--fs-cat-name-mobile": content.category_name_mobile_font_size }),
-    ...(content?.section3_background_color && { "--bg-s3": c(content.section3_background_color) }),
-    ...(content?.section4_background_color && { "--bg-s4": c(content.section4_background_color) }),
-    ...(content?.section4_title_font_size && { "--fs-s4-title": content.section4_title_font_size }),
-    ...(content?.section4_title_color && { "--color-s4-title": c(content.section4_title_color) }),
-    ...(content?.section4_title_mobile_font_size && { "--fs-s4-title-mobile": content.section4_title_mobile_font_size }),
-    ...(content?.section4_text_font_size && { "--fs-s4-text": content.section4_text_font_size }),
-    ...(content?.section4_text_color && { "--color-s4-text": c(content.section4_text_color) }),
-    ...(content?.section4_text_mobile_font_size && { "--fs-s4-text-mobile": content.section4_text_mobile_font_size }),
-    ...(content?.section4_button_color && { "--color-s4-btn": c(content.section4_button_color) }),
-    ...(content?.section4_button_font_size && { "--fs-s4-btn": content.section4_button_font_size }),
-    ...(content?.section4_button_background_color && { "--bg-s4-btn": c(content.section4_button_background_color) }),
-    ...(content?.section4_button_mobile_font_size && { "--fs-s4-btn-mobile": content.section4_button_mobile_font_size }),
+    ...(content?.hero_background_color && {
+      "--hero-bg": c(content.hero_background_color),
+    }),
+    ...(content?.hero_title_font_size && {
+      "--fs-hero-title": content.hero_title_font_size,
+    }),
+    ...(content?.hero_title_color && {
+      "--color-hero-title": c(content.hero_title_color),
+    }),
+    ...(content?.hero_title_mobile_font_size && {
+      "--fs-hero-title-mobile": content.hero_title_mobile_font_size,
+    }),
+    ...(content?.hero_title_mobile_color && {
+      "--color-hero-title-mobile": c(content.hero_title_mobile_color),
+    }),
+    ...(content?.hero_subtitle_font_size && {
+      "--fs-hero-subtitle": content.hero_subtitle_font_size,
+    }),
+    ...(content?.hero_subtitle_color && {
+      "--color-hero-subtitle": c(content.hero_subtitle_color),
+    }),
+    ...(content?.hero_button_font_size && {
+      "--fs-hero-btn": content.hero_button_font_size,
+    }),
+    ...(content?.hero_button_color && {
+      "--color-hero-btn": c(content.hero_button_color),
+    }),
+    ...(content?.hero_button_background_color && {
+      "--bg-hero-btn": c(content.hero_button_background_color),
+    }),
+    ...(content?.hero_button_mobile_font_size && {
+      "--fs-hero-btn-mobile": content.hero_button_mobile_font_size,
+    }),
+    ...(content?.hero_button_mobile_color && {
+      "--color-hero-btn-mobile": c(content.hero_button_mobile_color),
+    }),
+    ...(content?.hero_button_background_color_mobile && {
+      "--bg-hero-btn-mobile": c(content.hero_button_background_color_mobile),
+    }),
+    ...(content?.badges_label_font_size && {
+      "--fs-badges-label": content.badges_label_font_size,
+    }),
+    ...(content?.badges_label_color && {
+      "--color-badges-label": c(content.badges_label_color),
+    }),
+    ...(content?.section2_background_color && {
+      "--bg-s2": c(content.section2_background_color),
+    }),
+    ...(content?.section2_title_font_size && {
+      "--fs-s2-title": content.section2_title_font_size,
+    }),
+    ...(content?.section2_title_color && {
+      "--color-s2-title": c(content.section2_title_color),
+    }),
+    ...(content?.section2_title_mobile_font_size && {
+      "--fs-s2-title-mobile": content.section2_title_mobile_font_size,
+    }),
+    ...(content?.category_name_font_size && {
+      "--fs-cat-name": content.category_name_font_size,
+    }),
+    ...(content?.category_name_color && {
+      "--color-cat-name": c(content.category_name_color),
+    }),
+    ...(content?.category_name_mobile_font_size && {
+      "--fs-cat-name-mobile": content.category_name_mobile_font_size,
+    }),
+    ...(content?.section3_background_color && {
+      "--bg-s3": c(content.section3_background_color),
+    }),
+    ...(content?.section4_background_color && {
+      "--bg-s4": c(content.section4_background_color),
+    }),
+    ...(content?.section4_title_font_size && {
+      "--fs-s4-title": content.section4_title_font_size,
+    }),
+    ...(content?.section4_title_color && {
+      "--color-s4-title": c(content.section4_title_color),
+    }),
+    ...(content?.section4_title_mobile_font_size && {
+      "--fs-s4-title-mobile": content.section4_title_mobile_font_size,
+    }),
+    ...(content?.section4_text_font_size && {
+      "--fs-s4-text": content.section4_text_font_size,
+    }),
+    ...(content?.section4_text_color && {
+      "--color-s4-text": c(content.section4_text_color),
+    }),
+    ...(content?.section4_text_mobile_font_size && {
+      "--fs-s4-text-mobile": content.section4_text_mobile_font_size,
+    }),
+    ...(content?.section4_button_color && {
+      "--color-s4-btn": c(content.section4_button_color),
+    }),
+    ...(content?.section4_button_font_size && {
+      "--fs-s4-btn": content.section4_button_font_size,
+    }),
+    ...(content?.section4_button_background_color && {
+      "--bg-s4-btn": c(content.section4_button_background_color),
+    }),
+    ...(content?.section4_button_mobile_font_size && {
+      "--fs-s4-btn-mobile": content.section4_button_mobile_font_size,
+    }),
   } as React.CSSProperties;
 
   const directusUrl = process.env.NEXT_PUBLIC_DIRECTUS_URL ?? "";
@@ -80,21 +148,44 @@ export default async function HomePage() {
         <div className={styles.heroTextSide}>
           <h1 className={styles.heroTitle}>{content?.hero_title}</h1>
           <h3 className={styles.heroSubtitle}>{content?.hero_subtitle}</h3>
-          <Link href={content?.hero_button_link ?? "#"} className={styles.heroButton}>
+          <Link
+            href={content?.hero_button_link ?? "#"}
+            className={styles.heroButton}
+          >
             <span>{content?.hero_button_text}</span>
           </Link>
         </div>
         <h1 className={styles.heroTitleMobile}>{content?.hero_title}</h1>
-        <Link href={content?.hero_button_link ?? "#"} className={styles.heroButtonMobile}>
+        <Link
+          href={content?.hero_button_link ?? "#"}
+          className={styles.heroButtonMobile}
+        >
           <span>{content?.hero_button_text}</span>
         </Link>
         <div className={styles.heroBadgesBar}>
-          <span className={styles.heroBadgesLabel}>{content?.badges_label}</span>
+          <span className={styles.heroBadgesLabel}>
+            {content?.badges_label}
+          </span>
           <div className={styles.heroBadgesIcons}>
-            <Image src={appStoreBadge} alt="App Store" unoptimized className={styles.heroBadgeImg} />
-            <Image src={googlePlayBadge} alt="Google Play" unoptimized className={styles.heroBadgeImg} />
+            <Image
+              src={appStoreBadge}
+              alt="App Store"
+              unoptimized
+              className={styles.heroBadgeImg}
+            />
+            <Image
+              src={googlePlayBadge}
+              alt="Google Play"
+              unoptimized
+              className={styles.heroBadgeImg}
+            />
           </div>
-          <Image src={seenergienLogo} alt="Seenergien" unoptimized className={styles.heroBadgePartner} />
+          <Image
+            src={seenergienLogo}
+            alt="Seenergien"
+            unoptimized
+            className={styles.heroBadgePartner}
+          />
         </div>
       </div>
 
@@ -104,10 +195,16 @@ export default async function HomePage() {
           <h2 className={styles.section2Title}>{content?.section2_title}</h2>
           <div className={styles.categoriesList}>
             {CATEGORIES.map((cat) => {
-              const iconPaths = getCategoryIconPaths(cat.id) ?? DEFAULT_ICON_PATHS;
+              const iconPaths =
+                getCategoryIconPaths(cat.id) ?? DEFAULT_ICON_PATHS;
               return (
                 <div key={cat.name} className={styles.categoryItem}>
-                  <svg width={80} height={80} viewBox="0 0 80 80" aria-hidden="true">
+                  <svg
+                    width={80}
+                    height={80}
+                    viewBox="0 0 80 80"
+                    aria-hidden="true"
+                  >
                     <circle cx="40" cy="40" r="38" fill={cat.color} />
                     <circle cx="40" cy="40" r="28" fill="white" />
                     <g
@@ -148,7 +245,10 @@ export default async function HomePage() {
                   <p className={styles.ctaText}>{content.traveler_content}</p>
                 )}
                 {content.traveler_cta_label && content.traveler_cta_url && (
-                  <Link href={content.traveler_cta_url} className={styles.ctaButton}>
+                  <Link
+                    href={content.traveler_cta_url}
+                    className={styles.ctaButton}
+                  >
                     {content.traveler_cta_label}
                   </Link>
                 )}
@@ -164,7 +264,10 @@ export default async function HomePage() {
                   <p className={styles.ctaText}>{content.partner_content}</p>
                 )}
                 {content.partner_cta_label && content.partner_cta_url && (
-                  <Link href={content.partner_cta_url} className={styles.ctaButton}>
+                  <Link
+                    href={content.partner_cta_url}
+                    className={styles.ctaButton}
+                  >
                     {content.partner_cta_label}
                   </Link>
                 )}
@@ -191,11 +294,18 @@ export default async function HomePage() {
             <Sparkles size={20} className={styles.section4SparkleIcon} />
           </div>
           <h2 className={styles.section4Title}>{content?.section4_title}</h2>
-          {content?.section4_text?.split("\n\n").map((paragraph: string, i: number) => (
-            <p key={i} className={styles.section4Text}>{paragraph}</p>
-          ))}
+          {content?.section4_text
+            ?.split("\n\n")
+            .map((paragraph: string, i: number) => (
+              <p key={i} className={styles.section4Text}>
+                {paragraph}
+              </p>
+            ))}
           {content?.section4_button_text && content?.section4_button_link && (
-            <Link href={content.section4_button_link} className={styles.section4Button}>
+            <Link
+              href={content.section4_button_link}
+              className={styles.section4Button}
+            >
               {content.section4_button_text}
             </Link>
           )}

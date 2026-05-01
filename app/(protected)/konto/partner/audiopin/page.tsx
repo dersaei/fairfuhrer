@@ -19,7 +19,7 @@ async function uploadToDirectus(file: File): Promise<string> {
 
 const KATEGORIEN = [
   { id: 1, name: "Sehenswertes" },
-  { id: 2, name: "Gastronomie & Übernachten" },
+  { id: 2, name: "Essen & Übernachten" },
   { id: 3, name: "Einkaufen" },
   { id: 5, name: "Engagement" },
   { id: 8, name: "Unternehmen" },
@@ -69,8 +69,6 @@ interface PinData {
   Kategorie: { Kategorie_id: number }[];
   Zertifizierungen: { Zertifizierungen_id: string }[];
 }
-
-const DIRECTUS_PUBLIC = process.env.NEXT_PUBLIC_DIRECTUS_URL ?? "";
 
 // Proxy przez nasz API dla plików wymagających autoryzacji (galeria, titelbild, audio partnera)
 function assetUrl(uuid: string) {
@@ -246,7 +244,9 @@ export default function AudiopinPage() {
           ...(editValues.location ? { location: editValues.location } : {}),
         };
       } else if (field === "Kategorie") {
-        const currentIds = (pinData?.Kategorie ?? []).map((k) => k.Kategorie_id);
+        const currentIds = (pinData?.Kategorie ?? []).map(
+          (k) => k.Kategorie_id,
+        );
         payload = {
           Kategorie: value,
           Kategorie_delete: currentIds,
@@ -543,7 +543,7 @@ export default function AudiopinPage() {
         // Odśwież przez GET żeby dostać aktualne junction IDs
         const getRes = await fetch(`/api/audiopin/${pinId}`);
         if (getRes.ok) {
-          const freshData = await getRes.json() as PinData;
+          const freshData = (await getRes.json()) as PinData;
           setGalerieItems(
             (freshData.Galerie ?? []).map((g) => ({
               junctionId: g.id,
@@ -582,7 +582,7 @@ export default function AudiopinPage() {
 
   // ======== Submit nowego pina ========
 
-  async function handleSubmit(e: React.FormEvent) {
+  async function handleSubmit(e: React.SyntheticEvent) {
     e.preventDefault();
     setSubmitError(null);
     const errors: Record<string, string> = {};
@@ -756,7 +756,11 @@ export default function AudiopinPage() {
             value={
               <span>
                 {pinData.Adresse || "—"}
-                {pinData.Stadt ? <>, <strong>{pinData.Stadt}</strong></> : null}
+                {pinData.Stadt ? (
+                  <>
+                    , <strong>{pinData.Stadt}</strong>
+                  </>
+                ) : null}
                 {pinData.Land ? <> ({pinData.Land})</> : null}
               </span>
             }
@@ -1192,7 +1196,9 @@ export default function AudiopinPage() {
             return (
               <div className={styles.viewField}>
                 <div className={styles.viewFieldHeader}>
-                  <span className={styles.viewFieldLabel}>Zertifizierungen</span>
+                  <span className={styles.viewFieldLabel}>
+                    Zertifizierungen
+                  </span>
                   {isPremium && !editingFields.has("Zertifizierungen") && (
                     <button
                       type="button"

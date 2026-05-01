@@ -160,6 +160,8 @@
   color: var(--color-cat-name);
   font-weight: 500;
   font-family: var(--font-fira);
+  white-space: pre-line;
+  text-align: center;
 }
 
 /* ===== SEKCJA 3: Mapa Featured Pins ===== */
