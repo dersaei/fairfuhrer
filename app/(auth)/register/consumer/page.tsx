@@ -68,7 +68,9 @@ export default function RegisterConsumerPage() {
     }
 
     if (!turnstileToken) {
-      setErrors({ general: "Bitte bestätigen Sie, dass Sie kein Roboter sind" });
+      setErrors({
+        general: "Bitte bestätigen Sie, dass Sie kein Roboter sind",
+      });
       return;
     }
 
@@ -126,7 +128,7 @@ export default function RegisterConsumerPage() {
       <Link href="/register" className={styles.back}>
         ← Zurück
       </Link>
-      <h1 className={styles.title}>Als Reisender registrieren</h1>
+      <h1 className={styles.title}>Werde Teil der Fairführer-Community</h1>
 
       {errors.general && (
         <p className={styles.errorMessage}>{errors.general}</p>
