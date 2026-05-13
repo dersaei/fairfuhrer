@@ -7,7 +7,7 @@ import CategoryFilter from "./CategoryFilter";
 import styles from "./MapWithFilters.module.css";
 import type { Place, Category } from "../types";
 import { useAuth } from "@/context/AuthContext";
-import { isSightsCategory, FREE_SIGHTS_VISIBLE_RATIO } from "@/lib/sightsGating";
+import { isSightsCategory } from "@/lib/sightsGating";
 
 interface MapWithFiltersProps {
   places: Place[];
@@ -93,7 +93,6 @@ export default function MapWithFilters({
             onToggle={handleToggleCategory}
             isPro={isPro}
             isSightsCategory={isSightsCategory}
-            freeSightsRatio={FREE_SIGHTS_VISIBLE_RATIO}
           />
         </div>
       )}
