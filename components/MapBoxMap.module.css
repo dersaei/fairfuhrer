@@ -193,6 +193,23 @@
   color: #1e7e34;
 }
 
+.popupLockTitle {
+  margin: 0.7em 0.5em;
+  font-size: 2rem;
+  font-weight: 400;
+  color: #181716;
+  font-family: var(--font-anton);
+}
+
+.popupLockBody {
+  padding: 0.2em 0.5em;
+  font-size: 0.8rem;
+  color: #000;
+  font-family: var(--font-fira);
+  font-weight: 400;
+  line-height: 1.1;
+}
+
 /* Mobile — używamy --vh zamiast dvh, bo --vh jest obliczane przez JS jako window.innerHeight
    i nie zmienia się gdy pasek przeglądarki się chowa/pokazuje */
 @media (max-width: 768px) {

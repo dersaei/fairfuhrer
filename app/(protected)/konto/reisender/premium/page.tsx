@@ -5,32 +5,77 @@ import styles from "./premium.module.css";
 export default function PremiumPage() {
   return (
     <div className={styles.wrapper}>
-      <h3 className={styles.intro}>Premium-Mitgliedschaft</h3>
+      <h3 className={styles.intro}>Fairführer+</h3>
 
       <p className={styles.lead}>
-        Mit einem Premium-Konto unterstützt du Fairführer und erhältst Zugang
-        zu exklusiven Funktionen, die das Entdecken fairer Orte noch besser
-        machen.
+        Mit <strong>Fairführer+</strong> unterstützt du die Community und
+        erhältst Zugang zu allen Pins und exklusiven Funktionen — in der
+        mobilen App für iOS und Android.
       </p>
 
-      <div className={styles.featureList}>
-        <h4 className={styles.featureTitle}>Das bekommst du mit Premium:</h4>
-        <ul className={styles.features}>
-          <li>100 % der Pins in allen Kategorien</li>
-          <li>Offline-Karten für unterwegs ohne Internetverbindung</li>
-          <li>Neue Orte vorschlagen und zur Community beitragen</li>
-          <li>Zugang zu Community-Funktionen</li>
-        </ul>
+      <div className={styles.comparisonBlock}>
+        <h4 className={styles.sectionTitle}>Kostenlos vs. Premium</h4>
+        <table className={styles.table}>
+          <thead>
+            <tr>
+              <th className={styles.thFeature}>Funktion</th>
+              <th className={styles.thFree}>Kostenlos</th>
+              <th className={styles.thPro}>Fairführer+</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Alle Kategorien auf der Karte</td>
+              <td className={styles.check}>✓</td>
+              <td className={styles.check}>✓</td>
+            </tr>
+            <tr>
+              <td>20&nbsp;% der Sehenswertes-Pins</td>
+              <td className={styles.check}>✓</td>
+              <td className={styles.check}>✓</td>
+            </tr>
+            <tr>
+              <td>100&nbsp;% der Sehenswertes-Pins</td>
+              <td className={styles.cross}>—</td>
+              <td className={styles.check}>✓</td>
+            </tr>
+            <tr>
+              <td>Offline-Karten</td>
+              <td className={styles.cross}>—</td>
+              <td className={styles.check}>✓</td>
+            </tr>
+            <tr>
+              <td>Orte vorschlagen</td>
+              <td className={styles.cross}>—</td>
+              <td className={styles.check}>✓</td>
+            </tr>
+            <tr>
+              <td>Community-Funktionen</td>
+              <td className={styles.cross}>—</td>
+              <td className={styles.check}>✓</td>
+            </tr>
+          </tbody>
+        </table>
       </div>
 
-      <div className={styles.pricingBox}>
-        <h4 className={styles.pricingTitle}>Preise</h4>
-        <p className={styles.pricingText}>
-          Wir arbeiten derzeit an unserem Premium-Modell mit flexibler
-          Preisgestaltung — du wählst selbst, wie viel du beitragen möchtest.
-          Bald kannst du hier dein Premium-Konto erwerben.
+      <div className={styles.appBox}>
+        <h4 className={styles.sectionTitle}>So kaufst du Fairführer+</h4>
+        <p className={styles.appText}>
+          Das Premium-Abo wird ausschließlich über die{" "}
+          <strong>Fairführer-App</strong> erworben — direkt im App Store (iOS)
+          oder Google Play (Android). Die App befindet sich derzeit in der
+          finalen Entwicklungsphase und wird bald verfügbar sein.
         </p>
-        <p className={styles.comingSoon}>Demnächst verfügbar</p>
+        <ol className={styles.steps}>
+          <li>Lade die Fairführer-App herunter (demnächst verfügbar)</li>
+          <li>Melde dich mit deinen bestehenden Zugangsdaten an</li>
+          <li>Wechsle in der App zum Bereich „Premium"</li>
+          <li>Wähle dein Abo und schließe den Kauf ab</li>
+        </ol>
+        <p className={styles.note}>
+          Nach dem Kauf wird dein Konto automatisch auf allen Geräten und im
+          Web freigeschaltet.
+        </p>
       </div>
     </div>
   );

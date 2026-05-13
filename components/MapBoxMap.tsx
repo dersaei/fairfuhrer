@@ -17,6 +17,8 @@ import styles from "./MapBoxMap.module.css";
 import MapSearch from "./MapSearch";
 import type { Place } from "../types";
 import { getCategoryIconPaths, DEFAULT_ICON_PATHS } from "../lib/categoryIcons";
+import { useAuth } from "@/context/AuthContext";
+import { filterVisiblePlaces, isSightsCategory } from "@/lib/sightsGating";
 
 // LAZY LOADING komponentów
 const PlaceInfoPanel = lazy(() => import("./PlaceInfoPanel"));
@@ -60,7 +62,11 @@ const PIN_H = 56;
  * Buduje kompletny SVG pinu per kategoria — identyczny design jak CategoryPin w legendzie:
  * kolorowe wypełnienie łezki + białe kółko w środku + kolorowa ikona Lucide.
  */
-function buildPinSVG(color: string, iconPaths: string, selected = false): string {
+function buildPinSVG(
+  color: string,
+  iconPaths: string,
+  selected = false,
+): string {
   const stroke = selected ? ` stroke="rgba(0,0,0,0.75)" stroke-width="2"` : "";
   return (
     `<svg xmlns="http://www.w3.org/2000/svg" width="${PIN_W}" height="${PIN_H}" viewBox="0 0 40 56">` +
@@ -111,10 +117,7 @@ function loadCategoryMarkerSDFs(
   categories: Array<{ id: number; color: string }>,
   onLoaded: () => void,
 ): void {
-  const allCategories = [
-    { id: 0, color: "#3388ff" },
-    ...categories,
-  ];
+  const allCategories = [{ id: 0, color: "#3388ff" }, ...categories];
   let remaining = allCategories.length;
 
   const done = () => {
@@ -124,9 +127,23 @@ function loadCategoryMarkerSDFs(
 
   allCategories.forEach(({ id, color }) => {
     const paths = id === 0 ? DEFAULT_ICON_PATHS : getCategoryIconPaths(id);
-    loadImageFromSVG(map, `pin-${id}`, buildPinSVG(color, paths), PIN_W, PIN_H, done);
+    loadImageFromSVG(
+      map,
+      `pin-${id}`,
+      buildPinSVG(color, paths),
+      PIN_W,
+      PIN_H,
+      done,
+    );
     remaining++;
-    loadImageFromSVG(map, `pin-${id}-selected`, buildPinSVG(color, paths, true), PIN_W, PIN_H, done);
+    loadImageFromSVG(
+      map,
+      `pin-${id}-selected`,
+      buildPinSVG(color, paths, true),
+      PIN_W,
+      PIN_H,
+      done,
+    );
   });
 }
 
@@ -145,12 +162,30 @@ export default function MapBoxMap({
   const userLocationRequestedRef = useRef(false);
   const lastFittedPlacesRef = useRef<string>("");
 
+  const { isPro } = useAuth();
+
+  // Compute locked IDs — Sehenswertes places outside the free 20 %.
+  const lockedIds = useMemo<Set<number>>(() => {
+    if (isPro) return new Set();
+    const visibleIds = new Set(
+      filterVisiblePlaces(places, false).map((p) => p.id),
+    );
+    return new Set(
+      places
+        .filter(
+          (p) => p.Kategorie.some(isSightsCategory) && !visibleIds.has(p.id),
+        )
+        .map((p) => p.id),
+    );
+  }, [places, isPro]);
+
   // GL Layers refs (zastępują markersRef)
   const layersInitializedRef = useRef(false);
   const hoverPopupRef = useRef<mapboxgl.Popup | null>(null);
   const hoverTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   // Refy dla stabilnych closures w eventach Mapboxa
   const placesRef = useRef<Place[]>(places);
+  const lockedIdsRef = useRef<Set<number>>(lockedIds);
   const popupDataMapRef = useRef<Map<number, string>>(new Map());
   // Race condition prevention
   const closePanelTimeoutRef = useRef<NodeJS.Timeout | null>(null);
@@ -211,27 +246,34 @@ export default function MapBoxMap({
     [],
   );
 
-  const animatePinSize = useCallback((from: number, to: number, duration = 280) => {
-    if (pinSizeAnimFrameRef.current) {
-      cancelAnimationFrame(pinSizeAnimFrameRef.current);
-      pinSizeAnimFrameRef.current = null;
-    }
-    const start = performance.now();
-    const easeOutCubic = (t: number) => 1 - Math.pow(1 - t, 3);
-    const tick = (now: number) => {
-      const t = Math.min((now - start) / duration, 1);
-      const size = from + (to - from) * easeOutCubic(t);
-      if (mapRef.current?.getLayer("places-selected")) {
-        mapRef.current.setLayoutProperty("places-selected", "icon-size", size);
-      }
-      if (t < 1) {
-        pinSizeAnimFrameRef.current = requestAnimationFrame(tick);
-      } else {
+  const animatePinSize = useCallback(
+    (from: number, to: number, duration = 280) => {
+      if (pinSizeAnimFrameRef.current) {
+        cancelAnimationFrame(pinSizeAnimFrameRef.current);
         pinSizeAnimFrameRef.current = null;
       }
-    };
-    pinSizeAnimFrameRef.current = requestAnimationFrame(tick);
-  }, []);
+      const start = performance.now();
+      const easeOutCubic = (t: number) => 1 - Math.pow(1 - t, 3);
+      const tick = (now: number) => {
+        const t = Math.min((now - start) / duration, 1);
+        const size = from + (to - from) * easeOutCubic(t);
+        if (mapRef.current?.getLayer("places-selected")) {
+          mapRef.current.setLayoutProperty(
+            "places-selected",
+            "icon-size",
+            size,
+          );
+        }
+        if (t < 1) {
+          pinSizeAnimFrameRef.current = requestAnimationFrame(tick);
+        } else {
+          pinSizeAnimFrameRef.current = null;
+        }
+      };
+      pinSizeAnimFrameRef.current = requestAnimationFrame(tick);
+    },
+    [],
+  );
 
   const addUserLocationMarker = useCallback(
     (map: mapboxgl.Map, location: [number, number]) => {
@@ -359,7 +401,11 @@ export default function MapBoxMap({
       // Podświetl wybrany pin — płynne powiększenie
       if (mapRef.current?.getLayer("places-selected")) {
         mapRef.current.setLayoutProperty("places-selected", "icon-size", 1);
-        mapRef.current.setFilter("places-selected", ["==", ["get", "placeId"], place.id]);
+        mapRef.current.setFilter("places-selected", [
+          "==",
+          ["get", "placeId"],
+          place.id,
+        ]);
         animatePinSize(1, 1.45);
       }
 
@@ -369,11 +415,7 @@ export default function MapBoxMap({
 
           if (mapRef.current) {
             setTimeout(() => {
-              animateToLocation(
-                place.location.coordinates,
-                16,
-                1200,
-              );
+              animateToLocation(place.location.coordinates, 16, 1200);
             }, 300);
           }
         });
@@ -394,7 +436,11 @@ export default function MapBoxMap({
       animatePinSize(1.45, 1);
       setTimeout(() => {
         if (mapRef.current?.getLayer("places-selected")) {
-          mapRef.current.setFilter("places-selected", ["==", ["get", "placeId"], -1]);
+          mapRef.current.setFilter("places-selected", [
+            "==",
+            ["get", "placeId"],
+            -1,
+          ]);
         }
       }, 280);
     }
@@ -443,9 +489,7 @@ export default function MapBoxMap({
       ? selectedPlace.Galerie_Bilder
       : selectedPlace?.Galerie;
     if (!images?.length) return;
-    setCurrentImageIndex((prev) =>
-      prev === 0 ? images.length - 1 : prev - 1,
-    );
+    setCurrentImageIndex((prev) => (prev === 0 ? images.length - 1 : prev - 1));
   }, [selectedPlace?.Galerie, selectedPlace?.Galerie_Bilder]);
 
   const closeGalleryOnly = useCallback(() => {
@@ -496,7 +540,7 @@ export default function MapBoxMap({
         [place.Adresse, place.Stadt, place.Land ? `(${place.Land})` : ""]
           .filter(Boolean)
           .join(", "),
-        { ALLOWED_TAGS: [] }
+        { ALLOWED_TAGS: [] },
       );
       const safePhone = place.Telefon
         ? DOMPurify.sanitize(place.Telefon, { ALLOWED_TAGS: [] })
@@ -628,7 +672,9 @@ export default function MapBoxMap({
         placesRef.current.forEach((p) =>
           p.Kategorie.forEach((cat) => categoryMap.set(cat.id, cat.color)),
         );
-        const categories = Array.from(categoryMap.entries()).map(([id, color]) => ({ id, color }));
+        const categories = Array.from(categoryMap.entries()).map(
+          ([id, color]) => ({ id, color }),
+        );
         loadCategoryMarkerSDFs(map, categories, () => {
           initializePlacesLayer(map);
           attachLayerEvents(map);
@@ -681,15 +727,7 @@ export default function MapBoxMap({
             30,
             "#f28cb1",
           ],
-          "circle-radius": [
-            "step",
-            ["get", "point_count"],
-            20,
-            10,
-            30,
-            30,
-            40,
-          ],
+          "circle-radius": ["step", ["get", "point_count"], 20, 10, 30, 30, 40],
           "circle-stroke-width": 2,
           "circle-stroke-color": "#fff",
         },
@@ -721,11 +759,16 @@ export default function MapBoxMap({
           "icon-image": [
             "match",
             ["get", "categoryId"],
-            1, "pin-1",
-            2, "pin-2",
-            3, "pin-3",
-            5, "pin-5",
-            8, "pin-8",
+            1,
+            "pin-1",
+            2,
+            "pin-2",
+            3,
+            "pin-3",
+            5,
+            "pin-5",
+            8,
+            "pin-8",
             "pin-0",
           ],
           "icon-size": 1,
@@ -745,11 +788,16 @@ export default function MapBoxMap({
           "icon-image": [
             "match",
             ["get", "categoryId"],
-            1, "pin-1-selected",
-            2, "pin-2-selected",
-            3, "pin-3-selected",
-            5, "pin-5-selected",
-            8, "pin-8-selected",
+            1,
+            "pin-1-selected",
+            2,
+            "pin-2-selected",
+            3,
+            "pin-3-selected",
+            5,
+            "pin-5-selected",
+            8,
+            "pin-8-selected",
             "pin-0-selected",
           ],
           "icon-size": 1.45,
@@ -786,7 +834,9 @@ export default function MapBoxMap({
     const currentPlaces = placesRef.current;
 
     source.setData(
-      placesToGeoJSON(currentPlaces) as GeoJSON.FeatureCollection<GeoJSON.Point>,
+      placesToGeoJSON(
+        currentPlaces,
+      ) as GeoJSON.FeatureCollection<GeoJSON.Point>,
     );
 
     // fitBounds tylko gdy zmienił się zestaw miejsc.
@@ -810,7 +860,7 @@ export default function MapBoxMap({
 
       map.fitBounds(bounds, { padding, duration: 1000 });
     }
-  }, [places, userLocation]);
+  }, [userLocation]);
 
   // ========================================
   // GL LAYERS: attachLayerEvents
@@ -837,8 +887,6 @@ export default function MapBoxMap({
         if (!e.features?.length) return;
         const feature = e.features[0];
         const placeId = feature.properties?.placeId as number;
-        const html = popupDataMapRef.current.get(placeId);
-        if (!html) return;
 
         // Wyczyść debounce (jeśli kursor wrócił szybko)
         if (hoverTimeoutRef.current) {
@@ -854,6 +902,19 @@ export default function MapBoxMap({
 
         const geometry = feature.geometry as GeoJSON.Point;
         const coords = geometry.coordinates as [number, number];
+
+        const isLocked = lockedIdsRef.current.has(placeId);
+        const html = isLocked
+          ? DOMPurify.sanitize(
+              `<div class="${styles.modernPopup}">
+                <p class="${styles.popupLockTitle}">🔒 Fairführer+</p>
+                <p class=”${styles.popupLockBody}”>Das ist nur ein Vorgeschmack! Aktuell hast du Zugriff auf <strong>20&nbsp;%</strong> der Audiopins in der Kategorie „Sehenswertes”.<br /> Lade die App <em>(Bald verfügbar)</em> und hol dir <strong>Fairführer+</strong>, um alle Audiopins auf der Karte freizuschalten.</p>
+              </div>`,
+              { ADD_ATTR: ["style"] },
+            )
+          : popupDataMapRef.current.get(placeId);
+
+        if (!html) return;
 
         hoverPopupRef.current = new mapboxgl.Popup({
           offset: [0, -36],
@@ -876,12 +937,11 @@ export default function MapBoxMap({
         }, 300);
       });
 
-      // ---- KLIK na unclustered pin → otwórz panel ----
+      // ---- KLIK na unclustered pin → locked = popup CTA, odblokowany = panel ----
       map.on("click", "places-unclustered", (e) => {
         if (!e.features?.length) return;
         const placeId = e.features[0].properties?.placeId as number;
-        const place = placesRef.current.find((p) => p.id === placeId);
-        if (!place) return;
+        e.originalEvent.stopPropagation();
 
         // Zamknij hover popup
         if (hoverPopupRef.current) {
@@ -889,18 +949,20 @@ export default function MapBoxMap({
           hoverPopupRef.current = null;
         }
 
+        if (lockedIdsRef.current.has(placeId)) {
+          return;
+        }
+
+        const place = placesRef.current.find((p) => p.id === placeId);
+        if (!place) return;
         openPanel(place);
-        // Krytyczne: zatrzymaj propagację do ogólnego map.on("click")
-        e.originalEvent.stopPropagation();
       });
 
       // ---- KLIK na klaster → zoom in ----
       map.on("click", "places-clusters", (e) => {
         if (!e.features?.length) return;
         const clusterId = e.features[0].properties?.cluster_id as number;
-        const source = map.getSource(
-          "places-source",
-        ) as mapboxgl.GeoJSONSource;
+        const source = map.getSource("places-source") as mapboxgl.GeoJSONSource;
         const geometry = e.features[0].geometry as GeoJSON.Point;
         const coords = geometry.coordinates as [number, number];
 
@@ -936,10 +998,14 @@ export default function MapBoxMap({
   // EFFECTS
   // ========================================
 
-  // Synchronizuj placesRef i popupDataMapRef z aktualnymi wartościami
+  // Synchronizuj placesRef, lockedIdsRef i popupDataMapRef z aktualnymi wartościami
   useEffect(() => {
     placesRef.current = places;
   }, [places]);
+
+  useEffect(() => {
+    lockedIdsRef.current = lockedIds;
+  }, [lockedIds]);
 
   useEffect(() => {
     popupDataMapRef.current = popupDataMap;
@@ -962,7 +1028,8 @@ export default function MapBoxMap({
 
     return () => {
       if (hoverTimeoutRef.current) clearTimeout(hoverTimeoutRef.current);
-      if (closePanelTimeoutRef.current) clearTimeout(closePanelTimeoutRef.current);
+      if (closePanelTimeoutRef.current)
+        clearTimeout(closePanelTimeoutRef.current);
       if (hoverPopupRef.current) {
         hoverPopupRef.current.remove();
         hoverPopupRef.current = null;
@@ -1063,26 +1130,28 @@ export default function MapBoxMap({
         </Suspense>
       </Activity>
 
-      {selectedGalleryImage && (selectedPlace?.Galerie?.length || selectedPlace?.Galerie_Bilder?.length) && (
-        <Suspense
-          fallback={
-            <div className={styles.loadingOverlayGallery}>
-              <div className={styles.loadingSpinner}>
-                Galerie wird geladen...
+      {selectedGalleryImage &&
+        (selectedPlace?.Galerie?.length ||
+          selectedPlace?.Galerie_Bilder?.length) && (
+          <Suspense
+            fallback={
+              <div className={styles.loadingOverlayGallery}>
+                <div className={styles.loadingSpinner}>
+                  Galerie wird geladen...
+                </div>
               </div>
-            </div>
-          }
-        >
-          <FullscreenGallery
-            place={selectedPlace}
-            currentIndex={currentImageIndex}
-            isOpen={!!selectedGalleryImage}
-            onCloseAction={closeGalleryOnly}
-            onNextAction={handleNextImage}
-            onPrevAction={handlePrevImage}
-          />
-        </Suspense>
-      )}
+            }
+          >
+            <FullscreenGallery
+              place={selectedPlace}
+              currentIndex={currentImageIndex}
+              isOpen={!!selectedGalleryImage}
+              onCloseAction={closeGalleryOnly}
+              onNextAction={handleNextImage}
+              onPrevAction={handlePrevImage}
+            />
+          </Suspense>
+        )}
     </div>
   );
 }

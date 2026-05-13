@@ -190,7 +190,7 @@ const CategoryInfoModal: React.FC<CategoryInfoModalProps> = ({
             id="category-modal-description"
             className={styles.content}
             dangerouslySetInnerHTML={{
-              __html: category.description || "Brak opisu.",
+              __html: category.description ?? "",
             }}
           />
         </div>

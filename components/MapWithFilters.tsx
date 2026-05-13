@@ -7,7 +7,7 @@ import CategoryFilter from "./CategoryFilter";
 import styles from "./MapWithFilters.module.css";
 import type { Place, Category } from "../types";
 import { useAuth } from "@/context/AuthContext";
-import { filterVisiblePlaces, isSightsCategory, FREE_SIGHTS_VISIBLE_RATIO } from "@/lib/sightsGating";
+import { isSightsCategory, FREE_SIGHTS_VISIBLE_RATIO } from "@/lib/sightsGating";
 
 interface MapWithFiltersProps {
   places: Place[];
@@ -41,22 +41,17 @@ export default function MapWithFilters({
     );
   }, []);
 
-  // Free users see ceil(20 %) of Sehenswertes places; premium sees 100 %.
-  const visiblePlaces = useMemo(
-    () => filterVisiblePlaces(places, isPro),
-    [places, isPro]
-  );
-
-  // Memoized filtering dla lepszej wydajności
+  // Filtering by category only — gating (locked/unlocked) is handled inside
+  // MapBoxMap itself, so we pass ALL places matching the category filter.
+  // MapBoxMap computes lockedIds via its own useAuth + filterVisiblePlaces call.
   const filteredPlaces = useMemo(() => {
     if (selectedCategoryIds.length === 0) {
       return [];
     }
-
-    return visiblePlaces.filter((place) =>
+    return places.filter((place) =>
       place.Kategorie.some((cat) => selectedCategoryIds.includes(cat.id))
     );
-  }, [visiblePlaces, selectedCategoryIds]);
+  }, [places, selectedCategoryIds]);
 
   const containerClass = `${styles.container}${embedded ? ` ${styles.containerEmbedded}` : ""}`;
 

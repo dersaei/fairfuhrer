@@ -15,9 +15,6 @@ function CategoryPin({
   const iconPaths = getCategoryIconPaths(category.id) ?? DEFAULT_ICON_PATHS;
   const color = isActive ? category.color : "#ccc";
 
-  // Ikona Lucide ma viewBox 0 0 24 24.
-  // Kółko w łezce: cx=20 cy=19 r=11 → środek (20,19), dostępna przestrzeń ~18×18px.
-  // Skalujemy 24→16px (scale=0.667) i przesuwamy do środka kółka: translate(20-8, 19-8)=(12,11)
   return (
     <svg
       width="28"
@@ -50,7 +47,6 @@ interface CategoryFilterProps {
   onToggle: (id: number) => void;
   isPro?: boolean;
   isSightsCategory?: (cat: { id: number; name: string }) => boolean;
-  freeSightsRatio?: number;
 }
 
 const CategoryFilter: React.FC<CategoryFilterProps> = ({
@@ -59,13 +55,11 @@ const CategoryFilter: React.FC<CategoryFilterProps> = ({
   onToggle,
   isPro = true,
   isSightsCategory,
-  freeSightsRatio = 0.2,
 }) => {
   const [modalCategory, setModalCategory] = useState<Category | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [openCategoryId, setOpenCategoryId] = useState<number | null>(null);
 
-  // Memoized handler for keyboard events
   const createKeyDownHandler = useCallback(
     (id: number) => (e: React.KeyboardEvent<HTMLDivElement>) => {
       if (e.key === "Enter" || e.key === " ") {
@@ -73,50 +67,41 @@ const CategoryFilter: React.FC<CategoryFilterProps> = ({
         onToggle(id);
       }
     },
-    [onToggle]
+    [onToggle],
   );
 
-  // Handle info icon click with proper modal switching
   const handleInfoClick = useCallback(
     (e: React.MouseEvent, category: Category) => {
       e.stopPropagation();
 
-      // If clicking the same icon that's already open, close the modal
       if (openCategoryId === category.id && isModalOpen) {
         setIsModalOpen(false);
         setModalCategory(null);
         setOpenCategoryId(null);
       } else {
-        // If another modal is open, close it first then open new one
         if (isModalOpen && openCategoryId !== category.id) {
-          // First close the current modal
           setIsModalOpen(false);
-
-          // Wait for close animation, then open new modal
           setTimeout(() => {
             setModalCategory(category);
             setIsModalOpen(true);
             setOpenCategoryId(category.id);
           }, 200);
         } else {
-          // No modal open, just open this one
           setModalCategory(category);
           setIsModalOpen(true);
           setOpenCategoryId(category.id);
         }
       }
     },
-    [openCategoryId, isModalOpen]
+    [openCategoryId, isModalOpen],
   );
 
-  // Handle modal close
   const handleModalClose = useCallback(() => {
     setIsModalOpen(false);
     setModalCategory(null);
     setOpenCategoryId(null);
   }, []);
 
-  // Handle empty categories case
   if (!categories.length) {
     return (
       <div className={styles.filterContainer}>
@@ -134,12 +119,12 @@ const CategoryFilter: React.FC<CategoryFilterProps> = ({
           const isModalOpenForThis =
             openCategoryId === category.id && isModalOpen;
 
-          const showSightsHint =
+          const isSights =
             !isPro && isSightsCategory != null && isSightsCategory(category);
+          const showInfoButton = hasDescription || isSights;
 
           return (
             <div key={category.id} className={styles.filterWrapper}>
-              {/* Rząd: toggle + opcjonalny przycisk info */}
               <div className={styles.filterWrapperRow}>
                 <div
                   className={styles.filterItem}
@@ -156,8 +141,7 @@ const CategoryFilter: React.FC<CategoryFilterProps> = ({
                   <span className={styles.filterName}>{category.name}</span>
                 </div>
 
-                {/* Info button - only if description exists */}
-                {hasDescription && (
+                {showInfoButton && (
                   <button
                     className={`${styles.infoButton} ${isModalOpenForThis ? styles.infoButtonActive : ""}`}
                     onClick={(e) => handleInfoClick(e, category)}
@@ -184,14 +168,6 @@ const CategoryFilter: React.FC<CategoryFilterProps> = ({
                   </button>
                 )}
               </div>
-
-              {/* Hint pod rzędem — tylko dla free usera przy Sehenswertes */}
-              {showSightsHint && (
-                <p className={styles.sightsHint}>
-                  Kostenlose Konten sehen {Math.round(freeSightsRatio * 100)}&nbsp;%
-                  der Sehenswertes-Orte. Mit Fairführer+ sind alle sichtbar.
-                </p>
-              )}
             </div>
           );
         })}

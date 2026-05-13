@@ -25,13 +25,15 @@
   margin: 0;
 }
 
-.featureList {
+/* --- Comparison table --- */
+
+.comparisonBlock {
   display: flex;
   flex-direction: column;
   gap: 0.75rem;
 }
 
-.featureTitle {
+.sectionTitle {
   font-family: var(--font-fira);
   font-size: 0.875rem;
   font-weight: 700;
@@ -41,33 +43,67 @@
   margin: 0;
 }
 
-.features {
-  list-style: none;
-  padding: 0;
-  margin: 0;
-  display: flex;
-  flex-direction: column;
-  gap: 0.5rem;
-}
-
-.features li {
+.table {
+  width: 100%;
+  border-collapse: collapse;
   font-family: var(--font-fira);
-  font-size: 0.95rem;
-  color: #18222f;
-  padding-left: 1.25rem;
-  position: relative;
-  line-height: 1.5;
+  font-size: 0.9rem;
 }
 
-.features li::before {
-  content: "✓";
-  position: absolute;
-  left: 0;
-  color: gold;
+.table td,
+.table th {
+  padding: 0.55rem 0.75rem;
+  border-bottom: 1px solid #e0e0e0;
+  line-height: 1.4;
+}
+
+.table tbody tr:last-child td {
+  border-bottom: none;
+}
+
+.thFeature {
+  text-align: left;
+  font-weight: 700;
+  color: #18222f;
+  text-transform: uppercase;
+  font-size: 0.75rem;
+  letter-spacing: 0.06em;
+}
+
+.thFree {
+  text-align: center;
+  font-weight: 700;
+  color: #666;
+  text-transform: uppercase;
+  font-size: 0.75rem;
+  letter-spacing: 0.06em;
+  width: 90px;
+}
+
+.thPro {
+  text-align: center;
+  font-weight: 700;
+  color: #fc6c14;
+  text-transform: uppercase;
+  font-size: 0.75rem;
+  letter-spacing: 0.06em;
+  width: 90px;
+}
+
+.check {
+  text-align: center;
+  color: #18a34a;
   font-weight: 700;
 }
 
-.pricingBox {
+.cross {
+  text-align: center;
+  color: #aaa;
+}
+
+/* --- App download box --- */
+
+.appBox {
   display: flex;
   flex-direction: column;
   gap: 0.75rem;
@@ -76,30 +112,34 @@
   background-color: #f9f9f9;
 }
 
-.pricingTitle {
+.appText {
   font-family: var(--font-fira);
-  font-size: 0.875rem;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.08em;
-  color: #18222f;
-  margin: 0;
-}
-
-.pricingText {
-  font-family: var(--font-fira);
-  font-size: 0.875rem;
+  font-size: 0.9rem;
   color: #444;
   line-height: 1.7;
   margin: 0;
 }
 
-.comingSoon {
+.steps {
+  margin: 0;
+  padding-left: 1.25rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+.steps li {
+  font-family: var(--font-fira);
+  font-size: 0.9rem;
+  color: #18222f;
+  line-height: 1.5;
+}
+
+.note {
   font-family: var(--font-fira);
   font-size: 0.8rem;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.08em;
-  color: #fc6c14;
+  color: #666;
+  line-height: 1.6;
   margin: 0;
+  font-style: italic;
 }
