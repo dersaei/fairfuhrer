@@ -15,6 +15,7 @@ interface AuthContextValue {
   user: AuthUser | null;
   isLoading: boolean;
   isAuthenticated: boolean;
+  isPro: boolean;
   logout: () => Promise<void>;
   refreshUser: () => Promise<void>;
 }
@@ -79,6 +80,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       user,
       isLoading,
       isAuthenticated: user !== null,
+      isPro:
+        user?.profile?.premium_until != null &&
+        new Date(user.profile.premium_until) > new Date(),
       logout,
       refreshUser,
     }),

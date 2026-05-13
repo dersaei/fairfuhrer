@@ -9,10 +9,24 @@
 
 .filterWrapper {
   display: flex;
+  flex-direction: column;
+  gap: 2px;
+  position: relative;
+}
+
+.filterWrapperRow {
+  display: flex;
   align-items: center;
   justify-content: space-between;
   gap: 6px;
-  position: relative;
+  width: 100%;
+}
+
+.sightsHint {
+  font-size: 0.72rem;
+  color: #666;
+  margin: 0 8px 4px 44px;
+  line-height: 1.35;
 }
 
 .filterItem {

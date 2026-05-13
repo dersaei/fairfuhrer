@@ -1,6 +1,6 @@
 {
   "name": "fairguide",
-  "version": "3.7.5",
+  "version": "3.7.6",
   "private": true,
   "scripts": {
     "dev": "next dev",
@@ -33,7 +33,7 @@
   "devDependencies": {
     "@types/dompurify": "^3.0.5",
     "@types/mapbox-gl": "^3.4.1",
-    "@types/node": "^24.12.3",
+    "@types/node": "^24.12.4",
     "@types/react": "^19.2.14",
     "@types/react-dom": "^19.2.3",
     "eslint": "^10.3.0",
