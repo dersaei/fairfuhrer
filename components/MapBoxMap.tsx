@@ -460,11 +460,25 @@ export default function MapBoxMap({
     }, 600);
   }, [animatePinSize]);
 
-  const handleSearchPlaceSelect = useCallback(
-    (place: Place) => {
-      openPanel(place);
+  const handleLocationSelect = useCallback(
+    (
+      coords: [number, number],
+      zoom: number,
+      bbox?: [number, number, number, number],
+      maxZoom?: number,
+    ) => {
+      const map = mapRef.current;
+      if (!map) return;
+      if (bbox) {
+        map.fitBounds(
+          [[bbox[0], bbox[1]], [bbox[2], bbox[3]]],
+          { padding: 60, duration: 800, ...(maxZoom !== undefined && { maxZoom }) },
+        );
+      } else {
+        map.flyTo({ center: coords, zoom, duration: 800 });
+      }
     },
-    [openPanel],
+    [],
   );
 
   // ========================================
@@ -1047,11 +1061,11 @@ export default function MapBoxMap({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []); // Inicjalizuj tylko raz przy mount, cleanup przy unmount
 
-  // Aktualizuj dane GL source gdy places się zmienią (np. filtry)
+  // Aktualizuj dane GL source gdy places się zmienią (np. filtry kategorii)
   useEffect(() => {
     if (!mapRef.current || !layersInitializedRef.current) return;
     if (mapRef.current.isStyleLoaded()) updatePlacesData();
-  }, [updatePlacesData]);
+  }, [places, updatePlacesData]);
 
   // Dodaj user location marker po każdej zmianie lokalizacji
   useEffect(() => {
@@ -1106,8 +1120,7 @@ export default function MapBoxMap({
 
       {!embedded && (
         <MapSearch
-          places={places}
-          onPlaceSelectAction={handleSearchPlaceSelect}
+          onLocationSelect={handleLocationSelect}
           disabled={mapLoadingState !== "success"}
         />
       )}

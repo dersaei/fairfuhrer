@@ -1,125 +1,128 @@
 // components/MapSearch.tsx
 "use client";
 
-import { useState, useRef, useEffect, useCallback, useMemo } from "react";
+import { useState, useRef, useEffect, useCallback } from "react";
 import { useDebounce } from "../hooks/useDebounce";
-import type { Place } from "../types";
 import styles from "./MapSearch.module.css";
 
+interface GeoResult {
+  id: string;
+  name: string;
+  place_formatted: string;
+  lat: number;
+  lon: number;
+  bbox: [number, number, number, number] | null; // [minLon, minLat, maxLon, maxLat]
+  feature_type: string; // country | region | district | place
+}
+
 interface MapSearchProps {
-  places: Place[];
-  onPlaceSelectAction: (place: Place) => void;
+  onLocationSelect: (
+    coords: [number, number],
+    zoom: number,
+    bbox?: [number, number, number, number],
+    maxZoom?: number,
+  ) => void;
   disabled?: boolean;
 }
 
-interface SearchResult {
-  place: Place;
-  matchType: "name" | "address" | "location";
-  highlightedText: string;
-}
+const MAPBOX_TOKEN = process.env.NEXT_PUBLIC_MAPBOX_TOKEN ?? "";
 
 export default function MapSearch({
-  places,
-  onPlaceSelectAction,
+  onLocationSelect,
   disabled = false,
 }: MapSearchProps) {
   const [isExpanded, setIsExpanded] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
+  const [results, setResults] = useState<GeoResult[]>([]);
   const [selectedIndex, setSelectedIndex] = useState(-1);
   const [isLoading, setIsLoading] = useState(false);
 
   const containerRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
   const suggestionsRef = useRef<HTMLDivElement>(null);
+  const abortRef = useRef<AbortController | null>(null);
 
-  // Debounce search query dla lepszej wydajności
   const debouncedQuery = useDebounce(searchQuery.trim(), 300);
 
-  // ========================================
-  // UTILITY FUNCTIONS
-  // ========================================
-
-  const escapeRegExp = useCallback((string: string): string => {
-    return string.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
-  }, []);
-
-  const highlightSearchTerm = useCallback(
-    (text: string, query: string): string => {
-      if (!query) return text;
-
-      const regex = new RegExp(`(${escapeRegExp(query)})`, "gi");
-      return text.replace(regex, "<mark>$1</mark>");
-    },
-    [escapeRegExp]
-  );
-
-  // ========================================
-  // SEARCH LOGIC - TYLKO NAZWA I ADRES
-  // ========================================
-
-  const searchResults = useMemo(() => {
+  // Fetch suggestions from Mapbox Geocoding v6
+  useEffect(() => {
     if (!debouncedQuery || debouncedQuery.length < 2) {
-      return [];
+      setResults([]);
+      setIsLoading(false);
+      return;
     }
 
-    // Rozbij query na słowa — każde musi pasować (AND logic)
-    const words = debouncedQuery.toLowerCase().split(/\s+/).filter(Boolean);
-    const results: SearchResult[] = [];
+    if (!MAPBOX_TOKEN) {
+      setResults([]);
+      return;
+    }
 
-    places.forEach((place) => {
-      const nameLower = place.Name.toLowerCase();
-      const adresseLower = place.Adresse.toLowerCase();
-      const stadtLower = (place.Stadt ?? "").toLowerCase();
-      const landLower = (place.Land ?? "").toLowerCase();
-      const locationText = [place.Stadt, place.Land].filter(Boolean).join(", ");
-      const locationLower = locationText.toLowerCase();
+    abortRef.current?.abort();
+    abortRef.current = new AbortController();
+    setIsLoading(true);
 
-      const nameMatches = words.every((w) => nameLower.includes(w));
-      const locationMatches = locationText.length > 0 && words.every((w) =>
-        stadtLower.includes(w) || landLower.includes(w) || locationLower.includes(w)
-      );
-      const addressMatches = words.every((w) => adresseLower.includes(w));
+    const url =
+      `https://api.mapbox.com/search/geocode/v6/forward` +
+      `?q=${encodeURIComponent(debouncedQuery)}` +
+      `&language=de` +
+      `&limit=6` +
+      `&types=country,region,district,place` +
+      `&autocomplete=true` +
+      `&access_token=${MAPBOX_TOKEN}`;
 
-      if (!nameMatches && !locationMatches && !addressMatches) return;
+    fetch(url, { signal: abortRef.current.signal })
+      .then((r) => r.json())
+      .then((json) => {
+        const features = (json.features ?? []) as Record<string, unknown>[];
+        setResults(
+          features.map((f) => {
+            const props = f.properties as Record<string, unknown>;
+            const geom = f.geometry as { coordinates: [number, number] };
+            const rawBbox = props.bbox as number[] | undefined;
+            const bbox: [number, number, number, number] | null =
+              rawBbox?.length === 4
+                ? [rawBbox[0], rawBbox[1], rawBbox[2], rawBbox[3]]
+                : null;
+            return {
+              id: (props.mapbox_id as string) ?? String(Math.random()),
+              name: props.name as string,
+              place_formatted: (props.place_formatted as string) ?? "",
+              lat: geom.coordinates[1],
+              lon: geom.coordinates[0],
+              bbox,
+              feature_type: (props.feature_type as string) ?? "place",
+            };
+          }),
+        );
+        setIsLoading(false);
+      })
+      .catch((err) => {
+        if (err.name !== "AbortError") setIsLoading(false);
+      });
 
-      const matchType: "name" | "address" | "location" = nameMatches
-        ? "name"
-        : locationMatches
-        ? "location"
-        : "address";
+    return () => {
+      abortRef.current?.abort();
+    };
+  }, [debouncedQuery]);
 
-      const sourceText = nameMatches
-        ? place.Name
-        : locationMatches
-        ? locationText
-        : place.Adresse;
-
-      const highlightedText = words.reduce(
-        (text, word) => highlightSearchTerm(text, word),
-        sourceText
-      );
-
-      results.push({ place, matchType, highlightedText });
-    });
-
-    return results.sort((a, b) => {
-      const priority = { name: 3, location: 2, address: 1 };
-      return priority[b.matchType] - priority[a.matchType];
-    });
-  }, [debouncedQuery, places, highlightSearchTerm]);
-
-  // ========================================
-  // EVENT HANDLERS
-  // ========================================
+  const handleSelect = useCallback(
+    (result: GeoResult) => {
+      const maxZoom = result.feature_type === "place" ? 13 : undefined;
+      onLocationSelect([result.lon, result.lat], 13, result.bbox ?? undefined, maxZoom);
+      setSearchQuery(result.name);
+      setIsExpanded(false);
+      setResults([]);
+      setSelectedIndex(-1);
+      inputRef.current?.blur();
+    },
+    [onLocationSelect],
+  );
 
   const handleSearchIconClick = useCallback(() => {
     if (disabled) return;
-
     if (!isExpanded) {
       setIsExpanded(true);
-      setTimeout(() => {
-        inputRef.current?.focus();
-      }, 200);
+      setTimeout(() => inputRef.current?.focus(), 200);
     } else {
       if (!searchQuery.trim()) {
         setIsExpanded(false);
@@ -130,127 +133,67 @@ export default function MapSearch({
     }
   }, [disabled, isExpanded, searchQuery]);
 
-  const handleInputChange = useCallback(
-    (e: React.ChangeEvent<HTMLInputElement>) => {
-      const value = e.target.value;
-      setSearchQuery(value);
-      setSelectedIndex(-1);
-
-      if (value.trim().length >= 2) {
-        setIsLoading(true);
-      }
-    },
-    []
-  );
-
-  const handlePlaceSelect = useCallback(
-    (place: Place) => {
-      onPlaceSelectAction(place);
-      setSearchQuery("");
-      setIsExpanded(false);
-      setSelectedIndex(-1);
-      inputRef.current?.blur();
-    },
-    [onPlaceSelectAction]
-  );
-
   const handleKeyDown = useCallback(
     (e: React.KeyboardEvent) => {
-      if (!isExpanded || searchResults.length === 0) return;
-
+      if (!isExpanded || results.length === 0) return;
       switch (e.key) {
         case "ArrowDown":
           e.preventDefault();
-          setSelectedIndex((prev) =>
-            prev < searchResults.length - 1 ? prev + 1 : 0
-          );
+          setSelectedIndex((p) => (p < results.length - 1 ? p + 1 : 0));
           break;
-
         case "ArrowUp":
           e.preventDefault();
-          setSelectedIndex((prev) =>
-            prev > 0 ? prev - 1 : searchResults.length - 1
-          );
+          setSelectedIndex((p) => (p > 0 ? p - 1 : results.length - 1));
           break;
-
         case "Enter":
           e.preventDefault();
-          if (selectedIndex >= 0 && selectedIndex < searchResults.length) {
-            handlePlaceSelect(searchResults[selectedIndex].place);
-          }
+          if (selectedIndex >= 0) handleSelect(results[selectedIndex]);
+          else if (results.length > 0) handleSelect(results[0]);
           break;
-
         case "Escape":
           e.preventDefault();
           setSearchQuery("");
           setIsExpanded(false);
+          setResults([]);
           setSelectedIndex(-1);
           inputRef.current?.blur();
           break;
       }
     },
-    [isExpanded, searchResults, selectedIndex, handlePlaceSelect]
+    [isExpanded, results, selectedIndex, handleSelect],
   );
 
-  // ========================================
-  // EFFECTS
-  // ========================================
-
+  // Close on outside click
   useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
-      if (
-        containerRef.current &&
-        !containerRef.current.contains(event.target as Node)
-      ) {
+    if (!isExpanded) return;
+    const handler = (e: MouseEvent) => {
+      if (containerRef.current && !containerRef.current.contains(e.target as Node)) {
         setIsExpanded(false);
         setSelectedIndex(-1);
       }
     };
-
-    if (isExpanded) {
-      document.addEventListener("mousedown", handleClickOutside);
-      return () =>
-        document.removeEventListener("mousedown", handleClickOutside);
-    }
+    document.addEventListener("mousedown", handler);
+    return () => document.removeEventListener("mousedown", handler);
   }, [isExpanded]);
 
-  /* eslint-disable react-hooks/set-state-in-effect */
-  // Loading state needs to sync with search results updates
-  useEffect(() => {
-    setIsLoading(false);
-  }, [searchResults]);
-  /* eslint-enable react-hooks/set-state-in-effect */
-
+  // Scroll selected item into view
   useEffect(() => {
     if (selectedIndex >= 0 && suggestionsRef.current) {
-      const selectedElement = suggestionsRef.current.children[
-        selectedIndex
-      ] as HTMLElement;
-      if (selectedElement) {
-        selectedElement.scrollIntoView({
-          block: "nearest",
-          behavior: "smooth",
-        });
-      }
+      const el = suggestionsRef.current.children[selectedIndex] as HTMLElement;
+      el?.scrollIntoView({ block: "nearest", behavior: "smooth" });
     }
   }, [selectedIndex]);
 
-  // ========================================
-  // RENDER
-  // ========================================
-
-  const hasResults = searchResults.length > 0;
-  const showSuggestions =
-    isExpanded && debouncedQuery.length >= 2 && hasResults;
+  const showSuggestions = isExpanded && debouncedQuery.length >= 2 && results.length > 0;
   const showNoResults =
-    isExpanded && debouncedQuery.length >= 2 && !hasResults && !isLoading;
+    isExpanded && debouncedQuery.length >= 2 && !isLoading && results.length === 0;
 
   return (
     <div
       ref={containerRef}
-      className={`${styles.searchContainer} ${
-        isExpanded ? styles.expanded : ""
-      } ${disabled ? styles.disabled : ""}`}
+      className={`${styles.searchContainer} ${isExpanded ? styles.expanded : ""} ${
+        disabled ? styles.disabled : ""
+      }`}
     >
       <div className={styles.searchBox}>
         <button
@@ -258,6 +201,7 @@ export default function MapSearch({
           onClick={handleSearchIconClick}
           disabled={disabled}
           aria-label="Suche öffnen"
+          type="button"
         >
           <svg
             width="20"
@@ -278,10 +222,14 @@ export default function MapSearch({
           ref={inputRef}
           type="text"
           className={styles.searchInput}
-          placeholder="Ort suchen..."
+          placeholder="Stadt oder Region suchen…"
           value={searchQuery}
-          onChange={handleInputChange}
+          onChange={(e) => {
+            setSearchQuery(e.target.value);
+            setSelectedIndex(-1);
+          }}
           onKeyDown={handleKeyDown}
+          onFocus={(e) => e.target.select()}
           disabled={disabled}
           spellCheck={false}
           autoComplete="off"
@@ -298,10 +246,12 @@ export default function MapSearch({
             className={styles.clearButton}
             onClick={() => {
               setSearchQuery("");
+              setResults([]);
               setSelectedIndex(-1);
               inputRef.current?.focus();
             }}
             aria-label="Eingabe löschen"
+            type="button"
           >
             <svg
               width="16"
@@ -337,17 +287,17 @@ export default function MapSearch({
                   <path d="M21 21l-4.35-4.35" />
                 </svg>
               </div>
-              <p>Keine Orte gefunden</p>
+              <p>Keine Ergebnisse</p>
               <span>Versuchen Sie einen anderen Suchbegriff</span>
             </div>
           ) : (
-            searchResults.map((result, index) => (
+            results.map((result, index) => (
               <div
-                key={result.place.id}
+                key={result.id}
                 className={`${styles.suggestionItem} ${
                   index === selectedIndex ? styles.selected : ""
                 }`}
-                onClick={() => handlePlaceSelect(result.place)}
+                onClick={() => handleSelect(result)}
               >
                 <div className={styles.suggestionIcon}>
                   <svg
@@ -360,59 +310,14 @@ export default function MapSearch({
                     strokeLinecap="round"
                     strokeLinejoin="round"
                   >
-                    <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z" />
+                    <path d="M20 10c0 4.993-5.539 10.193-7.399 11.799a1 1 0 0 1-1.202 0C9.539 20.193 4 14.993 4 10a8 8 0 0 1 16 0" />
                     <circle cx="12" cy="10" r="3" />
                   </svg>
                 </div>
-
                 <div className={styles.suggestionContent}>
-                  <div className={styles.suggestionTitle}>
-                    {result.matchType === "name" ? (
-                      <span
-                        dangerouslySetInnerHTML={{
-                          __html: result.highlightedText,
-                        }}
-                      />
-                    ) : (
-                      result.place.Name
-                    )}
-                  </div>
-
-                  <div className={styles.suggestionMeta}>
-                    {result.matchType === "location" ? (
-                      <span
-                        dangerouslySetInnerHTML={{
-                          __html: result.highlightedText,
-                        }}
-                      />
-                    ) : result.matchType === "address" ? (
-                      <span
-                        dangerouslySetInnerHTML={{
-                          __html: result.highlightedText,
-                        }}
-                      />
-                    ) : (
-                      [result.place.Stadt, result.place.Land].filter(Boolean).join(", ") || result.place.Adresse
-                    )}
-                  </div>
-
-                  {result.place.Kategorie.length > 0 && (
-                    <div className={styles.suggestionCategories}>
-                      {result.place.Kategorie.slice(0, 2).map((category) => (
-                        <span
-                          key={category.id}
-                          className={styles.categoryTag}
-                          style={{ backgroundColor: category.color }}
-                        >
-                          {category.name}
-                        </span>
-                      ))}
-                      {result.place.Kategorie.length > 2 && (
-                        <span className={styles.moreCategories}>
-                          +{result.place.Kategorie.length - 2}
-                        </span>
-                      )}
-                    </div>
+                  <div className={styles.suggestionTitle}>{result.name}</div>
+                  {result.place_formatted && (
+                    <div className={styles.suggestionMeta}>{result.place_formatted}</div>
                   )}
                 </div>
               </div>
