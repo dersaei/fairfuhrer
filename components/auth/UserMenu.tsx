@@ -114,14 +114,24 @@ export default function UserMenu() {
               </Link>
             </>
           ) : (
-            <Link
-              href="/konto/reisender/ort-vorschlagen"
-              className={styles.item}
-              scroll={false}
-              onClick={() => setIsOpen(false)}
-            >
-              Neuen Ort vorschlagen
-            </Link>
+            <>
+              <Link
+                href="/konto/reisender/ort-vorschlagen"
+                className={styles.item}
+                scroll={false}
+                onClick={() => setIsOpen(false)}
+              >
+                Neuen Ort vorschlagen
+              </Link>
+              <Link
+                href="/konto/reisender/premium"
+                className={styles.item}
+                scroll={false}
+                onClick={() => setIsOpen(false)}
+              >
+                Premium
+              </Link>
+            </>
           )}
           <div className={styles.divider} />
           <button

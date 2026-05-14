@@ -18,11 +18,11 @@
 }
 
 .navItem:hover {
-  color: #fff;
+  color: #fc6c14;
 }
 
 .navItemActive {
-  color: #fff;
+  color: #fc6c14;
   text-decoration: underline;
   text-underline-offset: 4px;
 }

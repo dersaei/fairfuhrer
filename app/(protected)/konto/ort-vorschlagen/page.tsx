@@ -56,6 +56,7 @@ export default function OrtVorschlagenPage() {
     setIsSubmitting(true);
     const firstName = user?.profile?.first_name ?? null;
     const lastName = user?.profile?.last_name ?? null;
+    const username = user?.profile?.username ?? null;
     try {
       const res = await fetch("/api/ort-vorschlagen", {
         method: "POST",
@@ -65,6 +66,7 @@ export default function OrtVorschlagenPage() {
           address: fields.address.trim(),
           description: fields.description.trim(),
           submitted_by: user?.email ?? null,
+          submitted_by_username: username,
           submitted_by_first_name: firstName,
           submitted_by_last_name: lastName,
         }),

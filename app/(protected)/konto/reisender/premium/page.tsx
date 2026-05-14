@@ -1,17 +1,46 @@
-"use client";
-
+import { getCurrentUser } from "@/app/actions/auth";
+import AccountContactForm from "@/components/account/AccountContactForm";
 import styles from "./premium.module.css";
 
-export default function PremiumPage() {
+export default async function PremiumPage() {
+  const user = await getCurrentUser();
+  const premiumUntil = user?.profile?.premium_until
+    ? new Date(user.profile.premium_until)
+    : null;
+  const isPro = premiumUntil ? premiumUntil > new Date() : false;
+
   return (
     <div className={styles.wrapper}>
       <h3 className={styles.intro}>Fairführer+</h3>
 
-      <p className={styles.lead}>
-        Mit <strong>Fairführer+</strong> unterstützt du die Community und
-        erhältst Zugang zu allen Pins und exklusiven Funktionen — in der
-        mobilen App für iOS und Android.
-      </p>
+      {isPro ? (
+        <div className={styles.proActiveBox}>
+          <p className={styles.proActiveIcon}>★</p>
+          <p className={styles.proActiveTitle}>Fairführer+ aktiv</p>
+          <p className={styles.proActiveDate}>
+            Gültig bis:{" "}
+            <strong>
+              {premiumUntil!.toLocaleDateString("de-DE", {
+                day: "2-digit",
+                month: "long",
+                year: "numeric",
+              })}
+            </strong>
+          </p>
+          <p className={styles.proActiveHint}>
+            Dein Abonnement wird über den App Store (iOS) oder Google Play
+            (Android) verwaltet. Um dein Abo zu kündigen oder zu ändern, öffne
+            die Fairführer-App und gehe zu{" "}
+            <strong>Profil → Premium → Abonnement verwalten</strong>.
+          </p>
+        </div>
+      ) : (
+        <p className={styles.lead}>
+          Mit <strong>Fairführer+</strong> unterstützt du die Community und
+          erhältst Zugang zu allen Pins und exklusiven Funktionen — in der
+          mobilen App für iOS und Android.
+        </p>
+      )}
 
       <div className={styles.comparisonBlock}>
         <h4 className={styles.sectionTitle}>Kostenlos vs. Premium</h4>
@@ -58,25 +87,28 @@ export default function PremiumPage() {
         </table>
       </div>
 
-      <div className={styles.appBox}>
-        <h4 className={styles.sectionTitle}>So kaufst du Fairführer+</h4>
-        <p className={styles.appText}>
-          Das Premium-Abo wird ausschließlich über die{" "}
-          <strong>Fairführer-App</strong> erworben — direkt im App Store (iOS)
-          oder Google Play (Android). Die App befindet sich derzeit in der
-          finalen Entwicklungsphase und wird bald verfügbar sein.
-        </p>
-        <ol className={styles.steps}>
-          <li>Lade die Fairführer-App herunter (demnächst verfügbar)</li>
-          <li>Melde dich mit deinen bestehenden Zugangsdaten an</li>
-          <li>Wechsle in der App zum Bereich „Premium"</li>
-          <li>Wähle dein Abo und schließe den Kauf ab</li>
-        </ol>
-        <p className={styles.note}>
-          Nach dem Kauf wird dein Konto automatisch auf allen Geräten und im
-          Web freigeschaltet.
-        </p>
-      </div>
+      {!isPro && (
+        <div className={styles.appBox}>
+          <h4 className={styles.sectionTitle}>So kaufst du Fairführer+</h4>
+          <p className={styles.appText}>
+            Das Premium-Abo wird ausschließlich über die{" "}
+            <strong>Fairführer-App</strong> erworben — direkt im App Store (iOS)
+            oder Google Play (Android). Die App befindet sich derzeit in der
+            finalen Entwicklungsphase und wird bald verfügbar sein.
+          </p>
+          <ol className={styles.steps}>
+            <li>Lade die Fairführer-App herunter (demnächst verfügbar)</li>
+            <li>Melde dich mit deinen bestehenden Zugangsdaten an</li>
+            <li>Wechsle in der App zum Bereich „Premium"</li>
+            <li>Wähle dein Abo und schließe den Kauf ab</li>
+          </ol>
+          <p className={styles.note}>
+            Nach dem Kauf wird dein Konto automatisch auf allen Geräten und im
+            Web freigeschaltet.
+          </p>
+        </div>
+      )}
+      <AccountContactForm />
     </div>
   );
 }

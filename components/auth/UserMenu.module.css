@@ -17,6 +17,12 @@
   background-color: #fc6c14;
   color: #fff;
 }
+@media (max-width: 400px) {
+  .loginLink {
+    padding: 0.2rem 0.5rem;
+    font-size: 0.8rem;
+  }
+}
 
 .wrapper {
   position: relative;

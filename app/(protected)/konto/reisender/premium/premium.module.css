@@ -6,10 +6,11 @@
 }
 
 .intro {
-  font-family: var(--font-fira);
-  font-size: 1.4rem;
-  font-weight: 500;
-  color: #18222f;
+  font-family: var(--font-anton);
+  font-size: 3rem;
+  text-transform: uppercase;
+  font-weight: 400;
+  color: #fc6c14;
   line-height: 1.6;
   margin: 0;
   padding-bottom: 1.5rem;
@@ -142,4 +143,46 @@
   line-height: 1.6;
   margin: 0;
   font-style: italic;
+}
+
+/* --- Pro active box --- */
+
+.proActiveBox {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 1.5rem;
+  border: 1.5px solid #fc6c14;
+  background-color: #fff9f5;
+  text-align: center;
+}
+
+.proActiveIcon {
+  font-size: 2rem;
+  color: #fc6c14;
+  margin: 0;
+}
+
+.proActiveTitle {
+  font-family: var(--font-fira);
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: #18222f;
+  margin: 0;
+}
+
+.proActiveDate {
+  font-family: var(--font-fira);
+  font-size: 0.95rem;
+  color: #18222f;
+  margin: 0;
+}
+
+.proActiveHint {
+  font-family: var(--font-fira);
+  font-size: 0.85rem;
+  color: #555;
+  line-height: 1.6;
+  margin: 0.5rem 0 0;
 }
