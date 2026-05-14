@@ -13,7 +13,16 @@ export default function supabaseLoader({
   quality,
 }: LoaderProps): string {
   if (src.startsWith('http://') || src.startsWith('https://')) {
-    return src;
+    try {
+      const url = new URL(src);
+      url.searchParams.set("width", width.toString());
+      if (quality) {
+        url.searchParams.set("quality", quality.toString());
+      }
+      return url.toString();
+    } catch {
+      return src;
+    }
   }
   return `https://${projectId}.supabase.co/storage/v1/render/image/public/${src}?width=${width}&quality=${
     quality || 75

@@ -341,21 +341,6 @@
   opacity: 1;
 }
 
-/* Embedded Map */
-.embeddedMap {
-  border-radius: 8px;
-  overflow: hidden;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-  background: #f8f9fa;
-}
-
-.embeddedMap iframe {
-  width: 100%;
-  height: 200px;
-  border: none;
-  display: block;
-}
-
 /* Speed Control */
 .speedControl {
   display: flex;
@@ -450,10 +435,6 @@
     height: 26px;
     min-width: 34px;
     padding: 0 6px;
-  }
-
-  .embeddedMap iframe {
-    height: 150px;
   }
 }
 

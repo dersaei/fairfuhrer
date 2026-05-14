@@ -21,11 +21,12 @@ interface AudioPlayerProps {
   className?: string;
 }
 
-export function AudioPlayer({
-  placeId,
-  filename,
-  className = "",
-}: AudioPlayerProps) {
+interface BaseAudioPlayerProps {
+  src: string;
+  className?: string;
+}
+
+function BaseAudioPlayer({ src, className = "" }: BaseAudioPlayerProps) {
   const [isPlaying, setIsPlaying] = useState(false);
   const [currentTime, setCurrentTime] = useState(0);
   const [duration, setDuration] = useState(0);
@@ -34,7 +35,6 @@ export function AudioPlayer({
 
   const togglePlay = () => {
     if (!audioRef.current) return;
-
     if (isPlaying) {
       audioRef.current.pause();
     } else {
@@ -94,7 +94,7 @@ export function AudioPlayer({
     <div className={`${styles.audioPlayer} ${className}`}>
       <audio
         ref={audioRef}
-        src={getAudioUrl(placeId, filename)}
+        src={src}
         onPlay={() => setIsPlaying(true)}
         onPause={() => setIsPlaying(false)}
         onEnded={() => setIsPlaying(false)}
@@ -163,6 +163,15 @@ export function AudioPlayer({
       </div>
     </div>
   );
+}
+
+export function AudioPlayer({
+  placeId,
+  filename,
+  className = "",
+}: AudioPlayerProps) {
+  const src = getAudioUrl(placeId, filename);
+  return <BaseAudioPlayer src={src} className={className} />;
 }
 
 interface ImageGalleryProps {
@@ -265,98 +274,9 @@ interface DirectusAudioPlayerProps {
 }
 
 export function DirectusAudioPlayer({ uuid, className = "" }: DirectusAudioPlayerProps) {
-  const [isPlaying, setIsPlaying] = useState(false);
-  const [currentTime, setCurrentTime] = useState(0);
-  const [duration, setDuration] = useState(0);
-  const [playbackSpeed, setPlaybackSpeed] = useState<number>(1);
-  const audioRef = useRef<HTMLAudioElement>(null);
-
   const directusUrl = process.env.NEXT_PUBLIC_DIRECTUS_URL!;
   const src = `${directusUrl}/assets/${uuid}`;
-
-  const togglePlay = () => {
-    if (!audioRef.current) return;
-    if (isPlaying) { audioRef.current.pause(); } else { audioRef.current.play(); }
-  };
-  const skipBackward = () => {
-    if (!audioRef.current) return;
-    const t = Math.max(0, audioRef.current.currentTime - 5);
-    audioRef.current.currentTime = t;
-    setCurrentTime(t);
-  };
-  const skipForward = () => {
-    if (!audioRef.current) return;
-    const t = Math.min(duration, audioRef.current.currentTime + 5);
-    audioRef.current.currentTime = t;
-    setCurrentTime(t);
-  };
-  const handleSeek = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const t = parseFloat(e.target.value);
-    if (audioRef.current) { audioRef.current.currentTime = t; setCurrentTime(t); }
-  };
-  const handleSpeedChange = (speed: SpeedOption) => {
-    setPlaybackSpeed(speed);
-    if (audioRef.current) audioRef.current.playbackRate = speed;
-  };
-  const formatTime = (t: number) => {
-    const m = Math.floor(t / 60);
-    const s = Math.floor(t % 60);
-    return `${m}:${s.toString().padStart(2, "0")}`;
-  };
-
-  return (
-    <div className={`${styles.audioPlayer} ${className}`}>
-      <audio
-        ref={audioRef}
-        src={src}
-        onPlay={() => setIsPlaying(true)}
-        onPause={() => setIsPlaying(false)}
-        onEnded={() => setIsPlaying(false)}
-        onTimeUpdate={() => audioRef.current && setCurrentTime(audioRef.current.currentTime)}
-        onLoadedMetadata={() => audioRef.current && setDuration(audioRef.current.duration)}
-        preload="metadata"
-      />
-      <div className={styles.audioControls}>
-        <button type="button" className={styles.skipButton} onClick={skipBackward} title="5 Sekunden zurück">
-          <SkipBackIcon size={32} />
-        </button>
-        <button type="button" className={`${styles.playButton} ${isPlaying ? styles.playing : ""}`} onClick={togglePlay} title={isPlaying ? "Pause" : "Abspielen"}>
-          {isPlaying ? <PauseIcon size={40} /> : <PlayIcon size={40} />}
-        </button>
-        <button type="button" className={styles.skipButton} onClick={skipForward} title="5 Sekunden vor">
-          <SkipForwardIcon size={32} />
-        </button>
-      </div>
-      <div className={styles.progressContainer}>
-        <span className={styles.currentTime}>{formatTime(currentTime)}</span>
-        <input
-          type="range"
-          min="0"
-          max={duration || 0}
-          value={currentTime}
-          onChange={handleSeek}
-          className={styles.progressBar}
-          aria-label="Audio-Fortschrittsbalken"
-          title="Ziehen, um die Position in der Aufnahme zu verschieben"
-        />
-        <span className={styles.duration}>{formatTime(duration)}</span>
-      </div>
-      <div className={styles.speedControl}>
-        {SPEED_OPTIONS.map((speed) => (
-          <button
-            key={speed}
-            type="button"
-            className={`${styles.speedButton} ${playbackSpeed === speed ? styles.speedButtonActive : ""}`}
-            onClick={() => handleSpeedChange(speed)}
-            aria-pressed={playbackSpeed === speed}
-            title={`Wiedergabegeschwindigkeit: ${speed}x`}
-          >
-            {speed}x
-          </button>
-        ))}
-      </div>
-    </div>
-  );
+  return <BaseAudioPlayer src={src} className={className} />;
 }
 
 interface DirectusImageProps {

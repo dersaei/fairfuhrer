@@ -49,26 +49,16 @@ interface CategoryFilterProps {
   isSightsCategory?: (cat: { id: number; name: string }) => boolean;
 }
 
-const CategoryFilter: React.FC<CategoryFilterProps> = ({
+const CategoryFilter = ({
   categories,
   selectedIds,
   onToggle,
   isPro = true,
   isSightsCategory,
-}) => {
+}: CategoryFilterProps) => {
   const [modalCategory, setModalCategory] = useState<Category | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [openCategoryId, setOpenCategoryId] = useState<number | null>(null);
-
-  const createKeyDownHandler = useCallback(
-    (id: number) => (e: React.KeyboardEvent<HTMLDivElement>) => {
-      if (e.key === "Enter" || e.key === " ") {
-        e.preventDefault();
-        onToggle(id);
-      }
-    },
-    [onToggle],
-  );
 
   const handleInfoClick = useCallback(
     (e: React.MouseEvent, category: Category) => {
@@ -126,20 +116,18 @@ const CategoryFilter: React.FC<CategoryFilterProps> = ({
           return (
             <div key={category.id} className={styles.filterWrapper}>
               <div className={styles.filterWrapperRow}>
-                <div
+                <button
+                  type="button"
                   className={styles.filterItem}
                   onClick={() => onToggle(category.id)}
-                  onKeyDown={createKeyDownHandler(category.id)}
-                  tabIndex={0}
-                  role="button"
-                  aria-pressed={isActive ? "true" : "false"}
+                  aria-pressed={isActive}
                   aria-label={`Kategorie ${category.name} ${
                     isActive ? "ausblenden" : "anzeigen"
                   }`}
                 >
                   <CategoryPin category={category} isActive={isActive} />
                   <span className={styles.filterName}>{category.name}</span>
-                </div>
+                </button>
 
                 {showInfoButton && (
                   <button

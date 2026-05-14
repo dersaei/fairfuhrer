@@ -30,6 +30,9 @@
   border-radius: 6px;
   transition: all 0.2s ease;
   background-color: transparent;
+  border: none;
+  text-align: left;
+  font: inherit;
   -webkit-user-select: none;
   user-select: none;
   -webkit-tap-highlight-color: transparent;
@@ -48,32 +51,6 @@
   outline-offset: 2px;
 }
 
-.checkmark {
-  width: 16px;
-  height: 16px;
-  border-radius: 3px;
-  border: 2px solid var(--category-color, #ccc);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: all 0.2s ease;
-  flex-shrink: 0;
-  position: relative;
-}
-
-.checkmark.active {
-  background-color: var(--category-color, #007bff);
-  border-color: var(--category-color, #007bff);
-}
-
-.checkmark.active::after {
-  content: "✓";
-  color: white;
-  font-size: 12px;
-  font-weight: bold;
-  line-height: 1;
-}
-
 .filterName {
   font-size: 0.9rem;
   font-weight: 500;
@@ -88,37 +65,37 @@
   color: #000;
 }
 
-/* Just the icon, no background circle */
-.filterWrapper .infoButton {
-  width: auto !important; /* Remove fixed size */
-  height: auto !important;
-  border: none !important;
-  background: none !important; /* Remove background circle */
-  border-radius: 0 !important;
-  display: flex !important;
-  align-items: center !important;
-  justify-content: center !important;
-  cursor: pointer !important;
-  color: #0078ff !important; /* Blue icon color */
-  transition: all 0.2s ease !important;
-  flex-shrink: 0 !important;
-  padding: 4px !important; /* Small padding for touch target */
-  margin-left: 4px !important;
+/* Info Button */
+.infoButton {
+  width: auto;
+  height: auto;
+  border: none;
+  background: none;
+  border-radius: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  color: #0078ff;
+  transition: all 0.2s ease;
+  flex-shrink: 0;
+  padding: 4px;
+  margin-left: 4px;
 }
 
-.filterWrapper .infoButton:hover {
-  color: #005ce6 !important; /* Darker blue on hover */
-  transform: scale(1.2) !important; /* Scale the icon itself */
+.infoButton:hover {
+  color: #005ce6;
+  transform: scale(1.2);
 }
 
-.filterWrapper .infoButton:active {
-  transform: scale(1) !important;
+.infoButton:active {
+  transform: scale(1);
 }
 
-.filterWrapper .infoButton svg {
-  width: 18px !important; /* Larger icon */
-  height: 18px !important;
-  stroke-width: 2.5 !important; /* Thicker lines for better visibility */
+.infoButton svg {
+  width: 18px;
+  height: 18px;
+  stroke-width: 2.5;
 }
 
 .categoryPin {
@@ -166,28 +143,23 @@
     gap: 4px;
   }
 
-  .checkmark {
-    width: 19px;
-    height: 19px;
-  }
-
   .filterName {
     font-size: 0.8rem;
   }
 
-  .filterWrapper .infoButton svg {
-    width: 16px !important;
-    height: 16px !important;
+  .infoButton svg {
+    width: 16px;
+    height: 16px;
   }
 }
 
 /* Dark mode */
 @media (prefers-color-scheme: dark) {
-  .filterWrapper .infoButton {
-    color: #4fc3f7 !important;
+  .infoButton {
+    color: #4fc3f7;
   }
 
-  .filterWrapper .infoButton:hover {
-    color: #29b6f6 !important;
+  .infoButton:hover {
+    color: #29b6f6;
   }
 }
