@@ -53,7 +53,7 @@ export default function MapWithFilters({
     );
   }, [places, selectedCategoryIds]);
 
-  const containerClass = `${styles.container}${embedded ? ` ${styles.containerEmbedded}` : ""}`;
+  const containerClass = [styles.container, embedded && styles.containerEmbedded].filter(Boolean).join(" ");
 
   // Handle przypadku gdy brak kategorii
   if (categories.length === 0) {

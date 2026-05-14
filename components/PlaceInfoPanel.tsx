@@ -1,6 +1,7 @@
 "use client";
 
 import { useRef, useEffect, useState, useCallback } from "react";
+import Image from "next/image";
 import { AudioPlayer, DirectusAudioPlayer, DirectusImage, DirectusImageGallery, ImageGallery, PlaceImage } from "./MediaComponents";
 import type { Place } from "../types";
 import styles from "./PlaceInfoPanel.module.css";
@@ -108,6 +109,7 @@ export default function PlaceInfoPanel({
             strokeWidth="2"
             strokeLinecap="round"
             strokeLinejoin="round"
+            aria-hidden="true"
           >
             <line x1="18" y1="6" x2="6" y2="18" />
             <line x1="6" y1="6" x2="18" y2="18" />
@@ -195,7 +197,7 @@ function PlaceContent({
           {place.Land ? ` (${place.Land})` : ""}
         </p>
         {place.Telefon && (
-          <a href={`tel:${place.Telefon}`} className={styles.placePhone}>
+          <a href={`tel:${place.Telefon.replace(/\s+/g, "")}`} className={styles.placePhone}>
             📞 {place.Telefon}
           </a>
         )}
@@ -253,12 +255,14 @@ function PlaceContent({
               return (
                 <div key={zert.id} className={styles.zertifizierungItem}>
                   {zert.imageUuid && directusUrl ? (
-                    // eslint-disable-next-line @next/next/no-img-element
-                    <img
+                    <Image
                       src={`${directusUrl}/assets/${zert.imageUuid}`}
                       alt={zert.name}
+                      width={100}
+                      height={80}
                       className={styles.zertifizierungLogo}
                       title={zert.name}
+                      style={{ objectFit: "contain", width: "auto", height: "auto", maxHeight: "80px" }}
                     />
                   ) : (
                     <span className={styles.zertifizierungName}>{zert.name}</span>
