@@ -47,32 +47,36 @@ export default function MapSearch({
   // Fetch suggestions from Mapbox Geocoding v6
   useEffect(() => {
     if (!debouncedQuery || debouncedQuery.length < 2) {
-      setResults([]);
-      setIsLoading(false);
       return;
     }
 
     if (!MAPBOX_TOKEN) {
-      setResults([]);
       return;
     }
 
     abortRef.current?.abort();
-    abortRef.current = new AbortController();
-    setIsLoading(true);
+    const currentAbort = new AbortController();
+    abortRef.current = currentAbort;
 
-    const url =
-      `https://api.mapbox.com/search/geocode/v6/forward` +
-      `?q=${encodeURIComponent(debouncedQuery)}` +
-      `&language=de` +
-      `&limit=6` +
-      `&types=country,region,district,place` +
-      `&autocomplete=true` +
-      `&access_token=${MAPBOX_TOKEN}`;
+    const fetchSuggestions = async () => {
+      // Unikamy synchronicznego wywołania setState wewnątrz useEffect za pomocą Promise.resolve()
+      await Promise.resolve();
+      setIsLoading(true);
 
-    fetch(url, { signal: abortRef.current.signal })
-      .then((r) => r.json())
-      .then((json) => {
+      const url =
+        `https://api.mapbox.com/search/geocode/v6/forward` +
+        `?q=${encodeURIComponent(debouncedQuery)}` +
+        `&language=de` +
+        `&limit=6` +
+        `&types=country,region,district,place` +
+        `&autocomplete=true` +
+        `&access_token=${MAPBOX_TOKEN}`;
+
+      try {
+        const r = await fetch(url, { signal: currentAbort.signal });
+        const json = await r.json();
+        if (currentAbort.signal.aborted) return;
+        
         const features = (json.features ?? []) as Record<string, unknown>[];
         setResults(
           features.map((f) => {
@@ -94,11 +98,16 @@ export default function MapSearch({
             };
           }),
         );
-        setIsLoading(false);
-      })
-      .catch((err) => {
-        if (err.name !== "AbortError") setIsLoading(false);
-      });
+      } catch (err: unknown) {
+        if (err instanceof Error && err.name === "AbortError") return;
+      } finally {
+        if (!currentAbort.signal.aborted) {
+          setIsLoading(false);
+        }
+      }
+    };
+
+    fetchSuggestions();
 
     return () => {
       abortRef.current?.abort();
@@ -107,11 +116,13 @@ export default function MapSearch({
 
   const handleSelect = useCallback(
     (result: GeoResult) => {
+      abortRef.current?.abort();
       const maxZoom = result.feature_type === "place" ? 13 : undefined;
       onLocationSelect([result.lon, result.lat], 13, result.bbox ?? undefined, maxZoom);
       setSearchQuery(result.name);
       setIsExpanded(false);
       setResults([]);
+      setIsLoading(false);
       setSelectedIndex(-1);
       inputRef.current?.blur();
     },
@@ -152,9 +163,11 @@ export default function MapSearch({
           break;
         case "Escape":
           e.preventDefault();
+          abortRef.current?.abort();
           setSearchQuery("");
           setIsExpanded(false);
           setResults([]);
+          setIsLoading(false);
           setSelectedIndex(-1);
           inputRef.current?.blur();
           break;
@@ -225,8 +238,14 @@ export default function MapSearch({
           placeholder="Stadt oder Region suchen…"
           value={searchQuery}
           onChange={(e) => {
-            setSearchQuery(e.target.value);
+            const val = e.target.value;
+            setSearchQuery(val);
             setSelectedIndex(-1);
+            if (val.trim().length < 2) {
+              abortRef.current?.abort();
+              setResults([]);
+              setIsLoading(false);
+            }
           }}
           onKeyDown={handleKeyDown}
           onFocus={(e) => e.target.select()}
@@ -245,8 +264,10 @@ export default function MapSearch({
           <button
             className={styles.clearButton}
             onClick={() => {
+              abortRef.current?.abort();
               setSearchQuery("");
               setResults([]);
+              setIsLoading(false);
               setSelectedIndex(-1);
               inputRef.current?.focus();
             }}

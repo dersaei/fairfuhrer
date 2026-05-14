@@ -16,9 +16,12 @@ import "mapbox-gl/dist/mapbox-gl.css";
 import styles from "./MapBoxMap.module.css";
 import MapSearch from "./MapSearch";
 import type { Place } from "../types";
-import { getCategoryIconPaths, DEFAULT_ICON_PATHS } from "../lib/categoryIcons";
 import { useAuth } from "@/context/AuthContext";
 import { filterVisiblePlaces, isSightsCategory } from "@/lib/sightsGating";
+import { placesToGeoJSON, loadCategoryMarkerSDFs } from "../utils/mapHelpers";
+import { generatePopupHTML } from "../utils/popupGenerator";
+import { useGallery } from "../hooks/useGallery";
+import { useGeolocation } from "../hooks/useGeolocation";
 
 // LAZY LOADING komponentów
 const PlaceInfoPanel = lazy(() => import("./PlaceInfoPanel"));
@@ -28,123 +31,6 @@ interface MapBoxMapProps {
   places: Place[];
   disableGeolocation?: boolean;
   embedded?: boolean;
-}
-
-// ========================================
-// CZYSTE FUNKCJE POZA KOMPONENTEM
-// ========================================
-
-function placesToGeoJSON(places: Place[]) {
-  return {
-    type: "FeatureCollection" as const,
-    features: places
-      .filter((p) => p.location?.coordinates)
-      .map((p) => ({
-        type: "Feature" as const,
-        geometry: {
-          type: "Point" as const,
-          coordinates: p.location.coordinates,
-        },
-        properties: {
-          placeId: p.id,
-          categoryColor: p.Kategorie[0]?.color || "#3388ff",
-          categoryId: p.Kategorie[0]?.id ?? 0,
-        },
-      })),
-  };
-}
-
-// Wymiary pinu: 40×56px (viewBox), renderowany przy icon-size:1
-const PIN_W = 40;
-const PIN_H = 56;
-
-/**
- * Buduje kompletny SVG pinu per kategoria — identyczny design jak CategoryPin w legendzie:
- * kolorowe wypełnienie łezki + białe kółko w środku + kolorowa ikona Lucide.
- */
-function buildPinSVG(
-  color: string,
-  iconPaths: string,
-  selected = false,
-): string {
-  const stroke = selected ? ` stroke="rgba(0,0,0,0.75)" stroke-width="2"` : "";
-  return (
-    `<svg xmlns="http://www.w3.org/2000/svg" width="${PIN_W}" height="${PIN_H}" viewBox="0 0 40 56">` +
-    `<path d="M20,2 C10.611,2 3,9.611 3,19 C3,31 20,54 20,54 C20,54 37,31 37,19 C37,9.611 29.389,2 20,2 Z" fill="${color}"${stroke}/>` +
-    `<circle cx="20" cy="19" r="11" fill="white"/>` +
-    `<g transform="translate(12,11) scale(0.667)" fill="none" stroke="${color}" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">` +
-    iconPaths +
-    `</g>` +
-    `</svg>`
-  );
-}
-
-function loadImageFromSVG(
-  map: mapboxgl.Map,
-  imageId: string,
-  svg: string,
-  w: number,
-  h: number,
-  onDone: () => void,
-): void {
-  if (map.hasImage(imageId)) {
-    onDone();
-    return;
-  }
-  const blob = new Blob([svg], { type: "image/svg+xml" });
-  const url = URL.createObjectURL(blob);
-  const img = new Image(w, h);
-  img.onload = () => {
-    if (!map.hasImage(imageId)) {
-      map.addImage(imageId, img, { sdf: false });
-    }
-    URL.revokeObjectURL(url);
-    onDone();
-  };
-  img.onerror = () => {
-    URL.revokeObjectURL(url);
-    onDone();
-  };
-  img.src = url;
-}
-
-/**
- * Ładuje jeden kompletny obraz pinu per kategoria ("pin-{id}").
- * Kolor i ikona są wbudowane w SVG — nie potrzeba SDF ani osobnych warstw.
- */
-function loadCategoryMarkerSDFs(
-  map: mapboxgl.Map,
-  categories: Array<{ id: number; color: string }>,
-  onLoaded: () => void,
-): void {
-  const allCategories = [{ id: 0, color: "#3388ff" }, ...categories];
-  let remaining = allCategories.length;
-
-  const done = () => {
-    remaining--;
-    if (remaining === 0) onLoaded();
-  };
-
-  allCategories.forEach(({ id, color }) => {
-    const paths = id === 0 ? DEFAULT_ICON_PATHS : getCategoryIconPaths(id);
-    loadImageFromSVG(
-      map,
-      `pin-${id}`,
-      buildPinSVG(color, paths),
-      PIN_W,
-      PIN_H,
-      done,
-    );
-    remaining++;
-    loadImageFromSVG(
-      map,
-      `pin-${id}-selected`,
-      buildPinSVG(color, paths, true),
-      PIN_W,
-      PIN_H,
-      done,
-    );
-  });
 }
 
 // ========================================
@@ -159,7 +45,6 @@ export default function MapBoxMap({
   const containerRef = useRef<HTMLDivElement>(null);
   const mapRef = useRef<mapboxgl.Map | null>(null);
   const userLocationMarkerRef = useRef<mapboxgl.Marker | null>(null);
-  const userLocationRequestedRef = useRef(false);
   const lastFittedPlacesRef = useRef<string>("");
 
   const { isPro } = useAuth();
@@ -200,18 +85,45 @@ export default function MapBoxMap({
   const [isPanelVisible, setIsPanelVisible] = useState(false);
 
   // Gallery state
-  const [selectedGalleryImage, setSelectedGalleryImage] = useState<
-    string | null
-  >(null);
-  const [currentImageIndex, setCurrentImageIndex] = useState(0);
+  const {
+    selectedGalleryImage,
+    currentImageIndex,
+    setSelectedGalleryImage,
+    setCurrentImageIndex,
+    handleImageClick,
+    handleNextImage,
+    handlePrevImage,
+    closeGalleryOnly,
+  } = useGallery(selectedPlace);
 
   // Map state
-  const [userLocation, setUserLocation] = useState<[number, number] | null>(
-    null,
-  );
   const [mapLoadingState, setMapLoadingState] = useState<
     "idle" | "loading" | "success" | "error"
   >("idle");
+
+  // Geolocation state
+  const handleLocationFound = useCallback((location: [number, number]) => {
+    if (mapRef.current) {
+      isMapAnimatingRef.current = true;
+      mapRef.current.easeTo({
+        center: location,
+        zoom: 14,
+        duration: 1800,
+        easing: (t) => 1 - Math.pow(1 - t, 3),
+        essential: true,
+      });
+      setTimeout(() => {
+        isMapAnimatingRef.current = false;
+      }, 1900);
+    }
+  }, []);
+
+  const {
+    userLocation,
+    setUserLocation,
+    userLocationRequestedRef,
+    getUserLocation,
+  } = useGeolocation(handleLocationFound);
 
   // ========================================
   // BASIC UTILITIES
@@ -458,7 +370,7 @@ export default function MapBoxMap({
       closePanelTimeoutRef.current = null;
       setIsPanelOpen(false);
     }, 600);
-  }, [animatePinSize]);
+  }, [animatePinSize, setSelectedGalleryImage, setCurrentImageIndex]);
 
   const handleLocationSelect = useCallback(
     (
@@ -481,66 +393,7 @@ export default function MapBoxMap({
     [],
   );
 
-  // ========================================
-  // GALLERY FUNCTIONS
-  // ========================================
 
-  const handleImageClick = useCallback((imagePath: string, index: number) => {
-    setCurrentImageIndex(index);
-    setSelectedGalleryImage(imagePath);
-  }, []);
-
-  const handleNextImage = useCallback(() => {
-    const images = selectedPlace?.Galerie_Bilder?.length
-      ? selectedPlace.Galerie_Bilder
-      : selectedPlace?.Galerie;
-    if (!images?.length) return;
-    setCurrentImageIndex((prev) => (prev + 1) % images.length);
-  }, [selectedPlace?.Galerie, selectedPlace?.Galerie_Bilder]);
-
-  const handlePrevImage = useCallback(() => {
-    const images = selectedPlace?.Galerie_Bilder?.length
-      ? selectedPlace.Galerie_Bilder
-      : selectedPlace?.Galerie;
-    if (!images?.length) return;
-    setCurrentImageIndex((prev) => (prev === 0 ? images.length - 1 : prev - 1));
-  }, [selectedPlace?.Galerie, selectedPlace?.Galerie_Bilder]);
-
-  const closeGalleryOnly = useCallback(() => {
-    setSelectedGalleryImage(null);
-    setCurrentImageIndex(0);
-  }, []);
-
-  // ========================================
-  // GEOLOCATION
-  // ========================================
-
-  const getUserLocation = useCallback(() => {
-    userLocationRequestedRef.current = true;
-
-    if (!navigator.geolocation) {
-      console.warn("❌ Geolocation wird von diesem Browser nicht unterstützt");
-      return;
-    }
-
-    navigator.geolocation.getCurrentPosition(
-      (position) => {
-        const { latitude, longitude } = position.coords;
-        const newLocation: [number, number] = [longitude, latitude];
-        setUserLocation(newLocation);
-
-        if (mapRef.current) {
-          setTimeout(() => {
-            animateToLocation(newLocation, 14, 1800);
-          }, 100);
-        }
-      },
-      (error) => {
-        console.error("❌ Geolocation-Fehler:", error);
-      },
-      { enableHighAccuracy: true, timeout: 10000, maximumAge: 300000 },
-    );
-  }, [animateToLocation]);
 
   // ========================================
   // POPUP DATA (pre-computed, używane w hover tooltip)
@@ -549,40 +402,7 @@ export default function MapBoxMap({
   const popupDataMap = useMemo<Map<number, string>>(() => {
     const dataMap = new Map<number, string>();
     places.forEach((place) => {
-      const safeName = DOMPurify.sanitize(place.Name, { ALLOWED_TAGS: [] });
-      const safeAddress = DOMPurify.sanitize(
-        [place.Adresse, place.Stadt, place.Land ? `(${place.Land})` : ""]
-          .filter(Boolean)
-          .join(", "),
-        { ALLOWED_TAGS: [] },
-      );
-      const safePhone = place.Telefon
-        ? DOMPurify.sanitize(place.Telefon, { ALLOWED_TAGS: [] })
-        : "";
-
-      const phoneHTML = safePhone
-        ? `<p class="${styles.popupPhone}"><a href="tel:${safePhone}" class="${styles.popupPhoneLink}">📞 ${safePhone}</a></p>`
-        : "";
-
-      const categoryBadgesHTML =
-        place.Kategorie.length > 0
-          ? `<div class="popup-category-badges">${place.Kategorie.map(
-              (cat) =>
-                `<span class="popup-category-badge" style="background-color:${DOMPurify.sanitize(cat.color, { ALLOWED_TAGS: [] })}">${DOMPurify.sanitize(cat.name, { ALLOWED_TAGS: [] })}</span>`,
-            ).join("")}</div>`
-          : "";
-
-      const html = DOMPurify.sanitize(
-        `<div class="${styles.modernPopup}">
-          ${categoryBadgesHTML}
-          <h3 class="${styles.popupTitle}">${safeName}</h3>
-          <p class="${styles.popupAddress}">📍 ${safeAddress}</p>
-          ${phoneHTML}
-        </div>`,
-        { ADD_ATTR: ["style", "href"] },
-      );
-
-      dataMap.set(place.id, html);
+      dataMap.set(place.id, generatePopupHTML(place));
     });
     return dataMap;
   }, [places]);
@@ -1034,7 +854,7 @@ export default function MapBoxMap({
       }, 500);
       return () => clearTimeout(timer);
     }
-  }, [mapLoadingState, getUserLocation, disableGeolocation]);
+  }, [mapLoadingState, getUserLocation, disableGeolocation, userLocationRequestedRef]);
 
   // Inicjalizacja mapy
   useEffect(() => {

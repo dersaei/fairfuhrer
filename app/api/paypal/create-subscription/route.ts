@@ -1,6 +1,6 @@
 import "server-only";
 
-import { NextRequest, NextResponse } from "next/server";
+import { NextResponse } from "next/server";
 import { getSupabaseServerClient } from "@/lib/supabase-server";
 import { paypalConfig } from "@/lib/paypal";
 
@@ -44,7 +44,7 @@ async function getAccessToken(): Promise<string> {
   return data.access_token as string;
 }
 
-export async function POST(request: NextRequest) {
+export async function POST() {
   try {
     const supabase = await getSupabaseServerClient();
     const {
