@@ -1,4 +1,6 @@
 import { getHilfeWebItems } from "@/lib/directus";
+import AccountContactForm from "@/components/account/AccountContactForm";
+import HilfeContactLink from "./HilfeContactLink";
 import styles from "./hilfe.module.css";
 
 function renderMarkdown(text: string): string {
@@ -12,7 +14,11 @@ export default async function PartnerHilfePage() {
 
   return (
     <div className={styles.wrapper}>
-      <h3 className={styles.intro}>Hilfe & FAQ</h3>
+      <div className={styles.introRow}>
+        <h3 className={styles.intro}>Hilfe & FAQ</h3>
+      </div>
+      <HilfeContactLink />
+
       <ul className={styles.list}>
         {items.map((item) => (
           <li key={item.id} className={styles.item}>
@@ -24,6 +30,12 @@ export default async function PartnerHilfePage() {
           </li>
         ))}
       </ul>
+
+      <div className={styles.faqEndLine} />
+
+      <div id="hilfe-kontakt">
+        <AccountContactForm noBorderTop />
+      </div>
     </div>
   );
 }

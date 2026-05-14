@@ -5,6 +5,15 @@
   gap: 2rem;
 }
 
+.introRow {
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  gap: 1rem;
+  padding-bottom: 1.5rem;
+  border-bottom: 2px solid black;
+}
+
 .intro {
   font-family: var(--font-fira);
   font-size: 1.4rem;
@@ -12,10 +21,35 @@
   color: #18222f;
   line-height: 1.6;
   margin: 0;
-  padding-bottom: 1.5rem;
-  border-bottom: 2px solid black;
   text-align: center;
 }
+
+.contactLink {
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  font-family: var(--font-fira);
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: #fc6c14;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  white-space: nowrap;
+  line-height: 1;
+  margin-bottom: 0.2rem;
+  transition: color 0.15s;
+}
+
+.contactLink:hover {
+  color: #e05a08;
+}
+
+.faqEndLine {
+  border-top: 2px solid black;
+  margin-top: 0;
+}
+
 
 .list {
   list-style: none;
