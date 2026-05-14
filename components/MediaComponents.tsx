@@ -1,7 +1,7 @@
 // components/MediaComponents.tsx
 "use client";
 
-import { useState, useRef, useId } from "react";
+import { useState, useRef } from "react";
 import Image from "next/image";
 import { getAudioUrl, getOptimizedImagePath } from "../lib/supabase";
 import styles from "./MediaComponents.module.css";
@@ -31,7 +31,6 @@ export function AudioPlayer({
   const [duration, setDuration] = useState(0);
   const [playbackSpeed, setPlaybackSpeed] = useState<number>(1);
   const audioRef = useRef<HTMLAudioElement>(null);
-  const progressId = useId();
 
   const togglePlay = () => {
     if (!audioRef.current) return;
@@ -85,6 +84,7 @@ export function AudioPlayer({
   };
 
   const formatTime = (time: number) => {
+    if (isNaN(time) || !isFinite(time)) return "0:00";
     const minutes = Math.floor(time / 60);
     const seconds = Math.floor(time % 60);
     return `${minutes}:${seconds.toString().padStart(2, "0")}`;
@@ -135,7 +135,6 @@ export function AudioPlayer({
       <div className={styles.progressContainer}>
         <span className={styles.currentTime}>{formatTime(currentTime)}</span>
         <input
-          id={progressId}
           type="range"
           min="0"
           max={duration || 0}
@@ -185,25 +184,31 @@ export function ImageGallery({
     <div className={`${styles.gallery} ${className}`}>
       {images.map((imageName, index) => (
         <div key={index} className={styles.galleryItem}>
-          <Image
-            src={getOptimizedImagePath(placeId, imageName, "gallery")} // ✅ ZOPTYMALIZOWANE
-            alt={`Zdjęcie ${index + 1}`}
-            className={styles.galleryImage}
-            width={300}
-            height={200}
-            style={{ objectFit: "cover" }}
-            sizes="(max-width: 768px) 50vw, 300px"
+          <button
+            type="button"
+            className={styles.galleryButton}
             onClick={() => {
               // ✅ POPRAWKA: Przekaż path zamiast pełnego URL
               onImageClickAction(
                 getOptimizedImagePath(placeId, imageName, "gallery")
               );
             }}
-            onError={(e) => {
-              const target = e.target as HTMLImageElement;
-              target.style.display = "none";
-            }}
-          />
+            aria-label={`Zdjęcie ${index + 1} powiększ`}
+          >
+            <Image
+              src={getOptimizedImagePath(placeId, imageName, "gallery")} // ✅ ZOPTYMALIZOWANE
+              alt={`Zdjęcie ${index + 1}`}
+              className={styles.galleryImage}
+              width={300}
+              height={200}
+              style={{ objectFit: "cover" }}
+              sizes="(max-width: 768px) 50vw, 300px"
+              onError={(e) => {
+                const target = e.target as HTMLImageElement;
+                target.style.display = "none";
+              }}
+            />
+          </button>
         </div>
       ))}
     </div>
@@ -265,7 +270,6 @@ export function DirectusAudioPlayer({ uuid, className = "" }: DirectusAudioPlaye
   const [duration, setDuration] = useState(0);
   const [playbackSpeed, setPlaybackSpeed] = useState<number>(1);
   const audioRef = useRef<HTMLAudioElement>(null);
-  const progressId = useId();
 
   const directusUrl = process.env.NEXT_PUBLIC_DIRECTUS_URL!;
   const src = `${directusUrl}/assets/${uuid}`;
@@ -326,7 +330,6 @@ export function DirectusAudioPlayer({ uuid, className = "" }: DirectusAudioPlaye
       <div className={styles.progressContainer}>
         <span className={styles.currentTime}>{formatTime(currentTime)}</span>
         <input
-          id={progressId}
           type="range"
           min="0"
           max={duration || 0}
@@ -378,11 +381,14 @@ export function DirectusImage({
   return (
     <div className={`${styles.imageContainer} ${className}`}>
       {!imageLoaded && <div className={styles.imagePlaceholder}>Laden...</div>}
-      {/* eslint-disable-next-line @next/next/no-img-element */}
-      <img
+      <Image
         src={src}
         alt={alt}
         className={`${styles.placeImage} ${imageLoaded ? styles.loaded : ""}`}
+        width={400}
+        height={300}
+        style={{ objectFit: "cover" }}
+        sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 400px"
         onLoad={() => setImageLoaded(true)}
         onError={() => setImageError(true)}
       />
@@ -413,16 +419,12 @@ export function GalleryMixed({ placeId, items, onImageClickAction }: GalleryMixe
 
         return (
           <div key={index} className={styles.galleryItem}>
-            {isUuid ? (
-              // eslint-disable-next-line @next/next/no-img-element
-              <img
-                src={src}
-                alt={`Bild ${index + 1}`}
-                className={styles.galleryImage}
-                onClick={() => onImageClickAction?.(src, index)}
-                onError={(e) => { (e.target as HTMLImageElement).style.display = "none"; }}
-              />
-            ) : (
+            <button
+              type="button"
+              className={styles.galleryButton}
+              onClick={() => onImageClickAction?.(src, index)}
+              aria-label={`Bild ${index + 1} powiększ`}
+            >
               <Image
                 src={src}
                 alt={`Bild ${index + 1}`}
@@ -431,10 +433,9 @@ export function GalleryMixed({ placeId, items, onImageClickAction }: GalleryMixe
                 height={200}
                 style={{ objectFit: "cover" }}
                 sizes="(max-width: 768px) 50vw, 300px"
-                onClick={() => onImageClickAction?.(src, index)}
                 onError={(e) => { (e.target as HTMLImageElement).style.display = "none"; }}
               />
-            )}
+            </button>
           </div>
         );
       })}
@@ -456,14 +457,23 @@ export function DirectusImageGallery({ uuids, onImageClickAction }: DirectusImag
         const src = `${directusUrl}/assets/${uuid}`;
         return (
           <div key={uuid} className={styles.galleryItem}>
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img
-              src={src}
-              alt={`Bild ${index + 1}`}
-              className={styles.galleryImage}
+            <button
+              type="button"
+              className={styles.galleryButton}
               onClick={() => onImageClickAction?.(src, index)}
-              onError={(e) => { (e.target as HTMLImageElement).style.display = "none"; }}
-            />
+              aria-label={`Bild ${index + 1} powiększ`}
+            >
+              <Image
+                src={src}
+                alt={`Bild ${index + 1}`}
+                className={styles.galleryImage}
+                width={300}
+                height={200}
+                style={{ objectFit: "cover" }}
+                sizes="(max-width: 768px) 50vw, 300px"
+                onError={(e) => { (e.target as HTMLImageElement).style.display = "none"; }}
+              />
+            </button>
           </div>
         );
       })}
