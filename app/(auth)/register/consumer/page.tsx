@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useCallback } from "react";
+import { Mail } from "lucide-react";
 import Link from "next/link";
 import { registerConsumer } from "@/app/actions/auth";
 import type { FormErrors } from "@/types/auth";
@@ -94,18 +95,7 @@ export default function RegisterConsumerPage() {
     return (
       <div className={styles.card}>
         <div className={styles.successBox}>
-          <svg
-            width="48"
-            height="48"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="#27ae60"
-            strokeWidth="2"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-          >
-            <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12a19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 3.6 1.27h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L7.91 8.7A16 16 0 0 0 16 16.73l1.41-1.41a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 24 16.92z" />
-          </svg>
+          <Mail size={48} color="#fc6c14" />
           <h2 className={styles.successTitle}>Fast geschafft!</h2>
           <p className={styles.successText}>
             Wir haben eine Bestätigungs-E-Mail an{" "}

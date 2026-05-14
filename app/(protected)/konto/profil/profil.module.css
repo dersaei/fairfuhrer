@@ -60,20 +60,19 @@
 
 .deleteButton {
   padding: 0.5rem 1rem;
-  background-color: transparent;
-  color: #18222f;
+  background-color: rgb(220, 29, 29);
+  color: #fff;
   border: 1.5px solid #18222f;
   border-radius: 6px;
   font-family: var(--font-fira);
   font-size: 0.85rem;
   font-weight: 600;
   cursor: pointer;
-  transition: opacity 0.2s;
 }
 
 .deleteButton:hover:not(:disabled) {
-  opacity: 0.7;
-  background-color: #fff;
+  background-color: #fafafa;
+  color: #18222f;
 }
 
 .deleteButton:disabled {

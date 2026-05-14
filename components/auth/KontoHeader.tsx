@@ -21,8 +21,6 @@ export default function KontoHeader({ isPartner, displayName }: Props) {
             src={avatarUrl}
             alt=""
             className={styles.avatar}
-            width={100}
-            height={100}
           />
         ) : (
           <div className={styles.avatarPlaceholder} />
