@@ -6,11 +6,12 @@ import { getSupabaseBrowserClient } from "@/lib/supabase-browser";
 import styles from "../../profil/profil.module.css";
 
 export default function ReisenderProfilPage() {
-  const { user, refreshUser } = useAuth();
+  const { user, refreshUser, logout } = useAuth();
   const profile = user?.profile;
 
   const [uploading, setUploading] = useState(false);
   const [uploadError, setUploadError] = useState<string | null>(null);
+  const [signingOut, setSigningOut] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const avatarUrl = profile?.avatar_url ?? null;
@@ -49,6 +50,15 @@ export default function ReisenderProfilPage() {
     } finally {
       setUploading(false);
       if (fileInputRef.current) fileInputRef.current.value = "";
+    }
+  }
+
+  async function handleSignOut() {
+    setSigningOut(true);
+    try {
+      await logout();
+    } finally {
+      setSigningOut(false);
     }
   }
 
@@ -138,6 +148,17 @@ export default function ReisenderProfilPage() {
           <span className={styles.label}>Nachname</span>
           <span className={styles.value}>{profile?.last_name || "—"}</span>
         </div>
+      </div>
+
+      <div className={styles.signOutSection}>
+        <button
+          type="button"
+          className={styles.signOutButton}
+          onClick={handleSignOut}
+          disabled={signingOut}
+        >
+          {signingOut ? "Wird abgemeldet…" : "Abmelden"}
+        </button>
       </div>
     </div>
   );

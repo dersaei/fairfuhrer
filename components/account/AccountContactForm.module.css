@@ -1,5 +1,5 @@
 .section {
-  border-top: 1px solid #e0e0e0;
+  border-top: 2px solid #000;
   padding-top: 2rem;
 }
 
@@ -18,7 +18,7 @@
   text-transform: uppercase;
   letter-spacing: 0.06em;
   color: #18222f;
-  margin: 0;
+  margin: 0 0 1em;
 }
 
 .lead {
@@ -26,7 +26,7 @@
   font-size: 0.9rem;
   color: #555;
   line-height: 1.7;
-  margin: 0;
+  margin: 0 0 1em;
 }
 
 .form {
@@ -74,7 +74,7 @@
   width: 100%;
   padding: 0.6rem 0.75rem;
   border: 1.5px solid #ccc;
-  background: #fff;
+  background-color: #fafafa;
   font-family: var(--font-fira);
   font-size: 0.9rem;
   color: #18222f;

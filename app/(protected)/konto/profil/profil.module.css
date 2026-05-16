@@ -91,6 +91,34 @@
   display: none;
 }
 
+.signOutSection {
+  border-top: 2px solid #000;
+  padding-top: 1.5rem;
+}
+
+.signOutButton {
+  padding: 0.75rem 2rem;
+  background: transparent;
+  color: #18222f;
+  border: 1.5px solid #18222f;
+  border-radius: 6px;
+  font-family: var(--font-fira);
+  font-size: 0.875rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s;
+}
+
+.signOutButton:hover:not(:disabled) {
+  background: #18222f;
+  color: #fff;
+}
+
+.signOutButton:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
 /* Pola */
 .sectionLabel {
   font-family: var(--font-fira);

@@ -7,12 +7,13 @@ import { getCountryLabel } from "@/lib/countries";
 import styles from "@/app/(protected)/konto/profil/profil.module.css";
 
 export default function PartnerProfilPage() {
-  const { user, refreshUser } = useAuth();
+  const { user, refreshUser, logout } = useAuth();
   const profile = user?.profile;
   const partner = user?.partnerProfile;
 
   const [uploading, setUploading] = useState(false);
   const [uploadError, setUploadError] = useState<string | null>(null);
+  const [signingOut, setSigningOut] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const avatarUrl = profile?.avatar_url ?? null;
@@ -43,6 +44,15 @@ export default function PartnerProfilPage() {
     } finally {
       setUploading(false);
       if (fileInputRef.current) fileInputRef.current.value = "";
+    }
+  }
+
+  async function handleSignOut() {
+    setSigningOut(true);
+    try {
+      await logout();
+    } finally {
+      setSigningOut(false);
     }
   }
 
@@ -197,6 +207,17 @@ export default function PartnerProfilPage() {
           <span className={styles.label}>Anmelde-E-Mail</span>
           <span className={styles.value}>{user?.email || "—"}</span>
         </div>
+      </div>
+
+      <div className={styles.signOutSection}>
+        <button
+          type="button"
+          className={styles.signOutButton}
+          onClick={handleSignOut}
+          disabled={signingOut}
+        >
+          {signingOut ? "Wird abgemeldet…" : "Abmelden"}
+        </button>
       </div>
     </div>
   );

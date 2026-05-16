@@ -4,7 +4,9 @@ import { useState } from "react";
 import { useAuth } from "@/context/AuthContext";
 import styles from "./AccountContactForm.module.css";
 
-export default function AccountContactForm({ noBorderTop }: { noBorderTop?: boolean } = {}) {
+export default function AccountContactForm({
+  noBorderTop,
+}: { noBorderTop?: boolean } = {}) {
   const { user } = useAuth();
 
   const isPartner = user?.profile?.role === "partner";
@@ -90,8 +92,8 @@ export default function AccountContactForm({ noBorderTop }: { noBorderTop?: bool
     <div className={sectionClass}>
       <h4 className={styles.title}>Kontakt aufnehmen</h4>
       <p className={styles.lead}>
-        Sie haben eine Frage oder ein Anliegen? Schreiben Sie uns direkt — wir
-        antworten in der Regel innerhalb von 1–2 Werktagen.
+        Du hast eine Frage oder ein Anliegen? Schreib uns direkt — wir antworten
+        in der Regel innerhalb von 1–2 Werktagen.
       </p>
 
       <form onSubmit={handleSubmit} className={styles.form} noValidate>
