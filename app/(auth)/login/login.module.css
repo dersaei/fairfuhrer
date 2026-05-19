@@ -170,6 +170,15 @@
   margin-bottom: 1rem;
 }
 
+.googleHint {
+  text-align: center;
+  font-family: var(--font-fira);
+  font-size: 0.8125rem;
+  color: #666;
+  line-height: 1.4;
+  margin: 0.75rem 0 0;
+}
+
 .magicDescription {
   font-family: var(--font-fira);
   font-size: 0.875rem;

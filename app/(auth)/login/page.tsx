@@ -6,6 +6,7 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { loginWithEmail, loginWithMagicLink } from "@/app/actions/auth";
 import type { FormErrors } from "@/types/auth";
 import TurnstileWidget from "@/components/TurnstileWidget";
+import SocialLoginButtons from "@/components/SocialLoginButtons";
 import styles from "./login.module.css";
 
 function LoginForm() {
@@ -210,9 +211,14 @@ function LoginForm() {
         </>
       )}
 
-      {/* OAuth — tymczasowo ukryte, aktywować po konfiguracji providerów w Supabase Dashboard */}
-      {/* <div className={styles.divider}><span>oder</span></div> */}
-      {/* <SocialLoginButtons onOAuth={handleOAuth} /> */}
+      <div className={styles.divider}>
+        <span>oder</span>
+      </div>
+      <SocialLoginButtons redirectTo={redirectTo} />
+      <p className={styles.googleHint}>
+        Sie haben sich mit Google registriert? Melden Sie sich mit dem
+        Google-Button an statt mit E-Mail und Passwort.
+      </p>
 
       <p className={styles.registerLink}>
         Noch kein Konto?{" "}
