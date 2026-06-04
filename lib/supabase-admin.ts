@@ -2,10 +2,10 @@ import "server-only";
 
 import { createClient } from "@supabase/supabase-js";
 
-// Używa SERVICE_ROLE_KEY — nigdy nie eksponuj po stronie klienta
+// Używa SECRET_KEY — nigdy nie eksponuj po stronie klienta
 export const supabaseAdmin = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_ROLE_KEY!,
+  process.env.SUPABASE_SECRET_KEY!,
   {
     auth: {
       autoRefreshToken: false,
