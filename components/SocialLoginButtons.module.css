@@ -39,6 +39,41 @@
   cursor: not-allowed;
 }
 
+.appleButton {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.625rem;
+  width: 100%;
+  padding: 0.8rem;
+  background: #000;
+  color: #fff;
+  border: 1.5px solid #000;
+  border-radius: 8px;
+  font-family: var(--font-fira);
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition:
+    background 0.2s,
+    border-color 0.2s,
+    transform 0.1s;
+}
+
+.appleButton:hover:not(:disabled) {
+  background: #222;
+  border-color: #222;
+}
+
+.appleButton:active:not(:disabled) {
+  transform: scale(0.98);
+}
+
+.appleButton:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
 .error {
   background: #fff0f0;
   color: #c0392b;
