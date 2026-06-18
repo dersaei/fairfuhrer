@@ -2,12 +2,48 @@
 
 import { useState } from "react";
 import { useAuth } from "@/context/AuthContext";
+import type { AccountContactFormContent } from "@/types";
 import styles from "./AccountContactForm.module.css";
+
+// Fallback-Texte, falls Directus nichts liefert
+const DEFAULTS = {
+  title: "Kontakt aufnehmen",
+  lead_text:
+    "Du hast eine Frage oder ein Anliegen? Schreib uns direkt — wir antworten in der Regel innerhalb von 1–2 Werktagen.",
+  label_absender: "Absender",
+  label_betreff: "Betreff",
+  label_nachricht: "Nachricht",
+  button_text: "Nachricht senden",
+  button_sending_text: "Wird gesendet…",
+  success_message:
+    "Vielen Dank für Ihre Nachricht! Wir melden uns so schnell wie möglich bei Ihnen",
+  error_message: "Ein Fehler ist aufgetreten.",
+  validation_message: "Bitte füllen Sie alle Felder aus.",
+} as const;
 
 export default function AccountContactForm({
   noBorderTop,
-}: { noBorderTop?: boolean } = {}) {
+  content,
+}: {
+  noBorderTop?: boolean;
+  content?: AccountContactFormContent | null;
+} = {}) {
   const { user } = useAuth();
+
+  const t = {
+    title: content?.title || DEFAULTS.title,
+    lead_text: content?.lead_text || DEFAULTS.lead_text,
+    label_absender: content?.label_absender || DEFAULTS.label_absender,
+    label_betreff: content?.label_betreff || DEFAULTS.label_betreff,
+    label_nachricht: content?.label_nachricht || DEFAULTS.label_nachricht,
+    button_text: content?.button_text || DEFAULTS.button_text,
+    button_sending_text:
+      content?.button_sending_text || DEFAULTS.button_sending_text,
+    success_message: content?.success_message || DEFAULTS.success_message,
+    error_message: content?.error_message || DEFAULTS.error_message,
+    validation_message:
+      content?.validation_message || DEFAULTS.validation_message,
+  };
 
   const isPartner = user?.profile?.role === "partner";
   const displayEmail = isPartner
@@ -35,7 +71,7 @@ export default function AccountContactForm({
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     if (!subject.trim() || !message.trim()) {
-      setErrorMsg("Bitte füllen Sie alle Felder aus.");
+      setErrorMsg(t.validation_message);
       return;
     }
     setErrorMsg(undefined);
@@ -62,11 +98,11 @@ export default function AccountContactForm({
         setMessage("");
       } else {
         const data = await res.json().catch(() => ({}));
-        setErrorMsg(data.error ?? "Ein Fehler ist aufgetreten.");
+        setErrorMsg(data.error ?? t.error_message);
         setStatus("error");
       }
     } catch {
-      setErrorMsg("Ein Fehler ist aufgetreten. Bitte versuchen Sie es erneut.");
+      setErrorMsg(t.error_message);
       setStatus("error");
     }
   }
@@ -79,10 +115,7 @@ export default function AccountContactForm({
     return (
       <div className={sectionClass}>
         <div className={styles.successBox}>
-          <p className={styles.successText}>
-            Vielen Dank für Ihre Nachricht! Wir melden uns so schnell wie
-            möglich bei Ihnen
-          </p>
+          <p className={styles.successText}>{t.success_message}</p>
         </div>
       </div>
     );
@@ -90,11 +123,8 @@ export default function AccountContactForm({
 
   return (
     <div className={sectionClass}>
-      <h4 className={styles.title}>Kontakt aufnehmen</h4>
-      <p className={styles.lead}>
-        Du hast eine Frage oder ein Anliegen? Schreib uns direkt — wir antworten
-        in der Regel innerhalb von 1–2 Werktagen.
-      </p>
+      <h4 className={styles.title}>{t.title}</h4>
+      <p className={styles.lead}>{t.lead_text}</p>
 
       <form onSubmit={handleSubmit} className={styles.form} noValidate>
         {status === "error" && errorMsg && (
@@ -102,7 +132,7 @@ export default function AccountContactForm({
         )}
 
         <div className={styles.infoRow}>
-          <span className={styles.infoLabel}>Absender</span>
+          <span className={styles.infoLabel}>{t.label_absender}</span>
           <span className={styles.infoValue}>
             {displayName ? `${displayName} (${displayEmail})` : displayEmail}
           </span>
@@ -110,7 +140,7 @@ export default function AccountContactForm({
 
         <div className={styles.field}>
           <label htmlFor="ac-subject" className={styles.label}>
-            Betreff
+            {t.label_betreff}
           </label>
           <input
             id="ac-subject"
@@ -126,7 +156,7 @@ export default function AccountContactForm({
 
         <div className={styles.field}>
           <label htmlFor="ac-message" className={styles.label}>
-            Nachricht
+            {t.label_nachricht}
           </label>
           <textarea
             id="ac-message"
@@ -144,7 +174,7 @@ export default function AccountContactForm({
           className={styles.button}
           disabled={status === "submitting"}
         >
-          {status === "submitting" ? "Wird gesendet…" : "Nachricht senden"}
+          {status === "submitting" ? t.button_sending_text : t.button_text}
         </button>
       </form>
     </div>

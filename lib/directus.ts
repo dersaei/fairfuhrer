@@ -17,6 +17,10 @@ import type {
   PayPalDonation,
   DirectusPayPalDonation,
   WebhookLog,
+  PremiumPageContent,
+  PremiumComparisonFeature,
+  AccountContactFormContent,
+  OrtVorschlagenContent,
 } from "@/types";
 
 // ========================================
@@ -393,6 +397,137 @@ export async function getHilfeWebItems(): Promise<HilfeWebItem[]> {
   } catch (error) {
     console.error("Error fetching hilfe_web:", error);
     return [];
+  }
+}
+
+// ========================================
+// PREMIUM PAGE (Fairführer+)
+// ========================================
+
+export async function getPremiumPageContent(): Promise<PremiumPageContent | null> {
+  const isDev = process.env.NODE_ENV === "development";
+  try {
+    const response = await fetch(
+      `${DIRECTUS_URL}/items/premium_page_content?fields=*`,
+      {
+        headers: {
+          "Content-Type": "application/json",
+          ...(DIRECTUS_TOKEN && { Authorization: `Bearer ${DIRECTUS_TOKEN}` }),
+        },
+        ...(isDev
+          ? { cache: "no-store" as const }
+          : { next: { revalidate: 3600, tags: ["premium-page"] } }),
+      }
+    );
+
+    if (!response.ok) {
+      const body = await response.text().catch(() => "(unreadable)");
+      throw new Error(`Failed to fetch premium page content: ${response.status} ${response.statusText} — ${body}`);
+    }
+
+    const data = await response.json();
+    // Singleton zwraca obiekt, nie tablicę
+    return (Array.isArray(data.data) ? data.data[0] : data.data) as PremiumPageContent ?? null;
+  } catch (error) {
+    console.error("Error fetching premium page content:", error);
+    return null;
+  }
+}
+
+export async function getPremiumComparisonFeatures(): Promise<PremiumComparisonFeature[]> {
+  const isDev = process.env.NODE_ENV === "development";
+  try {
+    const response = await fetch(
+      `${DIRECTUS_URL}/items/premium_comparison_features?filter[status][_eq]=published&sort=sort&fields=id,status,sort,feature,free,pro`,
+      {
+        headers: {
+          "Content-Type": "application/json",
+          ...(DIRECTUS_TOKEN && { Authorization: `Bearer ${DIRECTUS_TOKEN}` }),
+        },
+        ...(isDev
+          ? { cache: "no-store" as const }
+          : { next: { revalidate: 3600, tags: ["premium-page"] } }),
+      }
+    );
+
+    if (!response.ok) {
+      const body = await response.text().catch(() => "(unreadable)");
+      throw new Error(`Failed to fetch premium comparison features: ${response.status} ${response.statusText} — ${body}`);
+    }
+
+    const data = await response.json();
+    return (data.data as PremiumComparisonFeature[]) ?? [];
+  } catch (error) {
+    console.error("Error fetching premium comparison features:", error);
+    return [];
+  }
+}
+
+// ========================================
+// ORT VORSCHLAGEN (Seite "Ort vorschlagen")
+// ========================================
+
+export async function getOrtVorschlagenContent(): Promise<OrtVorschlagenContent | null> {
+  const isDev = process.env.NODE_ENV === "development";
+  try {
+    const response = await fetch(
+      `${DIRECTUS_URL}/items/ort_vorschlagen_content?fields=*`,
+      {
+        headers: {
+          "Content-Type": "application/json",
+          ...(DIRECTUS_TOKEN && { Authorization: `Bearer ${DIRECTUS_TOKEN}` }),
+        },
+        ...(isDev
+          ? { cache: "no-store" as const }
+          : { next: { revalidate: 3600, tags: ["ort-vorschlagen"] } }),
+      }
+    );
+
+    if (!response.ok) {
+      const body = await response.text().catch(() => "(unreadable)");
+      throw new Error(`Failed to fetch ort vorschlagen content: ${response.status} ${response.statusText} — ${body}`);
+    }
+
+    const data = await response.json();
+    // Singleton zwraca obiekt, nie tablicę
+    return (Array.isArray(data.data) ? data.data[0] : data.data) as OrtVorschlagenContent ?? null;
+  } catch (error) {
+    console.error("Error fetching ort vorschlagen content:", error);
+    return null;
+  }
+}
+
+// ========================================
+// ACCOUNT CONTACT FORM (Kontaktformular im Konto)
+// ========================================
+
+export async function getAccountContactFormContent(): Promise<AccountContactFormContent | null> {
+  const isDev = process.env.NODE_ENV === "development";
+  try {
+    const response = await fetch(
+      `${DIRECTUS_URL}/items/account_contact_form_content?fields=*`,
+      {
+        headers: {
+          "Content-Type": "application/json",
+          ...(DIRECTUS_TOKEN && { Authorization: `Bearer ${DIRECTUS_TOKEN}` }),
+        },
+        ...(isDev
+          ? { cache: "no-store" as const }
+          : { next: { revalidate: 3600, tags: ["account-contact-form"] } }),
+      }
+    );
+
+    if (!response.ok) {
+      const body = await response.text().catch(() => "(unreadable)");
+      throw new Error(`Failed to fetch account contact form content: ${response.status} ${response.statusText} — ${body}`);
+    }
+
+    const data = await response.json();
+    // Singleton zwraca obiekt, nie tablicę
+    return (Array.isArray(data.data) ? data.data[0] : data.data) as AccountContactFormContent ?? null;
+  } catch (error) {
+    console.error("Error fetching account contact form content:", error);
+    return null;
   }
 }
 

@@ -185,3 +185,61 @@ export interface ContactInfoContent {
   features_p_color?: string;
   features_p_font_size?: string;
 }
+
+export interface PremiumPageContent {
+  id: number;
+  title?: string;
+  lead_text?: string;
+  pro_active_title?: string;
+  pro_active_date_label?: string;
+  pro_active_hint?: string;
+  comparison_title?: string;
+  comparison_th_feature?: string;
+  comparison_th_free?: string;
+  comparison_th_pro?: string;
+  app_box_title?: string;
+  app_box_text?: string;
+  app_box_steps?: { step: string }[];
+  app_box_note?: string;
+}
+
+export interface PremiumComparisonFeature {
+  id: number;
+  status: "published" | "draft" | "archived";
+  sort: number | null;
+  feature: string;
+  free: boolean;
+  pro: boolean;
+}
+
+export interface OrtVorschlagenContent {
+  id: number;
+  intro?: string;
+  premium_info?: string;
+  premium_badge?: string;
+  label_name?: string;
+  label_adresse?: string;
+  label_beschreibung?: string;
+  button_text?: string;
+  button_sending_text?: string;
+  hint_intro?: string;
+  hint_with_name?: string;
+  hint_without_name?: string;
+  success_message?: string;
+  error_message?: string;
+  validation_message?: string;
+}
+
+export interface AccountContactFormContent {
+  id: number;
+  title?: string;
+  lead_text?: string;
+  label_absender?: string;
+  label_betreff?: string;
+  label_nachricht?: string;
+  button_text?: string;
+  button_sending_text?: string;
+  success_message?: string;
+  error_message?: string;
+  validation_message?: string;
+}

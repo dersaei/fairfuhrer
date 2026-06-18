@@ -1,4 +1,7 @@
-import { getHilfeWebItems } from "@/lib/directus";
+import {
+  getHilfeWebItems,
+  getAccountContactFormContent,
+} from "@/lib/directus";
 import AccountContactForm from "@/components/account/AccountContactForm";
 import HilfeContactLink from "./HilfeContactLink";
 import styles from "./hilfe.module.css";
@@ -10,7 +13,10 @@ function renderMarkdown(text: string): string {
 }
 
 export default async function PartnerHilfePage() {
-  const items = await getHilfeWebItems();
+  const [items, contactFormContent] = await Promise.all([
+    getHilfeWebItems(),
+    getAccountContactFormContent(),
+  ]);
 
   return (
     <div className={styles.wrapper}>
@@ -34,7 +40,7 @@ export default async function PartnerHilfePage() {
       <div className={styles.faqEndLine} />
 
       <div id="hilfe-kontakt">
-        <AccountContactForm noBorderTop />
+        <AccountContactForm noBorderTop content={contactFormContent} />
       </div>
     </div>
   );
