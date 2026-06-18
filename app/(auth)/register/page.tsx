@@ -1,13 +1,32 @@
 import Link from "next/link";
+import { getRegisterPageContent } from "@/lib/directus";
 import styles from "./register.module.css";
 
-export default function RegisterPage() {
+export default async function RegisterPage() {
+  const content = await getRegisterPageContent();
+
+  const t = {
+    title: content?.title || "Konto erstellen",
+    subtitle:
+      content?.subtitle || "Wählen Sie aus, wie Sie Fairführer nutzen möchten.",
+    reisender_title: content?.reisender_title || "Als Reisender",
+    reisender_desc:
+      content?.reisender_desc ||
+      "Entdecken Sie nachhaltige Orte, folgen Sie Partnern und kommunizieren Sie mit der Community.",
+    reisender_cta: content?.reisender_cta || "Weiter →",
+    partner_title: content?.partner_title || "Als Partner",
+    partner_desc:
+      content?.partner_desc ||
+      "Präsentieren Sie Ihr nachhaltiges Unternehmen, teilen Sie Neuigkeiten und erreichen Sie unsere Community.",
+    partner_cta: content?.partner_cta || "Weiter →",
+    login_prompt: content?.login_prompt || "Bereits registriert?",
+    login_link_text: content?.login_link_text || "Anmelden",
+  };
+
   return (
     <div className={styles.wrapper}>
-      <h1 className={styles.title}>Konto erstellen</h1>
-      <p className={styles.subtitle}>
-        Wählen Sie aus, wie Sie Fairführer nutzen möchten.
-      </p>
+      <h1 className={styles.title}>{t.title}</h1>
+      <p className={styles.subtitle}>{t.subtitle}</p>
       <div className={styles.cards}>
         <Link href="/register/consumer" className={styles.card}>
           <div className={styles.cardIcon}>
@@ -27,12 +46,9 @@ export default function RegisterPage() {
               <circle cx="12" cy="7" r="4" />
             </svg>
           </div>
-          <h2 className={styles.cardTitle}>Als Reisender</h2>
-          <p className={styles.cardDesc}>
-            Entdecken Sie nachhaltige Orte, folgen Sie Partnern und
-            kommunizieren Sie mit der Community.
-          </p>
-          <span className={styles.cardCta}>Weiter →</span>
+          <h2 className={styles.cardTitle}>{t.reisender_title}</h2>
+          <p className={styles.cardDesc}>{t.reisender_desc}</p>
+          <span className={styles.cardCta}>{t.reisender_cta}</span>
         </Link>
 
         <Link href="/register/partner" className={styles.card}>
@@ -56,19 +72,16 @@ export default function RegisterPage() {
               <path d="M3 4h8" />
             </svg>
           </div>
-          <h2 className={styles.cardTitle}>Als Partner</h2>
-          <p className={styles.cardDesc}>
-            Präsentieren Sie Ihr nachhaltiges Unternehmen, teilen Sie
-            Neuigkeiten und erreichen Sie unsere Community.
-          </p>
-          <span className={styles.cardCta}>Weiter →</span>
+          <h2 className={styles.cardTitle}>{t.partner_title}</h2>
+          <p className={styles.cardDesc}>{t.partner_desc}</p>
+          <span className={styles.cardCta}>{t.partner_cta}</span>
         </Link>
       </div>
 
       <p className={styles.loginLink}>
-        Bereits registriert?{" "}
+        {t.login_prompt}{" "}
         <Link href="/login" className={styles.link}>
-          Anmelden
+          {t.login_link_text}
         </Link>
       </p>
     </div>

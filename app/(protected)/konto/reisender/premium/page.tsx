@@ -2,9 +2,7 @@ import { getCurrentUser } from "@/app/actions/auth";
 import {
   getPremiumPageContent,
   getPremiumComparisonFeatures,
-  getAccountContactFormContent,
 } from "@/lib/directus";
-import AccountContactForm from "@/components/account/AccountContactForm";
 import styles from "./premium.module.css";
 
 // Prosty markdown: **fett** i *kursiv* — spójnie ze stroną Hilfe
@@ -15,11 +13,10 @@ function renderMarkdown(text: string): string {
 }
 
 export default async function PremiumPage() {
-  const [user, content, features, contactFormContent] = await Promise.all([
+  const [user, content, features] = await Promise.all([
     getCurrentUser(),
     getPremiumPageContent(),
     getPremiumComparisonFeatures(),
-    getAccountContactFormContent(),
   ]);
 
   const premiumUntil = user?.profile?.premium_until
@@ -135,7 +132,6 @@ export default async function PremiumPage() {
           )}
         </div>
       )}
-      <AccountContactForm content={contactFormContent} />
     </div>
   );
 }

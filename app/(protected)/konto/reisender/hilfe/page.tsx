@@ -1,15 +1,15 @@
 import { marked } from "marked";
 import {
-  getHilfeWebItems,
+  getHilfeWebReisenderItems,
   getAccountContactFormContent,
 } from "@/lib/directus";
 import AccountContactForm from "@/components/account/AccountContactForm";
 import HilfeContactLink from "./HilfeContactLink";
 import styles from "./hilfe.module.css";
 
-export default async function PartnerHilfePage() {
+export default async function ReisenderHilfePage() {
   const [items, contactFormContent] = await Promise.all([
-    getHilfeWebItems(),
+    getHilfeWebReisenderItems(),
     getAccountContactFormContent(),
   ]);
 

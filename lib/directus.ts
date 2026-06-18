@@ -21,6 +21,7 @@ import type {
   PremiumComparisonFeature,
   AccountContactFormContent,
   OrtVorschlagenContent,
+  RegisterPageContent,
 } from "@/types";
 
 // ========================================
@@ -401,6 +402,39 @@ export async function getHilfeWebItems(): Promise<HilfeWebItem[]> {
 }
 
 // ========================================
+// HILFE WEB REISENDER (FAQ für Reisende/Einzelnutzer)
+// ========================================
+
+export async function getHilfeWebReisenderItems(): Promise<HilfeWebItem[]> {
+  const isDev = process.env.NODE_ENV === "development";
+
+  try {
+    const response = await fetch(
+      `${DIRECTUS_URL}/items/hilfe_web_reisender?filter[status][_eq]=published&sort=sort&fields=id,sort,frage,antwort`,
+      {
+        headers: {
+          "Content-Type": "application/json",
+          ...(DIRECTUS_TOKEN && { Authorization: `Bearer ${DIRECTUS_TOKEN}` }),
+        },
+        ...(isDev
+          ? { cache: "no-store" as const }
+          : { next: { revalidate: 3600, tags: ["hilfe-web-reisender"] } }),
+      }
+    );
+
+    if (!response.ok) {
+      throw new Error(`Failed to fetch hilfe_web_reisender: ${response.statusText}`);
+    }
+
+    const data = await response.json();
+    return (data.data as HilfeWebItem[]) ?? [];
+  } catch (error) {
+    console.error("Error fetching hilfe_web_reisender:", error);
+    return [];
+  }
+}
+
+// ========================================
 // PREMIUM PAGE (Fairführer+)
 // ========================================
 
@@ -460,6 +494,40 @@ export async function getPremiumComparisonFeatures(): Promise<PremiumComparisonF
   } catch (error) {
     console.error("Error fetching premium comparison features:", error);
     return [];
+  }
+}
+
+// ========================================
+// REGISTER PAGE (Auswahlseite "Konto erstellen")
+// ========================================
+
+export async function getRegisterPageContent(): Promise<RegisterPageContent | null> {
+  const isDev = process.env.NODE_ENV === "development";
+  try {
+    const response = await fetch(
+      `${DIRECTUS_URL}/items/register_page_content?fields=*`,
+      {
+        headers: {
+          "Content-Type": "application/json",
+          ...(DIRECTUS_TOKEN && { Authorization: `Bearer ${DIRECTUS_TOKEN}` }),
+        },
+        ...(isDev
+          ? { cache: "no-store" as const }
+          : { next: { revalidate: 3600, tags: ["register-page"] } }),
+      }
+    );
+
+    if (!response.ok) {
+      const body = await response.text().catch(() => "(unreadable)");
+      throw new Error(`Failed to fetch register page content: ${response.status} ${response.statusText} — ${body}`);
+    }
+
+    const data = await response.json();
+    // Singleton zwraca obiekt, nie tablicę
+    return (Array.isArray(data.data) ? data.data[0] : data.data) as RegisterPageContent ?? null;
+  } catch (error) {
+    console.error("Error fetching register page content:", error);
+    return null;
   }
 }
 

@@ -212,6 +212,20 @@ export interface PremiumComparisonFeature {
   pro: boolean;
 }
 
+export interface RegisterPageContent {
+  id: number;
+  title?: string;
+  subtitle?: string;
+  reisender_title?: string;
+  reisender_desc?: string;
+  reisender_cta?: string;
+  partner_title?: string;
+  partner_desc?: string;
+  partner_cta?: string;
+  login_prompt?: string;
+  login_link_text?: string;
+}
+
 export interface OrtVorschlagenContent {
   id: number;
   intro?: string;

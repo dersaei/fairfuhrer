@@ -131,6 +131,14 @@ export default function UserMenu() {
               >
                 Premium
               </Link>
+              <Link
+                href="/konto/reisender/hilfe"
+                className={styles.item}
+                scroll={false}
+                onClick={() => setIsOpen(false)}
+              >
+                Hilfe
+              </Link>
             </>
           )}
           <div className={styles.divider} />
