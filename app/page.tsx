@@ -1,6 +1,7 @@
 import React from "react";
 import Image from "next/image";
 import Link from "next/link";
+import { marked } from "marked";
 import { Heart, Sparkles } from "lucide-react";
 import { getCategoryIconPaths, DEFAULT_ICON_PATHS } from "@/lib/categoryIcons";
 import heroImage from "@/public/fair-fuehrer-guide-hero.jpg";
@@ -20,6 +21,16 @@ const CATEGORIES = [
 
 export default async function HomePage() {
   const content = await getHomePageContent();
+
+  // Felder `traveler_content` und `partner_content` sind Markdown (Directus
+  // `input-rich-text-md`). Vor dem Rendern in HTML konvertieren, sonst werden
+  // **fett** und Absätze als Rohtext angezeigt.
+  const travelerHtml = content?.traveler_content
+    ? await marked(content.traveler_content)
+    : "";
+  const partnerHtml = content?.partner_content
+    ? await marked(content.partner_content)
+    : "";
 
   const c = (val?: string) =>
     val ? (val.startsWith("#") ? val : `#${val}`) : undefined;
@@ -241,8 +252,11 @@ export default async function HomePage() {
               )}
               <div className={styles.ctaContent}>
                 <h2 className={styles.ctaTitle}>{content.traveler_title}</h2>
-                {content.traveler_content && (
-                  <p className={styles.ctaText}>{content.traveler_content}</p>
+                {travelerHtml && (
+                  <div
+                    className={styles.ctaText}
+                    dangerouslySetInnerHTML={{ __html: travelerHtml }}
+                  />
                 )}
                 {content.traveler_cta_label && content.traveler_cta_url && (
                   <Link
@@ -260,8 +274,11 @@ export default async function HomePage() {
             <div className={`${styles.ctaBlock} ${styles.ctaBlockReverse}`}>
               <div className={styles.ctaContent}>
                 <h2 className={styles.ctaTitle}>{content.partner_title}</h2>
-                {content.partner_content && (
-                  <p className={styles.ctaText}>{content.partner_content}</p>
+                {partnerHtml && (
+                  <div
+                    className={styles.ctaText}
+                    dangerouslySetInnerHTML={{ __html: partnerHtml }}
+                  />
                 )}
                 {content.partner_cta_label && content.partner_cta_url && (
                   <Link

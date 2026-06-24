@@ -19,7 +19,7 @@
     "@supabase/ssr": "^0.10.3",
     "@supabase/supabase-js": "^2.108.2",
     "dompurify": "^3.4.11",
-    "focus-trap-react": "^12.0.2",
+    "focus-trap-react": "^12.0.3",
     "lucide-react": "^1.21.0",
     "mapbox-gl": "^3.25.0",
     "marked": "^18.0.5",

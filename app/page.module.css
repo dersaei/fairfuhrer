@@ -207,11 +207,11 @@
 }
 
 .ctaTitle {
-  font-size: clamp(1.6rem, 3.5vw, 3rem);
+  font-size: clamp(2.2rem, 4vw, 4rem);
   font-weight: 400;
   font-family: var(--font-anton);
   color: #fc6c14;
-  margin: 0 0 1.2rem 0;
+  margin: 0 1rem 1.2rem 0;
   line-height: 1.2;
 }
 
@@ -223,6 +223,35 @@
   line-height: 1.75;
   margin: 0 0 2rem 0;
   max-width: 600px;
+}
+
+/* Markdown-rendered Inhalte aus Directus (traveler_content / partner_content):
+   marked erzeugt <p>, <strong>, <em>, <a>, Listen — wir geben ihnen sinnvolle
+   Defaults, da der CSS-Reset nicht greift. */
+.ctaText p {
+  margin: 0 0 1rem 0;
+}
+.ctaText p:last-child {
+  margin-bottom: 0;
+}
+.ctaText strong {
+  font-weight: 700;
+  color: #181716;
+}
+.ctaText em {
+  font-style: italic;
+}
+.ctaText a {
+  color: #fc6c14;
+  text-decoration: underline;
+}
+.ctaText ul,
+.ctaText ol {
+  margin: 0 0 1rem 1.2rem;
+  padding: 0;
+}
+.ctaText li {
+  margin-bottom: 0.3rem;
 }
 
 .ctaButton {
@@ -424,7 +453,7 @@
 
   .ctaContent {
     order: 1;
-    padding: 2rem 1.5rem;
+    padding: 2rem 3rem;
   }
 }
 
@@ -432,6 +461,15 @@
   .heroTitleMobile {
     width: 50%;
     top: 35%;
+  }
+  .ctaContent {
+    padding: 2rem;
+  }
+  .ctaTitle {
+    font-size: 1.5rem;
+  }
+  .ctaText {
+    font-size: 0.95rem;
   }
 }
 
