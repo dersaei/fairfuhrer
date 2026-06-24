@@ -941,6 +941,18 @@ export default function MapBoxMap({
       {!embedded && (
         <MapSearch
           onLocationSelect={handleLocationSelect}
+          onPinSelect={(placeId) => {
+            const place = placesRef.current.find((p) => p.id === placeId);
+            if (!place) return;
+            // Karte auf den Pin zoomen UND Panel öffnen.
+            mapRef.current?.flyTo({
+              center: place.location.coordinates,
+              zoom: 16,
+              duration: 800,
+            });
+            openPanel(place);
+          }}
+          places={places}
           disabled={mapLoadingState !== "success"}
         />
       )}

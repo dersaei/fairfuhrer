@@ -1,18 +1,22 @@
 // components/MapSearch.tsx
 "use client";
 
-import { useState, useRef, useEffect, useCallback } from "react";
+import { useState, useRef, useEffect, useCallback, useMemo } from "react";
 import { useDebounce } from "../hooks/useDebounce";
+import type { Place } from "../types/map";
 import styles from "./MapSearch.module.css";
 
-interface GeoResult {
+// Vereinheitlichter Suggestion-Typ: entweder ein lokaler Pin (placeId gesetzt)
+// oder ein geografischer Treffer aus Mapbox (placeId = null, bbox optional).
+interface Suggestion {
   id: string;
   name: string;
   place_formatted: string;
   lat: number;
   lon: number;
-  bbox: [number, number, number, number] | null; // [minLon, minLat, maxLon, maxLat]
-  feature_type: string; // country | region | district | place
+  bbox: [number, number, number, number] | null;
+  feature_type: string; // place / region / pin
+  placeId?: number; // gesetzt → lokaler Pin
 }
 
 interface MapSearchProps {
@@ -22,18 +26,55 @@ interface MapSearchProps {
     bbox?: [number, number, number, number],
     maxZoom?: number,
   ) => void;
+  onPinSelect?: (placeId: number) => void;
+  places?: Place[];
   disabled?: boolean;
 }
 
 const MAPBOX_TOKEN = process.env.NEXT_PUBLIC_MAPBOX_TOKEN ?? "";
 
+function normalizeSearch(input: string): string {
+  return input
+    .toLowerCase()
+    .replace(/ä/g, "a")
+    .replace(/ö/g, "o")
+    .replace(/ü/g, "u")
+    .replace(/ß/g, "ss")
+    .trim();
+}
+
+function searchLocalPins(query: string, places: Place[]): Suggestion[] {
+  const q = normalizeSearch(query);
+  if (!q) return [];
+  return places
+    .filter((p) => {
+      if (!p.location?.coordinates) return false;
+      const haystack = normalizeSearch(
+        `${p.Name ?? ""} ${p.Stadt ?? ""} ${p.Adresse ?? ""}`,
+      );
+      return haystack.includes(q);
+    })
+    .map((p) => ({
+      id: `pin-${p.id}`,
+      name: p.Name ?? "",
+      place_formatted: [p.Stadt, p.Land].filter(Boolean).join(", "),
+      lat: p.location.coordinates[1],
+      lon: p.location.coordinates[0],
+      bbox: null,
+      feature_type: "pin",
+      placeId: p.id,
+    }));
+}
+
 export default function MapSearch({
   onLocationSelect,
+  onPinSelect,
+  places = [],
   disabled = false,
 }: MapSearchProps) {
   const [isExpanded, setIsExpanded] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
-  const [results, setResults] = useState<GeoResult[]>([]);
+  const [geoResults, setGeoResults] = useState<Suggestion[]>([]);
   const [selectedIndex, setSelectedIndex] = useState(-1);
   const [isLoading, setIsLoading] = useState(false);
 
@@ -78,7 +119,7 @@ export default function MapSearch({
         if (currentAbort.signal.aborted) return;
         
         const features = (json.features ?? []) as Record<string, unknown>[];
-        setResults(
+        setGeoResults(
           features.map((f) => {
             const props = f.properties as Record<string, unknown>;
             const geom = f.geometry as { coordinates: [number, number] };
@@ -114,19 +155,40 @@ export default function MapSearch({
     };
   }, [debouncedQuery]);
 
+  // Lokale Pin-Treffer (synchron, vom Parent übergeben) zuerst, dann
+  // geografische Mapbox-Ergebnisse.
+  const localPinResults = useMemo(
+    () => searchLocalPins(debouncedQuery, places),
+    [debouncedQuery, places],
+  );
+  const results = useMemo(
+    () => [...localPinResults, ...geoResults],
+    [localPinResults, geoResults],
+  );
+
   const handleSelect = useCallback(
-    (result: GeoResult) => {
+    (result: Suggestion) => {
       abortRef.current?.abort();
-      const maxZoom = result.feature_type === "place" ? 13 : undefined;
-      onLocationSelect([result.lon, result.lat], 13, result.bbox ?? undefined, maxZoom);
+      if (result.placeId !== undefined) {
+        // Lokaler Pin → Panel öffnen (Map-Zoom übernimmt der Parent).
+        onPinSelect?.(result.placeId);
+      } else {
+        const maxZoom = result.feature_type === "place" ? 13 : undefined;
+        onLocationSelect(
+          [result.lon, result.lat],
+          13,
+          result.bbox ?? undefined,
+          maxZoom,
+        );
+      }
       setSearchQuery(result.name);
       setIsExpanded(false);
-      setResults([]);
+      setGeoResults([]);
       setIsLoading(false);
       setSelectedIndex(-1);
       inputRef.current?.blur();
     },
-    [onLocationSelect],
+    [onLocationSelect, onPinSelect],
   );
 
   const handleSearchIconClick = useCallback(() => {
@@ -166,7 +228,7 @@ export default function MapSearch({
           abortRef.current?.abort();
           setSearchQuery("");
           setIsExpanded(false);
-          setResults([]);
+          setGeoResults([]);
           setIsLoading(false);
           setSelectedIndex(-1);
           inputRef.current?.blur();
@@ -199,7 +261,11 @@ export default function MapSearch({
 
   const showSuggestions = isExpanded && debouncedQuery.length >= 2 && results.length > 0;
   const showNoResults =
-    isExpanded && debouncedQuery.length >= 2 && !isLoading && results.length === 0;
+    isExpanded &&
+    debouncedQuery.length >= 2 &&
+    !isLoading &&
+    results.length === 0 &&
+    geoResults.length === 0;
 
   return (
     <div
@@ -235,7 +301,7 @@ export default function MapSearch({
           ref={inputRef}
           type="text"
           className={styles.searchInput}
-          placeholder="Stadt oder Region suchen…"
+          placeholder="Stadt, Region oder Pin suchen…"
           value={searchQuery}
           onChange={(e) => {
             const val = e.target.value;
@@ -243,7 +309,7 @@ export default function MapSearch({
             setSelectedIndex(-1);
             if (val.trim().length < 2) {
               abortRef.current?.abort();
-              setResults([]);
+              setGeoResults([]);
               setIsLoading(false);
             }
           }}
@@ -266,7 +332,7 @@ export default function MapSearch({
             onClick={() => {
               abortRef.current?.abort();
               setSearchQuery("");
-              setResults([]);
+              setGeoResults([]);
               setIsLoading(false);
               setSelectedIndex(-1);
               inputRef.current?.focus();
@@ -312,37 +378,49 @@ export default function MapSearch({
               <span>Versuchen Sie einen anderen Suchbegriff</span>
             </div>
           ) : (
-            results.map((result, index) => (
-              <div
-                key={result.id}
-                className={`${styles.suggestionItem} ${
-                  index === selectedIndex ? styles.selected : ""
-                }`}
-                onClick={() => handleSelect(result)}
-              >
-                <div className={styles.suggestionIcon}>
-                  <svg
-                    width="16"
-                    height="16"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth="2"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                  >
-                    <path d="M20 10c0 4.993-5.539 10.193-7.399 11.799a1 1 0 0 1-1.202 0C9.539 20.193 4 14.993 4 10a8 8 0 0 1 16 0" />
-                    <circle cx="12" cy="10" r="3" />
-                  </svg>
+            results.map((result, index) => {
+              const isPin = result.placeId !== undefined;
+              return (
+                <div
+                  key={result.id}
+                  className={`${styles.suggestionItem} ${
+                    index === selectedIndex ? styles.selected : ""
+                  }`}
+                  onClick={() => handleSelect(result)}
+                >
+                  <div className={styles.suggestionIcon}>
+                    <svg
+                      width="16"
+                      height="16"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="2"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                    >
+                      <path d="M20 10c0 4.993-5.539 10.193-7.399 11.799a1 1 0 0 1-1.202 0C9.539 20.193 4 14.993 4 10a8 8 0 0 1 16 0" />
+                      <circle cx="12" cy="10" r="3" />
+                    </svg>
+                  </div>
+                  <div className={styles.suggestionContent}>
+                    <div className={styles.suggestionTitleRow}>
+                      <span
+                        className={`${styles.suggestionBadge} ${
+                          isPin ? styles.suggestionBadgePin : styles.suggestionBadgeGeo
+                        }`}
+                      >
+                        {isPin ? "Pin" : "Ort"}
+                      </span>
+                      <div className={styles.suggestionTitle}>{result.name}</div>
+                    </div>
+                    {result.place_formatted && (
+                      <div className={styles.suggestionMeta}>{result.place_formatted}</div>
+                    )}
+                  </div>
                 </div>
-                <div className={styles.suggestionContent}>
-                  <div className={styles.suggestionTitle}>{result.name}</div>
-                  {result.place_formatted && (
-                    <div className={styles.suggestionMeta}>{result.place_formatted}</div>
-                  )}
-                </div>
-              </div>
-            ))
+              );
+            })
           )}
         </div>
       )}
