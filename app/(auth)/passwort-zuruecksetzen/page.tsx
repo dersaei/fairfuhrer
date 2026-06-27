@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { getSupabaseBrowserClient } from "@/lib/supabase-browser";
 import { updatePassword } from "@/app/actions/auth";
 import type { FormErrors } from "@/types/auth";
+import PasswordInput from "@/components/PasswordInput";
 import styles from "./reset-password.module.css";
 
 export default function ResetPasswordPage() {
@@ -100,9 +101,8 @@ export default function ResetPasswordPage() {
           <label htmlFor="password" className={styles.label}>
             Neues Passwort <span className={styles.hint}>(min. 8 Zeichen)</span>
           </label>
-          <input
+          <PasswordInput
             id="password"
-            type="password"
             className={`${styles.input} ${errors.password ? styles.inputError : ""}`}
             value={password}
             onChange={(e) => setPassword(e.target.value)}
@@ -117,9 +117,8 @@ export default function ResetPasswordPage() {
           <label htmlFor="confirmPassword" className={styles.label}>
             Passwort bestätigen
           </label>
-          <input
+          <PasswordInput
             id="confirmPassword"
-            type="password"
             className={`${styles.input} ${errors.confirmPassword ? styles.inputError : ""}`}
             value={confirmPassword}
             onChange={(e) => setConfirmPassword(e.target.value)}

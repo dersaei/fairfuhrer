@@ -6,6 +6,7 @@ import { useRouter } from "next/navigation";
 import { registerPartner } from "@/app/actions/auth";
 import type { FormErrors } from "@/types/auth";
 import TurnstileWidget from "@/components/TurnstileWidget";
+import PasswordInput from "@/components/PasswordInput";
 import styles from "./partner.module.css";
 import { COUNTRIES, getCountry } from "@/lib/countries";
 
@@ -316,7 +317,7 @@ export default function RegisterPartnerPage() {
 
         <div className={styles.field}>
           <label htmlFor="password" className={styles.label}>Passwort *</label>
-          <input id="password" type="password"
+          <PasswordInput id="password"
             className={`${styles.input} ${errors.password ? styles.inputError : ""}`}
             value={fields.password} onChange={set("password")} autoComplete="new-password" />
           <span className={styles.hint}>
@@ -327,7 +328,7 @@ export default function RegisterPartnerPage() {
 
         <div className={styles.field}>
           <label htmlFor="confirmPassword" className={styles.label}>Passwort bestätigen *</label>
-          <input id="confirmPassword" type="password"
+          <PasswordInput id="confirmPassword"
             className={`${styles.input} ${errors.confirmPassword ? styles.inputError : ""}`}
             value={fields.confirmPassword} onChange={set("confirmPassword")} autoComplete="new-password" />
           {errors.confirmPassword && <span className={styles.fieldError}>{errors.confirmPassword}</span>}

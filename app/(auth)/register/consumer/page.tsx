@@ -6,6 +6,7 @@ import Link from "next/link";
 import { registerConsumer } from "@/app/actions/auth";
 import type { FormErrors } from "@/types/auth";
 import TurnstileWidget from "@/components/TurnstileWidget";
+import PasswordInput from "@/components/PasswordInput";
 // Social loginy (Apple/Google) sind in 1.0.3 vorübergehend deaktiviert —
 // Konsistenz mit Mobile (siehe project_social_loginy_zawieszone).
 // import SocialLoginButtons from "@/components/SocialLoginButtons";
@@ -169,9 +170,8 @@ export default function RegisterConsumerPage() {
           <label htmlFor="password" className={styles.label}>
             Passwort *
           </label>
-          <input
+          <PasswordInput
             id="password"
-            type="password"
             className={`${styles.input} ${errors.password ? styles.inputError : ""}`}
             value={fields.password}
             onChange={set("password")}
@@ -190,9 +190,8 @@ export default function RegisterConsumerPage() {
           <label htmlFor="confirmPassword" className={styles.label}>
             Passwort bestätigen *
           </label>
-          <input
+          <PasswordInput
             id="confirmPassword"
-            type="password"
             className={`${styles.input} ${errors.confirmPassword ? styles.inputError : ""}`}
             value={fields.confirmPassword}
             onChange={set("confirmPassword")}

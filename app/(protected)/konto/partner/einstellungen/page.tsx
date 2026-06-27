@@ -11,6 +11,7 @@ import {
 } from "@/app/actions/auth";
 import type { FormErrors } from "@/types/auth";
 import { COUNTRIES } from "@/lib/countries";
+import PasswordInput from "@/components/PasswordInput";
 import styles from "@/app/(protected)/konto/einstellungen/einstellungen.module.css";
 
 function validatePassword(password: string): string | null {
@@ -253,9 +254,8 @@ export default function PartnerEinstellungenPage() {
         <form onSubmit={handlePasswordChange} className={styles.form} noValidate>
           <div className={styles.field}>
             <label htmlFor="pw-new" className={styles.label}>Neues Passwort *</label>
-            <input
+            <PasswordInput
               id="pw-new"
-              type="password"
               className={`${styles.input} ${pwErrors.password ? styles.inputError : ""}`}
               value={password}
               onChange={(e) => setPassword(e.target.value)}
@@ -268,9 +268,8 @@ export default function PartnerEinstellungenPage() {
           </div>
           <div className={styles.field}>
             <label htmlFor="pw-confirm" className={styles.label}>Passwort bestätigen *</label>
-            <input
+            <PasswordInput
               id="pw-confirm"
-              type="password"
               className={`${styles.input} ${pwErrors.confirmPassword ? styles.inputError : ""}`}
               value={confirmPassword}
               onChange={(e) => setConfirmPassword(e.target.value)}

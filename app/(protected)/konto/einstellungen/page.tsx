@@ -7,6 +7,7 @@ import {
   updateConsumerProfile,
 } from "@/app/actions/auth";
 import type { FormErrors } from "@/types/auth";
+import PasswordInput from "@/components/PasswordInput";
 import styles from "./einstellungen.module.css";
 
 function validatePassword(password: string): string | null {
@@ -185,9 +186,8 @@ export default function EinstellungenPage() {
             <label htmlFor="pw-new" className={styles.label}>
               Neues Passwort *
             </label>
-            <input
+            <PasswordInput
               id="pw-new"
-              type="password"
               className={`${styles.input} ${pwErrors.password ? styles.inputError : ""}`}
               value={password}
               onChange={(e) => setPassword(e.target.value)}
@@ -205,9 +205,8 @@ export default function EinstellungenPage() {
             <label htmlFor="pw-confirm" className={styles.label}>
               Passwort bestätigen *
             </label>
-            <input
+            <PasswordInput
               id="pw-confirm"
-              type="password"
               className={`${styles.input} ${pwErrors.confirmPassword ? styles.inputError : ""}`}
               value={confirmPassword}
               onChange={(e) => setConfirmPassword(e.target.value)}

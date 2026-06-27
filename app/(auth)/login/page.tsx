@@ -6,6 +6,7 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { loginWithEmail, loginWithMagicLink } from "@/app/actions/auth";
 import type { FormErrors } from "@/types/auth";
 import TurnstileWidget from "@/components/TurnstileWidget";
+import PasswordInput from "@/components/PasswordInput";
 // Social loginy (Apple/Google) sind in 1.0.3 vorübergehend deaktiviert —
 // Konsistenz mit Mobile (siehe project_social_loginy_zawieszone). Komponente
 // und Supabase-Provider bleiben, damit eine Wiederaktivierung leicht ist.
@@ -137,9 +138,8 @@ function LoginForm() {
             <label htmlFor="password" className={styles.label}>
               Passwort
             </label>
-            <input
+            <PasswordInput
               id="password"
-              type="password"
               className={styles.input}
               value={password}
               onChange={(e) => setPassword(e.target.value)}
