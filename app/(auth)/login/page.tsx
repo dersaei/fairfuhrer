@@ -6,7 +6,10 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { loginWithEmail, loginWithMagicLink } from "@/app/actions/auth";
 import type { FormErrors } from "@/types/auth";
 import TurnstileWidget from "@/components/TurnstileWidget";
-import SocialLoginButtons from "@/components/SocialLoginButtons";
+// Social loginy (Apple/Google) sind in 1.0.3 vorübergehend deaktiviert —
+// Konsistenz mit Mobile (siehe project_social_loginy_zawieszone). Komponente
+// und Supabase-Provider bleiben, damit eine Wiederaktivierung leicht ist.
+// import SocialLoginButtons from "@/components/SocialLoginButtons";
 import styles from "./login.module.css";
 
 function LoginForm() {
@@ -210,15 +213,6 @@ function LoginForm() {
           )}
         </>
       )}
-
-      <div className={styles.divider}>
-        <span>oder</span>
-      </div>
-      <SocialLoginButtons redirectTo={redirectTo} />
-      <p className={styles.googleHint}>
-        Sie haben sich mit Google registriert? Melden Sie sich mit dem
-        Google-Button an statt mit E-Mail und Passwort.
-      </p>
 
       <p className={styles.registerLink}>
         Noch kein Konto?{" "}

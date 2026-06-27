@@ -6,7 +6,9 @@ import Link from "next/link";
 import { registerConsumer } from "@/app/actions/auth";
 import type { FormErrors } from "@/types/auth";
 import TurnstileWidget from "@/components/TurnstileWidget";
-import SocialLoginButtons from "@/components/SocialLoginButtons";
+// Social loginy (Apple/Google) sind in 1.0.3 vorübergehend deaktiviert —
+// Konsistenz mit Mobile (siehe project_social_loginy_zawieszone).
+// import SocialLoginButtons from "@/components/SocialLoginButtons";
 import styles from "./consumer.module.css";
 
 function validatePassword(password: string): string | null {
@@ -124,12 +126,6 @@ export default function RegisterConsumerPage() {
       {errors.general && (
         <p className={styles.errorMessage}>{errors.general}</p>
       )}
-
-      <SocialLoginButtons redirectTo="/konto" />
-
-      <div className={styles.divider}>
-        <span>oder mit E-Mail</span>
-      </div>
 
       <form onSubmit={handleSubmit} className={styles.form} noValidate>
         <div className={styles.field}>
