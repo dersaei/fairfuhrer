@@ -4,6 +4,7 @@
 // Voraussetzungen + Pin-Vergleich + Preise wurden auf die Unterseite
 // /partner-werden/voraussetzungen verschoben.
 
+import React from "react";
 import { Metadata } from "next";
 import Link from "next/link";
 import { marked } from "marked";
@@ -78,14 +79,68 @@ export default async function MitmachenPage() {
     ? await marked(pageData.mitmachen_redaktion_section_text)
     : "";
 
-  const heroBg = pageData.mitmachen_hero_background_color || "#FC6C14";
-  const heroTextColor = pageData.mitmachen_hero_text_color || "#FFFFFF";
   const heroImageSrc = pageData.mitmachen_hero_image
     ? `${directusUrl}/assets/${pageData.mitmachen_hero_image}`
     : null;
 
+  // Znormalizuj kolor: dopisz # jesli brakuje (Directus czasem trzyma bez #)
+  const c = (val?: string) =>
+    val ? (val.startsWith("#") ? val : `#${val}`) : undefined;
+
+  // CSS variables — analogicznie do homepage (app/page.tsx)
+  const cssVars = {
+    ...(pageData.mitmachen_hero_background_color && {
+      "--mm-hero-bg": c(pageData.mitmachen_hero_background_color),
+    }),
+    ...(pageData.mitmachen_hero_headline_font_size && {
+      "--mm-fs-headline": pageData.mitmachen_hero_headline_font_size,
+    }),
+    ...(pageData.mitmachen_hero_headline_color && {
+      "--mm-color-headline": c(pageData.mitmachen_hero_headline_color),
+    }),
+    ...(pageData.mitmachen_hero_headline_mobile_font_size && {
+      "--mm-fs-headline-mobile": pageData.mitmachen_hero_headline_mobile_font_size,
+    }),
+    ...(pageData.mitmachen_hero_headline_mobile_color && {
+      "--mm-color-headline-mobile": c(pageData.mitmachen_hero_headline_mobile_color),
+    }),
+    ...(pageData.mitmachen_hero_intro_font_size && {
+      "--mm-fs-intro": pageData.mitmachen_hero_intro_font_size,
+    }),
+    ...(pageData.mitmachen_hero_intro_color && {
+      "--mm-color-intro": c(pageData.mitmachen_hero_intro_color),
+    }),
+    ...(pageData.mitmachen_hero_eyebrow_font_size && {
+      "--mm-fs-eyebrow": pageData.mitmachen_hero_eyebrow_font_size,
+    }),
+    ...(pageData.mitmachen_hero_eyebrow_color && {
+      "--mm-color-eyebrow": c(pageData.mitmachen_hero_eyebrow_color),
+    }),
+    ...(pageData.mitmachen_hero_text_color && {
+      "--mm-color-hero-text": c(pageData.mitmachen_hero_text_color),
+    }),
+    ...(pageData.mitmachen_hero_button_font_size && {
+      "--mm-fs-btn": pageData.mitmachen_hero_button_font_size,
+    }),
+    ...(pageData.mitmachen_hero_button_color && {
+      "--mm-color-btn": c(pageData.mitmachen_hero_button_color),
+    }),
+    ...(pageData.mitmachen_hero_button_background_color && {
+      "--mm-bg-btn": c(pageData.mitmachen_hero_button_background_color),
+    }),
+    ...(pageData.mitmachen_hero_button_mobile_font_size && {
+      "--mm-fs-btn-mobile": pageData.mitmachen_hero_button_mobile_font_size,
+    }),
+    ...(pageData.mitmachen_hero_button_mobile_color && {
+      "--mm-color-btn-mobile": c(pageData.mitmachen_hero_button_mobile_color),
+    }),
+    ...(pageData.mitmachen_hero_button_background_color_mobile && {
+      "--mm-bg-btn-mobile": c(pageData.mitmachen_hero_button_background_color_mobile),
+    }),
+  } as React.CSSProperties;
+
   return (
-    <main className={styles.main}>
+    <main className={styles.main} style={cssVars}>
       {/* HERO — Layout wie Homepage: Bild links, Orange-Box rechts mit 3 Buttons */}
       <section className={styles.heroContainer}>
         <div className={styles.heroImageSide}>
@@ -103,24 +158,20 @@ export default async function MitmachenPage() {
           )}
         </div>
 
-        <div
-          className={styles.heroTextSide}
-          style={{ backgroundColor: heroBg, color: heroTextColor }}
-        >
+        <div className={styles.heroTextSide}>
           {pageData.mitmachen_hero_eyebrow && (
-            <p className={styles.heroEyebrow} style={{ color: heroTextColor }}>
+            <p className={styles.heroEyebrow}>
               {pageData.mitmachen_hero_eyebrow}
             </p>
           )}
           {pageData.mitmachen_hero_headline && (
-            <h1 className={styles.heroHeadline} style={{ color: heroTextColor }}>
+            <h1 className={styles.heroHeadline}>
               {pageData.mitmachen_hero_headline}
             </h1>
           )}
           {heroIntroHtml && (
             <div
               className={styles.heroIntro}
-              style={{ color: heroTextColor }}
               dangerouslySetInnerHTML={{ __html: heroIntroHtml }}
             />
           )}

@@ -13,26 +13,6 @@
   text-align: center;
 }
 
-/* Back link */
-.backLinkWrapper {
-  padding: 1.5rem 2rem 0;
-  max-width: 1200px;
-  margin: 0 auto;
-}
-
-.backLink {
-  display: inline-block;
-  font-family: var(--font-fira);
-  font-size: 1rem;
-  color: #FC6C14;
-  text-decoration: none;
-  font-weight: 500;
-}
-
-.backLink:hover {
-  text-decoration: underline;
-}
-
 /* ===== SEKCJA 1 — Voraussetzungen ===== */
 
 .voraussetzungen {

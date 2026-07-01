@@ -9,6 +9,21 @@ export interface PartnerPageContent {
   mitmachen_hero_eyebrow?: string;
   mitmachen_hero_headline?: string;
   mitmachen_hero_intro?: string;
+  // Typografia + kolory (analogicznie do home_page_content hero)
+  mitmachen_hero_headline_font_size?: string;
+  mitmachen_hero_headline_color?: string;
+  mitmachen_hero_headline_mobile_font_size?: string;
+  mitmachen_hero_headline_mobile_color?: string;
+  mitmachen_hero_intro_font_size?: string;
+  mitmachen_hero_intro_color?: string;
+  mitmachen_hero_eyebrow_font_size?: string;
+  mitmachen_hero_eyebrow_color?: string;
+  mitmachen_hero_button_font_size?: string;
+  mitmachen_hero_button_color?: string;
+  mitmachen_hero_button_background_color?: string;
+  mitmachen_hero_button_mobile_font_size?: string;
+  mitmachen_hero_button_mobile_color?: string;
+  mitmachen_hero_button_background_color_mobile?: string;
   // 3 buttony na hero
   mitmachen_button_1_label?: string;
   mitmachen_button_1_url?: string;
@@ -135,6 +150,9 @@ export interface HomePageContent {
   video_mux_playback_id?: string;
   video_title?: string;
   video_background_color?: string;
+  video_text?: string;
+  video_button_label?: string;
+  video_button_url?: string;
 }
 
 export interface ImpressumContent {

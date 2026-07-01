@@ -32,6 +32,9 @@ export default async function HomePage() {
   const partnerHtml = content?.partner_content
     ? await marked(content.partner_content)
     : "";
+  const videoTextHtml = content?.video_text
+    ? await marked(content.video_text)
+    : "";
 
   const c = (val?: string) =>
     val ? (val.startsWith("#") ? val : `#${val}`) : undefined;
@@ -304,7 +307,7 @@ export default async function HomePage() {
         </section>
       )}
 
-      {/* SEKCJA 4: Fairführer-Video (ersetzt die alte "Unterstütze unsere Mission" Sektion) */}
+      {/* SEKCJA 4: Fairführer-Video + Text (ersetzt die alte "Unterstütze unsere Mission" Sektion) */}
       {content?.video_mux_playback_id && (
         <section
           className={styles.videoSection}
@@ -312,19 +315,37 @@ export default async function HomePage() {
             backgroundColor: content.video_background_color || "#ffffff",
           }}
         >
-          <div className={styles.videoContent}>
-            {content.video_title && (
-              <h2 className={styles.videoTitle}>{content.video_title}</h2>
-            )}
-            <div className={styles.videoWrapper}>
-              <ConditionalMuxVideo>
-                <MuxVideoEmbed
-                  playbackId={content.video_mux_playback_id}
-                  autoPlay={false}
-                  muted={false}
-                  className={styles.videoEmbed}
+          <div className={styles.videoBlock}>
+            <div className={styles.videoSide}>
+              <div className={styles.videoWrapper}>
+                <ConditionalMuxVideo>
+                  <MuxVideoEmbed
+                    playbackId={content.video_mux_playback_id}
+                    autoPlay={false}
+                    muted={false}
+                    className={styles.videoEmbed}
+                  />
+                </ConditionalMuxVideo>
+              </div>
+            </div>
+            <div className={styles.videoTextSide}>
+              {content.video_title && (
+                <h2 className={styles.videoTitle}>{content.video_title}</h2>
+              )}
+              {videoTextHtml && (
+                <div
+                  className={styles.videoText}
+                  dangerouslySetInnerHTML={{ __html: videoTextHtml }}
                 />
-              </ConditionalMuxVideo>
+              )}
+              {content.video_button_label && content.video_button_url && (
+                <Link
+                  href={content.video_button_url}
+                  className={styles.videoButton}
+                >
+                  {content.video_button_label}
+                </Link>
+              )}
             </div>
           </div>
         </section>

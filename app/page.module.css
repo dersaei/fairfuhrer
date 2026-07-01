@@ -276,15 +276,27 @@
   color: #18222f;
 }
 
-/* ===== SEKCJA 4: Fairführer-Video (ersetzt die alte "Unterstütze unsere Mission" Sektion) ===== */
+/* ===== SEKCJA 4: Fairführer-Video + Text (Video lewo, Tekst prawo) ===== */
 .videoSection {
   padding: 4rem 2rem;
-  text-align: center;
 }
 
-.videoContent {
-  max-width: 960px;
+.videoBlock {
+  max-width: 1200px;
   margin: 0 auto;
+  display: flex;
+  align-items: center;
+  gap: 3rem;
+}
+
+.videoSide {
+  flex: 1 1 55%;
+  min-width: 0;
+}
+
+.videoTextSide {
+  flex: 1 1 45%;
+  min-width: 0;
 }
 
 .videoTitle {
@@ -292,8 +304,58 @@
   font-size: clamp(1.8rem, 3vw, 2.8rem);
   font-weight: 400;
   color: #18222F;
-  margin: 0 0 2rem 0;
+  margin: 0 0 1.5rem 0;
   line-height: 1.2;
+}
+
+.videoText {
+  font-family: var(--font-fira);
+  font-size: 1.05rem;
+  line-height: 1.7;
+  color: #181716;
+  margin: 0 0 2rem 0;
+}
+
+.videoText p {
+  margin: 0 0 1rem 0;
+}
+
+.videoText p:last-child {
+  margin-bottom: 0;
+}
+
+.videoText strong {
+  font-weight: 700;
+}
+
+.videoText em {
+  font-style: italic;
+}
+
+.videoText a {
+  color: #fc6c14;
+  text-decoration: underline;
+}
+
+.videoButton {
+  display: inline-block;
+  font-family: var(--font-fira);
+  font-size: 1rem;
+  font-weight: 600;
+  text-decoration: none;
+  color: #fff;
+  background-color: #18222f;
+  border: 2px solid #18222f;
+  padding: 0.75rem 2rem;
+  border-radius: 9999px;
+  transition:
+    background-color 0.25s ease,
+    color 0.25s ease;
+}
+
+.videoButton:hover {
+  background-color: #fc6c14;
+  color: #18222f;
 }
 
 .videoWrapper {
@@ -313,6 +375,21 @@
 @media screen and (max-width: 768px) {
   .videoSection {
     padding: 2.5rem 1rem;
+  }
+
+  .videoBlock {
+    flex-direction: column;
+    gap: 2rem;
+  }
+
+  .videoSide,
+  .videoTextSide {
+    flex: none;
+    width: 100%;
+  }
+
+  .videoTextSide {
+    text-align: center;
   }
 }
 

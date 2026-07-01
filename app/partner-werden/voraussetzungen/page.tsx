@@ -62,13 +62,6 @@ export default async function VoraussetzungenPage() {
 
   return (
     <main className={styles.main}>
-      {/* Back link to Mitmachen */}
-      <div className={styles.backLinkWrapper}>
-        <Link href="/partner-werden" className={styles.backLink}>
-          ← Zurück zu Mitmachen
-        </Link>
-      </div>
-
       {/* SEKCJA 1 — Voraussetzungen (dwukolumnowy: 40% tytuł | 60% tekst) */}
       {(pageData.voraussetzungen_title || pageData.voraussetzungen_text) && (
         <section className={styles.voraussetzungen}>

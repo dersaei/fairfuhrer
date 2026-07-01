@@ -58,11 +58,14 @@
   align-items: center;
   padding: 4rem;
   text-align: center;
+  background-color: var(--mm-hero-bg, #FC6C14);
+  color: var(--mm-color-hero-text, #FFFFFF);
 }
 
 .heroEyebrow {
   font-family: var(--font-fira);
-  font-size: 1rem;
+  font-size: var(--mm-fs-eyebrow, 1rem);
+  color: var(--mm-color-eyebrow, var(--mm-color-hero-text, #FFFFFF));
   font-weight: 700;
   letter-spacing: 0.15em;
   text-transform: uppercase;
@@ -72,7 +75,8 @@
 
 .heroHeadline {
   font-family: var(--font-anton);
-  font-size: clamp(2.2rem, 4vw, 4rem);
+  font-size: var(--mm-fs-headline, clamp(2.2rem, 4vw, 4rem));
+  color: var(--mm-color-headline, var(--mm-color-hero-text, #FFFFFF));
   font-weight: 400;
   line-height: 1.15;
   margin: 0 0 1.5rem 0;
@@ -80,7 +84,8 @@
 
 .heroIntro {
   font-family: var(--font-fira);
-  font-size: 1.1rem;
+  font-size: var(--mm-fs-intro, 1.1rem);
+  color: var(--mm-color-intro, #181716);
   line-height: 1.6;
   margin: 0 0 2.5rem 0;
   max-width: 540px;
@@ -109,13 +114,13 @@
 .heroButton {
   display: inline-block;
   text-decoration: none;
-  background-color: #FFFFFF;
-  color: #18222F;
+  background-color: var(--mm-bg-btn, #FFFFFF);
+  color: var(--mm-color-btn, #18222F);
   border: 2px solid #18222F;
   border-radius: 9999px;
   padding: 1rem 2rem;
   font-family: var(--font-fira);
-  font-size: 1.1rem;
+  font-size: var(--mm-fs-btn, 1.1rem);
   font-weight: 600;
   text-align: center;
   transition: all 0.25s ease;
@@ -235,15 +240,14 @@
   }
 
   .heroHeadline {
-    font-size: 2.2rem;
-  }
-
-  .heroIntro {
-    font-size: 1rem;
+    font-size: var(--mm-fs-headline-mobile, 2.2rem);
+    color: var(--mm-color-headline-mobile, var(--mm-color-headline, var(--mm-color-hero-text, #FFFFFF)));
   }
 
   .heroButton {
-    font-size: 1rem;
+    font-size: var(--mm-fs-btn-mobile, 1rem);
+    color: var(--mm-color-btn-mobile, var(--mm-color-btn, #18222F));
+    background-color: var(--mm-bg-btn-mobile, var(--mm-bg-btn, #FFFFFF));
     padding: 0.85rem 1.5rem;
   }
 
