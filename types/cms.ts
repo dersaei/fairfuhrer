@@ -2,47 +2,59 @@ import type { Place } from "./map";
 
 export interface PartnerPageContent {
   id: number;
-  section1_title?: string;
-  section1_text?: string;
-  section1_background_color?: string;
-  section1_text_color?: string;
-  section1_title_color?: string;
-  section2_left_title?: string;
-  section2_left_text?: string;
-  section2_mux_playback_id?: string;
-  section2_background_color?: string;
-  section2_text_color?: string;
-  section2_title_color?: string;
-  section3_background_color?: string;
-  section4_background_color?: string;
-  section5_title?: string;
-  section5_text?: string;
-  section5_background_color?: string;
-  section5_text_color?: string;
-  section5_title_color?: string;
-  abschnitt_3_titel?: string;
-  abschnitt_3_text?: string;
-  abschnitt_3_titel_farbe?: string;
-  abschnitt_3_text_farbe?: string;
-  abschnitt_3_hintergrundfarbe_links?: string;
-  abschnitt_3_hintergrundfarbe_rechts?: string;
-  abschnitt_4_text_links?: string;
-  abschnitt_4_text_rechts?: string;
-  abschnitt_4_hintergrundfarbe?: string;
-  abschnitt_5_titel?: string;
-  abschnitt_5_text?: string;
-  abschnitt_5_titel_farbe?: string;
-  abschnitt_5_text_farbe?: string;
-  abschnitt_5_hintergrundfarbe?: string;
-  abschnitt_5_1?: string;
-  abschnitt_5_2?: string;
-  abschnitt_5_3?: string;
-  abschnitt_5_4?: string;
-  bild_1?: string;
-  bild_2?: string;
-  button_parner_werden?: string;
-  color_button_partner_werden?: string;
-  url_button_partner_werden?: string;
+  // Mitmachen-Hero (główna strona /partner-werden — layout jak homepage)
+  mitmachen_hero_image?: string;
+  mitmachen_hero_background_color?: string;
+  mitmachen_hero_text_color?: string;
+  mitmachen_hero_eyebrow?: string;
+  mitmachen_hero_headline?: string;
+  mitmachen_hero_intro?: string;
+  // 3 buttony na hero
+  mitmachen_button_1_label?: string;
+  mitmachen_button_1_url?: string;
+  mitmachen_button_2_label?: string;
+  mitmachen_button_2_url?: string;
+  mitmachen_button_3_label?: string;
+  mitmachen_button_3_url?: string;
+  // 3 opcjonalne sekundarne linki
+  mitmachen_reisende_link_label?: string;
+  mitmachen_reisende_link_url?: string;
+  mitmachen_partner_link_label?: string;
+  mitmachen_partner_link_url?: string;
+  mitmachen_redaktion_link_label?: string;
+  mitmachen_redaktion_link_url?: string;
+  // 3 szczegółowe sekcje Tashiny pod hero
+  mitmachen_reisende_section_title?: string;
+  mitmachen_reisende_section_text?: string;
+  mitmachen_partner_section_title?: string;
+  mitmachen_partner_section_text?: string;
+  mitmachen_redaktion_section_title?: string;
+  mitmachen_redaktion_section_text?: string;
+  // Subpage Voraussetzungen (/partner-werden/voraussetzungen)
+  voraussetzungen_title?: string;
+  voraussetzungen_text?: string;
+  voraussetzungen_title_color?: string;
+  voraussetzungen_text_color?: string;
+  voraussetzungen_left_background?: string;
+  voraussetzungen_right_background?: string;
+  // Pin-Vergleich (Standard vs Partner Pin)
+  pin_vergleich_standard_text?: string;
+  pin_vergleich_partner_text?: string;
+  pin_vergleich_background?: string;
+  // Kosten (4 tiery)
+  kosten_title?: string;
+  kosten_intro?: string;
+  kosten_tier_1?: string;
+  kosten_tier_2?: string;
+  kosten_tier_3?: string;
+  kosten_tier_4?: string;
+  kosten_title_color?: string;
+  kosten_text_color?: string;
+  kosten_background?: string;
+  // CTA na końcu subpage
+  cta_button_label?: string;
+  cta_button_url?: string;
+  cta_button_color?: string;
 }
 
 export interface FeaturedPin {
@@ -119,6 +131,10 @@ export interface HomePageContent {
   partner_cta_label?: string;
   partner_cta_url?: string;
   partner_image?: string;
+  // Fairführer-Video (zastępuje starą sekcję 4 "Unterstütze unsere Mission")
+  video_mux_playback_id?: string;
+  video_title?: string;
+  video_background_color?: string;
 }
 
 export interface ImpressumContent {
@@ -184,6 +200,9 @@ export interface ContactInfoContent {
   features_h2_font_size?: string;
   features_p_color?: string;
   features_p_font_size?: string;
+  // Seenergien-Sektion (przeniesione z dawnej Mitmachen-Seite)
+  seenergien_title?: string;
+  seenergien_text?: string;
 }
 
 export interface PremiumPageContent {

@@ -2,12 +2,13 @@ import React from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { marked } from "marked";
-import { Heart, Sparkles } from "lucide-react";
 import { getCategoryIconPaths, DEFAULT_ICON_PATHS } from "@/lib/categoryIcons";
 import heroImage from "@/public/fair-fuehrer-guide-hero.jpg";
 import appStoreBadge from "@/public/app-store-badge.png";
 import googlePlayBadge from "@/public/google-play-badge.png";
 import seenergienLogo from "@/public/seenergienlogo.png";
+import MuxVideoEmbed from "@/components/MuxVideoEmbed";
+import { ConditionalMuxVideo } from "@/components/ConditionalMuxVideo";
 import styles from "./page.module.css";
 import { getHomePageContent } from "@/lib/directus";
 
@@ -303,31 +304,31 @@ export default async function HomePage() {
         </section>
       )}
 
-      {/* SEKCJA 4: Wsparcie */}
-      <section className={styles.section4}>
-        <div className={styles.section4Content}>
-          <div className={styles.section4IconContainer}>
-            <Heart size={32} className={styles.section4HeartIcon} />
-            <Sparkles size={20} className={styles.section4SparkleIcon} />
+      {/* SEKCJA 4: Fairführer-Video (ersetzt die alte "Unterstütze unsere Mission" Sektion) */}
+      {content?.video_mux_playback_id && (
+        <section
+          className={styles.videoSection}
+          style={{
+            backgroundColor: content.video_background_color || "#ffffff",
+          }}
+        >
+          <div className={styles.videoContent}>
+            {content.video_title && (
+              <h2 className={styles.videoTitle}>{content.video_title}</h2>
+            )}
+            <div className={styles.videoWrapper}>
+              <ConditionalMuxVideo>
+                <MuxVideoEmbed
+                  playbackId={content.video_mux_playback_id}
+                  autoPlay={false}
+                  muted={false}
+                  className={styles.videoEmbed}
+                />
+              </ConditionalMuxVideo>
+            </div>
           </div>
-          <h2 className={styles.section4Title}>{content?.section4_title}</h2>
-          {content?.section4_text
-            ?.split("\n\n")
-            .map((paragraph: string, i: number) => (
-              <p key={i} className={styles.section4Text}>
-                {paragraph}
-              </p>
-            ))}
-          {content?.section4_button_text && content?.section4_button_link && (
-            <Link
-              href={content.section4_button_link}
-              className={styles.section4Button}
-            >
-              {content.section4_button_text}
-            </Link>
-          )}
-        </div>
-      </section>
+        </section>
+      )}
     </main>
   );
 }

@@ -1,470 +1,268 @@
-/* app/partner-werden/partner-werden.module.css - zmodyfikowana wersja */
+/* app/partner-werden/partner-werden.module.css
+   Layout Mitmachen-Strony: Hero (jak homepage) + 3 detaillierte Sektionen.
+*/
 
-.ctaRow {
-  display: flex;
-  justify-content: center;
-  padding: 4rem 2rem 0;
-}
-
-.ctaButton {
-  display: inline-block;
-  font-family: var(--font-fira);
-  font-size: 1.3rem;
-  font-weight: 600;
-  text-decoration: none;
-  color: #18222f;
-  background-color: #fc6c14;
-  padding: 1rem 2.5rem;
-  border-radius: 9999px;
-  transition: opacity 0.2s ease;
-}
-
-.ctaButton:hover {
-  opacity: 0.85;
+.container,
+.main {
+  display: block;
+  width: 100%;
+  margin: 0;
+  padding: 0;
 }
 
 .errorMessage {
+  padding: 4rem 2rem;
   text-align: center;
-  background: white;
-  border-radius: 12px;
-  padding: 3rem 2rem;
-  margin: 2rem;
-  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
 }
 
-/* SEKCJA 1 - ZMODYFIKOWANA: Na całą szerokość, wyśrodkowana */
-.section1 {
-  display: block;
+/* ===== HERO (Layout wie Homepage) ===== */
+
+.heroContainer {
   position: relative;
-  padding: 6vh 8vw;
+  width: 100%;
+  min-height: calc(100dvh - 90px);
+  display: flex;
 }
 
-.section1Title {
-  font-size: clamp(3rem, 5vw, 5rem);
-  margin-bottom: 1rem;
-  line-height: 1.2;
-  letter-spacing: 3px;
-  font-family: var(--font-anton);
-  font-optical-sizing: auto;
-  font-weight: 400;
-  font-style: normal;
-  text-align: center;
+.heroImageSide {
+  position: relative;
+  width: 50%;
+  min-height: 100%;
+  overflow: hidden;
+  background-color: #f0f0f0;
 }
 
-.section1Text p {
-  font-size: 1.125rem;
-  line-height: 1.7;
-  max-width: 800px;
-  margin: 0 auto;
-  font-family: var(--font-fira);
-  font-weight: 400;
-  font-style: normal;
-  text-align: justify;
-}
-
-.section1Text h3 {
-  font-weight: 700;
-  font-size: 1.5rem;
-  text-align: center;
-  margin-bottom: 1rem;
-  font-family: var(--font-fira);
-}
-
-.section1Text a {
-  color: lime;
-  font-size: 1.2rem;
-}
-
-.section1Image,
-.section5Image {
+.heroImage {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
   display: block;
-  width: 300px;
-  height: 90px;
-  object-fit: contain;
-  margin: 0 auto;
 }
 
-/* SEKCJA 2 - USUNIĘTA CAŁKOWICIE */
-/* Wszystkie style dla .section2* zostały usunięte */
-
-/* SEKCJA 3 - Tekst + YouTube (bez zmian w stylu) */
-.section3 {
-  display: grid;
-  grid-template-columns: 1fr 1.3fr;
-  gap: 4rem;
-  padding: 3rem;
+.heroImagePlaceholder {
+  display: flex;
   align-items: center;
-}
-
-.section3Title {
-  font-size: 2.5rem;
-  font-weight: 400;
-  margin-bottom: 2rem;
-  line-height: 1.2;
-  font-family: var(--font-anton);
-  font-optical-sizing: auto;
-  font-style: normal;
-}
-
-.section3Text {
-  font-size: 1.125rem;
-  line-height: 1.7;
-  font-family: var(--font-fira);
-  font-weight: 400;
-  font-style: normal;
-  text-align: justify;
-}
-
-/* Style dla WYSIWYG w sekcji 3 */
-.section3Text p {
-  margin-bottom: 1rem;
-}
-
-/* SEKCJA 4 - FORMULARZ PARTNERSKI (bez zmian) */
-.section4 {
-  padding: 4vh 6vw;
-}
-
-.section4Subtitle {
-  font-style: normal;
-  margin: 2vh auto;
-  padding: 4vh 4vw;
+  justify-content: center;
+  height: 100%;
+  color: #999;
   text-align: center;
-}
-
-/* Style dla WYSIWYG content w section4Subtitle */
-.section4Subtitle p {
-  font-size: 1.25rem;
-  margin-bottom: 1rem;
-  text-align: left;
-  font-weight: 400;
-  line-height: 1.7;
-  color: #f8fafc;
+  padding: 2rem;
   font-family: var(--font-fira);
 }
-.section4Subtitle h2 {
-  font-size: 5vw;
-  margin: 4vh 0;
-  font-family: var(--font-anton);
-  font-weight: 400;
-  letter-spacing: 5px;
-}
-.section4Subtitle h3 {
-  font-size: 2rem;
-  margin: 2vh 0;
-  padding: 1vh 1vw;
-  font-family: var(--font-fira);
-  font-weight: 700;
-  background-color: #cbd5e1;
-}
-.section4Subtitle ul,
-.section4Subtitle ol {
-  margin: 1rem auto;
-  width: 90%;
-  text-align: left;
-  color: #f8fafc;
-  font-family: var(--font-fira);
-  font-weight: 400;
-  line-height: 1.7;
-  font-size: 1.25rem;
-}
 
-.section4Subtitle li {
-  margin-bottom: 0.5rem;
-}
-
-.section4Subtitle strong {
-  font-weight: 700;
-}
-
-.section4Subtitle table {
-  font-style: italic;
-  font-size: 1.2rem;
-  font-family: var(--font-fira);
-  font-weight: 600;
-}
-.section4Subtitle em {
-  font-size: 1.25rem;
-  font-family: var(--font-fira);
-  font-weight: 400;
-  line-height: 1.7;
-}
-
-.partnerFormContainer {
-  margin: 0 auto;
-  text-align: left;
-}
-
-/* SEKCJA 5 - Końcowa (bez zmian) */
-.section5 {
-  padding: 6vh 8vw;
-  text-align: center;
-}
-
-.section5Title {
-  font-size: clamp(2.5rem, 5vw, 5rem);
-  margin: 0 auto 1rem;
-  line-height: 1.2;
-  letter-spacing: 3px;
-  font-family: var(--font-anton);
-  font-optical-sizing: auto;
-  font-weight: 400;
-  font-style: normal;
-  text-align: center;
-  width: 90%;
-}
-.section5Text {
-  font-size: 1.125rem;
-  line-height: 1.7;
-  max-width: 800px;
-  margin: 0 auto;
-  font-family: var(--font-fira);
-  font-weight: 400;
-  font-style: normal;
-  text-align: justify;
-}
-
-.noVideo {
-  padding: 3rem 2rem;
-  background: #f8fafc;
-  border: 2px dashed #cbd5e1;
-  border-radius: 12px;
-  text-align: center;
-  color: #64748b;
-  aspect-ratio: 16/9;
+.heroTextSide {
+  width: 50%;
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
-}
-
-.noVideo p {
-  margin: 0.5rem 0;
-  font-size: 1.1rem;
-}
-
-.noVideo p:first-child {
-  font-size: 1.5rem;
-  font-weight: 600;
-}
-
-/* ============================================================
-   ABSCHNITT 3 — dwukolumnowy: 40% tytuł (lewa) | 60% tekst (prawa)
-   ============================================================ */
-.abschnitt3 {
-  display: grid;
-  grid-template-columns: 2fr 3fr;
-  min-height: 280px;
-}
-
-.abschnitt3Links {
-  padding: 4rem 3rem;
-  display: flex;
-  align-items: center;
-}
-
-.abschnitt3Rechts {
-  padding: 4rem 3rem;
-  display: flex;
-  align-items: center;
-}
-
-.abschnitt3Titel {
-  font-family: var(--font-anton);
-  font-size: clamp(1.9rem, 3.5vw, 3.5rem);
-  font-weight: 400;
-  font-style: normal;
-  line-height: 1.2;
-  letter-spacing: 1px;
-  margin: 0;
-  text-align: left;
-}
-
-.abschnitt3Text {
-  font-family: var(--font-fira);
-  font-size: 1.2rem;
-  font-weight: 400;
-  line-height: 1.7;
-  text-align: justify;
-}
-
-.abschnitt3Text p {
-  margin-bottom: 1rem;
-}
-
-.abschnitt3Text p:last-child {
-  margin-bottom: 0;
-}
-
-/* ============================================================
-   ABSCHNITT 4 — dwie karty obok siebie z gapem
-   lewa: białe tło + czarne obramowanie
-   prawa: żółte tło + czarne obramowanie
-   ============================================================ */
-.abschnitt4 {
-  display: flex;
-  gap: 2rem;
-  padding: 4rem 4vw;
-  align-items: stretch;
-}
-
-.abschnitt4KarteLinks {
-  flex: 1;
-  background-color: #ffffff;
-  border: 10px solid #000000;
-  padding: 2rem 2.5rem;
-}
-
-.abschnitt4KarteRechts {
-  flex: 1;
-  background-color: #fde047;
-  border: 10px solid #000000;
-  padding: 2rem 2.5rem;
-}
-
-.abschnitt4Text {
-  font-family: var(--font-fira);
-  font-size: 1.125rem;
-  font-weight: 400;
-  line-height: 1.7;
-}
-
-.abschnitt4Text p {
-  margin-bottom: 1rem;
-}
-
-.abschnitt4Text p:last-child {
-  margin-bottom: 0;
-}
-
-.abschnitt4Text h2,
-.abschnitt4Text h3 {
-  font-family: var(--font-anton);
-  font-weight: 400;
-  margin-bottom: 1rem;
-}
-
-.abschnitt4Text h2 {
-  font-size: 2rem;
-}
-
-.abschnitt4Text h3 {
-  font-size: 1.5rem;
-}
-
-/* ============================================================
-   ABSCHNITT 5 — pełna szerokość: tytuł + tekst pionowo,
-   potem 4 karty poziomo (białe tło + obramowanie w kolorze logo)
-   ============================================================ */
-.abschnitt5 {
-  padding: 5rem 4vw;
+  padding: 4rem;
   text-align: center;
 }
 
-.abschnitt5Titel {
-  font-family: var(--font-anton);
-  font-size: 5rem;
-  font-weight: 400;
-  font-style: normal;
-  line-height: 1.2;
-  letter-spacing: 2px;
-  margin-bottom: 1.5rem;
-}
-
-.abschnitt5Text {
-  font-family: var(--font-fira);
-  font-size: 1.3rem;
-  font-weight: 400;
-  line-height: 1.7;
-  max-width: 800px;
-  margin: 0 auto 3rem;
-}
-
-.abschnitt5Text p {
-  margin-bottom: 1rem;
-}
-
-.abschnitt5Karten {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 1.5rem;
-  align-items: stretch;
-}
-
-.abschnitt5Karte {
-  border: 1px dashed #ffffff;
-  padding: 1.75rem 1.5rem;
+.heroEyebrow {
   font-family: var(--font-fira);
   font-size: 1rem;
-  font-weight: 400;
-  line-height: 1.6;
-  align-content: flex-end;
+  font-weight: 700;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  margin: 0 0 1rem 0;
+  opacity: 0.85;
 }
 
-.abschnitt5Karte p {
-  margin-bottom: 0.75rem;
-  color: #fff;
-  font-size: 2rem;
+.heroHeadline {
   font-family: var(--font-anton);
+  font-size: clamp(2.2rem, 4vw, 4rem);
   font-weight: 400;
+  line-height: 1.15;
+  margin: 0 0 1.5rem 0;
 }
 
-.abschnitt5Karte p:last-child {
+.heroIntro {
+  font-family: var(--font-fira);
+  font-size: 1.1rem;
+  line-height: 1.6;
+  margin: 0 0 2.5rem 0;
+  max-width: 540px;
+}
+
+.heroIntro p {
+  margin: 0 0 1rem 0;
+}
+
+.heroIntro p:last-child {
   margin-bottom: 0;
 }
 
-.abschnitt5Karte h2,
-.abschnitt5Karte h3 {
+.heroIntro strong {
+  font-weight: 700;
+}
+
+.heroButtons {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  width: 100%;
+  max-width: 380px;
+}
+
+.heroButton {
+  display: inline-block;
+  text-decoration: none;
+  background-color: #FFFFFF;
+  color: #18222F;
+  border: 2px solid #18222F;
+  border-radius: 9999px;
+  padding: 1rem 2rem;
+  font-family: var(--font-fira);
+  font-size: 1.1rem;
+  font-weight: 600;
+  text-align: center;
+  transition: all 0.25s ease;
+  opacity: 0.95;
+}
+
+.heroButton:hover {
+  background-color: #18222F;
+  color: #FC6C14;
+  opacity: 1;
+}
+
+/* ===== SEKTION (Rolle: Reisende / Partner / Redaktion) ===== */
+
+.sectionRole {
+  background-color: #FFFFFF;
+  padding: 5rem 2rem;
+}
+
+.sectionRoleAlt {
+  background-color: #f7f4f0;
+}
+
+.sectionInner {
+  max-width: 760px;
+  margin: 0 auto;
+  text-align: left;
+}
+
+.sectionTitle {
   font-family: var(--font-anton);
+  font-size: clamp(1.8rem, 3vw, 2.8rem);
   font-weight: 400;
-  color: #fff;
-  margin-bottom: 0.75rem;
+  color: #FC6C14;
+  margin: 0 0 1.5rem 0;
+  line-height: 1.2;
 }
 
-.abschnitt5Karte h2 {
-  font-size: 1.5rem;
+.sectionText {
+  font-family: var(--font-fira);
+  font-size: 1.1rem;
+  line-height: 1.7;
+  color: #18222F;
+  margin: 0 0 2rem 0;
 }
 
-.abschnitt5Karte h3 {
-  font-size: 1.25rem;
+.sectionText p {
+  margin: 0 0 1rem 0;
 }
 
-/* RESPONSIVE DESIGN - ZMODYFIKOWANE */
-@media (max-width: 968px) {
-  .section3 {
-    grid-template-columns: 1fr;
-    gap: 2rem;
-    padding: 3rem 2rem;
-  }
+.sectionText p:last-child {
+  margin-bottom: 0;
+}
 
-  .abschnitt3 {
-    grid-template-columns: 1fr;
-  }
-  .abschnitt3Titel {
-    text-align: center;
-  }
+.sectionText strong {
+  font-weight: 700;
+}
 
-  .abschnitt4 {
+.sectionText em {
+  font-style: italic;
+}
+
+.sectionText a {
+  color: #FC6C14;
+  text-decoration: underline;
+}
+
+.sectionCta {
+  display: inline-block;
+  text-decoration: none;
+  background-color: #18222F;
+  color: #FFFFFF;
+  border: 2px solid #18222F;
+  border-radius: 9999px;
+  padding: 0.85rem 2rem;
+  font-family: var(--font-fira);
+  font-size: 1rem;
+  font-weight: 600;
+  transition: all 0.25s ease;
+  margin-right: 1rem;
+}
+
+.sectionCta:hover {
+  background-color: #FC6C14;
+  border-color: #FC6C14;
+}
+
+.sectionSecondaryLink {
+  display: inline-block;
+  margin-top: 1rem;
+  font-family: var(--font-fira);
+  font-size: 0.95rem;
+  font-weight: 500;
+  color: #FC6C14;
+  text-decoration: none;
+}
+
+.sectionSecondaryLink:hover {
+  text-decoration: underline;
+}
+
+/* ===== MOBILE ===== */
+@media screen and (max-width: 768px) {
+  .heroContainer {
     flex-direction: column;
+    min-height: auto;
   }
 
-  .abschnitt5Karten {
-    grid-template-columns: repeat(2, 1fr);
+  .heroImageSide {
+    width: 100%;
+    height: 280px;
   }
-}
 
-@media (max-width: 700px) {
-  .abschnitt5Karten {
-    grid-template-columns: 1fr;
+  .heroTextSide {
+    width: 100%;
+    padding: 2.5rem 1.5rem;
   }
-  .abschnitt5Text {
-    font-size: 1.125rem;
+
+  .heroHeadline {
+    font-size: 2.2rem;
   }
-  .section1Image,
-  .section5Image {
-    width: 90%;
-  }
-  .abschnitt3Text {
+
+  .heroIntro {
     font-size: 1rem;
+  }
+
+  .heroButton {
+    font-size: 1rem;
+    padding: 0.85rem 1.5rem;
+  }
+
+  .sectionRole {
+    padding: 3rem 1.5rem;
+  }
+
+  .sectionTitle {
+    font-size: 1.8rem;
+  }
+
+  .sectionText {
+    font-size: 1rem;
+  }
+
+  .sectionCta {
+    width: 100%;
+    margin-right: 0;
+    margin-bottom: 0.5rem;
+    text-align: center;
   }
 }

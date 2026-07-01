@@ -1,4 +1,5 @@
 // app/kontakt/ContactInfo.tsx
+import { marked } from "marked";
 import { ContactInfoContent } from "@/types";
 import styles from "./ContactInfo.module.css";
 
@@ -30,7 +31,7 @@ function parseFeatureBlocks(markdown: string): FeatureBlock[] {
 // ---------------------------------------------------------------------------
 // Komponent
 // ---------------------------------------------------------------------------
-export default function ContactInfo({
+export default async function ContactInfo({
   content,
 }: {
   content: ContactInfoContent | null;
@@ -38,6 +39,11 @@ export default function ContactInfo({
   const featureBlocks = content?.intro_features
     ? parseFeatureBlocks(content.intro_features)
     : [];
+
+  // Seenergien-Text (Markdown -> HTML). Verschoben von der alten Mitmachen-Seite.
+  const seenergienHtml = content?.seenergien_text
+    ? await marked(content.seenergien_text)
+    : "";
 
   return (
     <div
@@ -79,6 +85,21 @@ export default function ContactInfo({
               )}
             </div>
           ))}
+        </div>
+      )}
+
+      {/* Seenergien-Sektion (verschoben von der alten Mitmachen-Seite) */}
+      {(content?.seenergien_title || seenergienHtml) && (
+        <div className={styles.seenergienSection}>
+          {content?.seenergien_title && (
+            <h2 className={styles.seenergienTitle}>{content.seenergien_title}</h2>
+          )}
+          {seenergienHtml && (
+            <div
+              className={styles.seenergienText}
+              dangerouslySetInnerHTML={{ __html: seenergienHtml }}
+            />
+          )}
         </div>
       )}
     </div>
