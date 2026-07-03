@@ -42,6 +42,7 @@ export default function OrtVorschlagenForm({
     name: "",
     address: "",
     description: "",
+    kategorie_id: "" as string,
   });
   const [error, setError] = useState<string | undefined>();
   const [success, setSuccess] = useState(false);
@@ -85,9 +86,20 @@ export default function OrtVorschlagenForm({
   }, [user]);
 
   function set(key: keyof typeof fields) {
-    return (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) =>
-      setFields((prev) => ({ ...prev, [key]: e.target.value }));
+    return (
+      e: React.ChangeEvent<
+        HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
+      >,
+    ) => setFields((prev) => ({ ...prev, [key]: e.target.value }));
   }
+
+  // Kategorie komercyjne — Sehenswertes (id=1) idzie osobno przez Redaktion.
+  const KATEGORIEN_KOMMERZIELL = [
+    { id: 2, name: "Essen & Übernachten" },
+    { id: 3, name: "Einkaufen" },
+    { id: 5, name: "Engagement" },
+    { id: 8, name: "Unternehmen" },
+  ];
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -96,7 +108,8 @@ export default function OrtVorschlagenForm({
     if (
       !fields.name.trim() ||
       !fields.address.trim() ||
-      !fields.description.trim()
+      !fields.description.trim() ||
+      !fields.kategorie_id
     ) {
       setError(t.validation_message);
       return;
@@ -114,6 +127,7 @@ export default function OrtVorschlagenForm({
           name: fields.name.trim(),
           address: fields.address.trim(),
           description: fields.description.trim(),
+          kategorie_id: Number(fields.kategorie_id),
           submitted_by: user?.email ?? null,
           submitted_by_username: username,
           submitted_by_first_name: firstName,
@@ -126,7 +140,7 @@ export default function OrtVorschlagenForm({
         setError(data.error ?? t.error_message);
       } else {
         setSuccess(true);
-        setFields({ name: "", address: "", description: "" });
+        setFields({ name: "", address: "", description: "", kategorie_id: "" });
       }
     } catch {
       setError(t.error_message);
@@ -154,6 +168,29 @@ export default function OrtVorschlagenForm({
           noValidate
         >
           {error && <p className={styles.errorMessage}>{error}</p>}
+
+          <div className={styles.field}>
+            <label htmlFor="kategorie_id" className={styles.label}>
+              Kategorie
+              {!isPremium && (
+                <span className={styles.premiumBadge}>{t.premium_badge}</span>
+              )}
+            </label>
+            <select
+              id="kategorie_id"
+              className={styles.input}
+              value={fields.kategorie_id}
+              onChange={set("kategorie_id")}
+              disabled={!isPremium}
+            >
+              <option value="">Bitte wählen…</option>
+              {KATEGORIEN_KOMMERZIELL.map((k) => (
+                <option key={k.id} value={k.id}>
+                  {k.name}
+                </option>
+              ))}
+            </select>
+          </div>
 
           <div className={styles.field}>
             <label htmlFor="name" className={styles.label}>

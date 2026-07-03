@@ -116,6 +116,14 @@ export default function UserMenu() {
           ) : (
             <>
               <Link
+                href="/konto/reisender/redaktion"
+                className={styles.item}
+                scroll={false}
+                onClick={() => setIsOpen(false)}
+              >
+                Redaktion
+              </Link>
+              <Link
                 href="/konto/reisender/ort-vorschlagen"
                 className={styles.item}
                 scroll={false}

@@ -13,6 +13,18 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    // Sehenswertes (id=1) idzie przez /api/redaktion (pelny formularz).
+    // Ort-vorschlagen jest tylko dla kategorii komercyjnych.
+    const KATEGORIEN_KOMMERZIELL = [2, 3, 5, 8];
+    if (body.kategorie_id !== undefined && body.kategorie_id !== null) {
+      if (!KATEGORIEN_KOMMERZIELL.includes(Number(body.kategorie_id))) {
+        return NextResponse.json(
+          { error: "Sehenswertes bitte über die Redaktion einreichen." },
+          { status: 400 }
+        );
+      }
+    }
+
     const directusUrl = process.env.DIRECTUS_URL;
     if (!directusUrl) {
       return NextResponse.json(
@@ -33,6 +45,7 @@ export async function POST(request: NextRequest) {
         Name_des_Ortes: body.name,
         Adresse: body.address,
         Beschreibung: body.description,
+        Kategorie_id: body.kategorie_id ?? null,
         Eingereicht_von_Email: body.submitted_by ?? null,
         Benutzername: body.submitted_by_username ?? null,
         Vorname: body.submitted_by_first_name ?? null,

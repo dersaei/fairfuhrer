@@ -21,6 +21,7 @@ import type {
   PremiumComparisonFeature,
   AccountContactFormContent,
   OrtVorschlagenContent,
+  RedaktionPageContent,
   RegisterPageContent,
 } from "@/types";
 
@@ -532,6 +533,38 @@ export async function getRegisterPageContent(): Promise<RegisterPageContent | nu
 }
 
 // ========================================
+// REDAKTION (Reisender-Seite "Redaktion" — Sehenswertes-Pins einreichen)
+// ========================================
+
+export async function getRedaktionPageContent(): Promise<RedaktionPageContent | null> {
+  const isDev = process.env.NODE_ENV === "development";
+  try {
+    const response = await fetch(
+      `${DIRECTUS_URL}/items/redaktion_page_content?fields=*`,
+      {
+        headers: {
+          "Content-Type": "application/json",
+          ...(DIRECTUS_TOKEN && { Authorization: `Bearer ${DIRECTUS_TOKEN}` }),
+        },
+        ...(isDev
+          ? { cache: "no-store" as const }
+          : { next: { revalidate: 3600, tags: ["redaktion"] } }),
+      }
+    );
+
+    if (!response.ok) {
+      const body = await response.text().catch(() => "(unreadable)");
+      throw new Error(`Failed to fetch redaktion content: ${response.status} ${response.statusText} — ${body}`);
+    }
+
+    const data = await response.json();
+    return (Array.isArray(data.data) ? data.data[0] : data.data) as RedaktionPageContent ?? null;
+  } catch (error) {
+    console.error("Error fetching redaktion content:", error);
+    return null;
+  }
+}
+
 // ORT VORSCHLAGEN (Seite "Ort vorschlagen")
 // ========================================
 

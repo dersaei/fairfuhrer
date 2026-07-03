@@ -1,0 +1,332 @@
+/* Redaktion — style zunifikowane z Partner audiopin (audiopin.module.css).
+   Zachowujemy dokladnie te same reguly (kolory, spacing, fonty), zeby
+   formularz Reisendera nie odstawa wizualnie od formularza Partnera. */
+
+.wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  max-width: 640px;
+}
+
+.intro {
+  font-family: var(--font-fira);
+  font-size: 1.1rem;
+  font-weight: 500;
+  text-align: center;
+  color: #18222f;
+  line-height: 1.6;
+  margin: 0;
+}
+
+/* Tytul strony — Anton, jak reszta H1 w konto. */
+.title {
+  font-family: var(--font-anton);
+  font-size: clamp(1.8rem, 3vw, 2.4rem);
+  font-weight: 400;
+  color: #18222f;
+  margin: 0;
+  line-height: 1.2;
+  text-align: center;
+}
+
+/* Podtytul — Fira, wyszrodkowany, jak intro w Partner audiopin. */
+.subtitle {
+  font-family: var(--font-fira);
+  font-size: 1rem;
+  font-weight: 500;
+  color: #18222f;
+  line-height: 1.6;
+  margin: 0;
+  text-align: center;
+}
+
+.subtitle p {
+  margin: 0 0 0.75rem;
+}
+
+.subtitle p:last-child {
+  margin-bottom: 0;
+}
+
+.subtitle strong {
+  font-weight: 700;
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  position: relative;
+}
+
+.fieldRow {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+}
+
+@media (max-width: 500px) {
+  .fieldRow {
+    grid-template-columns: 1fr;
+  }
+}
+
+.label {
+  font-family: var(--font-fira);
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: #18222f;
+}
+
+.input {
+  width: 100%;
+  padding: 0.75rem 1rem;
+  border: 1.5px solid #000;
+  font-family: var(--font-fira);
+  font-size: 1rem;
+  color: #18222f;
+  background-color: #f0fff4;
+  transition:
+    border-color 0.2s,
+    box-shadow 0.2s;
+  box-sizing: border-box;
+}
+
+.input:focus {
+  outline: none;
+  border-color: #fc6c14;
+  box-shadow: 0 0 0 3px rgba(252, 108, 20, 0.12);
+  background-color: #fff;
+}
+
+.textarea {
+  width: 100%;
+  padding: 0.75rem 1rem;
+  border: 1.5px solid #000;
+  font-family: var(--font-fira);
+  font-size: 1rem;
+  color: #18222f;
+  background-color: #f0fff4;
+  resize: vertical;
+  transition:
+    border-color 0.2s,
+    box-shadow 0.2s;
+  box-sizing: border-box;
+}
+
+.textarea:focus {
+  outline: none;
+  border-color: #fc6c14;
+  box-shadow: 0 0 0 3px rgba(252, 108, 20, 0.12);
+  background-color: #fff;
+}
+
+.fieldError {
+  font-family: var(--font-fira);
+  font-size: 0.8rem;
+  color: #7e1206;
+}
+
+.hint {
+  font-family: var(--font-fira);
+  font-size: 0.8rem;
+  color: #18222f;
+  margin: 0;
+  line-height: 1.5;
+}
+
+/* Hint pod przyciskiem submit — informacja o moderacji, wyszrodkowana. */
+.hintCentered {
+  font-family: var(--font-fira);
+  font-size: 0.85rem;
+  color: #18222f;
+  margin: 0;
+  line-height: 1.6;
+  text-align: center;
+}
+
+.errorMessage {
+  background: #fff0f0;
+  color: #b22222;
+  border: 1px solid #f5c6c6;
+  padding: 0.75rem 1rem;
+  font-family: var(--font-fira);
+  font-size: 0.875rem;
+}
+
+/* Mapbox suggestions — analogicznie do geoDropdown z Partner audiopin. */
+.suggestions {
+  position: absolute;
+  top: calc(100% + 2px);
+  left: 0;
+  right: 0;
+  background-color: #fff;
+  border: 1.5px solid #000;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  z-index: 100;
+  max-height: 220px;
+  overflow-y: auto;
+}
+
+.suggestionBtn {
+  width: 100%;
+  text-align: left;
+  padding: 0.6rem 1rem;
+  border: none;
+  background: transparent;
+  font-family: var(--font-fira);
+  font-size: 0.875rem;
+  color: #18222f;
+  cursor: pointer;
+  border-bottom: 1px solid #eee;
+}
+
+.suggestionBtn:hover {
+  background-color: #f0fff4;
+}
+
+.suggestionBtn:last-child {
+  border-bottom: none;
+}
+
+/* Upload — plik input jak w Partner audiopin. */
+.fileInput {
+  font-family: var(--font-fira);
+  font-size: 0.85rem;
+  padding: 0.4rem 0;
+}
+
+.imagePreview {
+  width: 200px;
+  height: 140px;
+  object-fit: cover;
+  border: 1.5px solid #000;
+  display: block;
+  margin-bottom: 0.5rem;
+}
+
+.audioPreview {
+  width: 100%;
+  max-width: 400px;
+  margin-bottom: 0.5rem;
+}
+
+/* Galerie — grid 3-col, analogicznie do Partner. */
+.galleryGrid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 0.75rem;
+  margin-bottom: 0.5rem;
+}
+
+@media (max-width: 480px) {
+  .galleryGrid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+.galleryItem {
+  position: relative;
+}
+
+.galleryImg {
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  object-fit: cover;
+  border: 1.5px solid #000;
+  display: block;
+}
+
+.removeBtn {
+  position: absolute;
+  top: 4px;
+  right: 4px;
+  width: 24px;
+  height: 24px;
+  background: rgba(0, 0, 0, 0.65);
+  color: #fff;
+  border: none;
+  border-radius: 50%;
+  font-size: 1rem;
+  line-height: 1;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.2s;
+}
+
+.removeBtn:hover {
+  background: #8d1306;
+}
+
+/* Submit — dokladnie taki sam jak submitButton w Partner audiopin. */
+.button {
+  padding: 0.875rem 2rem;
+  background-color: #b22222;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  font-family: var(--font-fira);
+  font-size: 1rem;
+  font-weight: 700;
+  cursor: pointer;
+  align-self: flex-start;
+  transition: background-color 0.2s;
+}
+
+.button:hover:not(:disabled) {
+  background-color: #000;
+}
+
+.button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* Success */
+.successBox {
+  background: #f0fff4;
+  color: #27ae60;
+  border: 1px solid #b7e5c8;
+  border-radius: 8px;
+  padding: 1rem 1.25rem;
+  font-family: var(--font-fira);
+  font-size: 0.95rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  align-items: flex-start;
+}
+
+.successText {
+  margin: 0;
+  color: #18222f;
+  line-height: 1.6;
+}
+
+.newPinBtn {
+  padding: 0.75rem 1.5rem;
+  background-color: #18222f;
+  color: #fff;
+  border: none;
+  font-family: var(--font-fira);
+  font-size: 0.9rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background-color 0.15s;
+  letter-spacing: 0.02em;
+}
+
+.newPinBtn:hover {
+  background-color: #fc6c14;
+}

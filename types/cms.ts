@@ -263,6 +263,25 @@ export interface RegisterPageContent {
   login_link_text?: string;
 }
 
+export interface RedaktionPageContent {
+  id: number;
+  title?: string;
+  subtitle?: string;
+  label_name?: string;
+  label_adresse?: string;
+  label_stadt?: string;
+  label_land?: string;
+  label_beschreibung?: string;
+  label_titelbild?: string;
+  label_audio?: string;
+  label_galerie?: string;
+  hint_moderation?: string;
+  button_text?: string;
+  button_sending_text?: string;
+  success_message?: string;
+  error_message?: string;
+}
+
 export interface OrtVorschlagenContent {
   id: number;
   intro?: string;

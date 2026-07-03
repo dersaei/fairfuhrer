@@ -7,6 +7,7 @@ import styles from "./KontoNav.module.css";
 const links = [
   { href: "/konto/reisender/profil", label: "Mein Profil" },
   { href: "/konto/reisender/einstellungen", label: "Einstellungen" },
+  { href: "/konto/reisender/redaktion", label: "Redaktion" },
   { href: "/konto/reisender/ort-vorschlagen", label: "Neuen Ort vorschlagen" },
   { href: "/konto/reisender/premium", label: "Premium" },
   { href: "/konto/reisender/hilfe", label: "Hilfe" },
