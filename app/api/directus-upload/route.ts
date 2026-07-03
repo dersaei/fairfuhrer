@@ -1,14 +1,12 @@
 import "server-only";
 
 import { NextRequest, NextResponse } from "next/server";
-import { getSupabaseServerClient } from "@/lib/supabase-server";
+import { getUserFromRequest } from "@/lib/api-auth";
 
 export async function POST(request: NextRequest) {
   try {
-    const supabase = await getSupabaseServerClient();
-    const {
-      data: { user },
-    } = await supabase.auth.getUser();
+    // Auth: cookies (web) LUB Bearer token (mobile) — patrz lib/api-auth.ts.
+    const user = await getUserFromRequest(request);
 
     if (!user) {
       return NextResponse.json({ error: "Nicht autorisiert." }, { status: 401 });

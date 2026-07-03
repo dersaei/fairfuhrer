@@ -1,9 +1,28 @@
 import "server-only";
 
 import { NextRequest, NextResponse } from "next/server";
+import { getUserFromRequest } from "@/lib/api-auth";
+import { supabaseAdmin } from "@/lib/supabase-admin";
 
 export async function POST(request: NextRequest) {
   try {
+    // Auth: wymagane. Cookies (web) LUB Bearer token (mobile).
+    // BREAKING CHANGE: mobile 1.1.2 nie ma Bearer, wiec obecny hook nie zadziala
+    // do momentu wypuszczenia mobile 1.1.3 z auth header. Anti-spoofing:
+    // wczesniej user mogl podac dowolny email w body — teraz email czytamy
+    // z zweryfikowanej sesji, nigdy z body.
+    const user = await getUserFromRequest(request);
+    if (!user) {
+      return NextResponse.json({ error: "Nicht autorisiert." }, { status: 401 });
+    }
+
+    // Profil dla imienia/nazwiska — supabaseAdmin omija RLS.
+    const { data: profile } = await supabaseAdmin
+      .from("profiles")
+      .select("first_name, last_name, username")
+      .eq("id", user.id)
+      .single();
+
     const body = await request.json();
 
     if (!body.name || !body.address || !body.description) {
@@ -46,10 +65,12 @@ export async function POST(request: NextRequest) {
         Adresse: body.address,
         Beschreibung: body.description,
         Kategorie_id: body.kategorie_id ?? null,
-        Eingereicht_von_Email: body.submitted_by ?? null,
-        Benutzername: body.submitted_by_username ?? null,
-        Vorname: body.submitted_by_first_name ?? null,
-        Nachname: body.submitted_by_last_name ?? null,
+        // Wszystkie identyfikatory uzytkownika z ZWERYFIKOWANEJ sesji,
+        // nigdy z body. Zapobiega spoofingowi tozsamosci.
+        Eingereicht_von_Email: user.email ?? null,
+        Benutzername: profile?.username ?? null,
+        Vorname: profile?.first_name ?? null,
+        Nachname: profile?.last_name ?? null,
       }),
     });
 

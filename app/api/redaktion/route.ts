@@ -1,7 +1,8 @@
 import "server-only";
 
 import { NextRequest, NextResponse } from "next/server";
-import { getSupabaseServerClient } from "@/lib/supabase-server";
+import { getUserFromRequest } from "@/lib/api-auth";
+import { supabaseAdmin } from "@/lib/supabase-admin";
 
 // Sehenswertes = id 1 w Directus.
 // Wymuszamy po stronie serwera — user nie moze przez modyfikacje body dodac
@@ -10,16 +11,15 @@ const SEHENSWERTES_KATEGORIE_ID = 1;
 
 export async function POST(request: NextRequest) {
   try {
-    const supabase = await getSupabaseServerClient();
-    const {
-      data: { user },
-    } = await supabase.auth.getUser();
+    // Auth: cookies (web) LUB Bearer token (mobile) — patrz lib/api-auth.ts.
+    const user = await getUserFromRequest(request);
 
     if (!user) {
       return NextResponse.json({ error: "Nicht autorisiert." }, { status: 401 });
     }
 
-    const { data: profile } = await supabase
+    // Profile query — supabaseAdmin (service role) omija RLS, sprawdza rolę.
+    const { data: profile } = await supabaseAdmin
       .from("profiles")
       .select("role, first_name, last_name")
       .eq("id", user.id)

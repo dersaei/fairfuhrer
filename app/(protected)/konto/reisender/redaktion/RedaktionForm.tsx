@@ -432,7 +432,9 @@ export default function RedaktionForm({
 
         {/* Titelbild */}
         <div className={styles.field}>
-          <label className={styles.label}>{t.label_titelbild}</label>
+          <label htmlFor="titelbild" className={styles.label}>
+            {t.label_titelbild}
+          </label>
           {titelbildPreview ? (
             // eslint-disable-next-line @next/next/no-img-element
             <img
@@ -444,6 +446,7 @@ export default function RedaktionForm({
             <p className={styles.hint}>Noch kein Bild hochgeladen.</p>
           )}
           <input
+            id="titelbild"
             ref={titelbildRef}
             type="file"
             accept="image/*"
@@ -458,13 +461,16 @@ export default function RedaktionForm({
 
         {/* Audio */}
         <div className={styles.field}>
-          <label className={styles.label}>{t.label_audio}</label>
+          <label htmlFor="audio" className={styles.label}>
+            {t.label_audio}
+          </label>
           {audioPreview ? (
             <audio src={audioPreview} controls className={styles.audioPreview} />
           ) : (
             <p className={styles.hint}>Noch keine Datei hochgeladen.</p>
           )}
           <input
+            id="audio"
             ref={audioRef}
             type="file"
             accept="audio/*"
@@ -477,7 +483,9 @@ export default function RedaktionForm({
 
         {/* Galerie */}
         <div className={styles.field}>
-          <label className={styles.label}>{t.label_galerie}</label>
+          <label htmlFor="galerie" className={styles.label}>
+            {t.label_galerie}
+          </label>
           {galeriePreviews.length > 0 && (
             <div className={styles.galleryGrid}>
               {galeriePreviews.map((preview, i) => (
@@ -501,6 +509,7 @@ export default function RedaktionForm({
           )}
           {galerieIds.length < 6 && (
             <input
+              id="galerie"
               ref={galerieRef}
               type="file"
               accept="image/*"
