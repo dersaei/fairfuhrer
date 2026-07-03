@@ -4,11 +4,15 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import styles from "./KontoNav.module.css";
 
+// UWAGA: "Neuen Ort vorschlagen" tymczasowo ukryte z nawigacji (2026-07-03).
+// Powod: dublowanie z Redaktion + niejasna wartosc biznesowa (premium-gate
+// vs open access). Strona /konto/reisender/ort-vorschlagen oraz endpoint
+// /api/ort-vorschlagen ZOSTAJA w repo jako opcja na pozniej — mozna przywrocic
+// dodajac link ponizej.
 const links = [
   { href: "/konto/reisender/profil", label: "Mein Profil" },
   { href: "/konto/reisender/einstellungen", label: "Einstellungen" },
   { href: "/konto/reisender/redaktion", label: "Redaktion" },
-  { href: "/konto/reisender/ort-vorschlagen", label: "Neuen Ort vorschlagen" },
   { href: "/konto/reisender/premium", label: "Premium" },
   { href: "/konto/reisender/hilfe", label: "Hilfe" },
 ];

@@ -123,14 +123,10 @@ export default function UserMenu() {
               >
                 Redaktion
               </Link>
-              <Link
-                href="/konto/reisender/ort-vorschlagen"
-                className={styles.item}
-                scroll={false}
-                onClick={() => setIsOpen(false)}
-              >
-                Neuen Ort vorschlagen
-              </Link>
+              {/* UWAGA: "Neuen Ort vorschlagen" tymczasowo ukryte z menu
+                  (2026-07-03). Strona i endpoint zostaja w repo jako opcja
+                  na pozniej — przywrocic dodajac Link ponizej. Patrz tez
+                  komentarz w ReisenderNav.tsx. */}
               <Link
                 href="/konto/reisender/premium"
                 className={styles.item}
