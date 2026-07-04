@@ -62,17 +62,6 @@
   color: var(--mm-color-hero-text, #FFFFFF);
 }
 
-.heroEyebrow {
-  font-family: var(--font-fira);
-  font-size: var(--mm-fs-eyebrow, 1rem);
-  color: var(--mm-color-eyebrow, var(--mm-color-hero-text, #FFFFFF));
-  font-weight: 700;
-  letter-spacing: 0.15em;
-  text-transform: uppercase;
-  margin: 0 0 1rem 0;
-  opacity: 0.85;
-}
-
 .heroHeadline {
   font-family: var(--font-anton);
   font-size: var(--mm-fs-headline, clamp(2.2rem, 4vw, 4rem));
