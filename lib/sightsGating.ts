@@ -1,8 +1,8 @@
 // lib/sightsGating.ts
 // Shared gating logic — must stay in sync with mobile stores/placesStore.ts
-// (same algorithm: FNV-1a hash, Math.ceil(0.2 * N), deterministic sort with id tiebreak)
+// (same algorithm: FNV-1a hash, Math.ceil(0.5 * N), deterministic sort with id tiebreak)
 
-export const FREE_SIGHTS_VISIBLE_RATIO = 0.2;
+export const FREE_SIGHTS_VISIBLE_RATIO = 0.5;
 
 function envSightsCategoryId(): number | null {
   const raw = process.env.NEXT_PUBLIC_SIGHTS_CATEGORY_ID;

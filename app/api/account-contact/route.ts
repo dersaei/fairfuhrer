@@ -1,9 +1,20 @@
 import "server-only";
 
 import { NextRequest, NextResponse } from "next/server";
+import { getUserFromRequest } from "@/lib/api-auth";
+import { supabaseAdmin } from "@/lib/supabase-admin";
 
 export async function POST(request: NextRequest) {
   try {
+    // Auth: wymagane. Cookies (web) LUB Bearer token (mobile).
+    // Anti-spoofing: user_id/email/name/username/account_type NIGDY z body —
+    // czytamy je z ZWERYFIKOWANEJ sesji, inaczej kazdy moze podszyc sie pod
+    // dowolnego usera. Analogicznie do /api/ort-vorschlagen.
+    const user = await getUserFromRequest(request);
+    if (!user) {
+      return NextResponse.json({ error: "Nicht autorisiert." }, { status: 401 });
+    }
+
     const body = await request.json();
 
     if (!body.subject?.trim() || !body.message?.trim()) {
@@ -23,6 +34,17 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    // Profil dla imienia/nazwiska/username/roli — supabaseAdmin omija RLS.
+    const { data: profile } = await supabaseAdmin
+      .from("profiles")
+      .select("role, first_name, last_name, username")
+      .eq("id", user.id)
+      .single();
+
+    const name =
+      [profile?.first_name, profile?.last_name].filter(Boolean).join(" ") ||
+      null;
+
     const response = await fetch(
       `${directusUrl}/items/account_contact_messages`,
       {
@@ -32,11 +54,12 @@ export async function POST(request: NextRequest) {
           ...(directusToken && { Authorization: `Bearer ${directusToken}` }),
         },
         body: JSON.stringify({
-          user_id: body.user_id ?? null,
-          email: body.email ?? null,
-          name: body.name ?? null,
-          username: body.username ?? null,
-          account_type: body.account_type ?? null,
+          // Wszystkie identyfikatory z ZWERYFIKOWANEJ sesji, nigdy z body.
+          user_id: user.id,
+          email: user.email ?? null,
+          name,
+          username: profile?.username ?? null,
+          account_type: profile?.role ?? null,
           subject: body.subject.trim(),
           message: body.message.trim(),
           date_created: new Date().toISOString(),

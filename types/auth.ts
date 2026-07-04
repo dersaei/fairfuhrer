@@ -13,6 +13,8 @@ export interface Profile {
   avatar_url: string | null;
   premium_until: string | null;
   company_size: CompanySize | null;
+  bio: string | null;
+  is_public: boolean;
   created_at: string;
   updated_at: string;
 }

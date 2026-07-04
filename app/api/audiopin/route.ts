@@ -4,9 +4,13 @@ import { NextRequest, NextResponse } from "next/server";
 import { getCountryLabel } from "@/lib/countries";
 import { getSupabaseServerClient } from "@/lib/supabase-server";
 
+// Nazwy 1:1 z Directus.Kategorie (source of truth, 2026-07-03).
+// Uwaga: id=1 "Sehenswertes" jest wg wizji Miriam kategoria redaktion-only —
+// Partner nie powinien miec dostepu. Zostaje w liscie do momentu podjecia
+// decyzji B.2 (patrz project_miriam_pending_answer_2026_07_03).
 const KATEGORIEN = [
-  { id: 1, name: "Erlebnisse" },
-  { id: 2, name: "Gastronomie & Übernachten" },
+  { id: 1, name: "Sehenswertes" },
+  { id: 2, name: "Essen & Übernachten" },
   { id: 3, name: "Einkaufen" },
   { id: 5, name: "Engagement" },
   { id: 8, name: "Unternehmen" },

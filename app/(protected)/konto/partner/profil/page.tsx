@@ -4,6 +4,12 @@ import { useRef, useState } from "react";
 import { useAuth } from "@/context/AuthContext";
 import { getSupabaseBrowserClient } from "@/lib/supabase-browser";
 import { getCountryLabel } from "@/lib/countries";
+// Community-Feature auf Eis gelegt (2026-07-04): Frank hat entschieden, das
+// Community-Feature vorerst nicht umzusetzen (Aufwand/Kosten Rechtsberatung).
+// Komponente + DB-Felder (profiles.bio, is_public) bleiben erhalten, nur aus
+// der UI genommen. Zum Reaktivieren: Import + <CommunityProfilSection/> unten
+// wieder einkommentieren. Siehe auch Reisenden-Profil (gleiche Stelle).
+// import CommunityProfilSection from "@/components/auth/CommunityProfilSection";
 import styles from "@/app/(protected)/konto/profil/profil.module.css";
 
 export default function PartnerProfilPage() {
@@ -116,6 +122,9 @@ export default function PartnerProfilPage() {
           aria-label="Profilbild hochladen"
         />
       </div>
+
+      {/* Community-Feature auf Eis gelegt (2026-07-04) — s. Import oben. */}
+      {/* <CommunityProfilSection /> */}
 
       {/* Unternehmensdaten */}
       <div className={styles.fields}>

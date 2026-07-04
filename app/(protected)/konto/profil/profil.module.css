@@ -163,3 +163,134 @@
   font-size: 1rem;
   color: #18222f;
 }
+
+/* Community-Profil */
+.communitySection {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.bioBlock {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.bioLabel {
+  font-family: var(--font-fira);
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: #18222f;
+}
+
+.bioInput {
+  font-family: var(--font-fira);
+  font-size: 0.95rem;
+  color: #18222f;
+  line-height: 1.5;
+  padding: 0.75rem;
+  border: 1.5px solid rgba(0, 0, 0, 0.15);
+  border-radius: 6px;
+  resize: vertical;
+  min-height: 5.5rem;
+  background: #fff;
+}
+
+.bioInput:focus {
+  outline: none;
+  border-color: #18222f;
+}
+
+.bioFooter {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+
+.bioCount {
+  font-family: var(--font-fira);
+  font-size: 0.75rem;
+  color: #6c7686;
+  font-variant-numeric: tabular-nums;
+}
+
+.bioActions {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.savedHint {
+  font-family: var(--font-fira);
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: #2f7d5b;
+}
+
+.visibilityRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 0.875rem 0;
+  border-top: 1px solid rgba(0, 0, 0, 0.12);
+  border-bottom: 1px solid rgba(0, 0, 0, 0.12);
+}
+
+.visibilityText {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+}
+
+.visibilityTitle {
+  font-family: var(--font-fira);
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: #18222f;
+}
+
+.visibilityHint {
+  font-family: var(--font-fira);
+  font-size: 0.8rem;
+  color: #6c7686;
+}
+
+.toggle {
+  flex: none;
+  width: 46px;
+  height: 26px;
+  border-radius: 999px;
+  border: none;
+  background: rgba(0, 0, 0, 0.2);
+  padding: 3px;
+  cursor: pointer;
+  transition: background 0.18s ease;
+}
+
+.toggleOn {
+  background: #18222f;
+}
+
+.toggleKnob {
+  display: block;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: #fff;
+  transition: transform 0.18s ease;
+}
+
+.toggleOn .toggleKnob {
+  transform: translateX(20px);
+}
+
+.toggle:focus-visible {
+  outline: 2px solid #18222f;
+  outline-offset: 2px;
+}

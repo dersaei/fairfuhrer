@@ -70,6 +70,36 @@ export async function GET(request: NextRequest) {
       );
     }
 
+    // WŁAŚCICIELSTWO: sam fakt, że subskrypcja jest aktywna, nie znaczy, że
+    // należy do TEGO usera. Bez tej weryfikacji zalogowany user A, który zdobędzie
+    // cudze subscription_id, aktywowałby sobie premium na cudzej płatności.
+    // 1) e-mail subskrybenta z PayPala musi zgadzać się z e-mailem sesji.
+    const subscriberEmail: string | undefined =
+      subscription.subscriber?.email_address;
+    const emailMatches =
+      !!subscriberEmail &&
+      !!user.email &&
+      subscriberEmail.toLowerCase() === user.email.toLowerCase();
+
+    // 2) subscription_id nie może być już przypisane do innego partnera.
+    const { data: existingOwner } = await supabaseAdmin
+      .from("partner_profiles")
+      .select("id")
+      .eq("paypal_subscription_id", subscriptionId)
+      .maybeSingle();
+    const claimedByOther = !!existingOwner && existingOwner.id !== user.id;
+
+    if (!emailMatches || claimedByOther) {
+      console.error(
+        "activate-subscription: ownership check failed",
+        { userId: user.id, emailMatches, claimedByOther }
+      );
+      return NextResponse.json(
+        { error: "Subscription does not belong to this account" },
+        { status: 403 }
+      );
+    }
+
     // Zapisz subscription_id w partner_profiles i ustaw premium_until
     const premiumUntil = new Date();
     premiumUntil.setMonth(premiumUntil.getMonth() + 13);

@@ -49,7 +49,7 @@ export default function MapBoxMap({
 
   const { isPro } = useAuth();
 
-  // Compute locked IDs — Sehenswertes places outside the free 20 %.
+  // Compute locked IDs — Sehenswertes places outside the free 50 %.
   const lockedIds = useMemo<Set<number>>(() => {
     if (isPro) return new Set();
     const visibleIds = new Set(

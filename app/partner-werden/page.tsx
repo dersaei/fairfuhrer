@@ -110,12 +110,6 @@ export default async function MitmachenPage() {
     ...(pageData.mitmachen_hero_intro_color && {
       "--mm-color-intro": c(pageData.mitmachen_hero_intro_color),
     }),
-    ...(pageData.mitmachen_hero_eyebrow_font_size && {
-      "--mm-fs-eyebrow": pageData.mitmachen_hero_eyebrow_font_size,
-    }),
-    ...(pageData.mitmachen_hero_eyebrow_color && {
-      "--mm-color-eyebrow": c(pageData.mitmachen_hero_eyebrow_color),
-    }),
     ...(pageData.mitmachen_hero_text_color && {
       "--mm-color-hero-text": c(pageData.mitmachen_hero_text_color),
     }),
@@ -159,11 +153,6 @@ export default async function MitmachenPage() {
         </div>
 
         <div className={styles.heroTextSide}>
-          {pageData.mitmachen_hero_eyebrow && (
-            <p className={styles.heroEyebrow}>
-              {pageData.mitmachen_hero_eyebrow}
-            </p>
-          )}
           {pageData.mitmachen_hero_headline && (
             <h1 className={styles.heroHeadline}>
               {pageData.mitmachen_hero_headline}
