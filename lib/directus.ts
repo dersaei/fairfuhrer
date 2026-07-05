@@ -20,7 +20,6 @@ import type {
   PremiumPageContent,
   PremiumComparisonFeature,
   AccountContactFormContent,
-  OrtVorschlagenContent,
   RedaktionPageContent,
   RegisterPageContent,
 } from "@/types";
@@ -561,39 +560,6 @@ export async function getRedaktionPageContent(): Promise<RedaktionPageContent | 
     return (Array.isArray(data.data) ? data.data[0] : data.data) as RedaktionPageContent ?? null;
   } catch (error) {
     console.error("Error fetching redaktion content:", error);
-    return null;
-  }
-}
-
-// ORT VORSCHLAGEN (Seite "Ort vorschlagen")
-// ========================================
-
-export async function getOrtVorschlagenContent(): Promise<OrtVorschlagenContent | null> {
-  const isDev = process.env.NODE_ENV === "development";
-  try {
-    const response = await fetch(
-      `${DIRECTUS_URL}/items/ort_vorschlagen_content?fields=*`,
-      {
-        headers: {
-          "Content-Type": "application/json",
-          ...(DIRECTUS_TOKEN && { Authorization: `Bearer ${DIRECTUS_TOKEN}` }),
-        },
-        ...(isDev
-          ? { cache: "no-store" as const }
-          : { next: { revalidate: 3600, tags: ["ort-vorschlagen"] } }),
-      }
-    );
-
-    if (!response.ok) {
-      const body = await response.text().catch(() => "(unreadable)");
-      throw new Error(`Failed to fetch ort vorschlagen content: ${response.status} ${response.statusText} — ${body}`);
-    }
-
-    const data = await response.json();
-    // Singleton zwraca obiekt, nie tablicę
-    return (Array.isArray(data.data) ? data.data[0] : data.data) as OrtVorschlagenContent ?? null;
-  } catch (error) {
-    console.error("Error fetching ort vorschlagen content:", error);
     return null;
   }
 }

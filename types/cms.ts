@@ -282,24 +282,6 @@ export interface RedaktionPageContent {
   error_message?: string;
 }
 
-export interface OrtVorschlagenContent {
-  id: number;
-  intro?: string;
-  premium_info?: string;
-  premium_badge?: string;
-  label_name?: string;
-  label_adresse?: string;
-  label_beschreibung?: string;
-  button_text?: string;
-  button_sending_text?: string;
-  hint_intro?: string;
-  hint_with_name?: string;
-  hint_without_name?: string;
-  success_message?: string;
-  error_message?: string;
-  validation_message?: string;
-}
-
 export interface AccountContactFormContent {
   id: number;
   title?: string;

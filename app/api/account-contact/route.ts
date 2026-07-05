@@ -9,7 +9,7 @@ export async function POST(request: NextRequest) {
     // Auth: wymagane. Cookies (web) LUB Bearer token (mobile).
     // Anti-spoofing: user_id/email/name/username/account_type NIGDY z body —
     // czytamy je z ZWERYFIKOWANEJ sesji, inaczej kazdy moze podszyc sie pod
-    // dowolnego usera. Analogicznie do /api/ort-vorschlagen.
+    // dowolnego usera.
     const user = await getUserFromRequest(request);
     if (!user) {
       return NextResponse.json({ error: "Nicht autorisiert." }, { status: 401 });
