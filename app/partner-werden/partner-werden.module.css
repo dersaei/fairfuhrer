@@ -127,6 +127,9 @@
 .sectionRole {
   background-color: #ffffff;
   padding: 5rem 2rem;
+  /* Kleiner Abstand, wenn per Anker (#reisende/#partner/#redaktion)
+     von den Hero-Buttons hierher gesprungen wird. */
+  scroll-margin-top: 1.5rem;
 }
 
 .sectionRoleAlt {

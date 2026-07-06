@@ -165,29 +165,21 @@ export default async function MitmachenPage() {
             />
           )}
 
-          {/* 3 buttons */}
+          {/* 3 buttons — springen nur zur passenden Sektion auf DIESER Seite
+              (Anker #reisende / #partner / #redaktion), nicht auf andere Seiten. */}
           <div className={styles.heroButtons}>
-            {pageData.mitmachen_button_1_label && pageData.mitmachen_button_1_url && (
-              <Link
-                href={pageData.mitmachen_button_1_url}
-                className={styles.heroButton}
-              >
+            {pageData.mitmachen_button_1_label && (
+              <Link href="#reisende" className={styles.heroButton}>
                 {pageData.mitmachen_button_1_label}
               </Link>
             )}
-            {pageData.mitmachen_button_2_label && pageData.mitmachen_button_2_url && (
-              <Link
-                href={pageData.mitmachen_button_2_url}
-                className={styles.heroButton}
-              >
+            {pageData.mitmachen_button_2_label && (
+              <Link href="#partner" className={styles.heroButton}>
                 {pageData.mitmachen_button_2_label}
               </Link>
             )}
-            {pageData.mitmachen_button_3_label && pageData.mitmachen_button_3_url && (
-              <Link
-                href={pageData.mitmachen_button_3_url}
-                className={styles.heroButton}
-              >
+            {pageData.mitmachen_button_3_label && (
+              <Link href="#redaktion" className={styles.heroButton}>
                 {pageData.mitmachen_button_3_label}
               </Link>
             )}
@@ -260,15 +252,6 @@ export default async function MitmachenPage() {
                 {pageData.mitmachen_button_2_label}
               </Link>
             )}
-            {pageData.mitmachen_partner_link_label &&
-              pageData.mitmachen_partner_link_url && (
-                <Link
-                  href={pageData.mitmachen_partner_link_url}
-                  className={styles.sectionSecondaryLink}
-                >
-                  {pageData.mitmachen_partner_link_label} →
-                </Link>
-              )}
           </div>
         </section>
       )}
