@@ -20,14 +20,14 @@
 .heroContainer {
   position: relative;
   width: 100%;
-  min-height: calc(100dvh - 90px);
+  height: calc(100dvh - 90px);
   display: flex;
 }
 
 .heroImageSide {
   position: relative;
   width: 50%;
-  min-height: 100%;
+  height: 100%;
   overflow: hidden;
   background-color: #f0f0f0;
 }
@@ -56,16 +56,16 @@
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  padding: 4rem;
+  padding: 4vh 4vw;
   text-align: center;
-  background-color: var(--mm-hero-bg, #FC6C14);
-  color: var(--mm-color-hero-text, #FFFFFF);
+  background-color: var(--mm-hero-bg, #fc6c14);
+  color: var(--mm-color-hero-text, #ffffff);
 }
 
 .heroHeadline {
   font-family: var(--font-anton);
   font-size: var(--mm-fs-headline, clamp(2.2rem, 4vw, 4rem));
-  color: var(--mm-color-headline, var(--mm-color-hero-text, #FFFFFF));
+  color: var(--mm-color-headline, var(--mm-color-hero-text, #ffffff));
   font-weight: 400;
   line-height: 1.15;
   margin: 0 0 1.5rem 0;
@@ -94,38 +94,38 @@
 
 .heroButtons {
   display: flex;
-  flex-direction: column;
+  justify-content: center;
+  flex-direction: row;
   gap: 0.75rem;
   width: 100%;
-  max-width: 380px;
 }
 
 .heroButton {
   display: inline-block;
   text-decoration: none;
-  background-color: var(--mm-bg-btn, #FFFFFF);
-  color: var(--mm-color-btn, #18222F);
-  border: 2px solid #18222F;
+  background-color: var(--mm-bg-btn, #ffffffe6);
+  color: var(--mm-color-btn, #18222f);
+  border: 2px solid black;
   border-radius: 9999px;
-  padding: 1rem 2rem;
+  padding: 1rem 1.2rem;
   font-family: var(--font-fira);
-  font-size: var(--mm-fs-btn, 1.1rem);
-  font-weight: 600;
+  font-size: var(--mm-fs-btn, 1.2rem);
+  font-weight: 400;
   text-align: center;
-  transition: all 0.25s ease;
-  opacity: 0.95;
+  transition: all 1s ease;
+  opacity: 0.9;
+  box-shadow: 0px 0px 0px 0px black;
 }
 
 .heroButton:hover {
-  background-color: #18222F;
-  color: #FC6C14;
+  box-shadow: 1px 3px 18px 2px rgba(0, 0, 0, 0.2);
   opacity: 1;
 }
 
 /* ===== SEKTION (Rolle: Reisende / Partner / Redaktion) ===== */
 
 .sectionRole {
-  background-color: #FFFFFF;
+  background-color: #ffffff;
   padding: 5rem 2rem;
 }
 
@@ -143,7 +143,7 @@
   font-family: var(--font-anton);
   font-size: clamp(1.8rem, 3vw, 2.8rem);
   font-weight: 400;
-  color: #FC6C14;
+  color: #fc6c14;
   margin: 0 0 1.5rem 0;
   line-height: 1.2;
 }
@@ -152,7 +152,7 @@
   font-family: var(--font-fira);
   font-size: 1.1rem;
   line-height: 1.7;
-  color: #18222F;
+  color: #18222f;
   margin: 0 0 2rem 0;
 }
 
@@ -173,16 +173,16 @@
 }
 
 .sectionText a {
-  color: #FC6C14;
+  color: #fc6c14;
   text-decoration: underline;
 }
 
 .sectionCta {
   display: inline-block;
   text-decoration: none;
-  background-color: #18222F;
-  color: #FFFFFF;
-  border: 2px solid #18222F;
+  background-color: #18222f;
+  color: #ffffff;
+  border: 2px solid #18222f;
   border-radius: 9999px;
   padding: 0.85rem 2rem;
   font-family: var(--font-fira);
@@ -193,8 +193,8 @@
 }
 
 .sectionCta:hover {
-  background-color: #FC6C14;
-  border-color: #FC6C14;
+  background-color: #fc6c14;
+  border-color: #fc6c14;
 }
 
 .sectionSecondaryLink {
@@ -203,7 +203,7 @@
   font-family: var(--font-fira);
   font-size: 0.95rem;
   font-weight: 500;
-  color: #FC6C14;
+  color: #fc6c14;
   text-decoration: none;
 }
 
@@ -215,6 +215,7 @@
 @media screen and (max-width: 768px) {
   .heroContainer {
     flex-direction: column;
+    height: auto;
     min-height: auto;
   }
 
@@ -230,14 +231,17 @@
 
   .heroHeadline {
     font-size: var(--mm-fs-headline-mobile, 2.2rem);
-    color: var(--mm-color-headline-mobile, var(--mm-color-headline, var(--mm-color-hero-text, #FFFFFF)));
+    color: var(
+      --mm-color-headline-mobile,
+      var(--mm-color-headline, var(--mm-color-hero-text, #ffffff))
+    );
   }
 
   .heroButton {
     font-size: var(--mm-fs-btn-mobile, 1rem);
-    color: var(--mm-color-btn-mobile, var(--mm-color-btn, #18222F));
-    background-color: var(--mm-bg-btn-mobile, var(--mm-bg-btn, #FFFFFF));
-    padding: 0.85rem 1.5rem;
+    color: var(--mm-color-btn-mobile, var(--mm-color-btn, #18222f));
+    background-color: var(--mm-bg-btn-mobile, var(--mm-bg-btn, #ffffffe6));
+    padding: 0.85rem 1.75rem;
   }
 
   .sectionRole {
@@ -257,5 +261,11 @@
     margin-right: 0;
     margin-bottom: 0.5rem;
     text-align: center;
+  }
+}
+
+@media screen and (max-width: 500px) {
+  .heroButtons {
+    flex-direction: column;
   }
 }
