@@ -5,6 +5,7 @@
 
 import { Metadata } from "next";
 import Link from "next/link";
+import { marked } from "marked";
 import type { PartnerPageContent } from "../../../types";
 import styles from "./voraussetzungen.module.css";
 
@@ -60,6 +61,26 @@ export default async function VoraussetzungenPage() {
     );
   }
 
+  // Alle Rich-Text-Felder dieser Kolekcja sind Markdown-Felder (input-rich-text-md)
+  // in Directus. Sie müssen daher vor dem Rendern nach HTML konvertiert werden.
+  const toHtml = (md?: string) => (md ? marked(md) : null);
+  const [
+    voraussetzungenHtml,
+    pinStandardHtml,
+    pinPartnerHtml,
+    kostenIntroHtml,
+    ...kostenTiersHtml
+  ] = await Promise.all([
+    toHtml(pageData.voraussetzungen_text),
+    toHtml(pageData.pin_vergleich_standard_text),
+    toHtml(pageData.pin_vergleich_partner_text),
+    toHtml(pageData.kosten_intro),
+    toHtml(pageData.kosten_tier_1),
+    toHtml(pageData.kosten_tier_2),
+    toHtml(pageData.kosten_tier_3),
+    toHtml(pageData.kosten_tier_4),
+  ]);
+
   return (
     <main className={styles.main}>
       {/* SEKCJA 1 — Voraussetzungen (dwukolumnowy: 40% tytuł | 60% tekst) */}
@@ -90,14 +111,14 @@ export default async function VoraussetzungenPage() {
                 pageData.voraussetzungen_right_background || "#FFFFFF",
             }}
           >
-            {pageData.voraussetzungen_text && (
+            {voraussetzungenHtml && (
               <div
                 className={styles.voraussetzungenText}
                 style={{
                   color: pageData.voraussetzungen_text_color || "#000000",
                 }}
                 dangerouslySetInnerHTML={{
-                  __html: pageData.voraussetzungen_text,
+                  __html: voraussetzungenHtml,
                 }}
               />
             )}
@@ -115,21 +136,21 @@ export default async function VoraussetzungenPage() {
           }}
         >
           <div className={styles.pinVergleichKarteLinks}>
-            {pageData.pin_vergleich_standard_text && (
+            {pinStandardHtml && (
               <div
                 className={styles.pinVergleichText}
                 dangerouslySetInnerHTML={{
-                  __html: pageData.pin_vergleich_standard_text,
+                  __html: pinStandardHtml,
                 }}
               />
             )}
           </div>
           <div className={styles.pinVergleichKarteRechts}>
-            {pageData.pin_vergleich_partner_text && (
+            {pinPartnerHtml && (
               <div
                 className={styles.pinVergleichText}
                 dangerouslySetInnerHTML={{
-                  __html: pageData.pin_vergleich_partner_text,
+                  __html: pinPartnerHtml,
                 }}
               />
             )}
@@ -159,23 +180,15 @@ export default async function VoraussetzungenPage() {
               {pageData.kosten_title}
             </h2>
           )}
-          {pageData.kosten_intro && (
+          {kostenIntroHtml && (
             <div
               className={styles.kostenIntro}
-              dangerouslySetInnerHTML={{ __html: pageData.kosten_intro }}
+              dangerouslySetInnerHTML={{ __html: kostenIntroHtml }}
             />
           )}
-          {(pageData.kosten_tier_1 ||
-            pageData.kosten_tier_2 ||
-            pageData.kosten_tier_3 ||
-            pageData.kosten_tier_4) && (
+          {kostenTiersHtml.some(Boolean) && (
             <div className={styles.kostenKarten}>
-              {[
-                pageData.kosten_tier_1,
-                pageData.kosten_tier_2,
-                pageData.kosten_tier_3,
-                pageData.kosten_tier_4,
-              ].map(
+              {kostenTiersHtml.map(
                 (karte, i) =>
                   karte && (
                     <div
