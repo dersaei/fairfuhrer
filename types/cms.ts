@@ -24,20 +24,25 @@ export interface PartnerPageContent {
   mitmachen_hero_button_mobile_font_size?: string;
   mitmachen_hero_button_mobile_color?: string;
   mitmachen_hero_button_background_color_mobile?: string;
-  // 3 buttony na hero
+  // Wspólny kolor hover dla wszystkich 3 przycisków hero
+  mitmachen_hero_button_background_color_hover?: string;
+  // 3 buttony na hero (skok do sekcji #reisende/#partner/#redaktion)
   mitmachen_button_1_label?: string;
   mitmachen_button_1_url?: string;
   mitmachen_button_2_label?: string;
   mitmachen_button_2_url?: string;
   mitmachen_button_3_label?: string;
   mitmachen_button_3_url?: string;
-  // 3 opcjonalne sekundarne linki
-  mitmachen_reisende_link_label?: string;
-  mitmachen_reisende_link_url?: string;
-  mitmachen_partner_link_label?: string;
-  mitmachen_partner_link_url?: string;
-  mitmachen_redaktion_link_label?: string;
-  mitmachen_redaktion_link_url?: string;
+  // 3 niezależne przyciski CTA w sekcjach Tashiny (tekst + kolor + kolor hover)
+  mitmachen_reisende_button_label?: string;
+  mitmachen_reisende_button_color?: string;
+  mitmachen_reisende_button_hover_color?: string;
+  mitmachen_partner_button_label?: string;
+  mitmachen_partner_button_color?: string;
+  mitmachen_partner_button_hover_color?: string;
+  mitmachen_redaktion_button_label?: string;
+  mitmachen_redaktion_button_color?: string;
+  mitmachen_redaktion_button_hover_color?: string;
   // 3 szczegółowe sekcje Tashiny pod hero
   mitmachen_reisende_section_title?: string;
   mitmachen_reisende_section_text?: string;
@@ -69,7 +74,9 @@ export interface PartnerPageContent {
   // CTA na końcu subpage
   cta_button_label?: string;
   cta_button_url?: string;
-  cta_button_color?: string;
+  cta_button_color?: string; // kolor tekstu
+  cta_button_background_color?: string; // główny kolor (tło)
+  cta_button_hover_color?: string; // kolor tła na hover
 }
 
 export interface FeaturedPin {

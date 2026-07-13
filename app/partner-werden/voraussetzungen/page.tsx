@@ -4,6 +4,7 @@
 // pin_vergleich_*, kosten_*, cta_button_*).
 
 import { Metadata } from "next";
+import type { CSSProperties } from "react";
 import Link from "next/link";
 import { marked } from "marked";
 import type { PartnerPageContent } from "../../../types";
@@ -205,7 +206,17 @@ export default async function VoraussetzungenPage() {
               <Link
                 href={pageData.cta_button_url}
                 className={styles.ctaButton}
-                style={{ color: pageData.cta_button_color || "#FFFFFF" }}
+                style={
+                  {
+                    color: pageData.cta_button_color || "#FFFFFF",
+                    ...(pageData.cta_button_background_color && {
+                      "--cta-bg": pageData.cta_button_background_color,
+                    }),
+                    ...(pageData.cta_button_hover_color && {
+                      "--cta-bg-hover": pageData.cta_button_hover_color,
+                    }),
+                  } as CSSProperties
+                }
               >
                 {pageData.cta_button_label}
               </Link>

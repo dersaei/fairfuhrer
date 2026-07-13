@@ -193,8 +193,8 @@
 .ctaButton {
   display: inline-block;
   text-decoration: none;
-  background-color: #FC6C14;
-  border: 2px solid #FC6C14;
+  background-color: var(--cta-bg, #fc6c14);
+  border: 2px solid var(--cta-bg, #fc6c14);
   border-radius: 9999px;
   padding: 1rem 2.5rem;
   font-family: var(--font-fira);
@@ -204,7 +204,8 @@
 }
 
 .ctaButton:hover {
-  background-color: transparent;
+  background-color: var(--cta-bg-hover, transparent);
+  border-color: var(--cta-bg-hover, var(--cta-bg, #fc6c14));
 }
 
 /* ===== MOBILE ===== */

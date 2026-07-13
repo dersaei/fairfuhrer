@@ -87,6 +87,14 @@ export default async function MitmachenPage() {
   const c = (val?: string) =>
     val ? (val.startsWith("#") ? val : `#${val}`) : undefined;
 
+  // Kolory pojedynczego przycisku CTA (tło + tło na hover) jako zmienne CSS.
+  // Każdy z 3 przycisków sekcji ma własne, niezależne kolory z Directusa.
+  const ctaStyle = (color?: string, hover?: string) =>
+    ({
+      ...(c(color) && { "--cta-bg": c(color) }),
+      ...(c(hover) && { "--cta-bg-hover": c(hover) }),
+    }) as React.CSSProperties;
+
   // CSS variables — analogicznie do homepage (app/page.tsx)
   const cssVars = {
     ...(pageData.mitmachen_hero_background_color && {
@@ -121,6 +129,9 @@ export default async function MitmachenPage() {
     }),
     ...(pageData.mitmachen_hero_button_background_color && {
       "--mm-bg-btn": c(pageData.mitmachen_hero_button_background_color),
+    }),
+    ...(pageData.mitmachen_hero_button_background_color_hover && {
+      "--mm-bg-btn-hover": c(pageData.mitmachen_hero_button_background_color_hover),
     }),
     ...(pageData.mitmachen_hero_button_mobile_font_size && {
       "--mm-fs-btn-mobile": pageData.mitmachen_hero_button_mobile_font_size,
@@ -205,21 +216,17 @@ export default async function MitmachenPage() {
                 dangerouslySetInnerHTML={{ __html: reisendeHtml }}
               />
             )}
-            {pageData.mitmachen_button_1_label && pageData.mitmachen_button_1_url && (
-              <Link
-                href={pageData.mitmachen_button_1_url}
-                className={styles.sectionCta}
-              >
-                {pageData.mitmachen_button_1_label}
-              </Link>
-            )}
-            {pageData.mitmachen_reisende_link_label &&
-              pageData.mitmachen_reisende_link_url && (
+            {pageData.mitmachen_reisende_button_label &&
+              pageData.mitmachen_button_1_url && (
                 <Link
-                  href={pageData.mitmachen_reisende_link_url}
-                  className={styles.sectionSecondaryLink}
+                  href={pageData.mitmachen_button_1_url}
+                  className={styles.sectionCta}
+                  style={ctaStyle(
+                    pageData.mitmachen_reisende_button_color,
+                    pageData.mitmachen_reisende_button_hover_color,
+                  )}
                 >
-                  {pageData.mitmachen_reisende_link_label} →
+                  {pageData.mitmachen_reisende_button_label}
                 </Link>
               )}
           </div>
@@ -244,14 +251,19 @@ export default async function MitmachenPage() {
                 dangerouslySetInnerHTML={{ __html: partnerHtml }}
               />
             )}
-            {pageData.mitmachen_button_2_label && pageData.mitmachen_button_2_url && (
-              <Link
-                href={pageData.mitmachen_button_2_url}
-                className={styles.sectionCta}
-              >
-                {pageData.mitmachen_button_2_label}
-              </Link>
-            )}
+            {pageData.mitmachen_partner_button_label &&
+              pageData.mitmachen_button_2_url && (
+                <Link
+                  href={pageData.mitmachen_button_2_url}
+                  className={styles.sectionCta}
+                  style={ctaStyle(
+                    pageData.mitmachen_partner_button_color,
+                    pageData.mitmachen_partner_button_hover_color,
+                  )}
+                >
+                  {pageData.mitmachen_partner_button_label}
+                </Link>
+              )}
           </div>
         </section>
       )}
@@ -274,21 +286,17 @@ export default async function MitmachenPage() {
                 dangerouslySetInnerHTML={{ __html: redaktionHtml }}
               />
             )}
-            {pageData.mitmachen_button_3_label && pageData.mitmachen_button_3_url && (
-              <Link
-                href={pageData.mitmachen_button_3_url}
-                className={styles.sectionCta}
-              >
-                {pageData.mitmachen_button_3_label}
-              </Link>
-            )}
-            {pageData.mitmachen_redaktion_link_label &&
-              pageData.mitmachen_redaktion_link_url && (
+            {pageData.mitmachen_redaktion_button_label &&
+              pageData.mitmachen_button_3_url && (
                 <Link
-                  href={pageData.mitmachen_redaktion_link_url}
-                  className={styles.sectionSecondaryLink}
+                  href={pageData.mitmachen_button_3_url}
+                  className={styles.sectionCta}
+                  style={ctaStyle(
+                    pageData.mitmachen_redaktion_button_color,
+                    pageData.mitmachen_redaktion_button_hover_color,
+                  )}
                 >
-                  {pageData.mitmachen_redaktion_link_label} →
+                  {pageData.mitmachen_redaktion_button_label}
                 </Link>
               )}
           </div>
