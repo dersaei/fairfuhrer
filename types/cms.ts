@@ -6,7 +6,6 @@ export interface PartnerPageContent {
   mitmachen_hero_image?: string;
   mitmachen_hero_background_color?: string;
   mitmachen_hero_text_color?: string;
-  mitmachen_hero_eyebrow?: string;
   mitmachen_hero_headline?: string;
   mitmachen_hero_intro?: string;
   // Typografia + kolory (analogicznie do home_page_content hero)
@@ -16,8 +15,6 @@ export interface PartnerPageContent {
   mitmachen_hero_headline_mobile_color?: string;
   mitmachen_hero_intro_font_size?: string;
   mitmachen_hero_intro_color?: string;
-  mitmachen_hero_eyebrow_font_size?: string;
-  mitmachen_hero_eyebrow_color?: string;
   mitmachen_hero_button_font_size?: string;
   mitmachen_hero_button_color?: string;
   mitmachen_hero_button_background_color?: string;
