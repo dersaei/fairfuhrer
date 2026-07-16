@@ -82,8 +82,18 @@ export default async function VoraussetzungenPage() {
     toHtml(pageData.kosten_tier_4),
   ]);
 
+  // Globalna kolekcyjna kolor linków — normalizuj # jeśli brak (Directus czasem trzyma bez #)
+  const linkColor = pageData.link_color
+    ? pageData.link_color.startsWith("#")
+      ? pageData.link_color
+      : `#${pageData.link_color}`
+    : undefined;
+
   return (
-    <main className={styles.main}>
+    <main
+      className={styles.main}
+      style={linkColor ? ({ "--pp-link": linkColor } as CSSProperties) : undefined}
+    >
       {/* SEKCJA 1 — Voraussetzungen (dwukolumnowy: 40% tytuł | 60% tekst) */}
       {(pageData.voraussetzungen_title || pageData.voraussetzungen_text) && (
         <section className={styles.voraussetzungen}>

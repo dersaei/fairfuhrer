@@ -97,6 +97,9 @@ export default async function MitmachenPage() {
 
   // CSS variables — analogicznie do homepage (app/page.tsx)
   const cssVars = {
+    ...(c(pageData.link_color) && {
+      "--pp-link": c(pageData.link_color),
+    }),
     ...(pageData.mitmachen_hero_background_color && {
       "--mm-hero-bg": c(pageData.mitmachen_hero_background_color),
     }),

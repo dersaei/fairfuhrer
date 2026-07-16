@@ -65,6 +65,16 @@
   font-weight: 700;
 }
 
+/* Globalna kolekcyjna kolor linków (bez podkreślenia) — dotyczy wszystkich
+   Markdown-linków na tej podstronie (Voraussetzungen / Pin-Vergleich / Kosten). */
+.voraussetzungenText a,
+.pinVergleichText a,
+.kostenIntro a,
+.kostenKarte a {
+  color: var(--pp-link, #fc6c14);
+  text-decoration: none;
+}
+
 /* ===== SEKCJA 2 — Pin-Vergleich ===== */
 
 .pinVergleich {

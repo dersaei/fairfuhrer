@@ -1,6 +1,7 @@
 // components/MuxVideoEmbed.tsx
 "use client";
 
+import type { CSSProperties } from "react";
 import MuxPlayer from "@mux/mux-player-react";
 import styles from "./MuxVideoEmbed.module.css";
 
@@ -11,6 +12,9 @@ interface MuxVideoEmbedProps {
   poster?: string;
   autoPlay?: boolean;
   muted?: boolean;
+  // fill = video wypełnia całą wysokość kontenera z przycięciem (object-fit: cover),
+  // bez wymuszonego 16:9. Używane w sekcji video na pełną wysokość (100vh).
+  fill?: boolean;
 }
 
 export default function MuxVideoEmbed({
@@ -20,6 +24,7 @@ export default function MuxVideoEmbed({
   title,
   autoPlay = false,
   muted = true,
+  fill = false,
 }: MuxVideoEmbedProps) {
   // Validation - check if playbackId is valid
   if (!playbackId || playbackId.length !== 43) {
@@ -32,8 +37,27 @@ export default function MuxVideoEmbed({
     );
   }
 
+  const playerStyle = (
+    fill
+      ? {
+          width: "100%",
+          height: "100%",
+          "--media-object-fit": "cover",
+          "--media-object-position": "center",
+        }
+      : {
+          width: "100%",
+          height: "100%",
+          aspectRatio: "16/9",
+        }
+  ) as CSSProperties & Record<`--${string}`, string>;
+
   return (
-    <div className={`${styles.videoContainer} ${className}`}>
+    <div
+      className={`${styles.videoContainer} ${
+        fill ? styles.videoContainerFill : ""
+      } ${className}`}
+    >
       <MuxPlayer
         playbackId={playbackId}
         poster={poster}
@@ -44,11 +68,7 @@ export default function MuxVideoEmbed({
           video_title: title || "FairFuhrer Video",
           viewer_user_id: "anonymous",
         }}
-        style={{
-          width: "100%",
-          height: "100%",
-          aspectRatio: "16/9",
-        }}
+        style={playerStyle}
       />
     </div>
   );

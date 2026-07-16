@@ -29,17 +29,20 @@ export default async function HomePage() {
   const travelerHtml = content?.traveler_content
     ? await marked(content.traveler_content)
     : "";
+  const travelerVisionHtml = content?.traveler_vision
+    ? await marked(content.traveler_vision)
+    : "";
   const partnerHtml = content?.partner_content
     ? await marked(content.partner_content)
-    : "";
-  const videoTextHtml = content?.video_text
-    ? await marked(content.video_text)
     : "";
 
   const c = (val?: string) =>
     val ? (val.startsWith("#") ? val : `#${val}`) : undefined;
 
   const cssVars = {
+    ...(c(content?.link_color) && {
+      "--hp-link": c(content?.link_color),
+    }),
     ...(content?.hero_background_color && {
       "--hero-bg": c(content.hero_background_color),
     }),
@@ -105,9 +108,6 @@ export default async function HomePage() {
     }),
     ...(content?.category_name_mobile_font_size && {
       "--fs-cat-name-mobile": content.category_name_mobile_font_size,
-    }),
-    ...(content?.section3_background_color && {
-      "--bg-s3": c(content.section3_background_color),
     }),
     ...(content?.section4_background_color && {
       "--bg-s4": c(content.section4_background_color),
@@ -244,18 +244,38 @@ export default async function HomePage() {
       {(content?.traveler_title || content?.partner_title) && (
         <section className={styles.section3}>
           {content?.traveler_title && (
-            <div className={styles.ctaBlock}>
-              {content.traveler_image && (
-                <div className={styles.ctaImage}>
-                  {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img
-                    src={`${directusUrl}/assets/${content.traveler_image}`}
-                    alt={content.traveler_title}
+            <div
+              className={styles.ctaFeatured}
+              style={
+                c(content?.traveler_background_color)
+                  ? { backgroundColor: c(content.traveler_background_color) }
+                  : undefined
+              }
+            >
+              <div className={styles.ctaFeaturedMedia}>
+                {content.traveler_image ? (
+                  <div className={styles.ctaFeaturedImageWrap}>
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img
+                      src={`${directusUrl}/assets/${content.traveler_image}`}
+                      alt={content.traveler_title}
+                      className={styles.ctaFeaturedImage}
+                    />
+                    <h2 className={styles.ctaFeaturedTitle}>
+                      {content.traveler_title}
+                    </h2>
+                  </div>
+                ) : (
+                  <h2 className={styles.ctaTitle}>{content.traveler_title}</h2>
+                )}
+                {travelerVisionHtml && (
+                  <div
+                    className={styles.ctaFeaturedVision}
+                    dangerouslySetInnerHTML={{ __html: travelerVisionHtml }}
                   />
-                </div>
-              )}
-              <div className={styles.ctaContent}>
-                <h2 className={styles.ctaTitle}>{content.traveler_title}</h2>
+                )}
+              </div>
+              <div className={styles.ctaFeaturedContent}>
                 {travelerHtml && (
                   <div
                     className={styles.ctaText}
@@ -275,7 +295,14 @@ export default async function HomePage() {
           )}
 
           {content?.partner_title && (
-            <div className={`${styles.ctaBlock} ${styles.ctaBlockReverse}`}>
+            <div
+              className={`${styles.ctaBlock} ${styles.ctaBlockReverse}`}
+              style={
+                c(content?.partner_background_color)
+                  ? { backgroundColor: c(content.partner_background_color) }
+                  : undefined
+              }
+            >
               <div className={styles.ctaContent}>
                 <h2 className={styles.ctaTitle}>{content.partner_title}</h2>
                 {partnerHtml && (
@@ -307,46 +334,24 @@ export default async function HomePage() {
         </section>
       )}
 
-      {/* SEKCJA 4: Fairführer-Video + Text (ersetzt die alte "Unterstütze unsere Mission" Sektion) */}
+      {/* SEKCJA 4: Fairführer-Video — pełna szerokość i wysokość sekcji */}
       {content?.video_mux_playback_id && (
         <section
           className={styles.videoSection}
           style={{
-            backgroundColor: content.video_background_color || "#ffffff",
+            backgroundColor: content.video_background_color || "#000000",
           }}
         >
-          <div className={styles.videoBlock}>
-            <div className={styles.videoSide}>
-              <div className={styles.videoWrapper}>
-                <ConditionalMuxVideo>
-                  <MuxVideoEmbed
-                    playbackId={content.video_mux_playback_id}
-                    autoPlay={false}
-                    muted={false}
-                    className={styles.videoEmbed}
-                  />
-                </ConditionalMuxVideo>
-              </div>
-            </div>
-            <div className={styles.videoTextSide}>
-              {content.video_title && (
-                <h2 className={styles.videoTitle}>{content.video_title}</h2>
-              )}
-              {videoTextHtml && (
-                <div
-                  className={styles.videoText}
-                  dangerouslySetInnerHTML={{ __html: videoTextHtml }}
-                />
-              )}
-              {content.video_button_label && content.video_button_url && (
-                <Link
-                  href={content.video_button_url}
-                  className={styles.videoButton}
-                >
-                  {content.video_button_label}
-                </Link>
-              )}
-            </div>
+          <div className={styles.videoWrapper}>
+            <ConditionalMuxVideo>
+              <MuxVideoEmbed
+                playbackId={content.video_mux_playback_id}
+                autoPlay={false}
+                muted={false}
+                fill
+                className={styles.videoEmbed}
+              />
+            </ConditionalMuxVideo>
           </div>
         </section>
       )}

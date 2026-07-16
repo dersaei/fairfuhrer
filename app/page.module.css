@@ -166,7 +166,7 @@
 
 /* ===== SEKCJA 3: Mapa Featured Pins ===== */
 .section3 {
-  background-color: var(--bg-s3, #ffffff);
+  background-color: #ffffff;
   padding: 0;
 }
 
@@ -183,6 +183,186 @@
 
 .ctaBlockReverse {
   background-color: #f7f4f0;
+}
+
+/* ===== SEKCJA 3 — pierwszy blok (Traveler) jako artykuł redakcyjny =====
+   Zdjęcie w naturalnym kształcie, wycentrowane; tytuł nachodzi na dolną
+   krawędź zdjęcia w prostokątnym granatowym pasie; pod spodem lead + długi
+   tekst w wygodnej kolumnie, lista jako „feature items". Bez zaokrągleń,
+   bez gradientów. */
+.ctaFeatured {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 4.5rem 2rem 5rem;
+  display: flex;
+  flex-direction: row;
+  align-items: flex-start;
+  gap: 3.5rem;
+}
+
+/* Lewa kolumna: zdjęcie (z nachodzącym tytułem) + tekst „Vision" pod nim */
+.ctaFeaturedMedia {
+  flex: 1 1 46%;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.ctaFeaturedImageWrap {
+  position: relative;
+  align-self: flex-start;
+  max-width: 100%;
+  margin-bottom: 3.5rem;
+}
+
+.ctaFeaturedImage {
+  display: block;
+  width: auto;
+  height: auto;
+  max-width: 100%;
+  max-height: 82vh;
+}
+
+.ctaFeaturedTitle {
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  transform: translateY(38%);
+  max-width: 88%;
+  margin: 0;
+  padding: 0.6rem 1.6rem;
+  background-color: #18222f;
+  color: #ffffff;
+  font-family: var(--font-anton);
+  font-weight: 400;
+  font-size: clamp(1.6rem, 3.2vw, 2.9rem);
+  line-height: 1.12;
+}
+
+.ctaFeaturedContent {
+  flex: 1 1 54%;
+  min-width: 0;
+  max-width: 74ch;
+  text-align: left;
+}
+
+.ctaFeaturedContent .ctaText {
+  max-width: none;
+  margin: 0;
+}
+
+/* Tekst „Vision" pod zdjęciem — oddzielony pomarańczową kreską u góry */
+.ctaFeaturedVision {
+  width: 100%;
+  font-family: var(--font-fira);
+  font-size: 1rem;
+  line-height: 1.7;
+  color: #000;
+  border-top: 3px solid #fc6c14;
+  padding-top: 1.25rem;
+  text-align: justify;
+}
+
+.ctaFeaturedVision p {
+  margin: 0 0 0.75rem 0;
+}
+
+.ctaFeaturedVision p:last-child {
+  margin-bottom: 0;
+}
+
+.ctaFeaturedVision strong {
+  font-weight: 700;
+}
+
+/* Lead — pierwszy akapit jako wyróżniony wstęp (większy rozmiar, ale
+   normalna grubość 400, żeby nie wyglądał na pogrubiony) */
+.ctaFeaturedContent .ctaText > p:first-child {
+  font-size: clamp(1.2rem, 2.2vw, 1.5rem);
+  line-height: 1.5;
+  font-weight: 400;
+  color: #18222f;
+  margin-bottom: 1.75rem;
+  text-align: center;
+}
+
+/* Pull-quote — działa, gdy w Directusie oznaczysz linię jako cytat: > … */
+.ctaFeaturedContent .ctaText blockquote {
+  margin: 2.25rem 0;
+  padding: 0.25rem 0 0.25rem 1.5rem;
+  border-left: 4px solid #fc6c14;
+  font-family: var(--font-anton);
+  font-weight: 400;
+  font-size: clamp(1.4rem, 2.6vw, 2rem);
+  line-height: 1.25;
+  color: #18222f;
+}
+
+.ctaFeaturedContent .ctaText blockquote p {
+  margin: 0;
+}
+
+/* Lista cech jako „feature items" — kwadratowe pomarańczowe znaczniki */
+.ctaFeaturedContent .ctaText ul {
+  list-style: none;
+  margin: 1.75rem 0;
+  padding: 0;
+  display: grid;
+  gap: 0.85rem;
+}
+
+.ctaFeaturedContent .ctaText li {
+  position: relative;
+  margin: 0;
+  padding-left: 1.75rem;
+  line-height: 1.5;
+}
+
+.ctaFeaturedContent .ctaText li::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0.55em;
+  width: 0.6rem;
+  height: 0.6rem;
+  background-color: #fc6c14;
+}
+
+.ctaFeaturedContent .ctaButton {
+  margin-top: 0.5rem;
+}
+
+@media (min-width: 640px) {
+  .ctaFeaturedContent .ctaText ul {
+    grid-template-columns: 1fr 1fr;
+    gap: 0.85rem 2rem;
+  }
+}
+
+/* Poniżej 1000px: pierwszy blok układa się pionowo (zdjęcie + vision, potem tekst) */
+@media (max-width: 800px) {
+  .ctaFeatured {
+    flex-direction: column;
+    gap: 0;
+    padding: 3.5rem 1.5rem 4rem;
+  }
+
+  .ctaFeaturedMedia,
+  .ctaFeaturedContent {
+    flex: none;
+    width: 100%;
+    max-width: none;
+  }
+
+  .ctaFeaturedMedia {
+    align-items: center;
+    margin-bottom: 2.5rem;
+  }
+
+  .ctaFeaturedImageWrap {
+    align-self: center;
+  }
 }
 
 .ctaImage {
@@ -215,12 +395,15 @@
   line-height: 1.2;
 }
 
+/* Styl tekstu ujednolicony ze stroną Mitmachen (.sectionText):
+   normalny = 400 (nie 500!), 1.1rem, line-height 1.7, kolor #18222f —
+   dzięki temu bold (700) jest wyraźnie odróżnialny od normalnego tekstu. */
 .ctaText {
-  font-size: 1.05rem;
+  font-size: 1.1rem;
   font-family: var(--font-fira);
-  font-weight: 500;
-  color: #3a3a3a;
-  line-height: 1.75;
+  font-weight: 400;
+  color: #18222f;
+  line-height: 1.7;
   margin: 0 0 2rem 0;
   max-width: 600px;
 }
@@ -236,14 +419,13 @@
 }
 .ctaText strong {
   font-weight: 700;
-  color: #181716;
 }
 .ctaText em {
   font-style: italic;
 }
 .ctaText a {
-  color: #fc6c14;
-  text-decoration: underline;
+  color: var(--hp-link, #fc6c14);
+  text-decoration: none;
 }
 .ctaText ul,
 .ctaText ol {
@@ -276,121 +458,25 @@
   color: #18222f;
 }
 
-/* ===== SEKCJA 4: Fairführer-Video + Text (Video lewo, Tekst prawo) ===== */
+/* ===== SEKCJA 4: Fairführer-Video — pełna szerokość i stała wysokość 100vh ===== */
 .videoSection {
-  padding: 4rem 2rem;
-}
-
-.videoBlock {
-  max-width: 1200px;
-  margin: 0 auto;
-  display: flex;
-  align-items: center;
-  gap: 3rem;
-}
-
-.videoSide {
-  flex: 1 1 55%;
-  min-width: 0;
-}
-
-.videoTextSide {
-  flex: 1 1 45%;
-  min-width: 0;
-}
-
-.videoTitle {
-  font-family: var(--font-anton);
-  font-size: clamp(1.8rem, 3vw, 2.8rem);
-  font-weight: 400;
-  color: #18222F;
-  margin: 0 0 1.5rem 0;
-  line-height: 1.2;
-}
-
-.videoText {
-  font-family: var(--font-fira);
-  font-size: 1.05rem;
-  line-height: 1.7;
-  color: #181716;
-  margin: 0 0 2rem 0;
-}
-
-.videoText p {
-  margin: 0 0 1rem 0;
-}
-
-.videoText p:last-child {
-  margin-bottom: 0;
-}
-
-.videoText strong {
-  font-weight: 700;
-}
-
-.videoText em {
-  font-style: italic;
-}
-
-.videoText a {
-  color: #fc6c14;
-  text-decoration: underline;
-}
-
-.videoButton {
-  display: inline-block;
-  font-family: var(--font-fira);
-  font-size: 1rem;
-  font-weight: 600;
-  text-decoration: none;
-  color: #fff;
-  background-color: #18222f;
-  border: 2px solid #18222f;
-  padding: 0.75rem 2rem;
-  border-radius: 9999px;
-  transition:
-    background-color 0.25s ease,
-    color 0.25s ease;
-}
-
-.videoButton:hover {
-  background-color: #fc6c14;
-  color: #18222f;
+  padding: 0;
+  width: 100%;
+  height: 100vh; /* fallback dla przeglądarek bez dvh */
+  height: 100dvh;
 }
 
 .videoWrapper {
   position: relative;
   width: 100%;
-  aspect-ratio: 16 / 9;
-  border-radius: 12px;
+  height: 100%;
   overflow: hidden;
-  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.12);
 }
 
 .videoEmbed {
   width: 100%;
   height: 100%;
-}
-
-@media screen and (max-width: 768px) {
-  .videoSection {
-    padding: 2.5rem 1rem;
-  }
-
-  .videoBlock {
-    flex-direction: column;
-    gap: 2rem;
-  }
-
-  .videoSide,
-  .videoTextSide {
-    flex: none;
-    width: 100%;
-  }
-
-  .videoTextSide {
-    text-align: center;
-  }
+  display: block;
 }
 
 /* ===== STARE STYLE SEKCJI 4 — zachowane jako referencja (nieużywane) ===== */
@@ -571,6 +657,16 @@
   .ctaContent {
     order: 1;
     padding: 2rem 3rem;
+  }
+
+  .ctaFeatured {
+    padding: 2.5rem 1.5rem 3rem;
+  }
+
+  .ctaFeaturedTitle {
+    white-space: normal;
+    max-width: 88%;
+    font-size: clamp(1.4rem, 6vw, 2rem);
   }
 }
 

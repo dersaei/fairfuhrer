@@ -2,6 +2,8 @@ import type { Place } from "./map";
 
 export interface PartnerPageContent {
   id: number;
+  // Globalny kolor linków (Markdown-Links) dla całej kolekcji — obie strony
+  link_color?: string;
   // Mitmachen-Hero (główna strona /partner-werden — layout jak homepage)
   mitmachen_hero_image?: string;
   mitmachen_hero_background_color?: string;
@@ -85,6 +87,8 @@ export interface FeaturedPin {
 
 export interface HomePageContent {
   id: number;
+  // Globalny kolor linków (Markdown-Links) dla całej strony głównej
+  link_color?: string;
   hero_title?: string;
   hero_title_font_size?: string;
   hero_title_color?: string;
@@ -114,7 +118,8 @@ export interface HomePageContent {
   category_name_font_size?: string;
   category_name_color?: string;
   category_name_mobile_font_size?: string;
-  section3_background_color?: string;
+  // Sekcja 3 — tła podsekcji: górna (Traveler) i dolna (Partner)
+  traveler_background_color?: string;
   section3_title?: string;
   section3_title_font_size?: string;
   section3_title_color?: string;
@@ -142,6 +147,8 @@ export interface HomePageContent {
   section4_button_mobile_font_size?: string;
   traveler_title?: string;
   traveler_content?: string;
+  // Tekst „Vision" wyświetlany POD zdjęciem (nie w kolumnie tekstu) — Markdown
+  traveler_vision?: string;
   traveler_cta_label?: string;
   traveler_cta_url?: string;
   traveler_image?: string;
@@ -150,6 +157,8 @@ export interface HomePageContent {
   partner_cta_label?: string;
   partner_cta_url?: string;
   partner_image?: string;
+  // Tło drugiego bloku (Partner) w sekcji 3 — pusty = fallback #F7F4F0
+  partner_background_color?: string;
   // Fairführer-Video (zastępuje starą sekcję 4 "Unterstütze unsere Mission")
   video_mux_playback_id?: string;
   video_title?: string;

@@ -15,6 +15,14 @@
   object-fit: cover;
 }
 
+/* fill = pełna wysokość kontenera, przycięcie (cover), bez 16:9, cienia i radiusa */
+.videoContainerFill {
+  aspect-ratio: auto;
+  height: 100%;
+  box-shadow: none;
+  border-radius: 0;
+}
+
 .videoError {
   padding: 2rem;
   background: #fee2e2;
@@ -37,5 +45,9 @@
 @media (max-width: 768px) {
   .videoContainer {
     border-radius: 8px;
+  }
+
+  .videoContainerFill {
+    border-radius: 0;
   }
 }
