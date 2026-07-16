@@ -1,5 +1,11 @@
 import type { Place } from "./map";
 
+// Rozwinięty plik z Directusa (obraz) — id + modified_on do cache-bustingu URL.
+export interface DirectusFileRef {
+  id: string;
+  modified_on?: string | null;
+}
+
 export interface PartnerPageContent {
   id: number;
   // Globalny kolor linków (Markdown-Links) dla całej kolekcji — obie strony
@@ -60,6 +66,9 @@ export interface PartnerPageContent {
   pin_vergleich_standard_text?: string;
   pin_vergleich_partner_text?: string;
   pin_vergleich_background?: string;
+  // Kolor tytułów (H2) w kartach porównania pinów
+  pin_vergleich_standard_title_color?: string;
+  pin_vergleich_partner_title_color?: string;
   // Kosten (4 tiery)
   kosten_title?: string;
   kosten_intro?: string;
@@ -151,12 +160,12 @@ export interface HomePageContent {
   traveler_vision?: string;
   traveler_cta_label?: string;
   traveler_cta_url?: string;
-  traveler_image?: string;
+  traveler_image?: DirectusFileRef | null;
   partner_title?: string;
   partner_content?: string;
   partner_cta_label?: string;
   partner_cta_url?: string;
-  partner_image?: string;
+  partner_image?: DirectusFileRef | null;
   // Tło drugiego bloku (Partner) w sekcji 3 — pusty = fallback #F7F4F0
   partner_background_color?: string;
   // Fairführer-Video (zastępuje starą sekcję 4 "Unterstütze unsere Mission")

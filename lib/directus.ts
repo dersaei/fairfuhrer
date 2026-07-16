@@ -62,17 +62,19 @@ export interface DirectusSchema {
 }
 
 export async function getHomePageContent(): Promise<HomePageContent | null> {
-  const isDev = process.env.NODE_ENV === "development";
   try {
     const response = await fetch(
-      `${DIRECTUS_URL}/items/home_page_content?fields=*&limit=1`,
+      // Rozwijamy pola obrazów o modified_on — używane jako cache-buster w URL
+      // (podmiana pliku pod tym samym UUID inaczej zostaje w 30-dniowym cache).
+      `${DIRECTUS_URL}/items/home_page_content?fields=*,traveler_image.id,traveler_image.modified_on,partner_image.id,partner_image.modified_on&limit=1`,
       {
         headers: {
           "Content-Type": "application/json",
         },
-        ...(isDev
-          ? { cache: "no-store" as const }
-          : { next: { revalidate: 3600, tags: ["home-page"] } }),
+        // Bez cache — strona główna renderuje się dynamicznie, zmiany w Directusie
+        // (m.in. obraz partnera) są widoczne od razu. Directus Flow nie rewaliduje
+        // tagu "home-page" w tym przypadku, dlatego świadomie rezygnujemy z ISR.
+        cache: "no-store" as const,
       }
     );
 

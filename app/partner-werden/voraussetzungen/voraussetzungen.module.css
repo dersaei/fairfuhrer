@@ -73,6 +73,7 @@
 .kostenKarte a {
   color: var(--pp-link, #fc6c14);
   text-decoration: none;
+  font-weight: 700;
 }
 
 /* ===== SEKCJA 2 — Pin-Vergleich ===== */
@@ -104,7 +105,7 @@
 .pinVergleichText h2 {
   font-family: var(--font-anton);
   font-size: 1.8rem;
-  color: #FC6C14;
+  color: var(--pin-title, #FC6C14);
   margin: 0 0 1rem 0;
   font-weight: 400;
 }

@@ -20,6 +20,9 @@ export default function Footer() {
           © {new Date().getFullYear()} FAIRFÜHRER
         </p>
         <div className={styles.links}>
+          <Link href="/partner-werden/voraussetzungen" className={styles.link}>
+            Voraussetzungen
+          </Link>
           <Link href="/impressum" className={styles.link}>
             Impressum
           </Link>

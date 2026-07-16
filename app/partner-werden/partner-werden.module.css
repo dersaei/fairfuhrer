@@ -180,6 +180,7 @@
 .heroIntro a {
   color: var(--pp-link, #fc6c14);
   text-decoration: none;
+  font-weight: 700;
 }
 
 .sectionCta {

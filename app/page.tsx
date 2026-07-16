@@ -39,6 +39,21 @@ export default async function HomePage() {
   const c = (val?: string) =>
     val ? (val.startsWith("#") ? val : `#${val}`) : undefined;
 
+  // Linki zewnętrzne (pełny adres http/https) otwieramy w nowej karcie.
+  const isExternal = (url?: string) => !!url && /^https?:\/\//i.test(url);
+  const externalProps = (url?: string) =>
+    isExternal(url)
+      ? { target: "_blank" as const, rel: "noopener noreferrer" }
+      : {};
+
+  // URL obrazu z cache-busterem (?v=<modified_on>) — wymusza świeży plik po
+  // podmianie w Directusie pod tym samym UUID (asset ma Cache-Control 30 dni).
+  const assetUrl = (img?: { id: string; modified_on?: string | null } | null) => {
+    if (!img?.id) return undefined;
+    const v = img.modified_on ? `?v=${Date.parse(img.modified_on)}` : "";
+    return `${directusUrl}/assets/${img.id}${v}`;
+  };
+
   const cssVars = {
     ...(c(content?.link_color) && {
       "--hp-link": c(content?.link_color),
@@ -253,11 +268,11 @@ export default async function HomePage() {
               }
             >
               <div className={styles.ctaFeaturedMedia}>
-                {content.traveler_image ? (
+                {content.traveler_image?.id ? (
                   <div className={styles.ctaFeaturedImageWrap}>
                     {/* eslint-disable-next-line @next/next/no-img-element */}
                     <img
-                      src={`${directusUrl}/assets/${content.traveler_image}`}
+                      src={assetUrl(content.traveler_image)}
                       alt={content.traveler_title}
                       className={styles.ctaFeaturedImage}
                     />
@@ -286,6 +301,7 @@ export default async function HomePage() {
                   <Link
                     href={content.traveler_cta_url}
                     className={styles.ctaButton}
+                    {...externalProps(content.traveler_cta_url)}
                   >
                     {content.traveler_cta_label}
                   </Link>
@@ -315,16 +331,17 @@ export default async function HomePage() {
                   <Link
                     href={content.partner_cta_url}
                     className={styles.ctaButton}
+                    {...externalProps(content.partner_cta_url)}
                   >
                     {content.partner_cta_label}
                   </Link>
                 )}
               </div>
-              {content.partner_image && (
+              {content.partner_image?.id && (
                 <div className={styles.ctaImage}>
                   {/* eslint-disable-next-line @next/next/no-img-element */}
                   <img
-                    src={`${directusUrl}/assets/${content.partner_image}`}
+                    src={assetUrl(content.partner_image)}
                     alt={content.partner_title}
                   />
                 </div>

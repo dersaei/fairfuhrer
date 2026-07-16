@@ -366,15 +366,24 @@
 }
 
 .ctaImage {
-  flex: 0 0 28%;
-  max-width: 28%;
+  flex: 0 0 36%;
+  max-width: 36%;
   overflow: hidden;
+  box-sizing: border-box;
+  padding: 1.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  /* Białe tło pod obrazem (logo SDGs na białym) — niezależnie od koloru bloku */
+  background-color: #ffffff;
 }
 
+/* contain (nie cover) — cały obraz (np. okrąg SDGs) zawsze w pełni widoczny,
+   bez przycinania, na każdym ekranie */
 .ctaImage img {
   width: 100%;
   height: 100%;
-  object-fit: cover;
+  object-fit: contain;
   display: block;
 }
 
@@ -426,6 +435,7 @@
 .ctaText a {
   color: var(--hp-link, #fc6c14);
   text-decoration: none;
+  font-weight: 700;
 }
 .ctaText ul,
 .ctaText ol {

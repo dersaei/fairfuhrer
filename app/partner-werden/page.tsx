@@ -13,7 +13,7 @@ import styles from "./partner-werden.module.css";
 
 const directusUrl = process.env.NEXT_PUBLIC_DIRECTUS_URL!;
 
-export const revalidate = 604800; // 7 dni fallback, główna rewalidacja przez Directus Flow
+export const revalidate = 0; // bez ISR — strona renderuje się dynamicznie (Flow nie rewaliduje tagu)
 
 interface DirectusResponse<T> {
   data: T[];
@@ -28,7 +28,7 @@ async function getPartnerPageContent(): Promise<PartnerPageContent | null> {
 
     const response = await fetch(
       `${baseUrl}/items/partner_page_content?fields=*&limit=1`,
-      { next: { tags: ["partner-werden"] } },
+      { cache: "no-store" },
     );
 
     if (!response.ok) {

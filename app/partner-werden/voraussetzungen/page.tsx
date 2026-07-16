@@ -64,7 +64,14 @@ export default async function VoraussetzungenPage() {
 
   // Alle Rich-Text-Felder dieser Kolekcja sind Markdown-Felder (input-rich-text-md)
   // in Directus. Sie müssen daher vor dem Rendern nach HTML konvertiert werden.
-  const toHtml = (md?: string) => (md ? marked(md) : null);
+  // Externe Links (http/https) öffnen wir in einem neuen Tab.
+  const externalizeLinks = (html: string) =>
+    html.replace(
+      /<a\s+href="(https?:\/\/[^"]+)"/gi,
+      '<a href="$1" target="_blank" rel="noopener noreferrer"',
+    );
+  const toHtml = async (md?: string) =>
+    md ? externalizeLinks(await marked(md)) : null;
   const [
     voraussetzungenHtml,
     pinStandardHtml,
@@ -82,12 +89,15 @@ export default async function VoraussetzungenPage() {
     toHtml(pageData.kosten_tier_4),
   ]);
 
-  // Globalna kolekcyjna kolor linków — normalizuj # jeśli brak (Directus czasem trzyma bez #)
-  const linkColor = pageData.link_color
-    ? pageData.link_color.startsWith("#")
-      ? pageData.link_color
-      : `#${pageData.link_color}`
-    : undefined;
+  // Normalizuj kolor: dopisz # jeśli brakuje (Directus czasem trzyma bez #)
+  const norm = (v?: string) =>
+    v ? (v.startsWith("#") ? v : `#${v}`) : undefined;
+
+  // Globalna kolekcyjna kolor linków
+  const linkColor = norm(pageData.link_color);
+  // Kolory tytułów (H2) kart porównania pinów
+  const pinStandardTitleColor = norm(pageData.pin_vergleich_standard_title_color);
+  const pinPartnerTitleColor = norm(pageData.pin_vergleich_partner_title_color);
 
   return (
     <main
@@ -150,6 +160,11 @@ export default async function VoraussetzungenPage() {
             {pinStandardHtml && (
               <div
                 className={styles.pinVergleichText}
+                style={
+                  pinStandardTitleColor
+                    ? ({ "--pin-title": pinStandardTitleColor } as CSSProperties)
+                    : undefined
+                }
                 dangerouslySetInnerHTML={{
                   __html: pinStandardHtml,
                 }}
@@ -160,6 +175,11 @@ export default async function VoraussetzungenPage() {
             {pinPartnerHtml && (
               <div
                 className={styles.pinVergleichText}
+                style={
+                  pinPartnerTitleColor
+                    ? ({ "--pin-title": pinPartnerTitleColor } as CSSProperties)
+                    : undefined
+                }
                 dangerouslySetInnerHTML={{
                   __html: pinPartnerHtml,
                 }}
