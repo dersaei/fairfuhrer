@@ -95,6 +95,85 @@ export interface PartnerPageContent {
   cta_button_hover_color?: string; // kolor tła na hover
 }
 
+export interface UeberUnsProzess {
+  id: number;
+  status: "published" | "draft" | "archived";
+  sort: number | null;
+  label?: string;
+  icon?: string;
+}
+
+export interface UeberUnsWert {
+  id: number;
+  status: "published" | "draft" | "archived";
+  sort: number | null;
+  icon?: string;
+  title?: string;
+  text?: string;
+}
+
+export interface UeberUnsContent {
+  id: number;
+  // Hero
+  hero_title?: string;
+  hero_title_color?: string;
+  hero_title_font_size?: string;
+  hero_intro?: string;
+  hero_intro_color?: string;
+  hero_intro_font_size?: string;
+  hero_image?: string;
+  hero_background_color?: string;
+  // Seenergien
+  seenergien_text?: string;
+  seenergien_text_color?: string;
+  seenergien_text_font_size?: string;
+  seenergien_logo?: string;
+  seenergien_caption?: string;
+  seenergien_caption_color?: string;
+  seenergien_caption_font_size?: string;
+  seenergien_image?: string;
+  seenergien_background_color?: string;
+  // Audioguide
+  audioguide_title?: string;
+  audioguide_title_color?: string;
+  audioguide_title_font_size?: string;
+  audioguide_text?: string;
+  audioguide_text_color?: string;
+  audioguide_text_font_size?: string;
+  audioguide_image?: string;
+  // Handarbeit
+  handarbeit_text?: string;
+  handarbeit_text_color?: string;
+  handarbeit_text_font_size?: string;
+  handarbeit_image?: string;
+  // Wächst + Prozess
+  wachst_title?: string;
+  wachst_title_color?: string;
+  wachst_title_font_size?: string;
+  wachst_text?: string;
+  wachst_text_color?: string;
+  wachst_text_font_size?: string;
+  wachst_image?: string;
+  prozess_items?: UeberUnsProzess[];
+  prozess_label_color?: string;
+  prozess_label_font_size?: string;
+  // Werte
+  werte_title?: string;
+  werte_title_color?: string;
+  werte_title_font_size?: string;
+  werte_background_color?: string;
+  werte_items?: UeberUnsWert[];
+  werte_card_title_color?: string;
+  werte_card_title_font_size?: string;
+  werte_card_text_color?: string;
+  werte_card_text_font_size?: string;
+  // Abschluss
+  abschluss_text?: string;
+  abschluss_text_color?: string;
+  abschluss_text_font_size?: string;
+  abschluss_background_color?: string;
+}
+
 export interface FeaturedPin {
   id: number;
   ort: Place;

@@ -54,7 +54,7 @@ export default function Header() {
         <Link href="/partner-werden" className={styles.navLink}>
           Mitmachen
         </Link>
-        <Link href="/kontakt" className={styles.navLink}>
+        <Link href="/ueber-uns" className={styles.navLink}>
           Über uns
         </Link>
 
@@ -63,7 +63,7 @@ export default function Header() {
         {/* Social media - Desktop */}
         <div className={styles.social}>
           <a
-            href="https://www.instagram.com/fairfuehrerofficial/"
+            href="https://www.instagram.com/fairfuehrer/"
             target="_blank"
             rel="noopener noreferrer"
             className={styles.socialIcon}
@@ -147,7 +147,7 @@ export default function Header() {
             Mitmachen
           </Link>
           <Link
-            href="/kontakt"
+            href="/ueber-uns"
             className={styles.mobileNavLink}
             onClick={closeMenu}
           >
@@ -198,7 +198,7 @@ export default function Header() {
         {/* Social media - Mobile */}
         <div className={styles.mobileSocial}>
           <a
-            href="https://www.instagram.com/fairfuehrerofficial/"
+            href="https://www.instagram.com/fairfuehrer/"
             target="_blank"
             rel="noopener noreferrer"
             className={styles.socialIcon}

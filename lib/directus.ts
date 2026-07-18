@@ -22,6 +22,7 @@ import type {
   AccountContactFormContent,
   RedaktionPageContent,
   RegisterPageContent,
+  UeberUnsContent,
 } from "@/types";
 
 // ========================================
@@ -562,6 +563,44 @@ export async function getRedaktionPageContent(): Promise<RedaktionPageContent | 
     return (Array.isArray(data.data) ? data.data[0] : data.data) as RedaktionPageContent ?? null;
   } catch (error) {
     console.error("Error fetching redaktion content:", error);
+    return null;
+  }
+}
+
+// ========================================
+// ÜBER UNS (Seite "Über uns")
+// ========================================
+
+export async function getUeberUnsContent(): Promise<UeberUnsContent | null> {
+  const isDev = process.env.NODE_ENV === "development";
+  try {
+    // Pod-kolekcje (prozess_items, werte_items) rozwijane i filtrowane po
+    // status=published + sortowane rosnąco (deep filter/sort).
+    const response = await fetch(
+      `${DIRECTUS_URL}/items/ueber_uns_content?fields=*,prozess_items.*,werte_items.*` +
+        `&deep[prozess_items][_filter][status][_eq]=published&deep[prozess_items][_sort]=sort` +
+        `&deep[werte_items][_filter][status][_eq]=published&deep[werte_items][_sort]=sort`,
+      {
+        headers: {
+          "Content-Type": "application/json",
+          ...(DIRECTUS_TOKEN && { Authorization: `Bearer ${DIRECTUS_TOKEN}` }),
+        },
+        ...(isDev
+          ? { cache: "no-store" as const }
+          : { next: { revalidate: 3600, tags: ["ueber-uns"] } }),
+      }
+    );
+
+    if (!response.ok) {
+      const body = await response.text().catch(() => "(unreadable)");
+      throw new Error(`Failed to fetch ueber uns content: ${response.status} ${response.statusText} — ${body}`);
+    }
+
+    const data = await response.json();
+    // Singleton zwraca obiekt, nie tablicę
+    return (Array.isArray(data.data) ? data.data[0] : data.data) as UeberUnsContent ?? null;
+  } catch (error) {
+    console.error("Error fetching ueber uns content:", error);
     return null;
   }
 }
