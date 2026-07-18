@@ -55,6 +55,14 @@ export interface PartnerPageContent {
   mitmachen_partner_section_text?: string;
   mitmachen_redaktion_section_title?: string;
   mitmachen_redaktion_section_text?: string;
+  // Kolory tła kontenerów 3 sekcji ról (fallback do wartości z CSS)
+  mitmachen_reisende_background_color?: string;
+  mitmachen_partner_background_color?: string;
+  mitmachen_redaktion_background_color?: string;
+  // Kolory tytułów 3 sekcji ról (fallback #FC6C14 z CSS)
+  mitmachen_reisende_title_color?: string;
+  mitmachen_partner_title_color?: string;
+  mitmachen_redaktion_title_color?: string;
   // Subpage Voraussetzungen (/partner-werden/voraussetzungen)
   voraussetzungen_title?: string;
   voraussetzungen_text?: string;
@@ -173,6 +181,8 @@ export interface HomePageContent {
   video_title?: string;
   video_background_color?: string;
   video_text?: string;
+  video_feature_list?: string;
+  video_feature_list_background_color?: string;
   video_button_label?: string;
   video_button_url?: string;
 }

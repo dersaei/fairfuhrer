@@ -32,8 +32,15 @@ export default async function HomePage() {
   const travelerVisionHtml = content?.traveler_vision
     ? await marked(content.traveler_vision)
     : "";
+  // Links im partner_content sollen in neuem Tab öffnen: target + rel zu jedem <a>.
   const partnerHtml = content?.partner_content
-    ? await marked(content.partner_content)
+    ? (await marked(content.partner_content)).replace(
+        /<a /g,
+        '<a target="_blank" rel="noopener noreferrer" ',
+      )
+    : "";
+  const videoFeatureListHtml = content?.video_feature_list
+    ? await marked(content.video_feature_list)
     : "";
 
   const c = (val?: string) =>
@@ -351,24 +358,43 @@ export default async function HomePage() {
         </section>
       )}
 
-      {/* SEKCJA 4: Fairführer-Video — pełna szerokość i wysokość sekcji */}
+      {/* SEKCJA 4: Fairführer-Video — 2 Spalten: links Video (60%), rechts Feature-Liste (40%) */}
       {content?.video_mux_playback_id && (
         <section
           className={styles.videoSection}
           style={{
-            backgroundColor: content.video_background_color || "#000000",
+            backgroundColor: content.video_background_color || "#ffffff",
           }}
         >
-          <div className={styles.videoWrapper}>
-            <ConditionalMuxVideo>
-              <MuxVideoEmbed
-                playbackId={content.video_mux_playback_id}
-                autoPlay={false}
-                muted={false}
-                fill
-                className={styles.videoEmbed}
-              />
-            </ConditionalMuxVideo>
+          <div className={styles.videoBlock}>
+            <div className={styles.videoSide}>
+              <ConditionalMuxVideo>
+                <MuxVideoEmbed
+                  playbackId={content.video_mux_playback_id}
+                  autoPlay={false}
+                  muted={false}
+                />
+              </ConditionalMuxVideo>
+            </div>
+            {videoFeatureListHtml && (
+              <div
+                className={styles.videoTextSide}
+                style={
+                  c(content?.video_feature_list_background_color)
+                    ? {
+                        backgroundColor: c(
+                          content.video_feature_list_background_color,
+                        ),
+                      }
+                    : undefined
+                }
+              >
+                <div
+                  className={styles.videoFeatureList}
+                  dangerouslySetInnerHTML={{ __html: videoFeatureListHtml }}
+                />
+              </div>
+            )}
           </div>
         </section>
       )}

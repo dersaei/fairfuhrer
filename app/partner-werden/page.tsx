@@ -206,10 +206,19 @@ export default async function MitmachenPage() {
         <section
           className={styles.sectionRole}
           id="reisende"
+          style={{
+            backgroundColor:
+              c(pageData.mitmachen_reisende_background_color) || "#ffffff",
+          }}
         >
           <div className={styles.sectionInner}>
             {pageData.mitmachen_reisende_section_title && (
-              <h2 className={styles.sectionTitle}>
+              <h2
+                className={styles.sectionTitle}
+                style={{
+                  color: c(pageData.mitmachen_reisende_title_color) || "#fc6c14",
+                }}
+              >
                 {pageData.mitmachen_reisende_section_title}
               </h2>
             )}
@@ -241,10 +250,19 @@ export default async function MitmachenPage() {
         <section
           className={`${styles.sectionRole} ${styles.sectionRoleAlt}`}
           id="partner"
+          style={{
+            backgroundColor:
+              c(pageData.mitmachen_partner_background_color) || "#f7f4f0",
+          }}
         >
           <div className={styles.sectionInner}>
             {pageData.mitmachen_partner_section_title && (
-              <h2 className={styles.sectionTitle}>
+              <h2
+                className={styles.sectionTitle}
+                style={{
+                  color: c(pageData.mitmachen_partner_title_color) || "#fc6c14",
+                }}
+              >
                 {pageData.mitmachen_partner_section_title}
               </h2>
             )}
@@ -276,10 +294,20 @@ export default async function MitmachenPage() {
         <section
           className={styles.sectionRole}
           id="redaktion"
+          style={{
+            backgroundColor:
+              c(pageData.mitmachen_redaktion_background_color) || "#ffffff",
+          }}
         >
           <div className={styles.sectionInner}>
             {pageData.mitmachen_redaktion_section_title && (
-              <h2 className={styles.sectionTitle}>
+              <h2
+                className={styles.sectionTitle}
+                style={{
+                  color:
+                    c(pageData.mitmachen_redaktion_title_color) || "#fc6c14",
+                }}
+              >
                 {pageData.mitmachen_redaktion_section_title}
               </h2>
             )}
