@@ -572,7 +572,6 @@ export async function getRedaktionPageContent(): Promise<RedaktionPageContent | 
 // ========================================
 
 export async function getUeberUnsContent(): Promise<UeberUnsContent | null> {
-  const isDev = process.env.NODE_ENV === "development";
   try {
     // Pod-kolekcje (prozess_items, werte_items) rozwijane i filtrowane po
     // status=published + sortowane rosnąco (deep filter/sort).
@@ -585,9 +584,8 @@ export async function getUeberUnsContent(): Promise<UeberUnsContent | null> {
           "Content-Type": "application/json",
           ...(DIRECTUS_TOKEN && { Authorization: `Bearer ${DIRECTUS_TOKEN}` }),
         },
-        ...(isDev
-          ? { cache: "no-store" as const }
-          : { next: { revalidate: 3600, tags: ["ueber-uns"] } }),
+        // Bez cache — zmiany w Directusie widoczne od razu (jak getHomePageContent).
+        cache: "no-store" as const,
       }
     );
 

@@ -14,8 +14,6 @@ import styles from "./ueber-uns.module.css";
 
 const directusUrl = process.env.NEXT_PUBLIC_DIRECTUS_URL ?? "";
 
-export const revalidate = 3600;
-
 export const metadata: Metadata = {
   title: "Über uns",
   description:
@@ -175,7 +173,10 @@ export default async function UeberUnsPage() {
 
       {/* 3 — AUDIOGUIDE (Bild links | Text rechts) */}
       {(audioguideHtml || data.audioguide_title) && (
-        <section className={styles.split}>
+        <section
+          className={styles.split}
+          style={bg(data.audioguide_background_color)}
+        >
           <div className={styles.splitMedia}>
             {media(data.audioguide_image, "Audioguide")}
           </div>
@@ -209,7 +210,10 @@ export default async function UeberUnsPage() {
 
       {/* 4 — HANDARBEIT (Text links | Bild rechts) */}
       {(handarbeitHtml || data.handarbeit_image) && (
-        <section className={`${styles.split} ${styles.splitReverse}`}>
+        <section
+          className={`${styles.split} ${styles.splitReverse}`}
+          style={bg(data.handarbeit_background_color)}
+        >
           <div className={styles.splitMedia}>
             {media(data.handarbeit_image, "Team")}
           </div>
@@ -231,7 +235,10 @@ export default async function UeberUnsPage() {
 
       {/* 5 — WÄCHST + PROZESS (Bild links | Text+Prozess rechts) */}
       {(wachstHtml || data.wachst_title || prozess.length > 0) && (
-        <section className={styles.split}>
+        <section
+          className={styles.split}
+          style={bg(data.wachst_background_color)}
+        >
           <div className={styles.splitMedia}>
             {media(data.wachst_image, "Fairführer")}
           </div>

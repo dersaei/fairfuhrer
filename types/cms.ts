@@ -141,11 +141,13 @@ export interface UeberUnsContent {
   audioguide_text_color?: string;
   audioguide_text_font_size?: string;
   audioguide_image?: string;
+  audioguide_background_color?: string;
   // Handarbeit
   handarbeit_text?: string;
   handarbeit_text_color?: string;
   handarbeit_text_font_size?: string;
   handarbeit_image?: string;
+  handarbeit_background_color?: string;
   // Wächst + Prozess
   wachst_title?: string;
   wachst_title_color?: string;
@@ -154,6 +156,7 @@ export interface UeberUnsContent {
   wachst_text_color?: string;
   wachst_text_font_size?: string;
   wachst_image?: string;
+  wachst_background_color?: string;
   prozess_items?: UeberUnsProzess[];
   prozess_label_color?: string;
   prozess_label_font_size?: string;
