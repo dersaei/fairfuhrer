@@ -22,6 +22,7 @@ import type {
   AccountContactFormContent,
   RedaktionPageContent,
   RegisterPageContent,
+  SightsLockModalContent,
   UeberUnsContent,
 } from "@/types";
 
@@ -260,6 +261,36 @@ export async function getContactInfoContent(): Promise<ContactInfoContent | null
     return data.data?.[0] ?? null;
   } catch (error) {
     console.error("Error fetching contact info content:", error);
+    return null;
+  }
+}
+
+// Info-Blase, die auf der Karte über gesperrten Sehenswertes-Pins erscheint.
+// Verweist Web-Nutzer auf die mobile App (App Store / Google Play).
+// Singleton in Directus.
+// Bewusst ohne Cache: Text-Änderungen (z. B. Store-Links, Prozentsatz-Copy)
+// sollen sofort live sein, ohne Revalidate-Zyklus abzuwarten.
+export async function getSightsLockModalContent(): Promise<SightsLockModalContent | null> {
+  try {
+    const response = await fetch(
+      `${DIRECTUS_URL}/items/sights_lock_modal_content?fields=*`,
+      {
+        headers: { "Content-Type": "application/json" },
+        cache: "no-store" as const,
+      },
+    );
+
+    if (!response.ok) {
+      const body = await response.text().catch(() => "(unreadable)");
+      throw new Error(
+        `Failed to fetch sights lock modal content: ${response.status} ${response.statusText} — ${body}`,
+      );
+    }
+
+    const data = await response.json();
+    return data.data ?? null;
+  } catch (error) {
+    console.error("Error fetching sights lock modal content:", error);
     return null;
   }
 }

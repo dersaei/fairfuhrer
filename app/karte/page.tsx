@@ -4,6 +4,8 @@ import MapWithFilters from "../../components/MapWithFilters";
 import { ErrorBoundary } from "../../components/ErrorBoundary";
 import { ConditionalMapbox } from "../../components/ConditionalMapbox";
 import MapRealtimeRefresh from "../../components/MapRealtimeRefresh";
+import { getSightsLockModalContent } from "../../lib/directus";
+import { FREE_SIGHTS_VISIBLE_RATIO } from "../../lib/sightsGating";
 import type {
   Place,
   Category,
@@ -275,6 +277,11 @@ export default async function KartePage() {
       }))
       .filter((cat) => cat.name.length > 0 && cat.color.length > 0);
 
+    // Directus-Content für die Info-Blase über gesperrten Sehenswertes-Pins.
+    // Sichtbarer Prozentsatz aus sightsGating.ts ableiten (Single Source of Truth).
+    const sightsLockContent = await getSightsLockModalContent();
+    const sightsFreePercent = Math.round(FREE_SIGHTS_VISIBLE_RATIO * 100);
+
     // ========================================
     // DATA VALIDATION
     // ========================================
@@ -386,7 +393,12 @@ export default async function KartePage() {
               </div>
             }
           >
-            <MapWithFilters places={places} categories={categories} />
+            <MapWithFilters
+              places={places}
+              categories={categories}
+              sightsLockContent={sightsLockContent}
+              sightsFreePercent={sightsFreePercent}
+            />
           </ErrorBoundary>
         </ConditionalMapbox>
       </div>

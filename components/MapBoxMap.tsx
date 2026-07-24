@@ -15,7 +15,7 @@ import DOMPurify from "dompurify";
 import "mapbox-gl/dist/mapbox-gl.css";
 import styles from "./MapBoxMap.module.css";
 import MapSearch from "./MapSearch";
-import type { Place } from "../types";
+import type { Place, SightsLockModalContent } from "../types";
 import { useAuth } from "@/context/AuthContext";
 import { filterVisiblePlaces, isSightsCategory } from "@/lib/sightsGating";
 import { placesToGeoJSON, loadCategoryMarkerSDFs } from "../utils/mapHelpers";
@@ -27,10 +27,70 @@ import { useGeolocation } from "../hooks/useGeolocation";
 const PlaceInfoPanel = lazy(() => import("./PlaceInfoPanel"));
 const FullscreenGallery = lazy(() => import("./FullscreenGallery"));
 
+// Fallback-Texte, falls die Directus-Kollektion (noch) leer ist. Werden nur
+// verwendet, wenn getSightsLockModalContent() null zurückgibt.
+const SIGHTS_LOCK_FALLBACK = {
+  title: "🔒 Nur in der App verfügbar",
+  body: 'Das ist nur ein Vorgeschmack! Auf der Website siehst du {{ratio_percent}} % der Audiopins aus der Kategorie „Sehenswertes". Mit der kostenlosen Fairführer-App und optionalem FAIRFÜHRER+ hörst du alle Audioguides — plus Offline-Karten und die Möglichkeit, eigene Orte vorzuschlagen.',
+  cta_headline: "Jetzt kostenlos laden:",
+  app_store_label: "App Store",
+  google_play_label: "Google Play",
+  app_store_url: "https://apps.apple.com/de/app/fairf%C3%BChrer/id6778095803",
+  google_play_url:
+    "https://play.google.com/store/apps/details?id=com.fairfuehrer.app",
+  sync_note:
+    "Bereits gekauft? Die Web-Synchronisation deines mobilen Abos kommt bald.",
+};
+
+function escapeHtml(input: string): string {
+  return input
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#39;");
+}
+
+// Baut das HTML der Sperr-Blase, die beim Hover/Klick auf einen gesperrten
+// Sehenswertes-Pin erscheint. Verwendet Texte aus Directus, fällt bei
+// fehlenden Feldern auf SIGHTS_LOCK_FALLBACK zurück und ersetzt den
+// {{ratio_percent}}-Platzhalter durch den aktuellen Wert aus sightsGating.ts.
+function buildSightsLockPopupHtml(
+  content: SightsLockModalContent | null,
+  freePercent: number,
+  cssModule: { readonly [k: string]: string },
+): string {
+  const c = content ?? SIGHTS_LOCK_FALLBACK;
+  const percentSafe = String(Math.round(freePercent));
+  const bodyWithPercent = c.body.replace(/\{\{\s*ratio_percent\s*\}\}/g, percentSafe);
+  const syncBlock = c.sync_note
+    ? `<p class="${cssModule.popupLockSync}">${escapeHtml(c.sync_note)}</p>`
+    : "";
+
+  const html = `<div class="${cssModule.modernPopup}">
+    <p class="${cssModule.popupLockTitle}">${escapeHtml(c.title)}</p>
+    <p class="${cssModule.popupLockBody}">${escapeHtml(bodyWithPercent)}</p>
+    <p class="${cssModule.popupLockCta}">${escapeHtml(c.cta_headline)}</p>
+    <div class="${cssModule.popupLockLinks}">
+      <a class="${cssModule.popupLockLink}" href="${escapeHtml(c.app_store_url)}" target="_blank" rel="noopener noreferrer">${escapeHtml(c.app_store_label)}</a>
+      <a class="${cssModule.popupLockLink}" href="${escapeHtml(c.google_play_url)}" target="_blank" rel="noopener noreferrer">${escapeHtml(c.google_play_label)}</a>
+    </div>
+    ${syncBlock}
+  </div>`;
+
+  return DOMPurify.sanitize(html, {
+    ADD_ATTR: ["target", "rel"],
+  });
+}
+
 interface MapBoxMapProps {
   places: Place[];
   disableGeolocation?: boolean;
   embedded?: boolean;
+  /** Directus-Text für die Info-Blase über gesperrten Sehenswertes-Pins. */
+  sightsLockContent?: SightsLockModalContent | null;
+  /** Prozentsatz sichtbarer Sehenswertes-Pins für Free-Nutzer. */
+  sightsFreePercent?: number;
 }
 
 // ========================================
@@ -41,6 +101,8 @@ export default function MapBoxMap({
   places,
   disableGeolocation = false,
   embedded = false,
+  sightsLockContent,
+  sightsFreePercent = 50,
 }: MapBoxMapProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const mapRef = useRef<mapboxgl.Map | null>(null);
@@ -72,6 +134,12 @@ export default function MapBoxMap({
   const placesRef = useRef<Place[]>(places);
   const lockedIdsRef = useRef<Set<number>>(lockedIds);
   const popupDataMapRef = useRef<Map<number, string>>(new Map());
+  // Directus-Content + %-Anteil für die Sperr-Popups (via ref, damit die
+  // stabile Map-Callback sie nicht in Closure kapselt).
+  const sightsLockContentRef = useRef<SightsLockModalContent | null>(
+    sightsLockContent ?? null,
+  );
+  const sightsFreePercentRef = useRef<number>(sightsFreePercent);
   // Race condition prevention
   const closePanelTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   const isPanelOpenRef = useRef(false);
@@ -739,12 +807,10 @@ export default function MapBoxMap({
 
         const isLocked = lockedIdsRef.current.has(placeId);
         const html = isLocked
-          ? DOMPurify.sanitize(
-              `<div class="${styles.modernPopup}">
-                <p class="${styles.popupLockTitle}">🔒 Fairführer+</p>
-                <p class=”${styles.popupLockBody}”>Das ist nur ein Vorgeschmack! Aktuell hast du Zugriff auf <strong>20&nbsp;%</strong> der Audiopins in der Kategorie „Sehenswertes”.<br /> Lade die App <em>(Bald verfügbar)</em> und hol dir <strong>Fairführer+</strong>, um alle Audiopins auf der Karte freizuschalten.</p>
-              </div>`,
-              { ADD_ATTR: ["style"] },
+          ? buildSightsLockPopupHtml(
+              sightsLockContentRef.current,
+              sightsFreePercentRef.current,
+              styles,
             )
           : popupDataMapRef.current.get(placeId);
 
@@ -759,6 +825,29 @@ export default function MapBoxMap({
           .setLngLat(coords)
           .setHTML(html)
           .addTo(map);
+
+        // Hover-Hold: Wenn der Cursor auf das Popup wandert, wird der
+        // Schließ-Timer abgebrochen — so kann der Nutzer die Store-Links
+        // anklicken, ohne dass die Blase verschwindet. Sobald er das
+        // Popup wieder verlässt, startet der Timer erneut.
+        const popupEl = hoverPopupRef.current.getElement();
+        if (popupEl) {
+          popupEl.addEventListener("mouseenter", () => {
+            if (hoverTimeoutRef.current) {
+              clearTimeout(hoverTimeoutRef.current);
+              hoverTimeoutRef.current = null;
+            }
+          });
+          popupEl.addEventListener("mouseleave", () => {
+            hoverTimeoutRef.current = setTimeout(() => {
+              if (hoverPopupRef.current) {
+                hoverPopupRef.current.remove();
+                hoverPopupRef.current = null;
+              }
+              hoverTimeoutRef.current = null;
+            }, 300);
+          });
+        }
       });
 
       map.on("mouseleave", "places-unclustered", () => {
@@ -777,14 +866,22 @@ export default function MapBoxMap({
         const placeId = e.features[0].properties?.placeId as number;
         e.originalEvent.stopPropagation();
 
-        // Zamknij hover popup
+        // Bei gesperrten Pins: Hover-Popup NICHT schließen — der Nutzer soll
+        // die Store-Links (im Popup) anklicken können. Nur bei
+        // freigeschalteten Pins schließen wir und öffnen das Info-Panel.
+        if (lockedIdsRef.current.has(placeId)) {
+          // Cancel eventuellen Schließ-Timer, damit der Klick das Popup nicht
+          // sofort danach entfernt.
+          if (hoverTimeoutRef.current) {
+            clearTimeout(hoverTimeoutRef.current);
+            hoverTimeoutRef.current = null;
+          }
+          return;
+        }
+
         if (hoverPopupRef.current) {
           hoverPopupRef.current.remove();
           hoverPopupRef.current = null;
-        }
-
-        if (lockedIdsRef.current.has(placeId)) {
-          return;
         }
 
         const place = placesRef.current.find((p) => p.id === placeId);
@@ -844,6 +941,14 @@ export default function MapBoxMap({
   useEffect(() => {
     popupDataMapRef.current = popupDataMap;
   }, [popupDataMap]);
+
+  useEffect(() => {
+    sightsLockContentRef.current = sightsLockContent ?? null;
+  }, [sightsLockContent]);
+
+  useEffect(() => {
+    sightsFreePercentRef.current = sightsFreePercent;
+  }, [sightsFreePercent]);
 
   // Request user location po załadowaniu mapy
   useEffect(() => {

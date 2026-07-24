@@ -194,20 +194,23 @@
 }
 
 .popupLockTitle {
-  margin: 0.7em 0.5em;
-  font-size: 2rem;
+  margin: 0.6em 0.6em 0.4em;
+  font-size: 1.25rem;
   font-weight: 400;
+  line-height: 1.25;
   color: #181716;
   font-family: var(--font-anton);
+  letter-spacing: 0.02em;
 }
 
 .popupLockBody {
-  padding: 0.2em 0.5em;
-  font-size: 0.8rem;
-  color: #000;
+  margin: 0;
+  padding: 0.3em 0.8em 0.5em;
+  font-size: 0.85rem;
+  color: #333;
   font-family: var(--font-fira);
   font-weight: 400;
-  line-height: 1.1;
+  line-height: 1.45;
 }
 
 /* Mobile — używamy --vh zamiast dvh, bo --vh jest obliczane przez JS jako window.innerHeight
@@ -250,4 +253,65 @@
   padding: 0.2rem 0.6rem;
   border-radius: 9999px;
   display: inline-block;
+}
+
+/* ========================================
+   Sperr-Popup (Sehenswertes → App-Verweis)
+   ======================================== */
+
+/* Popup muss über der Karten-Legende (z-index: 10) liegen, sonst wird die
+   Sperr-Blase teilweise verdeckt und die Store-Links sind nicht klickbar. */
+.popup {
+  z-index: 20;
+}
+
+.popupLockCta {
+  margin: 0.6em 0.8em 0.4em;
+  font-family: var(--font-fira);
+  font-weight: 700;
+  font-size: 0.7rem;
+  color: #666;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  text-align: center;
+}
+
+.popupLockLinks {
+  display: flex;
+  gap: 0.5rem;
+  justify-content: center;
+  padding: 0 0.8em;
+}
+
+.popupLockLink {
+  flex: 1;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.6rem 0.5rem;
+  border-radius: 9999px;
+  background: #181716;
+  color: #fc6c14 !important;
+  font-family: var(--font-fira);
+  font-weight: 700;
+  font-size: 0.85rem;
+  line-height: 1;
+  text-decoration: none;
+}
+
+.popupLockLink:hover {
+  background: #fc6c14;
+  color: #181716 !important;
+  text-decoration: none;
+}
+
+.popupLockSync {
+  margin: 0;
+  padding: 0.9em 0.8em 0.4em;
+  font-family: var(--font-fira);
+  font-size: 0.72rem;
+  font-style: italic;
+  color: #888;
+  line-height: 1.4;
+  text-align: center;
 }

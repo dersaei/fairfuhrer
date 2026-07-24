@@ -178,20 +178,36 @@ export default function Header() {
 
         {/* Store Badges - Mobile */}
         <div className={styles.mobileStoreBadges}>
-          <span className={styles.mobileStoreBadgesLabel}>Bald verfügbar</span>
+          <span className={styles.mobileStoreBadgesLabel}>Jetzt verfügbar</span>
           <div className={styles.mobileStoreBadgesIcons}>
-            <Image
-              src={appStoreBadge}
-              alt="App Store"
-              unoptimized
-              className={styles.mobileStoreBadgeImg}
-            />
-            <Image
-              src={googlePlayBadge}
-              alt="Google Play"
-              unoptimized
-              className={styles.mobileStoreBadgeImg}
-            />
+            <a
+              href="https://apps.apple.com/de/app/fairf%C3%BChrer/id6778095803"
+              target="_blank"
+              rel="noopener noreferrer"
+              onClick={closeMenu}
+              aria-label="Fairführer im App Store öffnen"
+            >
+              <Image
+                src={appStoreBadge}
+                alt="App Store"
+                unoptimized
+                className={styles.mobileStoreBadgeImg}
+              />
+            </a>
+            <a
+              href="https://play.google.com/store/apps/details?id=com.fairfuehrer.app"
+              target="_blank"
+              rel="noopener noreferrer"
+              onClick={closeMenu}
+              aria-label="Fairführer bei Google Play öffnen"
+            >
+              <Image
+                src={googlePlayBadge}
+                alt="Google Play"
+                unoptimized
+                className={styles.mobileStoreBadgeImg}
+              />
+            </a>
           </div>
         </div>
 

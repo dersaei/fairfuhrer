@@ -363,6 +363,21 @@ export interface PremiumComparisonFeature {
   pro: boolean;
 }
 
+// Info-Blase, die auf der Karte erscheint, wenn Web-Nutzer einen gesperrten
+// Sehenswertes-Pin ansteuern. Verweist auf die mobile App und die Stores.
+// Singleton in Directus (Kollektion `sights_lock_modal_content`).
+export interface SightsLockModalContent {
+  id: number;
+  title: string;
+  body: string;
+  cta_headline: string;
+  app_store_label: string;
+  google_play_label: string;
+  app_store_url: string;
+  google_play_url: string;
+  sync_note?: string;
+}
+
 export interface RegisterPageContent {
   id: number;
   title?: string;

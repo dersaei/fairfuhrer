@@ -5,7 +5,7 @@ import { useState, useCallback, useMemo } from "react";
 import MapBoxMap from "./MapBoxMap";
 import CategoryFilter from "./CategoryFilter";
 import styles from "./MapWithFilters.module.css";
-import type { Place, Category } from "../types";
+import type { Place, Category, SightsLockModalContent } from "../types";
 import { useAuth } from "@/context/AuthContext";
 import { isSightsCategory } from "@/lib/sightsGating";
 
@@ -14,6 +14,10 @@ interface MapWithFiltersProps {
   categories: Category[];
   disableGeolocation?: boolean;
   embedded?: boolean;
+  /** Directus-Text für die Info-Blase über gesperrten Sehenswertes-Pins. */
+  sightsLockContent?: SightsLockModalContent | null;
+  /** Prozentsatz sichtbarer Sehenswertes-Pins für Free-Nutzer (aus sightsGating). */
+  sightsFreePercent?: number;
 }
 
 export default function MapWithFilters({
@@ -21,6 +25,8 @@ export default function MapWithFilters({
   categories,
   disableGeolocation = false,
   embedded = false,
+  sightsLockContent,
+  sightsFreePercent,
 }: MapWithFiltersProps) {
   const { isPro } = useAuth();
 
@@ -79,6 +85,8 @@ export default function MapWithFilters({
         places={embedded ? places : filteredPlaces}
         disableGeolocation={disableGeolocation}
         embedded={embedded}
+        sightsLockContent={sightsLockContent}
+        sightsFreePercent={sightsFreePercent}
       />
 
       {!embedded && (

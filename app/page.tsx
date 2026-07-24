@@ -204,18 +204,32 @@ export default async function HomePage() {
             {content?.badges_label}
           </span>
           <div className={styles.heroBadgesIcons}>
-            <Image
-              src={appStoreBadge}
-              alt="App Store"
-              unoptimized
-              className={styles.heroBadgeImg}
-            />
-            <Image
-              src={googlePlayBadge}
-              alt="Google Play"
-              unoptimized
-              className={styles.heroBadgeImg}
-            />
+            <a
+              href="https://apps.apple.com/de/app/fairf%C3%BChrer/id6778095803"
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label="Fairführer im App Store öffnen"
+            >
+              <Image
+                src={appStoreBadge}
+                alt="App Store"
+                unoptimized
+                className={styles.heroBadgeImg}
+              />
+            </a>
+            <a
+              href="https://play.google.com/store/apps/details?id=com.fairfuehrer.app"
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label="Fairführer bei Google Play öffnen"
+            >
+              <Image
+                src={googlePlayBadge}
+                alt="Google Play"
+                unoptimized
+                className={styles.heroBadgeImg}
+              />
+            </a>
           </div>
           <Image
             src={seenergienLogo}
