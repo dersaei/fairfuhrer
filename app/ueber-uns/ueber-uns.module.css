@@ -127,38 +127,25 @@
   max-width: 1200px;
   margin: 0 auto;
   display: grid;
-  grid-template-columns: 1.4fr 0.8fr 1fr;
-  gap: 2.5rem;
+  grid-template-columns: 1.6fr 1fr;
+  gap: 3rem;
   align-items: center;
-}
-
-.seenergienLogo {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 0.75rem;
-  text-align: center;
-}
-
-.seenergienLogoImg {
-  max-width: 180px;
-  height: auto;
-}
-
-.seenergienCaption {
-  font-family: var(--font-fira);
-  font-size: 0.8rem;
-  letter-spacing: 0.05em;
-  color: #555;
 }
 
 .seenergienMedia {
-  min-height: 220px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Bild in seiner Spalte zentrieren, natürliche Höhe (kein Cover-Stretch). */
+.seenergienMedia .sectionImage {
+  width: 100%;
+  height: auto;
 }
 
 /* ===== 3–5 — SPLIT (Bild | Text) ===== */
 .split {
-  max-width: 1200px;
   margin: 0 auto;
   padding: 4rem 2rem;
   display: grid;
@@ -301,6 +288,91 @@
   margin: 0 0 1rem 0;
 }
 
+/* ===== 7 — KONTAKT (Adresse + E-Mail) ===== */
+.kontakt {
+  background-color: #fc6c14;
+  padding: 4.5rem 2rem 5rem;
+}
+
+.kontaktInner {
+  max-width: 900px;
+  margin: 0 auto;
+  text-align: center;
+}
+
+.kontaktTitle {
+  font-family: var(--font-anton);
+  font-weight: 400;
+  font-size: clamp(1.8rem, 3.2vw, 2.8rem);
+  line-height: 1.15;
+  color: #18222f;
+  margin: 0 0 2.5rem 0;
+}
+
+.kontaktCards {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 2.5rem 4rem;
+}
+
+.kontaktCard {
+  display: flex;
+  align-items: flex-start;
+  gap: 1rem;
+  text-align: left;
+  max-width: 340px;
+}
+
+.kontaktIcon {
+  flex-shrink: 0;
+  width: 52px;
+  height: 52px;
+  /* Ausnahme: runder Icon-Kreis wie in der Prozess-Reihe (bewusstes Design-Element). */
+  border-radius: 50%;
+  background-color: rgba(255, 255, 255, 0.18);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #ffffff;
+}
+
+.kontaktCardLabel {
+  font-family: var(--font-anton);
+  font-weight: 400;
+  font-size: 1.2rem;
+  line-height: 1.2;
+  color: #ffffff;
+  margin: 0 0 0.4rem 0;
+}
+
+.kontaktCardBody p {
+  font-family: var(--font-fira);
+  font-size: 1rem;
+  line-height: 1.6;
+  color: #ffffff;
+  margin: 0;
+}
+
+.kontaktEmailLink {
+  color: #ffffff;
+  text-decoration: none;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.5);
+  transition: border-color 0.2s ease;
+}
+
+.kontaktEmailLink:hover {
+  border-bottom-color: #ffffff;
+}
+
+.kontaktEmailDesc {
+  display: block;
+  margin-top: 0.4rem;
+  font-family: var(--font-fira);
+  font-size: 0.85rem;
+  color: #18222f;
+}
+
 /* ===== MOBILE ===== */
 @media (max-width: 900px) {
   .seenergienInner {
@@ -331,5 +403,16 @@
   .prozess {
     justify-content: space-between;
     gap: 1rem;
+  }
+
+  .kontaktCards {
+    flex-direction: column;
+    align-items: center;
+    gap: 2rem;
+  }
+
+  .kontaktCard {
+    max-width: 320px;
+    width: 100%;
   }
 }

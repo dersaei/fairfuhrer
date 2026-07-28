@@ -127,10 +127,6 @@ export interface UeberUnsContent {
   seenergien_text?: string;
   seenergien_text_color?: string;
   seenergien_text_font_size?: string;
-  seenergien_logo?: string;
-  seenergien_caption?: string;
-  seenergien_caption_color?: string;
-  seenergien_caption_font_size?: string;
   seenergien_image?: string;
   seenergien_background_color?: string;
   // Audioguide
@@ -304,8 +300,7 @@ export interface SupportSectionContent {
 }
 
 export interface ContactFormContent {
-  id: number;
-  page_slug: string;
+  id: string;
   background_color?: string;
   title?: string;
   title_font_size?: string;
@@ -314,7 +309,6 @@ export interface ContactFormContent {
   email_description?: string;
   email_description_font_size?: string;
   email_description_color?: string;
-  telefon?: string;
   adresse?: string;
   contact_fields_font_size?: string;
   contact_fields_color?: string;

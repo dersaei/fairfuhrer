@@ -7,9 +7,9 @@ import React from "react";
 import { Metadata } from "next";
 import { Fragment } from "react";
 import { marked } from "marked";
-import { getUeberUnsContent } from "@/lib/directus";
+import { getUeberUnsContent, getContactFormContent } from "@/lib/directus";
 import LucideIcon from "@/components/LucideIcon";
-import { ArrowRight } from "lucide-react";
+import { ArrowRight, AtSign, MapPin } from "lucide-react";
 import styles from "./ueber-uns.module.css";
 
 const directusUrl = process.env.NEXT_PUBLIC_DIRECTUS_URL ?? "";
@@ -21,7 +21,10 @@ export const metadata: Metadata = {
 };
 
 export default async function UeberUnsPage() {
-  const data = await getUeberUnsContent();
+  const [data, contact] = await Promise.all([
+    getUeberUnsContent(),
+    getContactFormContent(),
+  ]);
 
   if (!data) {
     return (
@@ -124,7 +127,7 @@ export default async function UeberUnsPage() {
       </section>
 
       {/* 2 — SEENERGIEN */}
-      {(seenergienHtml || data.seenergien_image || data.seenergien_logo) && (
+      {(seenergienHtml || data.seenergien_image) && (
         <section
           className={styles.seenergien}
           style={bg(data.seenergien_background_color)}
@@ -140,28 +143,6 @@ export default async function UeberUnsPage() {
                   )}
                   dangerouslySetInnerHTML={{ __html: seenergienHtml }}
                 />
-              )}
-            </div>
-            <div className={styles.seenergienLogo}>
-              {asset(data.seenergien_logo) && (
-                // eslint-disable-next-line @next/next/no-img-element
-                <img
-                  src={asset(data.seenergien_logo) as string}
-                  alt="Seenergien"
-                  className={styles.seenergienLogoImg}
-                />
-              )}
-              {data.seenergien_caption && (
-                <span
-                  className={styles.seenergienCaption}
-                  style={st(
-                    data.seenergien_caption_color,
-                    "#555555",
-                    data.seenergien_caption_font_size,
-                  )}
-                >
-                  {data.seenergien_caption}
-                </span>
               )}
             </div>
             <div className={styles.seenergienMedia}>
@@ -351,6 +332,86 @@ export default async function UeberUnsPage() {
               ))}
             </div>
           )}
+        </section>
+      )}
+
+      {/* 7 — KONTAKT (Adresse + E-Mail — aus contact_form_content) */}
+      {contact && (contact.adresse || contact.email) && (
+        <section
+          className={styles.kontakt}
+          style={bg(contact.background_color) ?? { backgroundColor: "#fc6c14" }}
+        >
+          <div className={styles.kontaktInner}>
+            {contact.title && (
+              <h2
+                className={styles.kontaktTitle}
+                style={st(contact.title_color, "#18222f", contact.title_font_size)}
+              >
+                {contact.title}
+              </h2>
+            )}
+            <div className={styles.kontaktCards}>
+              {contact.adresse && (
+                <div className={styles.kontaktCard}>
+                  <div className={styles.kontaktIcon}>
+                    <MapPin size={26} aria-hidden />
+                  </div>
+                  <div className={styles.kontaktCardBody}>
+                    <h3 className={styles.kontaktCardLabel}>Adresse</h3>
+                    <p
+                      style={st(
+                        contact.contact_fields_color,
+                        "#ffffff",
+                        contact.contact_fields_font_size,
+                      )}
+                    >
+                      {contact.adresse.split("\n").map((line, i, arr) => (
+                        <Fragment key={i}>
+                          {line}
+                          {i < arr.length - 1 && <br />}
+                        </Fragment>
+                      ))}
+                    </p>
+                  </div>
+                </div>
+              )}
+              {contact.email && (
+                <div className={styles.kontaktCard}>
+                  <div className={styles.kontaktIcon}>
+                    <AtSign size={26} aria-hidden />
+                  </div>
+                  <div className={styles.kontaktCardBody}>
+                    <h3 className={styles.kontaktCardLabel}>E-Mail</h3>
+                    <p>
+                      <a
+                        href={`mailto:${contact.email}`}
+                        className={styles.kontaktEmailLink}
+                        style={st(
+                          contact.contact_fields_color,
+                          "#ffffff",
+                          contact.contact_fields_font_size,
+                        )}
+                      >
+                        {contact.email}
+                      </a>
+                    </p>
+                    {contact.email_description && (
+                      <span
+                        className={styles.kontaktEmailDesc}
+                        style={st(
+                          contact.email_description_color,
+                          "#18222f",
+                          contact.email_description_font_size,
+                        )}
+                      >
+                        {contact.email_description}
+                      </span>
+                    )}
+                  </div>
+                </div>
+              )}
+            </div>
+          </div>
         </section>
       )}
 

@@ -216,7 +216,7 @@ export async function getContactFormContent(): Promise<ContactFormContent | null
   const isDev = process.env.NODE_ENV === "development";
   try {
     const response = await fetch(
-      `${DIRECTUS_URL}/items/contact_form_content?filter[page_slug][_eq]=kontakt&fields=*&limit=1`,
+      `${DIRECTUS_URL}/items/contact_form_content?fields=*`,
       {
         headers: {
           "Content-Type": "application/json",
@@ -233,7 +233,8 @@ export async function getContactFormContent(): Promise<ContactFormContent | null
     }
 
     const data = await response.json();
-    return data.data?.[0] ?? null;
+    // Singleton: data.data ist ein Objekt (kein Array).
+    return (Array.isArray(data.data) ? data.data[0] : data.data) ?? null;
   } catch (error) {
     console.error("Error fetching contact form content:", error);
     return null;

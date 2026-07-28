@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useCallback } from "react";
-import { Mail, AtSign, Phone, MapPin } from "lucide-react";
+import { Mail, AtSign, MapPin } from "lucide-react";
 import { ContactFormContent } from "@/types";
 import TurnstileWidget from "@/components/TurnstileWidget";
 import styles from "./ContactForm.module.css";
@@ -231,25 +231,6 @@ export default function ContactForm({
                   {content.email_description}
                 </span>
               )}
-            </div>
-          </div>
-        )}
-
-        {content?.telefon && (
-          <div className={styles.contactMethod}>
-            <div className={styles.methodIcon}>
-              <Phone size={24} />
-            </div>
-            <div className={styles.methodContent}>
-              <h3>Telefon</h3>
-              <p
-                style={{
-                  fontSize: content.contact_fields_font_size ?? undefined,
-                  color: content.contact_fields_color ?? undefined,
-                }}
-              >
-                {content.telefon}
-              </p>
             </div>
           </div>
         )}
