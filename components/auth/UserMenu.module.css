@@ -47,12 +47,6 @@
   background: rgba(0, 0, 0, 0.05);
 }
 
-.avatar {
-  border-radius: 50%;
-  object-fit: cover;
-  border: 2px solid #fc6c14;
-}
-
 .avatarFallback {
   width: 32px;
   height: 32px;

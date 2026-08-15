@@ -39,7 +39,6 @@ export default function UserMenu() {
     user.email?.split("@")[0] ||
     "Konto";
 
-  const avatarUrl = user.profile?.avatar_url;
   const isPartner = user.profile?.role === "partner";
   const base = isPartner ? "/konto/partner" : "/konto/reisender";
 
@@ -51,20 +50,9 @@ export default function UserMenu() {
         aria-expanded={isOpen}
         aria-haspopup="true"
       >
-        {avatarUrl ? (
-          // eslint-disable-next-line @next/next/no-img-element
-          <img
-            src={avatarUrl}
-            alt={displayName}
-            className={styles.avatar}
-            width={32}
-            height={32}
-          />
-        ) : (
-          <span className={styles.avatarFallback}>
-            {displayName.charAt(0).toUpperCase()}
-          </span>
-        )}
+        <span className={styles.avatarFallback}>
+          {displayName.charAt(0).toUpperCase()}
+        </span>
         <span className={styles.chevron}>{isOpen ? "▲" : "▼"}</span>
       </button>
 

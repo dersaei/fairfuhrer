@@ -264,15 +264,6 @@ export async function deleteAccount(): Promise<AuthResult> {
     return { success: false, error: "Nicht autorisiert." };
   }
 
-  // Usuń avatar z Storage
-  const { data: files } = await supabaseAdmin.storage
-    .from("avatars")
-    .list(user.id);
-  if (files && files.length > 0) {
-    const paths = files.map((f) => `${user.id}/${f.name}`);
-    await supabaseAdmin.storage.from("avatars").remove(paths);
-  }
-
   // Usuń usera z Auth (cascade usunie profiles i partner_profiles)
   const { error: deleteError } = await supabaseAdmin.auth.admin.deleteUser(user.id);
   if (deleteError) {

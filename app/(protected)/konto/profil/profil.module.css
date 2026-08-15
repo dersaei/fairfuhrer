@@ -5,35 +5,13 @@
   max-width: 600px;
 }
 
-.avatarSection {
-  display: flex;
-  flex-direction: column;
-  gap: 0.5rem;
-}
-
-.avatarTitle {
-  font-family: var(--font-fira);
-  font-size: 0.75rem;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-  color: #18222f;
-  margin: 0;
-}
-
+/* Wird noch von CommunityProfilSection genutzt. */
 .avatarText {
   font-family: var(--font-fira);
   font-size: 0.875rem;
   color: #18222f;
   line-height: 1.6;
   margin: 0;
-}
-
-.avatarActions {
-  display: flex;
-  gap: 0.75rem;
-  margin-top: 0.25rem;
-  flex-wrap: wrap;
 }
 
 .uploadButton {
@@ -58,37 +36,11 @@
   cursor: not-allowed;
 }
 
-.deleteButton {
-  padding: 0.5rem 1rem;
-  background-color: rgb(220, 29, 29);
-  color: #fff;
-  border: 1.5px solid #18222f;
-  border-radius: 6px;
-  font-family: var(--font-fira);
-  font-size: 0.85rem;
-  font-weight: 600;
-  cursor: pointer;
-}
-
-.deleteButton:hover:not(:disabled) {
-  background-color: #fafafa;
-  color: #18222f;
-}
-
-.deleteButton:disabled {
-  opacity: 0.5;
-  cursor: not-allowed;
-}
-
 .uploadError {
   font-family: var(--font-fira);
   font-size: 0.8rem;
   color: #c0392b;
   margin: 0;
-}
-
-.hiddenInput {
-  display: none;
 }
 
 .signOutSection {
