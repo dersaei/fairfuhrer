@@ -269,15 +269,20 @@ export async function getContactInfoContent(): Promise<ContactInfoContent | null
 // Info-Blase, die auf der Karte über gesperrten Sehenswertes-Pins erscheint.
 // Verweist Web-Nutzer auf die mobile App (App Store / Google Play).
 // Singleton in Directus.
-// Bewusst ohne Cache: Text-Änderungen (z. B. Store-Links, Prozentsatz-Copy)
-// sollen sofort live sein, ohne Revalidate-Zyklus abzuwarten.
+// Cache mit Tag "sights-lock": no-store hat hier die gesamte /karte-Route aus
+// dem ISR geworfen (Dynamic server usage), wodurch der 3-MB-Orte-Fetch bei
+// jedem Request lief. Text-Änderungen bleiben sofort live — der Directus Flow
+// muss dafür den Tag "sights-lock" an /api/revalidate schicken.
 export async function getSightsLockModalContent(): Promise<SightsLockModalContent | null> {
+  const isDev = process.env.NODE_ENV === "development";
   try {
     const response = await fetch(
       `${DIRECTUS_URL}/items/sights_lock_modal_content?fields=*`,
       {
         headers: { "Content-Type": "application/json" },
-        cache: "no-store" as const,
+        ...(isDev
+          ? { cache: "no-store" as const }
+          : { next: { revalidate: 86400, tags: ["sights-lock"] } }),
       },
     );
 
