@@ -11,7 +11,6 @@ import { CookieProvider } from "../context/CookieContext";
 import { AuthProvider } from "../context/AuthContext";
 import CookieBanner from "../components/CookieBanner";
 import HotjarTag from "../components/HotjarTag";
-import GlobalLoadingIndicator from "../components/GlobalLoadingIndicator";
 import { WebVitals } from "./_components/web-vitals";
 import { AnalyticsTracker } from "./_components/analytics-tracker";
 import { anton, firaSansCondensed } from "./fonts";
@@ -84,9 +83,6 @@ export default function RootLayout({
             `,
           }}
         />
-        {/* ✅ Global Loading Indicator - Next.js 16 useLinkStatus */}
-        <GlobalLoadingIndicator />
-
         <CookieProvider>
           {/* Web Vitals monitoring - sends Core Web Vitals to Google Analytics */}
           <WebVitals />
