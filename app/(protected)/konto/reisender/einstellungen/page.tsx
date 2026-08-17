@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { useAuth } from "@/context/AuthContext";
-import { updateEmail, updatePassword, updateConsumerProfile, deleteAccount } from "@/app/actions/auth";
+import { updateEmail, updatePassword, deleteAccount } from "@/app/actions/auth";
 import type { FormErrors } from "@/types/auth";
 import PasswordInput from "@/components/PasswordInput";
 import styles from "../../einstellungen/einstellungen.module.css";
@@ -34,13 +34,6 @@ export default function ReisenderEinstellungenPage() {
   const [pwErrors, setPwErrors] = useState<FormErrors>({});
   const [pwSuccess, setPwSuccess] = useState(false);
   const [isPwSubmitting, setIsPwSubmitting] = useState(false);
-
-  const [username, setUsername] = useState(user?.profile?.username ?? "");
-  const [firstName, setFirstName] = useState(user?.profile?.first_name ?? "");
-  const [lastName, setLastName] = useState(user?.profile?.last_name ?? "");
-  const [nameErrors, setNameErrors] = useState<FormErrors>({});
-  const [nameSuccess, setNameSuccess] = useState(false);
-  const [isNameSubmitting, setIsNameSubmitting] = useState(false);
 
   const [deleteConfirm, setDeleteConfirm] = useState("");
   const [isDeleting, setIsDeleting] = useState(false);
@@ -82,21 +75,6 @@ export default function ReisenderEinstellungenPage() {
     setPwSuccess(true);
     setPassword("");
     setConfirmPassword("");
-  }
-
-  async function handleNameUpdate(e: React.FormEvent) {
-    e.preventDefault();
-    setNameErrors({});
-    setNameSuccess(false);
-    setIsNameSubmitting(true);
-    const result = await updateConsumerProfile({
-      username: username.trim() || null,
-      first_name: firstName.trim() || null,
-      last_name: lastName.trim() || null,
-    });
-    setIsNameSubmitting(false);
-    if (!result.success) { setNameErrors({ general: result.error }); return; }
-    setNameSuccess(true);
   }
 
   async function handleDeleteAccount() {
@@ -150,29 +128,6 @@ export default function ReisenderEinstellungenPage() {
           </div>
           <button type="submit" className={styles.button} disabled={isPwSubmitting}>
             {isPwSubmitting ? "Wird gespeichert…" : "Passwort aktualisieren"}
-          </button>
-        </form>
-      </section>
-
-      <section className={styles.section}>
-        <h2 className={styles.sectionTitle}>Persönliche Daten</h2>
-        {nameErrors.general && <p className={styles.errorMessage}>{nameErrors.general}</p>}
-        {nameSuccess && <p className={styles.successMessage}>Daten erfolgreich aktualisiert.</p>}
-        <form onSubmit={handleNameUpdate} className={styles.form} noValidate>
-          <div className={styles.field}>
-            <label htmlFor="username" className={styles.label}>Benutzername</label>
-            <input id="username" type="text" className={styles.input} value={username} onChange={(e) => setUsername(e.target.value)} autoComplete="username" />
-          </div>
-          <div className={styles.field}>
-            <label htmlFor="firstName" className={styles.label}>Vorname</label>
-            <input id="firstName" type="text" className={styles.input} value={firstName} onChange={(e) => setFirstName(e.target.value)} autoComplete="given-name" />
-          </div>
-          <div className={styles.field}>
-            <label htmlFor="lastName" className={styles.label}>Nachname</label>
-            <input id="lastName" type="text" className={styles.input} value={lastName} onChange={(e) => setLastName(e.target.value)} autoComplete="family-name" />
-          </div>
-          <button type="submit" className={styles.button} disabled={isNameSubmitting}>
-            {isNameSubmitting ? "Wird gespeichert…" : "Aktualisieren"}
           </button>
         </form>
       </section>

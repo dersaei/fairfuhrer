@@ -5,7 +5,7 @@ import { usePathname } from "next/navigation";
 import styles from "./KontoNav.module.css";
 
 const links = [
-  { href: "/konto/partner/profil", label: "Mein Profil" },
+  { href: "/konto/partner/profil", label: "Profil" },
   { href: "/konto/partner/einstellungen", label: "Einstellungen" },
   { href: "/konto/partner/audiopin", label: "Mein Audiopin" },
   { href: "/konto/partner/premium", label: "Premium" },

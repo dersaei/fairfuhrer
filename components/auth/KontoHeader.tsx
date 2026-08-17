@@ -10,14 +10,11 @@ interface Props {
 export default function KontoHeader({ isPartner, displayName }: Props) {
   return (
     <div className={styles.header}>
-      <div className={styles.avatarWrapper}>
-        <div className={styles.avatarPlaceholder} />
-      </div>
       <div className={styles.headerWelcome}>
         <span className={styles.role}>
-          {isPartner ? "Partner" : "Reisender"}
+          {isPartner ? "Partner*in" : "Reisende*r"}
         </span>
-        <h1 className={styles.greeting}>Willkommen, {displayName}!</h1>
+        <h1 className={styles.greeting}>Willkommen {displayName}!</h1>
       </div>
     </div>
   );

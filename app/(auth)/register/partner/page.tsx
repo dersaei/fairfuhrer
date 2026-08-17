@@ -146,7 +146,7 @@ export default function RegisterPartnerPage() {
       <Link href="/register" className={styles.back}>
         ← Zurück
       </Link>
-      <h1 className={styles.title}>Als Partner registrieren</h1>
+      <h1 className={styles.title}>Als Partner*in registrieren</h1>
 
       {errors.general && (
         <p className={styles.errorMessage}>{errors.general}</p>

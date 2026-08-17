@@ -5,10 +5,10 @@ import { usePathname } from "next/navigation";
 import styles from "./KontoNav.module.css";
 
 const links = [
-  { href: "/konto/reisender/profil", label: "Mein Profil" },
+  { href: "/konto/reisender/profil", label: "Profil" },
   { href: "/konto/reisender/einstellungen", label: "Einstellungen" },
-  { href: "/konto/reisender/redaktion", label: "Redaktion" },
-  { href: "/konto/reisender/premium", label: "Premium" },
+  { href: "/konto/reisender/redaktion", label: "PIN erstellen" },
+  { href: "/konto/reisender/premium", label: "Fairführer+" },
   { href: "/konto/reisender/hilfe", label: "Hilfe" },
 ];
 

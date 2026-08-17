@@ -9,12 +9,12 @@ export default async function RegisterPage() {
     title: content?.title || "Konto erstellen",
     subtitle:
       content?.subtitle || "Wählen Sie aus, wie Sie Fairführer nutzen möchten.",
-    reisender_title: content?.reisender_title || "Als Reisender",
+    reisender_title: content?.reisender_title || "Als Reisende*r",
     reisender_desc:
       content?.reisender_desc ||
       "Entdecken Sie nachhaltige Orte, folgen Sie Partnern und kommunizieren Sie mit der Community.",
     reisender_cta: content?.reisender_cta || "Weiter →",
-    partner_title: content?.partner_title || "Als Partner",
+    partner_title: content?.partner_title || "Als Partner*in",
     partner_desc:
       content?.partner_desc ||
       "Präsentieren Sie Ihr nachhaltiges Unternehmen, teilen Sie Neuigkeiten und erreichen Sie unsere Community.",

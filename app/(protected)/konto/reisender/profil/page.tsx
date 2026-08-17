@@ -12,7 +12,6 @@ import styles from "../../profil/profil.module.css";
 
 export default function ReisenderProfilPage() {
   const { user, logout } = useAuth();
-  const profile = user?.profile;
 
   const [signingOut, setSigningOut] = useState(false);
 
@@ -32,22 +31,20 @@ export default function ReisenderProfilPage() {
 
       <div className={styles.fields}>
         <div className={styles.field}>
-          <span className={styles.label}>Benutzername</span>
-          <span className={styles.value}>{profile?.username || "—"}</span>
-        </div>
-        <div className={styles.field}>
           <span className={styles.label}>E-Mail-Adresse</span>
           <span className={styles.value}>{user?.email || "—"}</span>
         </div>
-        <div className={styles.field}>
-          <span className={styles.label}>Vorname</span>
-          <span className={styles.value}>{profile?.first_name || "—"}</span>
-        </div>
-        <div className={styles.field}>
-          <span className={styles.label}>Nachname</span>
-          <span className={styles.value}>{profile?.last_name || "—"}</span>
-        </div>
       </div>
+
+      <section className={styles.infoSection}>
+        <p className={styles.sectionLabel}>Konto und mobile App</p>
+        <p className={styles.infoText}>
+          Dein Konto ist vor allem dann nützlich, wenn du in unserer mobilen App
+          ein Abo abschließt: Es synchronisiert deine Inhalte über alle deine
+          Geräte hinweg und schaltet die Audiopins der Kategorie „Sehenswertes"
+          frei.
+        </p>
+      </section>
 
       <div className={styles.signOutSection}>
         <button

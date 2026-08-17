@@ -64,7 +64,7 @@ export default function UserMenu() {
             scroll={false}
             onClick={() => setIsOpen(false)}
           >
-            Mein Profil
+            Profil
           </Link>
           <Link
             href={`${base}/einstellungen`}
@@ -109,7 +109,7 @@ export default function UserMenu() {
                 scroll={false}
                 onClick={() => setIsOpen(false)}
               >
-                Redaktion
+                PIN erstellen
               </Link>
               <Link
                 href="/konto/reisender/premium"
@@ -117,7 +117,7 @@ export default function UserMenu() {
                 scroll={false}
                 onClick={() => setIsOpen(false)}
               >
-                Premium
+                Fairführer+
               </Link>
               <Link
                 href="/konto/reisender/hilfe"
