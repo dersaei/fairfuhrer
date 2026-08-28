@@ -6,7 +6,7 @@ import MuxPlayer from "@mux/mux-player-react";
 import styles from "./MuxVideoEmbed.module.css";
 
 interface MuxVideoEmbedProps {
-  playbackId: string; // hz85VadaGOSuRmlIP7uoACRb63tjJXXNKTcFqHA14Po
+  playbackId: string; // z.B. b55Uuj3M7zO01CbLiGM9eMOObyDcY6no56Yf2T3Sctus
   title?: string;
   className?: string;
   poster?: string;
@@ -26,12 +26,16 @@ export default function MuxVideoEmbed({
   muted = true,
   fill = false,
 }: MuxVideoEmbedProps) {
-  // Validation - check if playbackId is valid
-  if (!playbackId || playbackId.length !== 43) {
+  // Validation - Mux garantiert keine feste Länge der Playback-ID,
+  // daher nur Format (alphanumerisch) statt exakter Zeichenzahl prüfen.
+  const isValidPlaybackId =
+    typeof playbackId === "string" && /^[A-Za-z0-9]{20,}$/.test(playbackId.trim());
+
+  if (!isValidPlaybackId) {
     return (
       <div className={`${styles.videoError} ${className}`}>
         <p>❌ Ungültige Playback-ID!</p>
-        <p>Erwartet: 43 Zeichen lange Mux Playback-ID</p>
+        <p>Erwartet: alphanumerische Mux Playback-ID</p>
         <p>Erhalten: {playbackId || "keine ID"}</p>
       </div>
     );
@@ -59,7 +63,7 @@ export default function MuxVideoEmbed({
       } ${className}`}
     >
       <MuxPlayer
-        playbackId={playbackId}
+        playbackId={playbackId.trim()}
         poster={poster}
         autoPlay={autoPlay ? "muted" : false}
         muted={muted}

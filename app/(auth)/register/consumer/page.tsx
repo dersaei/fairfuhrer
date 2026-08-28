@@ -106,11 +106,11 @@ export default function RegisterConsumerPage() {
             <strong>{fields.email}</strong> gesendet.
           </p>
           <p className={styles.successText}>
-            Bitte klicken Sie auf den Link in der E-Mail, um Ihr Konto zu
-            aktivieren. Danach können Sie sich anmelden.
+            Bitte klicke auf den Link in der E-Mail, um dein Konto zu
+            aktivieren. Danach kannst du dich anmelden.
           </p>
           <p className={styles.successHint}>
-            Keine E-Mail erhalten? Bitte prüfen Sie Ihren Spam-Ordner.
+            Keine E-Mail erhalten? Bitte prüfe deinen Spam-Ordner.
           </p>
         </div>
       </div>

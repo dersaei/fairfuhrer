@@ -65,6 +65,7 @@ export interface DirectusSchema {
 
 export async function getHomePageContent(): Promise<HomePageContent | null> {
   try {
+    const isDev = process.env.NODE_ENV === "development";
     const response = await fetch(
       // Rozwijamy pola obrazów o modified_on — używane jako cache-buster w URL
       // (podmiana pliku pod tym samym UUID inaczej zostaje w 30-dniowym cache).
@@ -73,10 +74,14 @@ export async function getHomePageContent(): Promise<HomePageContent | null> {
         headers: {
           "Content-Type": "application/json",
         },
-        // Bez cache — strona główna renderuje się dynamicznie, zmiany w Directusie
-        // (m.in. obraz partnera) są widoczne od razu. Directus Flow nie rewaliduje
-        // tagu "home-page" w tym przypadku, dlatego świadomie rezygnujemy z ISR.
-        cache: "no-store" as const,
+        // ISR + tag "home-page": Directus Flow "Home Page" woła
+        // POST /api/revalidate z tagiem "home-page" po każdej zmianie w
+        // home_page_content, więc edycje są widoczne od razu. revalidate to tylko
+        // siatka bezpieczeństwa, gdyby Flow nie doszedł. Cache chroni też stronę
+        // główną przed pustym renderem, gdy Directus śpi/nie odpowiada.
+        ...(isDev
+          ? { cache: "no-store" as const }
+          : { next: { revalidate: 3600, tags: ["home-page"] } }),
       }
     );
 
