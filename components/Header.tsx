@@ -6,7 +6,7 @@ import Link from "next/link";
 import UserMenu from "./auth/UserMenu";
 import { useState, useEffect } from "react";
 import logoFairfuehrer from "../public/logo-fairfuehrer.png";
-import appStoreBadge from "../public/app-store-badge.png";
+import appStoreBadge from "../public/app-store-badge.svg";
 import googlePlayBadge from "../public/google-play-badge.png";
 
 export default function Header() {

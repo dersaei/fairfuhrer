@@ -1,9 +1,16 @@
+import Image from "next/image";
 import { getCurrentUser } from "@/app/actions/auth";
 import {
   getPremiumPageContent,
   getPremiumComparisonFeatures,
 } from "@/lib/directus";
 import styles from "./premium.module.css";
+import appStoreBadge from "@/public/app-store-badge.svg";
+import googlePlayBadge from "@/public/google-play-badge.png";
+
+const APP_STORE_URL = "https://apple.co/46r4XcG";
+const GOOGLE_PLAY_URL =
+  "https://play.google.com/store/apps/details?id=com.fairfuehrer.app";
 
 // Prosty markdown: **fett** i *kursiv* — spójnie ze stroną Hilfe
 function renderMarkdown(text: string): string {
@@ -56,14 +63,46 @@ export default async function PremiumPage() {
           )}
         </div>
       ) : (
-        content?.lead_text && (
-          <p
-            className={styles.lead}
-            dangerouslySetInnerHTML={{
-              __html: renderMarkdown(content.lead_text),
-            }}
-          />
-        )
+        <div className={styles.leadBlock}>
+          {content?.lead_text && (
+            <p
+              className={styles.lead}
+              dangerouslySetInnerHTML={{
+                __html: renderMarkdown(content.lead_text),
+              }}
+            />
+          )}
+          <div className={styles.storeBadges}>
+            <a
+              href={APP_STORE_URL}
+              target="_blank"
+              rel="noopener noreferrer"
+              className={styles.storeBadge}
+              aria-label="Fairführer im App Store öffnen"
+            >
+              <Image
+                src={appStoreBadge}
+                alt="App Store"
+                unoptimized
+                className={styles.storeBadgeImg}
+              />
+            </a>
+            <a
+              href={GOOGLE_PLAY_URL}
+              target="_blank"
+              rel="noopener noreferrer"
+              className={styles.storeBadge}
+              aria-label="Fairführer bei Google Play öffnen"
+            >
+              <Image
+                src={googlePlayBadge}
+                alt="Google Play"
+                unoptimized
+                className={styles.storeBadgeImg}
+              />
+            </a>
+          </div>
+        </div>
       )}
 
       {features.length > 0 && (

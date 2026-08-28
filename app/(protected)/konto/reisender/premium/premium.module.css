@@ -187,3 +187,37 @@
   line-height: 1.6;
   margin: 0.5rem 0 0;
 }
+
+/* --- Store-Badges unter dem Lead-Text --- */
+
+.leadBlock {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.storeBadges {
+  display: flex;
+  gap: 0.75rem;
+  justify-content: center;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+/* An gleicher Höhe ausgerichtet, da App Store und Google Play
+   unterschiedliche Seitenverhältnisse haben. */
+.storeBadge {
+  display: inline-flex;
+  align-items: center;
+  transition: opacity 0.15s ease;
+}
+
+.storeBadge:hover {
+  opacity: 0.75;
+}
+
+.storeBadgeImg {
+  height: 40px;
+  width: auto;
+  display: block;
+}

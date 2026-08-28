@@ -280,30 +280,29 @@
   display: flex;
   gap: 0.5rem;
   justify-content: center;
+  align-items: center;
   padding: 0 0.8em;
 }
 
-.popupLockLink {
-  flex: 1;
+/* Offizielle Store-Badges: an gleicher Höhe ausgerichtet (nicht an gleicher
+   Breite), da App Store und Google Play unterschiedliche Seitenverhältnisse
+   haben. */
+.popupLockBadge {
   display: inline-flex;
   align-items: center;
-  justify-content: center;
-  padding: 0.6rem 0.5rem;
-  border-radius: 9999px;
-  background: #181716;
-  color: #fc6c14 !important;
-  font-family: var(--font-fira);
-  font-weight: 700;
-  font-size: 0.85rem;
-  line-height: 1;
-  text-decoration: none;
+  transition: opacity 0.15s ease;
 }
 
-.popupLockLink:hover {
-  background: #fc6c14;
-  color: #181716 !important;
-  text-decoration: none;
+.popupLockBadge:hover {
+  opacity: 0.75;
 }
+
+.popupLockBadgeImg {
+  height: 34px;
+  width: auto;
+  display: block;
+}
+
 
 .popupLockSync {
   margin: 0;

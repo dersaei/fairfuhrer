@@ -72,8 +72,12 @@ function buildSightsLockPopupHtml(
     <p class="${cssModule.popupLockBody}">${escapeHtml(bodyWithPercent)}</p>
     <p class="${cssModule.popupLockCta}">${escapeHtml(c.cta_headline)}</p>
     <div class="${cssModule.popupLockLinks}">
-      <a class="${cssModule.popupLockLink}" href="${escapeHtml(c.app_store_url)}" target="_blank" rel="noopener noreferrer">${escapeHtml(c.app_store_label)}</a>
-      <a class="${cssModule.popupLockLink}" href="${escapeHtml(c.google_play_url)}" target="_blank" rel="noopener noreferrer">${escapeHtml(c.google_play_label)}</a>
+      <a class="${cssModule.popupLockBadge}" href="${escapeHtml(c.app_store_url)}" target="_blank" rel="noopener noreferrer" aria-label="${escapeHtml(c.app_store_label)}">
+        <img class="${cssModule.popupLockBadgeImg}" src="/app-store-badge.svg" alt="${escapeHtml(c.app_store_label)}" width="119" height="40" />
+      </a>
+      <a class="${cssModule.popupLockBadge}" href="${escapeHtml(c.google_play_url)}" target="_blank" rel="noopener noreferrer" aria-label="${escapeHtml(c.google_play_label)}">
+        <img class="${cssModule.popupLockBadgeImg}" src="/google-play-badge.png" alt="${escapeHtml(c.google_play_label)}" width="100" height="30" />
+      </a>
     </div>
     ${syncBlock}
   </div>`;
