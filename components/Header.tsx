@@ -7,7 +7,7 @@ import UserMenu from "./auth/UserMenu";
 import { useState, useEffect } from "react";
 import logoFairfuehrer from "../public/logo-fairfuehrer.png";
 import appStoreBadge from "../public/app-store-badge.svg";
-import googlePlayBadge from "../public/google-play-badge.png";
+import googlePlayBadge from "../public/android-store-badge.svg";
 
 export default function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);

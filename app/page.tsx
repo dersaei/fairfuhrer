@@ -5,7 +5,7 @@ import { marked } from "marked";
 import { getCategoryIconPaths, DEFAULT_ICON_PATHS } from "@/lib/categoryIcons";
 import heroImage from "@/public/fair-fuehrer-guide-hero.jpg";
 import appStoreBadge from "@/public/app-store-badge.svg";
-import googlePlayBadge from "@/public/google-play-badge.png";
+import googlePlayBadge from "@/public/android-store-badge.svg";
 import seenergienLogo from "@/public/seenergienlogo.png";
 import MuxVideoEmbed from "@/components/MuxVideoEmbed";
 import { ConditionalMuxVideo } from "@/components/ConditionalMuxVideo";

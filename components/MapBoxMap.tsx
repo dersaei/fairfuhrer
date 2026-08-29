@@ -76,7 +76,7 @@ function buildSightsLockPopupHtml(
         <img class="${cssModule.popupLockBadgeImg}" src="/app-store-badge.svg" alt="${escapeHtml(c.app_store_label)}" width="119" height="40" />
       </a>
       <a class="${cssModule.popupLockBadge}" href="${escapeHtml(c.google_play_url)}" target="_blank" rel="noopener noreferrer" aria-label="${escapeHtml(c.google_play_label)}">
-        <img class="${cssModule.popupLockBadgeImg}" src="/google-play-badge.png" alt="${escapeHtml(c.google_play_label)}" width="100" height="30" />
+        <img class="${cssModule.popupLockBadgeImg}" src="/android-store-badge.svg" alt="${escapeHtml(c.google_play_label)}" width="239" height="71" />
       </a>
     </div>
     ${syncBlock}

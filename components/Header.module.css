@@ -197,9 +197,12 @@
   gap: 12px;
 }
 
+/* An gleicher Höhe ausgerichtet, nicht an gleicher Breite: App Store und
+   Google Play haben unterschiedliche Seitenverhältnisse. */
 .mobileStoreBadgeImg {
-  width: 100px;
-  height: auto;
+  height: 34px;
+  width: auto;
+  display: block;
 }
 
 .mobileSocial {

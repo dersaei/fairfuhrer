@@ -6,7 +6,7 @@ import {
 } from "@/lib/directus";
 import styles from "./premium.module.css";
 import appStoreBadge from "@/public/app-store-badge.svg";
-import googlePlayBadge from "@/public/google-play-badge.png";
+import googlePlayBadge from "@/public/android-store-badge.svg";
 
 const APP_STORE_URL = "https://apple.co/46r4XcG";
 const GOOGLE_PLAY_URL =

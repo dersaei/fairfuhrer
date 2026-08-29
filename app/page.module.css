@@ -107,9 +107,12 @@
   gap: 10px;
 }
 
+/* An gleicher Höhe ausgerichtet, nicht an gleicher Breite: App Store und
+   Google Play haben unterschiedliche Seitenverhältnisse. */
 .heroBadgeImg {
-  width: 100px;
-  height: auto;
+  height: 34px;
+  width: auto;
+  display: block;
 }
 
 .heroBadgePartner {
