@@ -1,0 +1,182 @@
+/* components/AppPromoModal.module.css — scharfe Kanten, keine Verläufe,
+   Anton für die Überschrift, Fira für den Fließtext. */
+
+.backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 9990; /* unter dem Cookie-Banner (9999), der nie gleichzeitig läuft */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1.25rem;
+  padding-bottom: max(1.25rem, env(safe-area-inset-bottom));
+  background: rgba(0, 0, 0, 0.45);
+  -webkit-backdrop-filter: blur(0px);
+  backdrop-filter: blur(0px);
+  opacity: 0;
+  transition:
+    opacity 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94),
+    backdrop-filter 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+.backdrop.visible {
+  opacity: 1;
+  -webkit-backdrop-filter: blur(2px);
+  backdrop-filter: blur(2px);
+}
+
+.modal {
+  position: relative;
+  box-sizing: border-box;
+  width: 100%;
+  max-width: 380px;
+  max-height: calc(100 * var(--vh, 1vh) - 2.5rem);
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  padding: 1.75rem 1.5rem 1.5rem;
+  background: #fff;
+  border: 1.5px solid #181716;
+  box-shadow: 0 18px 48px rgba(0, 0, 0, 0.22);
+  opacity: 0;
+  transform: translateY(14px);
+  transition:
+    opacity 0.35s cubic-bezier(0.16, 1, 0.3, 1),
+    transform 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+  -webkit-font-smoothing: antialiased;
+}
+
+.modal.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.closeButton {
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 44px;
+  height: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  background: transparent;
+  color: #181716;
+  cursor: pointer;
+  transition: background 0.2s ease;
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
+}
+
+.closeButton:hover {
+  background: rgba(0, 0, 0, 0.06);
+}
+
+.closeButton:active {
+  background: rgba(0, 0, 0, 0.12);
+}
+
+.closeButton:focus-visible {
+  outline: 2px solid #fc6c14;
+  outline-offset: -2px;
+}
+
+.title {
+  margin: 0 2rem 0.75rem 0;
+  font-family: var(--font-anton);
+  font-size: 1.75rem;
+  font-weight: 400;
+  line-height: 1.15;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+  color: #181716;
+}
+
+.body {
+  margin: 0 0 1.25rem;
+  font-family: var(--font-fira);
+  font-size: 0.9rem;
+  line-height: 1.6;
+  color: #444;
+}
+
+.cta {
+  margin: 0 0 0.75rem;
+  font-family: var(--font-fira);
+  font-weight: 700;
+  font-size: 0.7rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: #666;
+  text-align: center;
+}
+
+.badges {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+
+/* An gleicher Höhe ausgerichtet, nicht an gleicher Breite: App Store und
+   Google Play haben unterschiedliche Seitenverhältnisse. */
+.badge {
+  display: inline-flex;
+  align-items: center;
+  transition: opacity 0.15s ease;
+}
+
+.badge:hover {
+  opacity: 0.75;
+}
+
+.badge:focus-visible {
+  outline: 2px solid #fc6c14;
+  outline-offset: 3px;
+}
+
+.badgeImg {
+  height: 40px;
+  width: auto;
+  display: block;
+}
+
+@media (max-width: 380px) {
+  .modal {
+    padding: 1.5rem 1.25rem 1.25rem;
+  }
+
+  .title {
+    font-size: 1.5rem;
+  }
+
+  .badgeImg {
+    height: 36px;
+  }
+}
+
+/* Querformat auf dem Handy: wenig Höhe, also kompakter. */
+@media (max-height: 520px) and (orientation: landscape) {
+  .modal {
+    max-width: 460px;
+    padding: 1.25rem 1.25rem 1rem;
+  }
+
+  .title {
+    font-size: 1.35rem;
+    margin-bottom: 0.5rem;
+  }
+
+  .body {
+    margin-bottom: 0.85rem;
+    font-size: 0.85rem;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .backdrop,
+  .modal {
+    transition: none;
+  }
+}

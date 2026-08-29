@@ -10,6 +10,7 @@ import { PayPalProvider } from "../components/PayPalProvider";
 import { CookieProvider } from "../context/CookieContext";
 import { AuthProvider } from "../context/AuthContext";
 import CookieBanner from "../components/CookieBanner";
+import AppPromoModal from "../components/AppPromoModal";
 import HotjarTag from "../components/HotjarTag";
 import { WebVitals } from "./_components/web-vitals";
 import { AnalyticsTracker } from "./_components/analytics-tracker";
@@ -107,6 +108,10 @@ export default function RootLayout({
           </AuthProvider>
 
           <CookieBanner />
+
+          {/* App-Hinweis für Tablet/Mobile - läuft erst an,
+              wenn der Cookie-Banner weg ist. */}
+          <AppPromoModal />
         </CookieProvider>
 
         {/* Structured Data für Organisation */}
