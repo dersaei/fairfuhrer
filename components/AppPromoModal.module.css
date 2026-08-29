@@ -35,7 +35,7 @@
   overscroll-behavior: contain;
   padding: 1.75rem 1.5rem 1.5rem;
   background: #fff;
-  border: 1.5px solid #181716;
+  border: 4px ridge #fc6c14;
   box-shadow: 0 18px 48px rgba(0, 0, 0, 0.22);
   opacity: 0;
   transform: translateY(14px);
@@ -60,7 +60,7 @@
   align-items: center;
   justify-content: center;
   border: none;
-  background: transparent;
+  background: #fc6c14;
   color: #181716;
   cursor: pointer;
   transition: background 0.2s ease;
@@ -69,35 +69,37 @@
 }
 
 .closeButton:hover {
-  background: rgba(0, 0, 0, 0.06);
+  background: #e35d0a;
 }
 
 .closeButton:active {
-  background: rgba(0, 0, 0, 0.12);
+  background: #c94f06;
 }
 
 .closeButton:focus-visible {
-  outline: 2px solid #fc6c14;
-  outline-offset: -2px;
+  outline: 2px solid #c94f06;
+  outline-offset: -1px;
 }
 
 .title {
-  margin: 0 2rem 0.75rem 0;
+  margin: 0 0 0.75rem 0;
   font-family: var(--font-anton);
   font-size: 1.75rem;
   font-weight: 400;
   line-height: 1.15;
   letter-spacing: 0.02em;
   text-transform: uppercase;
+  text-align: center;
   color: #181716;
 }
 
 .body {
   margin: 0 0 1.25rem;
   font-family: var(--font-fira);
-  font-size: 0.9rem;
+  font-size: 1rem;
+  text-align: center;
   line-height: 1.6;
-  color: #444;
+  color: #2d2c2d;
 }
 
 .cta {

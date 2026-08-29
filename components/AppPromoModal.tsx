@@ -8,6 +8,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import Image from "next/image";
 import { FocusTrap } from "focus-trap-react";
+import { X } from "lucide-react";
 import { useCookies } from "@/context/CookieContext";
 import styles from "./AppPromoModal.module.css";
 import appStoreBadge from "@/public/app-store-badge.svg";
@@ -174,19 +175,7 @@ export default function AppPromoModal() {
             onClick={handleClose}
             aria-label={CONTENT.close_label}
           >
-            <svg
-              width="16"
-              height="16"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2.5"
-              strokeLinecap="round"
-              aria-hidden="true"
-            >
-              <line x1="18" y1="6" x2="6" y2="18" />
-              <line x1="6" y1="6" x2="18" y2="18" />
-            </svg>
+            <X size={20} strokeWidth={2.5} aria-hidden="true" />
           </button>
 
           <h2 id="app-promo-title" className={styles.title}>
