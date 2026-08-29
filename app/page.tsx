@@ -12,6 +12,52 @@ import { ConditionalMuxVideo } from "@/components/ConditionalMuxVideo";
 import styles from "./page.module.css";
 import { getHomePageContent } from "@/lib/directus";
 
+const APP_STORE_URL =
+  "https://apps.apple.com/de/app/fairf%C3%BChrer/id6778095803";
+const GOOGLE_PLAY_URL =
+  "https://play.google.com/store/apps/details?id=com.fairfuehrer.app";
+
+// Dieselben zwei Links erscheinen in der Hero-Leiste (Desktop) und im
+// eigenen Abschnitt darunter (Mobil) - deshalb einmal definiert.
+function StoreBadgeLinks({
+  iconsClassName,
+  imgClassName,
+}: {
+  iconsClassName: string;
+  imgClassName: string;
+}) {
+  return (
+    <div className={iconsClassName}>
+      <a
+        href={APP_STORE_URL}
+        target="_blank"
+        rel="noopener noreferrer"
+        aria-label="Fairführer im App Store öffnen"
+      >
+        <Image
+          src={appStoreBadge}
+          alt="App Store"
+          unoptimized
+          className={imgClassName}
+        />
+      </a>
+      <a
+        href={GOOGLE_PLAY_URL}
+        target="_blank"
+        rel="noopener noreferrer"
+        aria-label="Fairführer bei Google Play öffnen"
+      >
+        <Image
+          src={googlePlayBadge}
+          alt="Google Play"
+          unoptimized
+          className={imgClassName}
+        />
+      </a>
+    </div>
+  );
+}
+
 const CATEGORIES = [
   { id: 1, name: "Sehenswertes", color: "#E45858" },
   { id: 3, name: "Einkaufen", color: "#F0873D" },
@@ -203,34 +249,10 @@ export default async function HomePage() {
           <span className={styles.heroBadgesLabel}>
             {content?.badges_label}
           </span>
-          <div className={styles.heroBadgesIcons}>
-            <a
-              href="https://apps.apple.com/de/app/fairf%C3%BChrer/id6778095803"
-              target="_blank"
-              rel="noopener noreferrer"
-              aria-label="Fairführer im App Store öffnen"
-            >
-              <Image
-                src={appStoreBadge}
-                alt="App Store"
-                unoptimized
-                className={styles.heroBadgeImg}
-              />
-            </a>
-            <a
-              href="https://play.google.com/store/apps/details?id=com.fairfuehrer.app"
-              target="_blank"
-              rel="noopener noreferrer"
-              aria-label="Fairführer bei Google Play öffnen"
-            >
-              <Image
-                src={googlePlayBadge}
-                alt="Google Play"
-                unoptimized
-                className={styles.heroBadgeImg}
-              />
-            </a>
-          </div>
+          <StoreBadgeLinks
+            iconsClassName={styles.heroBadgesIcons}
+            imgClassName={styles.heroBadgeImg}
+          />
           <Image
             src={seenergienLogo}
             alt="Seenergien"
@@ -239,6 +261,25 @@ export default async function HomePage() {
           />
         </div>
       </div>
+
+      {/* Store-Badges als eigener Abschnitt. Im Hero ist die Leiste auf
+          Mobil ausgeblendet, weil sie dort mit dem CTA-Button kollidiert -
+          hier stehen dieselben Inhalte untereinander. */}
+      <section className={styles.heroBadgesMobile}>
+        <span className={styles.heroBadgesMobileLabel}>
+          {content?.badges_label}
+        </span>
+        <StoreBadgeLinks
+          iconsClassName={styles.heroBadgesMobileIcons}
+          imgClassName={styles.heroBadgeImg}
+        />
+        <Image
+          src={seenergienLogo}
+          alt="Seenergien"
+          unoptimized
+          className={styles.heroBadgesMobilePartner}
+        />
+      </section>
 
       {/* SEKCJA 2: Kategorie */}
       <section className={styles.section2}>
