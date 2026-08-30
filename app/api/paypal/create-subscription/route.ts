@@ -96,6 +96,10 @@ export async function POST() {
       },
       body: JSON.stringify({
         plan_id: planId,
+        // PayPal odsyła custom_id w każdym evencie webhooka tej subskrypcji.
+        // Dzięki temu subscription-webhook przypisuje płatność do konta bez
+        // szukania po e-mailu (ten bywa inny w PayPalu niż w aplikacji).
+        custom_id: user.id,
         subscriber: {
           email_address: user.email,
         },
