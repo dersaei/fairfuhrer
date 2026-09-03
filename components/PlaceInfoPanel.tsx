@@ -193,7 +193,7 @@ function PlaceContent({
         </h2>
         <p className={styles.placeAddress}>
           {place.Adresse}
-          {place.Stadt ? `, ${place.Stadt}` : ""}
+          {place.Stadt ? ` ${place.Stadt}` : ""}
           {place.Land ? ` (${place.Land})` : ""}
         </p>
         {place.Telefon && (

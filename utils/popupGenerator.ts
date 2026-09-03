@@ -4,10 +4,11 @@ import styles from "../components/MapBoxMap.module.css";
 
 export function generatePopupHTML(place: Place): string {
   const safeName = DOMPurify.sanitize(place.Name, { ALLOWED_TAGS: [] });
+  const cityLine = [place.Stadt, place.Land ? `(${place.Land})` : ""]
+    .filter(Boolean)
+    .join(" ");
   const safeAddress = DOMPurify.sanitize(
-    [place.Adresse, place.Stadt, place.Land ? `(${place.Land})` : ""]
-      .filter(Boolean)
-      .join(", "),
+    [place.Adresse, cityLine].filter(Boolean).join(" "),
     { ALLOWED_TAGS: [] },
   );
   const safePhone = place.Telefon
