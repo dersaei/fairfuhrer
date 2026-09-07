@@ -73,13 +73,30 @@ export async function GET(request: NextRequest) {
     // WŁAŚCICIELSTWO: sam fakt, że subskrypcja jest aktywna, nie znaczy, że
     // należy do TEGO usera. Bez tej weryfikacji zalogowany user A, który zdobędzie
     // cudze subscription_id, aktywowałby sobie premium na cudzej płatności.
-    // 1) e-mail subskrybenta z PayPala musi zgadzać się z e-mailem sesji.
+    // 1) custom_id — create-subscription wysyła w nim user.id, a PayPal odsyła
+    //    wartość bez zmian. Mocniejszy dowód niż e-mail: pochodzi z naszego
+    //    żądania, więc nie da się go podstawić bez dostępu do tego endpointu.
+    const customId: string | undefined =
+      typeof subscription.custom_id === "string"
+        ? subscription.custom_id
+        : undefined;
+
+    //    Fallback wyłącznie dla subskrypcji założonych zanim zaczęliśmy wysyłać
+    //    custom_id: e-mail subskrybenta musi zgadzać się z e-mailem sesji.
+    //    Nie stosujemy go, gdy custom_id jest obecne — wtedy niezgodność
+    //    oznacza odmowę, bez drugiej szansy.
+    //
+    //    Uwaga: samo porównanie e-maili wymagało, żeby adres konta PayPal był
+    //    identyczny z adresem konta w aplikacji. To zawodzi u firm, które mają
+    //    PayPala na inny adres niż konto w serwisie.
     const subscriberEmail: string | undefined =
       subscription.subscriber?.email_address;
     const emailMatches =
       !!subscriberEmail &&
       !!user.email &&
       subscriberEmail.toLowerCase() === user.email.toLowerCase();
+
+    const ownedByUser = customId ? customId === user.id : emailMatches;
 
     // 2) subscription_id nie może być już przypisane do innego partnera.
     const { data: existingOwner } = await supabaseAdmin
@@ -89,11 +106,13 @@ export async function GET(request: NextRequest) {
       .maybeSingle();
     const claimedByOther = !!existingOwner && existingOwner.id !== user.id;
 
-    if (!emailMatches || claimedByOther) {
-      console.error(
-        "activate-subscription: ownership check failed",
-        { userId: user.id, emailMatches, claimedByOther }
-      );
+    if (!ownedByUser || claimedByOther) {
+      console.error("activate-subscription: ownership check failed", {
+        userId: user.id,
+        via: customId ? "custom_id" : "email",
+        ownedByUser,
+        claimedByOther,
+      });
       return NextResponse.json(
         { error: "Subscription does not belong to this account" },
         { status: 403 }

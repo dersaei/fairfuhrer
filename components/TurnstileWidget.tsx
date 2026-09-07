@@ -1,7 +1,17 @@
 "use client";
 
-import { useEffect, useRef, useCallback } from "react";
+import { useEffect, useRef, useCallback, useImperativeHandle } from "react";
+import type { Ref } from "react";
 import Script from "next/script";
+
+/**
+ * Tokeny Turnstile są jednorazowe — po wysłaniu do siteverify tracą ważność.
+ * Formularz, który zostaje na ekranie po nieudanej próbie, musi zamówić nowy
+ * token, inaczej kolejne wysłanie odpadnie na weryfikacji mimo poprawnych danych.
+ */
+export interface TurnstileWidgetHandle {
+  reset: () => void;
+}
 
 interface TurnstileWidgetProps {
   siteKey: string;
@@ -9,6 +19,7 @@ interface TurnstileWidgetProps {
   onExpire?: () => void;
   onError?: () => void;
   onTimeout?: () => void;
+  ref?: Ref<TurnstileWidgetHandle>;
 }
 
 declare global {
@@ -39,9 +50,18 @@ export default function TurnstileWidget({
   onExpire,
   onError,
   onTimeout,
+  ref,
 }: TurnstileWidgetProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const widgetIdRef = useRef<string | null>(null);
+
+  useImperativeHandle(ref, () => ({
+    reset() {
+      if (widgetIdRef.current && window.turnstile) {
+        window.turnstile.reset(widgetIdRef.current);
+      }
+    },
+  }), []);
 
   const renderWidget = useCallback(() => {
     if (!containerRef.current || !window.turnstile) return;

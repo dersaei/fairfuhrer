@@ -3,6 +3,12 @@ import type { NextRequest } from "next/server";
 import { createServerClient } from "@supabase/ssr";
 
 export async function proxy(request: NextRequest) {
+  // Wylogowanie kasuje ciasteczka sesji — odświeżanie jej tuż przedtem mogłoby
+  // je przywrócić w nagłówkach odpowiedzi.
+  if (request.nextUrl.pathname === "/api/auth/logout") {
+    return NextResponse.next({ request });
+  }
+
   let supabaseResponse = NextResponse.next({ request });
 
   const supabase = createServerClient(
@@ -40,12 +46,29 @@ export async function proxy(request: NextRequest) {
     return NextResponse.redirect(loginUrl);
   }
 
-  // Strony auth: redirect do /konto jeśli już zalogowany
+  // Strony auth: redirect do /konto jeśli już zalogowany.
+  //
+  // `getClaims()` weryfikuje podpis tokenu lokalnie i nie wie, że konto zostało
+  // usunięte albo zablokowane — token pozostaje poprawny aż do wygaśnięcia.
+  // Bez potwierdzenia u źródła powstaje pętla: proxy odsyła z /login na /konto,
+  // a chroniony layout pyta Supabase przez getUser(), dostaje null i odsyła
+  // z powrotem. Przy nawigacji klienckiej objawia się to pustą treścią zamiast
+  // czytelnego błędu.
+  //
+  // getUser() to dodatkowe żądanie do Supabase, ale wykonywane wyłącznie przy
+  // wejściu na /login lub /register z istniejącym ciasteczkiem sesji — nie na
+  // każdym żądaniu objętym matcherem.
   const authPaths = ["/login", "/register"];
   if (authPaths.some((p) => pathname.startsWith(p)) && user) {
-    const dashboardUrl = request.nextUrl.clone();
-    dashboardUrl.pathname = "/konto";
-    return NextResponse.redirect(dashboardUrl);
+    const {
+      data: { user: verifiedUser },
+    } = await supabase.auth.getUser();
+
+    if (verifiedUser) {
+      const dashboardUrl = request.nextUrl.clone();
+      dashboardUrl.pathname = "/konto";
+      return NextResponse.redirect(dashboardUrl);
+    }
   }
 
   return supabaseResponse;
