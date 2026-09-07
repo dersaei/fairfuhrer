@@ -12,7 +12,11 @@ export default async function ProtectedLayout({
   } = await supabase.auth.getUser();
 
   if (!user) {
-    redirect("/login");
+    // Przez endpoint, nie wprost na /login. Ciasteczko sesji może być wciąż
+    // kryptograficznie ważne (usunięte lub zablokowane konto), a proxy.ts
+    // sprawdza je przez getClaims() bez pytania Supabase — odesłałby stąd
+    // z powrotem na /konto i powstałaby pętla przekierowań.
+    redirect("/api/auth/logout?next=/login");
   }
 
   return <>{children}</>;

@@ -3,6 +3,12 @@ import type { NextRequest } from "next/server";
 import { createServerClient } from "@supabase/ssr";
 
 export async function proxy(request: NextRequest) {
+  // Wylogowanie kasuje ciasteczka sesji — odświeżanie jej tuż przedtem mogłoby
+  // je przywrócić w nagłówkach odpowiedzi.
+  if (request.nextUrl.pathname === "/api/auth/logout") {
+    return NextResponse.next({ request });
+  }
+
   let supabaseResponse = NextResponse.next({ request });
 
   const supabase = createServerClient(

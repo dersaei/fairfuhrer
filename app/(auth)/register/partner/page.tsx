@@ -1,11 +1,12 @@
 "use client";
 
-import { useState, useCallback } from "react";
+import { useState, useCallback, useRef } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { registerPartner } from "@/app/actions/auth";
 import type { FormErrors } from "@/types/auth";
 import TurnstileWidget from "@/components/TurnstileWidget";
+import type { TurnstileWidgetHandle } from "@/components/TurnstileWidget";
 import PasswordInput from "@/components/PasswordInput";
 import styles from "./partner.module.css";
 import { COUNTRIES, getCountry } from "@/lib/countries";
@@ -44,12 +45,23 @@ export default function RegisterPartnerPage() {
   const [success, setSuccess] = useState(false);
   const [turnstileToken, setTurnstileToken] = useState<string | null>(null);
 
+  const turnstileRef = useRef<TurnstileWidgetHandle>(null);
+
   const handleTurnstileVerify = useCallback((token: string) => {
     setTurnstileToken(token);
   }, []);
 
   const handleTurnstileExpire = useCallback(() => {
     setTurnstileToken(null);
+  }, []);
+
+  /**
+   * Token Turnstile jest jednorazowy — po nieudanej probie trzeba zamowic nowy,
+   * inaczej kolejne wyslanie odpadnie na weryfikacji mimo poprawnych danych.
+   */
+  const resetTurnstile = useCallback(() => {
+    setTurnstileToken(null);
+    turnstileRef.current?.reset();
   }, []);
 
   function set(key: keyof typeof fields) {
@@ -123,6 +135,7 @@ export default function RegisterPartnerPage() {
 
     if (!result.success) {
       setErrors({ general: result.error });
+      resetTurnstile();
       return;
     }
 
@@ -335,6 +348,7 @@ export default function RegisterPartnerPage() {
         </div>
 
         <TurnstileWidget
+          ref={turnstileRef}
           siteKey={process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY!}
           onVerify={handleTurnstileVerify}
           onExpire={handleTurnstileExpire}

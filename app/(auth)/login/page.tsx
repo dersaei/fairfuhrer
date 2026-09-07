@@ -1,11 +1,12 @@
 "use client";
 
-import { Suspense, useState, useCallback } from "react";
+import { Suspense, useState, useCallback, useRef } from "react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { loginWithEmail, loginWithMagicLink } from "@/app/actions/auth";
 import type { FormErrors } from "@/types/auth";
 import TurnstileWidget from "@/components/TurnstileWidget";
+import type { TurnstileWidgetHandle } from "@/components/TurnstileWidget";
 import PasswordInput from "@/components/PasswordInput";
 // Social loginy (Apple/Google) sind in 1.0.3 vorübergehend deaktiviert —
 // Konsistenz mit Mobile (siehe project_social_loginy_zawieszone). Komponente
@@ -30,6 +31,9 @@ function LoginForm() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [magicSent, setMagicSent] = useState(false);
   const [turnstileToken, setTurnstileToken] = useState<string | null>(null);
+  // W danym momencie zamontowana jest tylko jedna zakładka, więc jeden ref
+  // obsługuje oba widgety.
+  const turnstileRef = useRef<TurnstileWidgetHandle>(null);
 
   const handleTurnstileVerify = useCallback((token: string) => {
     setTurnstileToken(token);
@@ -37,6 +41,15 @@ function LoginForm() {
 
   const handleTurnstileExpire = useCallback(() => {
     setTurnstileToken(null);
+  }, []);
+
+  /**
+   * Token Turnstile jest jednorazowy — po nieudanej próbie trzeba zamówić nowy,
+   * inaczej kolejne wysłanie odpadnie na weryfikacji mimo poprawnych danych.
+   */
+  const resetTurnstile = useCallback(() => {
+    setTurnstileToken(null);
+    turnstileRef.current?.reset();
   }, []);
 
   async function handlePasswordLogin(e: React.FormEvent) {
@@ -60,6 +73,7 @@ function LoginForm() {
 
     if (!result.success) {
       setErrors({ general: result.error });
+      resetTurnstile();
       return;
     }
 
@@ -86,6 +100,7 @@ function LoginForm() {
 
     if (!result.success) {
       setErrors({ general: result.error });
+      resetTurnstile();
       return;
     }
 
@@ -153,6 +168,7 @@ function LoginForm() {
             </Link>
           </div>
           <TurnstileWidget
+            ref={turnstileRef}
             siteKey={process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY!}
             onVerify={handleTurnstileVerify}
             onExpire={handleTurnstileExpire}
@@ -198,6 +214,7 @@ function LoginForm() {
                 />
               </div>
               <TurnstileWidget
+                ref={turnstileRef}
                 siteKey={process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY!}
                 onVerify={handleTurnstileVerify}
                 onExpire={handleTurnstileExpire}

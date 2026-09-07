@@ -1,9 +1,10 @@
 "use client";
 
-import { useState, useCallback } from "react";
+import { useState, useCallback, useRef } from "react";
 import { Mail, AtSign, MapPin } from "lucide-react";
 import { ContactFormContent } from "@/types";
 import TurnstileWidget from "@/components/TurnstileWidget";
+import type { TurnstileWidgetHandle } from "@/components/TurnstileWidget";
 import styles from "./ContactForm.module.css";
 
 interface FormData {
@@ -38,6 +39,8 @@ export default function ContactForm({
   const handleTurnstileExpire = useCallback(() => {
     setTurnstileToken(null);
   }, []);
+
+  const turnstileRef = useRef<TurnstileWidgetHandle>(null);
 
   const handleSubmit = async (e: React.SyntheticEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -92,6 +95,10 @@ export default function ContactForm({
       setSubmitStatus("error");
     } finally {
       setIsSubmitting(false);
+      // Token Turnstile jest jednorazowy, a formularz zostaje na ekranie —
+      // bez nowego tokena kolejna proba odpadnie na weryfikacji.
+      setTurnstileToken(null);
+      turnstileRef.current?.reset();
     }
   };
 
@@ -190,6 +197,7 @@ export default function ContactForm({
         </div>
         <div className={styles.formTurnstile}>
           <TurnstileWidget
+            ref={turnstileRef}
             siteKey={process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY!}
             onVerify={handleTurnstileVerify}
             onExpire={handleTurnstileExpire}
