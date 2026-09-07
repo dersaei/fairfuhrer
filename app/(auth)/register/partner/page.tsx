@@ -2,7 +2,6 @@
 
 import { useState, useCallback, useRef } from "react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
 import { registerPartner } from "@/app/actions/auth";
 import type { FormErrors } from "@/types/auth";
 import TurnstileWidget from "@/components/TurnstileWidget";
@@ -21,7 +20,6 @@ function validatePassword(password: string): string | null {
 }
 
 export default function RegisterPartnerPage() {
-  const router = useRouter();
   const [fields, setFields] = useState({
     email: "",
     password: "",
@@ -140,7 +138,12 @@ export default function RegisterPartnerPage() {
     }
 
     setSuccess(true);
-    setTimeout(() => router.push(result.redirectTo ?? "/konto/partner"), 2000);
+    // Pełne przeładowanie z tego samego powodu co przy logowaniu — rejestracja
+    // tworzy sesję w server action, o której klient przeglądarki nie wie.
+    setTimeout(
+      () => window.location.assign(result.redirectTo ?? "/konto/partner"),
+      2000
+    );
   }
 
   if (success) {

@@ -2,7 +2,7 @@
 
 import { Suspense, useState, useCallback, useRef } from "react";
 import Link from "next/link";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useSearchParams } from "next/navigation";
 import { loginWithEmail, loginWithMagicLink } from "@/app/actions/auth";
 import type { FormErrors } from "@/types/auth";
 import TurnstileWidget from "@/components/TurnstileWidget";
@@ -15,7 +15,6 @@ import PasswordInput from "@/components/PasswordInput";
 import styles from "./login.module.css";
 
 function LoginForm() {
-  const router = useRouter();
   const searchParams = useSearchParams();
   const redirectTo = searchParams.get("redirect") ?? "/konto";
   const callbackError = searchParams.get("error");
@@ -77,7 +76,13 @@ function LoginForm() {
       return;
     }
 
-    router.push(redirectTo);
+    // Pełne przeładowanie, nie router.push(). Logowanie odbywa się w server
+    // action, więc klient przeglądarki nie wie o nowej sesji: AuthProvider
+    // siedzi w głównym layoucie i przy miękkiej nawigacji nie montuje się
+    // ponownie, a onAuthStateChange nie wypala dla logowania po stronie
+    // serwera. Kontekst zostawałby z user: null i wszystkie ekrany oparte
+    // na useAuth() byłyby puste aż do ręcznego odświeżenia.
+    window.location.assign(redirectTo);
   }
 
   async function handleMagicLink(e: React.FormEvent) {
