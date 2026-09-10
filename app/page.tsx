@@ -62,7 +62,7 @@ const CATEGORIES = [
   { id: 1, name: "Sehenswertes", color: "#E45858" },
   { id: 3, name: "Einkaufen", color: "#F0873D" },
   { id: 5, name: "Engagement", color: "#42D742" },
-  { id: 8, name: "Unternehmen", color: "#E0D12E" },
+  { id: 8, name: "Unternehmen &\nHandwerk", color: "#E0D12E" },
   { id: 2, name: "Essen &\nÜbernachten", color: "#6477E3" },
 ] as const;
 
@@ -101,7 +101,9 @@ export default async function HomePage() {
 
   // URL obrazu z cache-busterem (?v=<modified_on>) — wymusza świeży plik po
   // podmianie w Directusie pod tym samym UUID (asset ma Cache-Control 30 dni).
-  const assetUrl = (img?: { id: string; modified_on?: string | null } | null) => {
+  const assetUrl = (
+    img?: { id: string; modified_on?: string | null } | null,
+  ) => {
     if (!img?.id) return undefined;
     const v = img.modified_on ? `?v=${Date.parse(img.modified_on)}` : "";
     return `${directusUrl}/assets/${img.id}${v}`;
