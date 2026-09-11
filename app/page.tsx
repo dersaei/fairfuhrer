@@ -428,6 +428,7 @@ export default async function HomePage() {
               <ConditionalMuxVideo>
                 <MuxVideoEmbed
                   playbackId={content.video_mux_playback_id}
+                  thumbnailTime={content.video_thumbnail_time}
                   autoPlay={false}
                   muted={false}
                 />

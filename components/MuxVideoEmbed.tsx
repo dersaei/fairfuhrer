@@ -10,6 +10,9 @@ interface MuxVideoEmbedProps {
   title?: string;
   className?: string;
   poster?: string;
+  // Sekunde des Frames, den Mux als Poster generiert (Standard: Videomitte).
+  // Wird nur genutzt, wenn kein eigenes `poster` gesetzt ist.
+  thumbnailTime?: number;
   autoPlay?: boolean;
   muted?: boolean;
   // fill = video wypełnia całą wysokość kontenera z przycięciem (object-fit: cover),
@@ -21,6 +24,7 @@ export default function MuxVideoEmbed({
   playbackId,
   className = "",
   poster,
+  thumbnailTime,
   title,
   autoPlay = false,
   muted = true,
@@ -65,6 +69,7 @@ export default function MuxVideoEmbed({
       <MuxPlayer
         playbackId={playbackId.trim()}
         poster={poster}
+        thumbnailTime={poster ? undefined : thumbnailTime}
         autoPlay={autoPlay ? "muted" : false}
         muted={muted}
         accentColor="#ac39f2"

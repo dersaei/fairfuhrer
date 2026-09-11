@@ -256,6 +256,9 @@ export interface HomePageContent {
   partner_background_color?: string;
   // Fairführer-Video (zastępuje starą sekcję 4 "Unterstütze unsere Mission")
   video_mux_playback_id?: string;
+  // Sekunde des Video-Frames, den Mux als Vorschaubild (Poster) nutzt.
+  // Leer = Mux-Standard (Videomitte).
+  video_thumbnail_time?: number;
   video_title?: string;
   video_background_color?: string;
   video_text?: string;
