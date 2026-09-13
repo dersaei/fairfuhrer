@@ -90,6 +90,35 @@ export async function loginWithMagicLink(
   };
 }
 
+export async function resendConfirmation(formData: FormData): Promise<AuthResult> {
+  const email = formData.get("email") as string;
+  const turnstileToken = formData.get("turnstileToken") as string;
+
+  if (!email) {
+    return { success: false, error: "Bitte geben Sie Ihre E-Mail-Adresse ein." };
+  }
+
+  if (!turnstileToken || !(await verifyTurnstileToken(turnstileToken, await getRemoteIp()))) {
+    return { success: false, error: "Sicherheitsüberprüfung fehlgeschlagen. Bitte versuchen Sie es erneut." };
+  }
+
+  const supabase = await getSupabaseServerClient();
+  const { error } = await supabase.auth.resend({
+    type: "signup",
+    email,
+    options: {
+      emailRedirectTo: `${process.env.SITE_URL ?? process.env.NEXT_PUBLIC_SITE_URL}/callback`,
+    },
+  });
+
+  if (error) {
+    console.error("resendConfirmation error:", error.message);
+    return { success: false, error: "Bestätigungslink konnte nicht gesendet werden." };
+  }
+
+  return { success: true, error: undefined };
+}
+
 export async function loginWithOAuth(
   provider: OAuthProvider
 ): Promise<{ url: string } | AuthResult> {

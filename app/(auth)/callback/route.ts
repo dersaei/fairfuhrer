@@ -35,6 +35,16 @@ export async function GET(request: NextRequest) {
       const redirectPath = type === "signup" ? `${next}?confirmed=1` : next;
       return NextResponse.redirect(`${siteUrl}${redirectPath}`);
     }
+
+    // Token abgelaufen oder bereits verwendet — spezifische Fehlermeldung statt
+    // generischem "Anmeldung fehlgeschlagen", damit der Nutzer direkt einen
+    // neuen Link anfordern kann.
+    if (type === "signup") {
+      return NextResponse.redirect(`${siteUrl}/login?error=confirmation_expired`);
+    }
+    if (type === "magiclink") {
+      return NextResponse.redirect(`${siteUrl}/login?error=magiclink_expired`);
+    }
   }
 
   return NextResponse.redirect(`${siteUrl}/login?error=auth_callback_failed`);

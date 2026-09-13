@@ -3,7 +3,7 @@
 import { Suspense, useState, useCallback, useRef } from "react";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
-import { loginWithEmail, loginWithMagicLink } from "@/app/actions/auth";
+import { loginWithEmail, loginWithMagicLink, resendConfirmation } from "@/app/actions/auth";
 import type { FormErrors } from "@/types/auth";
 import TurnstileWidget from "@/components/TurnstileWidget";
 import type { TurnstileWidgetHandle } from "@/components/TurnstileWidget";
@@ -19,16 +19,25 @@ function LoginForm() {
   const redirectTo = searchParams.get("redirect") ?? "/konto";
   const callbackError = searchParams.get("error");
 
-  const [tab, setTab] = useState<"password" | "magic">("password");
+  const [tab, setTab] = useState<"password" | "magic">(
+    callbackError === "magiclink_expired" ? "magic" : "password"
+  );
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [errors, setErrors] = useState<FormErrors>(
-    callbackError === "auth_callback_failed"
-      ? { general: "Anmeldung fehlgeschlagen. Bitte versuchen Sie es erneut." }
-      : {}
-  );
+  const [errors, setErrors] = useState<FormErrors>(() => {
+    if (callbackError === "magiclink_expired") {
+      return {
+        general: "Ihr Magic Link ist abgelaufen oder wurde bereits verwendet. Bitte fordern Sie unten einen neuen an.",
+      };
+    }
+    if (callbackError === "auth_callback_failed") {
+      return { general: "Anmeldung fehlgeschlagen. Bitte versuchen Sie es erneut." };
+    }
+    return {};
+  });
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [magicSent, setMagicSent] = useState(false);
+  const [resendSent, setResendSent] = useState(false);
   const [turnstileToken, setTurnstileToken] = useState<string | null>(null);
   // W danym momencie zamontowana jest tylko jedna zakładka, więc jeden ref
   // obsługuje oba widgety.
@@ -112,6 +121,92 @@ function LoginForm() {
     setMagicSent(true);
   }
 
+  async function handleResendConfirmation(e: React.FormEvent) {
+    e.preventDefault();
+    setErrors({});
+
+    if (!turnstileToken) {
+      setErrors({ general: "Bitte bestätigen Sie, dass Sie kein Roboter sind" });
+      return;
+    }
+
+    setIsSubmitting(true);
+
+    const formData = new FormData();
+    formData.set("email", email);
+    formData.set("turnstileToken", turnstileToken);
+
+    const result = await resendConfirmation(formData);
+    setIsSubmitting(false);
+
+    if (!result.success) {
+      setErrors({ general: result.error });
+      resetTurnstile();
+      return;
+    }
+
+    setResendSent(true);
+  }
+
+  if (callbackError === "confirmation_expired") {
+    return (
+      <div className={styles.card}>
+        <h1 className={styles.title}>Anmelden</h1>
+
+        {resendSent ? (
+          <p className={styles.successMessage}>
+            Wir haben Ihnen einen neuen Bestätigungslink an <strong>{email}</strong>{" "}
+            gesendet.
+            <br />
+            <br /> Bitte prüfen Sie Ihr Postfach.
+          </p>
+        ) : (
+          <form onSubmit={handleResendConfirmation} className={styles.form} noValidate>
+            <p className={styles.magicDescription}>
+              Ihr Bestätigungslink ist abgelaufen oder wurde bereits verwendet.
+              Geben Sie Ihre E-Mail-Adresse ein, um einen neuen zu erhalten.
+            </p>
+            {errors.general && (
+              <p className={styles.errorMessage}>{errors.general}</p>
+            )}
+            <div className={styles.field}>
+              <label htmlFor="email-resend" className={styles.label}>
+                E-Mail
+              </label>
+              <input
+                id="email-resend"
+                type="email"
+                className={styles.input}
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                required
+                autoComplete="email"
+              />
+            </div>
+            <TurnstileWidget
+              ref={turnstileRef}
+              siteKey={process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY!}
+              onVerify={handleTurnstileVerify}
+              onExpire={handleTurnstileExpire}
+            />
+            <button
+              type="submit"
+              className={styles.submitButton}
+              disabled={isSubmitting || !turnstileToken}
+            >
+              {isSubmitting ? "Wird gesendet…" : "Neuen Bestätigungslink senden"}
+            </button>
+          </form>
+        )}
+
+        <p className={styles.registerLink}>
+          <Link href="/login" className={styles.link}>
+            Zurück zum Login
+          </Link>
+        </p>
+      </div>
+    );
+  }
 
   return (
     <div className={styles.card}>
