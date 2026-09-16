@@ -7,8 +7,8 @@ import styles from "./KontoNav.module.css";
 const links = [
   { href: "/konto/partner/profil", label: "Profil" },
   { href: "/konto/partner/einstellungen", label: "Einstellungen" },
-  { href: "/konto/partner/audiopin", label: "Mein Audiopin" },
-  { href: "/konto/partner/premium", label: "Premium" },
+  { href: "/konto/partner/audiopin", label: "Kostenloser PIN" },
+  { href: "/konto/partner/premium", label: "Partner PIN" },
   { href: "/konto/partner/hilfe", label: "Hilfe" },
 ];
 

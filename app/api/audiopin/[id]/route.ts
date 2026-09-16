@@ -2,6 +2,7 @@ import "server-only";
 
 import { NextRequest, NextResponse } from "next/server";
 import { getSupabaseServerClient } from "@/lib/supabase-server";
+import { LINK_TEXT, MAX_BESCHREIBUNG } from "@/app/api/audiopin/route";
 
 export async function PATCH(
   request: NextRequest,
@@ -47,16 +48,35 @@ export async function PATCH(
     const body = await request.json();
 
     // Dozwolone pola do edycji przez partnera
+    // Link_Text celowo nie jest tu wymieniony — ustawiamy go nizej na stale.
     const allowedFields = [
       "Name", "Adresse", "Stadt", "Land", "Telefon", "Vollbeschreibung",
-      "Link_URL", "Link_Text", "Titelbild", "Audio", "location",
+      "Link_URL", "Titelbild", "Audio", "location",
     ];
+
+    if (
+      typeof body.Vollbeschreibung === "string" &&
+      body.Vollbeschreibung.length > MAX_BESCHREIBUNG
+    ) {
+      return NextResponse.json(
+        {
+          error: `Die Beschreibung darf höchstens ${MAX_BESCHREIBUNG} Zeichen lang sein.`,
+        },
+        { status: 400 }
+      );
+    }
 
     const patchData: Record<string, unknown> = {};
     for (const field of allowedFields) {
       if (field in body) {
         patchData[field] = body[field];
       }
+    }
+
+    // Link_Text nie jest edytowalny przez partnera — trzymamy go zgodnie
+    // z Link_URL, zeby etykiety pod pinami byly spojne.
+    if ("Link_URL" in body) {
+      patchData.Link_Text = body.Link_URL ? LINK_TEXT : null;
     }
 
     // Kategorie — zastąp wszystkie (delete + create przez Directus nested mutation)

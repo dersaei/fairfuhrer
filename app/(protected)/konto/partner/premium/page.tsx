@@ -23,7 +23,7 @@ export default async function PartnerPremiumPage() {
 
   return (
     <div className={styles.wrapper}>
-      <h3 className={styles.intro}>Premium-Partnerschaft</h3>
+      <h3 className={styles.intro}>Partner PIN</h3>
 
       <div className={styles.featureList}>
         <h4 className={styles.featureTitle}>

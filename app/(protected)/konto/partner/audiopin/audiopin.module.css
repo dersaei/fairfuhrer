@@ -1,13 +1,13 @@
 .wrapper {
   display: flex;
   flex-direction: column;
-  gap: 1.5rem;
+  gap: 1rem;
   max-width: 640px;
 }
 
 .freeAccountInfo {
   font-family: var(--font-fira);
-  font-size: 0.9rem;
+  font-size: 1rem;
   font-weight: 400;
   color: #000;
   line-height: 1.7;
@@ -18,7 +18,7 @@
 
 .intro {
   font-family: var(--font-fira);
-  font-size: 1.1rem;
+  font-size: 2rem;
   font-weight: 500;
   text-align: center;
   color: #18222f;
@@ -141,6 +141,75 @@
   line-height: 1.5;
 }
 
+/* Blok wprowadzajacy nad formularzem */
+.introBlock {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.introText {
+  font-family: var(--font-fira);
+  font-size: 0.95rem;
+  font-weight: 400;
+  color: #18222f;
+  line-height: 1.6;
+  margin: 0;
+}
+
+/* Licznik znakow pod polem opisu */
+.charCounterRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.charCounter {
+  font-family: var(--font-fira);
+  font-size: 0.8rem;
+  color: #666;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.charCounterMax {
+  color: #b22222;
+  font-weight: 600;
+}
+
+/* Rzad przyciskow (upload audio + wytyczne) */
+.buttonRow {
+  display: flex;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+.secondaryButton {
+  padding: 0.5rem 1rem;
+  background-color: beige;
+  color: #18222f;
+  border: 1.5px solid #18222f;
+  border-radius: 6px;
+  font-family: var(--font-fira);
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  transition:
+    background-color 0.2s,
+    color 0.2s;
+}
+
+.secondaryButton:hover {
+  background-color: saddleBrown;
+  color: #fff;
+}
+
 /* Checkboxy */
 .checkboxGroup {
   display: flex;
@@ -200,11 +269,11 @@
   font-weight: 600;
   cursor: pointer;
   align-self: flex-start;
-  transition: opacity 0.2s;
+  transition: background-color 0.2s;
 }
 
 .uploadButton:hover:not(:disabled) {
-  opacity: 0.8;
+  background-color: firebrick;
 }
 
 .uploadButton:disabled {
@@ -357,7 +426,6 @@
 }
 
 .premiumBadge {
-  margin-left: 0.5rem;
   font-size: 0.7rem;
   font-weight: 700;
   text-transform: uppercase;
@@ -463,7 +531,8 @@
 .viewBox {
   display: flex;
   flex-direction: column;
-  border: 1.5px solid #000;
+  border: 4px solid #000;
+  background-color: #fff8f4;
 }
 
 .viewField {
@@ -549,7 +618,9 @@
   border: 1px solid #18222f;
   padding: 0.25rem 0.65rem;
   cursor: pointer;
-  transition: background 0.12s, color 0.12s;
+  transition:
+    background 0.12s,
+    color 0.12s;
   white-space: nowrap;
   flex-shrink: 0;
 }
@@ -620,7 +691,9 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  transition: border-color 0.15s, color 0.15s;
+  transition:
+    border-color 0.15s,
+    color 0.15s;
 }
 
 .galerieAddBtn:hover:not(:disabled) {

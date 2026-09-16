@@ -295,9 +295,9 @@
 
 .backButton {
   font-family: var(--font-fira);
-  font-size: 0.875rem;
+  font-size: 1.2rem;
   font-weight: 600;
-  color: #393737;
+  color: #b22222;
   background: none;
   border: none;
   padding: 0.4rem 0;
@@ -307,7 +307,7 @@
 }
 
 .backButton:hover:not(:disabled) {
-  color: firebrick;
+  color: goldenrod;
 }
 
 .backButton:disabled {
@@ -328,7 +328,9 @@
 }
 
 @keyframes spin {
-  to { transform: rotate(360deg); }
+  to {
+    transform: rotate(360deg);
+  }
 }
 
 .activatingSpinner {

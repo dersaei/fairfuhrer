@@ -17,25 +17,16 @@ async function uploadToDirectus(file: File): Promise<string> {
   return data.id as string;
 }
 
-const KATEGORIEN = [
-  { id: 1, name: "Sehenswertes" },
-  { id: 2, name: "Essen & Übernachten" },
-  { id: 3, name: "Einkaufen" },
-  { id: 5, name: "Engagement" },
-  { id: 8, name: "Unternehmen" },
-];
+/** Twardy limit opisu; w podpowiedzi sugerujemy 1.300–1.800 znakow. */
+const MAX_BESCHREIBUNG = 2000;
 
-const ZERTIFIZIERUNGEN = [
-  { id: "0b65943d-f041-4ba4-8977-f1130182b165", name: "Bioland" },
-  { id: "316f5bd4-1161-4987-975e-0ceb58fb260c", name: "Unverpackt Verband" },
-  { id: "3a2f6b5e-5573-4268-a730-9de111f0c2b1", name: "Fairtrade" },
-  { id: "434a2b04-3a73-49c0-8ed0-2fb76ce5da40", name: "Fairbusiness" },
-  { id: "613717b2-ba00-45b8-9f3d-bbd834b0497a", name: "Naturland fair" },
-  { id: "85cc8c45-bbfd-4324-af38-4b6ae5789588", name: "Cradle to Cradle" },
-  { id: "875901cf-245d-4892-aa92-752a60d7fc21", name: "GWÖ" },
-  { id: "d454e097-1a75-481a-939e-8e2b85359561", name: "Demeter" },
-  { id: "df8d53d4-03a7-472e-9275-4709c87354e0", name: "Bürgerkarte" },
-];
+/** Wytyczne do nagran — plik statyczny w /public. */
+const AUDIO_GUIDE_PDF = "/tipps-fur-die-audiodatei.pdf";
+
+interface Option<T> {
+  id: T;
+  name: string;
+}
 
 interface GeocodingSuggestion {
   place_name: string;
@@ -79,6 +70,13 @@ export default function AudiopinPage() {
   const { user } = useAuth();
   const [isPremium, setIsPremium] = useState(false);
   const [premiumChecked, setPremiumChecked] = useState(false);
+
+  // Kategorie i certyfikaty pochodza z Directusa (api/pin-optionen), zeby
+  // formularz nie rozjezdzal sie z CMS przy kazdej zmianie nazwy.
+  const [kategorienOptions, setKategorienOptions] = useState<Option<number>[]>(
+    [],
+  );
+  const [zertOptions, setZertOptions] = useState<Option<string>[]>([]);
 
   // Tryby strony
   type PageMode = "loading" | "new_form" | "view" | "submitting";
@@ -131,7 +129,6 @@ export default function AudiopinPage() {
   const [telefon, setTelefon] = useState("");
   const [vollbeschreibung, setVollbeschreibung] = useState("");
   const [linkUrl, setLinkUrl] = useState("");
-  const [linkText, setLinkText] = useState("");
   const [kategorien, setKategorien] = useState<number[]>([]);
   const [zertifizierungen, setZertifizierungen] = useState<string[]>([]);
   const [titelbildId, setTitelbildId] = useState<string | null>(null);
@@ -151,6 +148,17 @@ export default function AudiopinPage() {
   const audioRef = useRef<HTMLInputElement>(null);
   const [submitError, setSubmitError] = useState<string | null>(null);
   const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
+
+  // Załaduj listy kategorii i certyfikatów z Directusa
+  useEffect(() => {
+    fetch("/api/pin-optionen")
+      .then((r) => r.json())
+      .then((data) => {
+        setKategorienOptions(data.kategorien ?? []);
+        setZertOptions(data.zertifizierungen ?? []);
+      })
+      .catch(() => {});
+  }, []);
 
   // Załaduj status premium i pin_id
   useEffect(() => {
@@ -611,7 +619,6 @@ export default function AudiopinPage() {
           Telefon: isPremium ? telefon.trim() || null : null,
           Vollbeschreibung: vollbeschreibung.trim() || null,
           Link_URL: isPremium ? linkUrl.trim() || null : null,
-          Link_Text: isPremium ? linkText.trim() || null : null,
           Kategorie: kategorien,
           Zertifizierungen: zertifizierungen,
           Titelbild: titelbildId ?? null,
@@ -721,25 +728,25 @@ export default function AudiopinPage() {
 
     return (
       <div className={styles.wrapper}>
-        <h3 className={styles.intro}>Ihr Audiopin</h3>
+        <h3 className={styles.intro}>Dein Audiopin</h3>
         {!isPremium && (
           <p className={styles.freeAccountInfo}>
-            Mit einem kostenlosen Konto kann der Pin nach der Einreichung nicht
-            bearbeitet werden. Upgrade zu{" "}
-            <strong className={styles.premiumBadge}>Premium</strong>, um
-            Änderungen vorzunehmen.
+            Mit einem kostenlosen Konto kann der PIN nach der Einreichung nicht
+            mehr bearbeitet werden. Mit dem{" "}
+            <span className={styles.premiumBadge}>Partner PIN</span>
+            kannst du jederzeit Änderungen vornehmen.
           </p>
         )}
 
         <div className={styles.viewBox}>
           <FieldRow
             field="Name"
-            label="Name des Ortes"
+            label="Name des PINs"
             value={pinData.Name}
             renderEdit={() => (
               <input
                 type="text"
-                aria-label="Name des Ortes"
+                aria-label="Name des PINs"
                 className={styles.input}
                 value={(editValues.Name as string) ?? ""}
                 onChange={(e) =>
@@ -804,12 +811,12 @@ export default function AudiopinPage() {
 
           <FieldRow
             field="Telefon"
-            label="Telefon"
+            label="Telefonnummer mit Anruffunktion"
             value={pinData.Telefon}
             renderEdit={() => (
               <input
                 type="tel"
-                aria-label="Telefon"
+                aria-label="Telefonnummer mit Anruffunktion"
                 className={styles.input}
                 value={(editValues.Telefon as string) ?? ""}
                 onChange={(e) =>
@@ -830,26 +837,49 @@ export default function AudiopinPage() {
                 </span>
               ) : null
             }
-            renderEdit={() => (
-              <textarea
-                aria-label="Vollständige Beschreibung"
-                className={styles.textarea}
-                rows={5}
-                value={(editValues.Vollbeschreibung as string) ?? ""}
-                onChange={(e) =>
-                  setEditValues((p) => ({
-                    ...p,
-                    Vollbeschreibung: e.target.value,
-                  }))
-                }
-                autoFocus
-              />
-            )}
+            renderEdit={() => {
+              const value = (editValues.Vollbeschreibung as string) ?? "";
+              return (
+                <div className={styles.fieldGroup}>
+                  <textarea
+                    aria-label="Vollständige Beschreibung"
+                    className={styles.textarea}
+                    rows={10}
+                    maxLength={MAX_BESCHREIBUNG}
+                    value={value}
+                    onChange={(e) =>
+                      setEditValues((p) => ({
+                        ...p,
+                        Vollbeschreibung: e.target.value.slice(
+                          0,
+                          MAX_BESCHREIBUNG,
+                        ),
+                      }))
+                    }
+                    autoFocus
+                  />
+                  <div className={styles.charCounterRow}>
+                    <span className={styles.hint}>
+                      ca. 1.300 – 1.800 Zeichen inklusive Leerzeichen
+                    </span>
+                    <span
+                      className={`${styles.charCounter} ${
+                        value.length >= MAX_BESCHREIBUNG
+                          ? styles.charCounterMax
+                          : ""
+                      }`}
+                    >
+                      {value.length} / {MAX_BESCHREIBUNG}
+                    </span>
+                  </div>
+                </div>
+              );
+            }}
           />
 
           <FieldRow
             field="Link_URL"
-            label="Website-Link"
+            label="Website"
             value={
               pinData.Link_URL ? (
                 <a
@@ -858,34 +888,24 @@ export default function AudiopinPage() {
                   rel="noopener noreferrer"
                   className={styles.viewLink}
                 >
-                  {pinData.Link_Text || pinData.Link_URL}
+                  {pinData.Link_URL}
                 </a>
               ) : null
             }
             renderEdit={() => (
-              <div className={styles.fieldGroup}>
-                <input
-                  type="url"
-                  aria-label="Website-Link URL"
-                  className={styles.input}
-                  placeholder="https://…"
-                  value={(editValues.Link_URL as string) ?? ""}
-                  onChange={(e) =>
-                    setEditValues((p) => ({ ...p, Link_URL: e.target.value }))
-                  }
-                  autoFocus
-                />
-                <input
-                  type="text"
-                  aria-label="Link-Text"
-                  className={styles.input}
-                  placeholder="Link-Text"
-                  value={(editValues.Link_Text as string) ?? ""}
-                  onChange={(e) =>
-                    setEditValues((p) => ({ ...p, Link_Text: e.target.value }))
-                  }
-                />
-              </div>
+              // Link_Text ustawia serwer na stale ("Website") — partner podaje
+              // wylacznie adres.
+              <input
+                type="url"
+                aria-label="Website"
+                className={styles.input}
+                placeholder="https://…"
+                value={(editValues.Link_URL as string) ?? ""}
+                onChange={(e) =>
+                  setEditValues((p) => ({ ...p, Link_URL: e.target.value }))
+                }
+                autoFocus
+              />
             )}
           />
 
@@ -1132,7 +1152,7 @@ export default function AudiopinPage() {
             {editingFields.has("Kategorie") ? (
               <div className={styles.viewFieldEdit}>
                 <div className={styles.checkboxGroup}>
-                  {KATEGORIEN.map((kat) => {
+                  {kategorienOptions.map((kat) => {
                     const selected =
                       (editValues.Kategorie as number[]) ?? kategorienIds;
                     return (
@@ -1178,7 +1198,9 @@ export default function AudiopinPage() {
                 )}
                 {kategorienIds.length > 0 ? (
                   kategorienIds
-                    .map((id) => KATEGORIEN.find((k) => k.id === id)?.name)
+                    .map(
+                      (id) => kategorienOptions.find((k) => k.id === id)?.name,
+                    )
                     .filter(Boolean)
                     .join(", ")
                 ) : (
@@ -1197,7 +1219,7 @@ export default function AudiopinPage() {
               <div className={styles.viewField}>
                 <div className={styles.viewFieldHeader}>
                   <span className={styles.viewFieldLabel}>
-                    Zertifizierungen
+                    Zertifizierungen &amp; Labels
                   </span>
                   {isPremium && !editingFields.has("Zertifizierungen") && (
                     <button
@@ -1218,7 +1240,7 @@ export default function AudiopinPage() {
                 {editingFields.has("Zertifizierungen") ? (
                   <div className={styles.viewFieldEdit}>
                     <div className={styles.checkboxGroup}>
-                      {ZERTIFIZIERUNGEN.map((zert) => {
+                      {zertOptions.map((zert) => {
                         const selected =
                           (editValues.Zertifizierungen as string[]) ?? zertIds;
                         return (
@@ -1274,10 +1296,7 @@ export default function AudiopinPage() {
                     )}
                     {zertIds.length > 0 ? (
                       zertIds
-                        .map(
-                          (id) =>
-                            ZERTIFIZIERUNGEN.find((z) => z.id === id)?.name,
-                        )
+                        .map((id) => zertOptions.find((z) => z.id === id)?.name)
                         .filter(Boolean)
                         .join(", ")
                     ) : (
@@ -1298,26 +1317,25 @@ export default function AudiopinPage() {
   // ==============================
   return (
     <div className={styles.wrapper}>
-      <h3 className={styles.intro}>
-        Du kannst unser Formular ausfüllen und deinen eigenen Audiopin
-        erstellen, der auf unsere Karte kommt. Wir freuen uns auf deine
-        Einsendung.
-      </h3>
-
       {!isPremium && (
-        <p className={styles.freeAccountInfo}>
-          Mit deinem kostenlosen Konto kannst du einen Audiopin nur einmal
-          einreichen und hast nur begrenzte Felder zum Ausfüllen. Nach der
-          Einreichung lässt sich der Audiopin nicht mehr bearbeiten. Dein Pin
-          wird zunächst von unserem Team geprüft und erst nach Freigabe auf der
-          Karte sichtbar. Wenn du mehr Funktionen brauchst, upgradiere zu{" "}
-          <strong className={styles.premiumBadge}>Premium</strong>.
-        </p>
-      )}
-      {!isPremium && (
-        <div className={styles.premiumBanner}>
-          Einige Felder sind nur für Premium-Konten verfügbar.{" "}
-          <strong>Jetzt upgraden</strong>, um alle Funktionen freizuschalten.
+        <div className={styles.introBlock}>
+          <p className={styles.introText}>
+            Hier kannst du <strong>einmalig deinen Audiopin einreichen</strong>.
+            Die Eingabefelder sind begrenzt und der PIN kann nach der
+            Einreichung nicht mehr bearbeitet werden.
+          </p>
+          <p className={styles.introText}>
+            Nach Prüfung und Freigabe wird dein PIN auf der Karte
+            veröffentlicht.
+          </p>
+          <p className={styles.introText}>
+            <strong>Mehr Möglichkeiten?</strong> Mit dem{" "}
+            <span className={styles.premiumBadge}>Partner PIN</span>&nbsp;kannst
+            du deinen PIN jederzeit bearbeiten und zusätzliche Infos wie Link
+            zur Website, Telefonnummer mit Anruffunktion, mehrere
+            Zertifizierungen &amp; Labels sowie bis zu 6 Bilder hinterlegen.
+            Damit unterstützt du außerdem die Weiterentwicklung des Fairführers.
+          </p>
         </div>
       )}
 
@@ -1326,7 +1344,7 @@ export default function AudiopinPage() {
           <legend className={styles.legend}>Grunddaten</legend>
           <div className={styles.field}>
             <label htmlFor="pin-name" className={styles.label}>
-              Name des Ortes
+              Name des PINs
             </label>
             <input
               id="pin-name"
@@ -1428,9 +1446,9 @@ export default function AudiopinPage() {
             className={`${styles.field} ${!isPremium ? styles.premiumLocked : ""}`}
           >
             <label htmlFor="pin-telefon" className={styles.label}>
-              Telefon
+              Telefonnummer mit Anruffunktion&nbsp;
               {!isPremium && (
-                <span className={styles.premiumBadge}>Premium</span>
+                <span className={styles.premiumBadge}>Partner PIN</span>
               )}
             </label>
             <input
@@ -1440,13 +1458,40 @@ export default function AudiopinPage() {
               value={telefon}
               onChange={(e) => setTelefon(e.target.value)}
               disabled={!isPremium}
-              placeholder={!isPremium ? "Nur für Premium-Konten" : ""}
+              placeholder={!isPremium ? "Nur mit Partner PIN" : ""}
+            />
+          </div>
+          <div
+            className={`${styles.field} ${!isPremium ? styles.premiumLocked : ""}`}
+          >
+            <label htmlFor="pin-link-url" className={styles.label}>
+              Website&nbsp;
+              {!isPremium && (
+                <span className={styles.premiumBadge}>Partner PIN</span>
+              )}
+            </label>
+            <input
+              id="pin-link-url"
+              type="url"
+              className={styles.input}
+              value={linkUrl}
+              onChange={(e) => setLinkUrl(e.target.value)}
+              placeholder={!isPremium ? "Nur mit Partner PIN" : "https://…"}
+              disabled={!isPremium}
             />
           </div>
         </fieldset>
 
         <fieldset className={styles.fieldset}>
-          <legend className={styles.legend}>Beschreibung</legend>
+          <legend className={styles.legend}>
+            Beschreibung &amp; Audiodatei
+          </legend>
+          <p className={styles.hint}>
+            Die Beschreibung ist der Text zu deinem Audiopin und sollte
+            möglichst dem Inhalt deiner Audiodatei entsprechen. So können
+            Besucher*innen die Geschichte während des Anhörens mitlesen oder sie
+            alternativ lesen.
+          </p>
           <div className={styles.field}>
             <label htmlFor="pin-beschreibung" className={styles.label}>
               Vollständige Beschreibung
@@ -1455,51 +1500,79 @@ export default function AudiopinPage() {
               id="pin-beschreibung"
               className={styles.textarea}
               value={vollbeschreibung}
-              onChange={(e) => setVollbeschreibung(e.target.value)}
-              rows={6}
+              onChange={(e) =>
+                setVollbeschreibung(e.target.value.slice(0, MAX_BESCHREIBUNG))
+              }
+              maxLength={MAX_BESCHREIBUNG}
+              rows={10}
             />
+            <div className={styles.charCounterRow}>
+              <span className={styles.hint}>
+                ca. 1.300 – 1.800 Zeichen inklusive Leerzeichen
+              </span>
+              <span
+                className={`${styles.charCounter} ${
+                  vollbeschreibung.length >= MAX_BESCHREIBUNG
+                    ? styles.charCounterMax
+                    : ""
+                }`}
+              >
+                {vollbeschreibung.length} / {MAX_BESCHREIBUNG}
+              </span>
+            </div>
           </div>
-          <div
-            className={`${styles.fieldRow} ${!isPremium ? styles.premiumLocked : ""}`}
-          >
-            <div className={styles.field}>
-              <label htmlFor="pin-link-url" className={styles.label}>
-                Website-Link
-                {!isPremium && (
-                  <span className={styles.premiumBadge}>Premium</span>
-                )}
-              </label>
-              <input
-                id="pin-link-url"
-                type="url"
-                className={styles.input}
-                value={linkUrl}
-                onChange={(e) => setLinkUrl(e.target.value)}
-                placeholder={
-                  !isPremium ? "Nur für Premium-Konten" : "https://…"
-                }
-                disabled={!isPremium}
-              />
-            </div>
-            <div className={styles.field}>
-              <label htmlFor="pin-link-text" className={styles.label}>
-                Link-Text
-                {!isPremium && (
-                  <span className={styles.premiumBadge}>Premium</span>
-                )}
-              </label>
-              <input
-                id="pin-link-text"
-                type="text"
-                className={styles.input}
-                value={linkText}
-                onChange={(e) => setLinkText(e.target.value)}
-                placeholder={
-                  !isPremium ? "Nur für Premium-Konten" : "z.B. Unsere Website"
-                }
-                disabled={!isPremium}
-              />
-            </div>
+
+          <div className={styles.field}>
+            <label className={styles.label}>Audiodatei</label>
+            {audioPreview ? (
+              <div className={styles.audioPreview}>
+                <audio
+                  controls
+                  src={audioPreview}
+                  className={styles.audioPlayer}
+                />
+                <button
+                  type="button"
+                  className={styles.removeButton}
+                  onClick={() => {
+                    setAudioId(null);
+                    setAudioPreview(null);
+                  }}
+                >
+                  Entfernen
+                </button>
+              </div>
+            ) : (
+              <div className={styles.buttonRow}>
+                <button
+                  type="button"
+                  className={styles.uploadButton}
+                  onClick={() => audioRef.current?.click()}
+                  disabled={audioUploading}
+                >
+                  {audioUploading
+                    ? "Wird hochgeladen…"
+                    : "Audiodatei hochladen"}
+                </button>
+                <a
+                  href={AUDIO_GUIDE_PDF}
+                  download
+                  className={styles.secondaryButton}
+                >
+                  Tipps für die Audiodatei
+                </a>
+              </div>
+            )}
+            <p className={styles.hint}>MP3, M4A, WAV — max. 50 MB</p>
+            {audioError && <p className={styles.uploadError}>{audioError}</p>}
+            <input
+              ref={audioRef}
+              type="file"
+              accept="audio/mpeg,audio/mp4,audio/wav,audio/x-m4a"
+              aria-label="Audiodatei hochladen"
+              className={styles.hiddenInput}
+              onChange={handleAudioUpload}
+            />
           </div>
         </fieldset>
 
@@ -1509,7 +1582,7 @@ export default function AudiopinPage() {
             <span className={styles.fieldError}>{fieldErrors.kategorien}</span>
           )}
           <div className={styles.checkboxGroup}>
-            {KATEGORIEN.map((kat) => (
+            {kategorienOptions.map((kat) => (
               <label key={kat.id} className={styles.checkboxLabel}>
                 <input
                   type="checkbox"
@@ -1524,16 +1597,31 @@ export default function AudiopinPage() {
         </fieldset>
 
         <fieldset className={styles.fieldset}>
-          <legend className={styles.legend}>Zertifizierungen</legend>
+          <legend className={styles.legend}>
+            Zertifizierungen &amp; Labels
+          </legend>
+          <p className={styles.hint}>
+            Bitte wähle eine Zertifizierung oder ein Label aus.
+            <br />
+            Mit dem <strong>Partner PIN</strong> kannst du mehrere hinterlegen.
+          </p>
           <div className={styles.checkboxGroup}>
-            {ZERTIFIZIERUNGEN.map((zert) => (
+            {zertOptions.map((zert) => (
               <label key={zert.id} className={styles.checkboxLabel}>
                 <input
                   type="checkbox"
                   className={styles.checkbox}
                   checked={zertifizierungen.includes(zert.id)}
                   onChange={() =>
-                    setZertifizierungen((p) => toggleMulti(p, zert.id))
+                    setZertifizierungen((p) =>
+                      // Bez Partner PIN mozna wybrac tylko jedna pozycje —
+                      // kolejny klik zastepuje poprzedni wybor.
+                      isPremium
+                        ? toggleMulti(p, zert.id)
+                        : p.includes(zert.id)
+                          ? []
+                          : [zert.id],
+                    )
                   }
                 />
                 {zert.name}
@@ -1594,12 +1682,14 @@ export default function AudiopinPage() {
           className={`${styles.fieldset} ${!isPremium ? styles.premiumLocked : ""}`}
         >
           <legend className={styles.legend}>
-            Bildergalerie (max. 6)
-            {!isPremium && <span className={styles.premiumBadge}>Premium</span>}
+            Bildergalerie (max. 6)&nbsp;
+            {!isPremium && (
+              <span className={styles.premiumBadge}>Partner PIN</span>
+            )}
           </legend>
           {!isPremium ? (
             <p className={styles.hint}>
-              Die Bildergalerie ist nur für Premium-Konten verfügbar.
+              Die Bildergalerie ist nur mit dem Partner PIN verfügbar.
             </p>
           ) : (
             <>
@@ -1654,48 +1744,6 @@ export default function AudiopinPage() {
               />
             </>
           )}
-        </fieldset>
-
-        <fieldset className={styles.fieldset}>
-          <legend className={styles.legend}>Audiodatei</legend>
-          <p className={styles.hint}>MP3, M4A, WAV — max. 50 MB.</p>
-          {audioPreview ? (
-            <div className={styles.audioPreview}>
-              <audio
-                controls
-                src={audioPreview}
-                className={styles.audioPlayer}
-              />
-              <button
-                type="button"
-                className={styles.removeButton}
-                onClick={() => {
-                  setAudioId(null);
-                  setAudioPreview(null);
-                }}
-              >
-                Entfernen
-              </button>
-            </div>
-          ) : (
-            <button
-              type="button"
-              className={styles.uploadButton}
-              onClick={() => audioRef.current?.click()}
-              disabled={audioUploading}
-            >
-              {audioUploading ? "Wird hochgeladen…" : "Audiodatei hochladen"}
-            </button>
-          )}
-          {audioError && <p className={styles.uploadError}>{audioError}</p>}
-          <input
-            ref={audioRef}
-            type="file"
-            accept="audio/mpeg,audio/mp4,audio/wav,audio/x-m4a"
-            aria-label="Audiodatei hochladen"
-            className={styles.hiddenInput}
-            onChange={handleAudioUpload}
-          />
         </fieldset>
 
         <button

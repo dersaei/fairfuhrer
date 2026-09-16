@@ -2,7 +2,7 @@
   display: flex;
   flex-direction: column;
   gap: 2rem;
-  max-width: 600px;
+  max-width: 900px;
 }
 
 /* Wird noch von CommunityProfilSection genutzt. */
@@ -58,7 +58,9 @@
   font-size: 0.875rem;
   font-weight: 600;
   cursor: pointer;
-  transition: background 0.15s, color 0.15s;
+  transition:
+    background 0.15s,
+    color 0.15s;
 }
 
 .signOutButton:hover:not(:disabled) {

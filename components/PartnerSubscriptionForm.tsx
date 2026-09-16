@@ -68,8 +68,11 @@ export function PartnerSubscriptionForm({
   const router = useRouter();
   const searchParams = useSearchParams();
 
+  // Zawsze startujemy od kroku 1, nawet gdy company_size jest już zapisane w
+  // profilu — inaczej po powrocie na stronę (AGB, przełączenie zakładki)
+  // użytkownik ląduje od razu w "Schritt 2 von 2" i nie wie, skąd się tam wziął.
   const [step, setStep] = useState<"size" | "payment" | "active" | "activating">(
-    isPremiumActive ? "active" : initialCompanySize ? "payment" : "size"
+    isPremiumActive ? "active" : "size"
   );
   const [companySize, setCompanySize] = useState<CompanySize | null>(initialCompanySize);
   const [savingSize, setSavingSize] = useState(false);
@@ -279,6 +282,15 @@ export function PartnerSubscriptionForm({
 
   return (
     <div className={styles.form}>
+      <button
+        type="button"
+        className={styles.backButton}
+        onClick={() => setStep("size")}
+        disabled={loadingPayment}
+      >
+        ← Zurück
+      </button>
+
       <p className={styles.stepLabel}>Schritt 2 von 2</p>
       <h3 className={styles.stepTitle}>Jährliche Partnerschaft abschließen</h3>
 
@@ -391,15 +403,6 @@ export function PartnerSubscriptionForm({
       >
         <Image src={paypalLogo} alt="PayPal" height={20} unoptimized />
         {loadingPayment ? "Wird weitergeleitet…" : "Mit PayPal abonnieren"}
-      </button>
-
-      <button
-        type="button"
-        className={styles.backButton}
-        onClick={() => setStep("size")}
-        disabled={loadingPayment}
-      >
-        ← Zurück
       </button>
     </div>
   );
