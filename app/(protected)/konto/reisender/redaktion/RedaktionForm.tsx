@@ -1,9 +1,16 @@
 "use client";
 
 import { useRef, useState } from "react";
+import { Download } from "lucide-react";
 import { useAuth } from "@/context/AuthContext";
 import type { RedaktionPageContent } from "@/types";
 import styles from "./redaktion.module.css";
+
+/** Ten sam limit co w formularzu partnera. */
+const MAX_BESCHREIBUNG = 2000;
+
+/** Wytyczne do nagran — ten sam plik co po stronie partnera. */
+const AUDIO_GUIDE_PDF = "/tipps-fur-die-audiodatei.pdf";
 
 // Upload pliku przez /api/directus-upload (server-side, uses DIRECTUS_TOKEN).
 async function uploadToDirectus(file: File): Promise<string> {
@@ -63,6 +70,8 @@ const DEFAULTS = {
   label_stadt: "Stadt",
   label_land: "Land",
   label_beschreibung: "Beschreibung",
+  hint_beschreibung_audio:
+    "Die Beschreibung ist der Text zu deinem Audiopin und sollte möglichst dem Inhalt deiner Audiodatei entsprechen. So können Besucher*innen die Geschichte während des Anhörens mitlesen oder sie alternativ lesen.",
   label_titelbild: "Titelbild",
   label_audio: "Audiodatei",
   label_galerie: "Galerie (max. 6 Bilder)",
@@ -89,6 +98,8 @@ export default function RedaktionForm({
     label_stadt: content?.label_stadt || DEFAULTS.label_stadt,
     label_land: content?.label_land || DEFAULTS.label_land,
     label_beschreibung: content?.label_beschreibung || DEFAULTS.label_beschreibung,
+    hint_beschreibung_audio:
+      content?.hint_beschreibung_audio || DEFAULTS.hint_beschreibung_audio,
     label_titelbild: content?.label_titelbild || DEFAULTS.label_titelbild,
     label_audio: content?.label_audio || DEFAULTS.label_audio,
     label_galerie: content?.label_galerie || DEFAULTS.label_galerie,
@@ -416,18 +427,76 @@ export default function RedaktionForm({
           </div>
         </div>
 
-        {/* Beschreibung */}
-        <div className={styles.field}>
-          <label htmlFor="vollbeschreibung" className={styles.label}>
-            {t.label_beschreibung}
-          </label>
-          <textarea
-            id="vollbeschreibung"
-            className={styles.textarea}
-            value={vollbeschreibung}
-            onChange={(e) => setVollbeschreibung(e.target.value)}
-            rows={5}
-          />
+        {/* Beschreibung + Audio — celowo obok siebie, zeby bylo jasne, ze opis
+            powinien odpowiadac tresci nagrania. */}
+        <div className={styles.group}>
+          <p className={styles.groupHint}>{t.hint_beschreibung_audio}</p>
+
+          <div className={styles.field}>
+            <label htmlFor="vollbeschreibung" className={styles.label}>
+              {t.label_beschreibung}
+            </label>
+            <textarea
+              id="vollbeschreibung"
+              className={styles.textarea}
+              value={vollbeschreibung}
+              onChange={(e) =>
+                setVollbeschreibung(e.target.value.slice(0, MAX_BESCHREIBUNG))
+              }
+              maxLength={MAX_BESCHREIBUNG}
+              rows={10}
+            />
+            <div className={styles.charCounterRow}>
+              <span className={styles.hint}>
+                ca. 1.300 – 1.800 Zeichen inklusive Leerzeichen
+              </span>
+              <span
+                className={`${styles.charCounter} ${
+                  vollbeschreibung.length >= MAX_BESCHREIBUNG
+                    ? styles.charCounterMax
+                    : ""
+                }`}
+              >
+                {vollbeschreibung.length} / {MAX_BESCHREIBUNG}
+              </span>
+            </div>
+          </div>
+
+          <div className={styles.field}>
+            <label htmlFor="audio" className={styles.label}>
+              {t.label_audio}
+            </label>
+            {audioPreview ? (
+              <audio
+                src={audioPreview}
+                controls
+                className={styles.audioPreview}
+              />
+            ) : (
+              <p className={styles.hint}>Noch keine Datei hochgeladen.</p>
+            )}
+            <input
+              id="audio"
+              ref={audioRef}
+              type="file"
+              accept="audio/*"
+              onChange={handleAudioUpload}
+              className={styles.fileInput}
+            />
+            <div className={styles.audioMetaRow}>
+              <p className={styles.hint}>MP3, M4A, WAV — max. 50 MB</p>
+              <a
+                href={AUDIO_GUIDE_PDF}
+                download
+                className={styles.guideLink}
+              >
+                <Download size={15} aria-hidden="true" />
+                Tipps für die Audiodatei
+              </a>
+            </div>
+            {audioUploading && <p className={styles.hint}>Wird hochgeladen…</p>}
+            {audioError && <p className={styles.fieldError}>{audioError}</p>}
+          </div>
         </div>
 
         {/* Titelbild */}
@@ -457,28 +526,6 @@ export default function RedaktionForm({
           {titelbildError && (
             <p className={styles.fieldError}>{titelbildError}</p>
           )}
-        </div>
-
-        {/* Audio */}
-        <div className={styles.field}>
-          <label htmlFor="audio" className={styles.label}>
-            {t.label_audio}
-          </label>
-          {audioPreview ? (
-            <audio src={audioPreview} controls className={styles.audioPreview} />
-          ) : (
-            <p className={styles.hint}>Noch keine Datei hochgeladen.</p>
-          )}
-          <input
-            id="audio"
-            ref={audioRef}
-            type="file"
-            accept="audio/*"
-            onChange={handleAudioUpload}
-            className={styles.fileInput}
-          />
-          {audioUploading && <p className={styles.hint}>Wird hochgeladen…</p>}
-          {audioError && <p className={styles.fieldError}>{audioError}</p>}
         </div>
 
         {/* Galerie */}

@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import { Download } from "lucide-react";
 import { useAuth } from "@/context/AuthContext";
 import { getSupabaseBrowserClient } from "@/lib/supabase-browser";
 import styles from "./audiopin.module.css";
@@ -189,8 +190,23 @@ export default function AudiopinPage() {
     if (mode !== "view" || !pinId) return;
     setPinLoading(true);
     fetch(`/api/audiopin/${pinId}`)
-      .then((r) => r.json())
-      .then((data: PinData) => {
+      .then(async (r) => {
+        // Pin usuniety w Directusie (np. po odrzuceniu zgloszenia), a pin_id
+        // wciaz w partner_profiles — bez tego konto zostaje z formularzem
+        // w trybie edycji, ktorej nie da sie wykonac, i nowego pina tez nie
+        // mozna dodac. Traktujemy brak pina jak jego brak w profilu.
+        if (r.status === 404 || r.status === 403) {
+          setPinId(null);
+          setPinData(null);
+          setGalerieItems([]);
+          setMode("new_form");
+          return null;
+        }
+        if (!r.ok) throw new Error(`Pin konnte nicht geladen werden (${r.status})`);
+        return (await r.json()) as PinData;
+      })
+      .then((data) => {
+        if (!data) return;
         setPinData(data);
         const items = (data.Galerie ?? []).map((g) => ({
           junctionId: g.id,
@@ -1559,11 +1575,17 @@ export default function AudiopinPage() {
                   download
                   className={styles.secondaryButton}
                 >
+                  <Download size={15} aria-hidden="true" />
                   Tipps für die Audiodatei
                 </a>
               </div>
             )}
             <p className={styles.hint}>MP3, M4A, WAV — max. 50 MB</p>
+            <p className={styles.hint}>
+              Du bist dir unsicher, wie du deine Aufnahme gestaltest? In unserem
+              Leitfaden (PDF) findest du Tipps zu Länge, Aufbau und Tonqualität
+              deiner Audiodatei.
+            </p>
             {audioError && <p className={styles.uploadError}>{audioError}</p>}
             <input
               ref={audioRef}

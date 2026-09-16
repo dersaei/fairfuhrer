@@ -398,6 +398,7 @@ export interface RedaktionPageContent {
   label_stadt?: string;
   label_land?: string;
   label_beschreibung?: string;
+  hint_beschreibung_audio?: string;
   label_titelbild?: string;
   label_audio?: string;
   label_galerie?: string;

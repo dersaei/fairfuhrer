@@ -82,7 +82,7 @@ export default function UserMenu() {
                 scroll={false}
                 onClick={() => setIsOpen(false)}
               >
-                Mein Audiopin
+                Kostenloser PIN
               </Link>
               <Link
                 href="/konto/partner/premium"
@@ -90,7 +90,7 @@ export default function UserMenu() {
                 scroll={false}
                 onClick={() => setIsOpen(false)}
               >
-                Premium
+                Partner PIN
               </Link>
               <Link
                 href="/konto/partner/hilfe"

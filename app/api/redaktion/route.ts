@@ -9,6 +9,9 @@ import { supabaseAdmin } from "@/lib/supabase-admin";
 // pinu w kategorii komercyjnej przez ten endpoint.
 const SEHENSWERTES_KATEGORIE_ID = 1;
 
+/** Ten sam limit co w formularzu partnera (api/audiopin). */
+const MAX_BESCHREIBUNG = 2000;
+
 export async function POST(request: NextRequest) {
   try {
     // Auth: cookies (web) LUB Bearer token (mobile) — patrz lib/api-auth.ts.
@@ -41,6 +44,18 @@ export async function POST(request: NextRequest) {
     if (!body.Name || !body.Adresse || !body.Stadt) {
       return NextResponse.json(
         { error: "Name, Adresse und Stadt sind erforderlich." },
+        { status: 400 },
+      );
+    }
+
+    if (
+      typeof body.Vollbeschreibung === "string" &&
+      body.Vollbeschreibung.length > MAX_BESCHREIBUNG
+    ) {
+      return NextResponse.json(
+        {
+          error: `Die Beschreibung darf höchstens ${MAX_BESCHREIBUNG} Zeichen lang sein.`,
+        },
         { status: 400 },
       );
     }
