@@ -65,7 +65,7 @@ const DEFAULTS = {
   title: "Redaktion",
   subtitle:
     "Kennst du eine besondere Sehenswürdigkeit, die auf unsere Karte gehört? Als Teil unserer Redaktion kannst du selbst einen vollständigen Audiopin für die Kategorie **Sehenswertes** erstellen — kostenlos und unbegrenzt.",
-  label_name: "Name des Ortes",
+  label_name: "Name des PINs",
   label_adresse: "Straße & Hausnummer",
   label_stadt: "Stadt",
   label_land: "Land",
@@ -97,7 +97,8 @@ export default function RedaktionForm({
     label_adresse: content?.label_adresse || DEFAULTS.label_adresse,
     label_stadt: content?.label_stadt || DEFAULTS.label_stadt,
     label_land: content?.label_land || DEFAULTS.label_land,
-    label_beschreibung: content?.label_beschreibung || DEFAULTS.label_beschreibung,
+    label_beschreibung:
+      content?.label_beschreibung || DEFAULTS.label_beschreibung,
     hint_beschreibung_audio:
       content?.hint_beschreibung_audio || DEFAULTS.hint_beschreibung_audio,
     label_titelbild: content?.label_titelbild || DEFAULTS.label_titelbild,
@@ -105,7 +106,8 @@ export default function RedaktionForm({
     label_galerie: content?.label_galerie || DEFAULTS.label_galerie,
     hint_moderation: content?.hint_moderation || DEFAULTS.hint_moderation,
     button_text: content?.button_text || DEFAULTS.button_text,
-    button_sending_text: content?.button_sending_text || DEFAULTS.button_sending_text,
+    button_sending_text:
+      content?.button_sending_text || DEFAULTS.button_sending_text,
     success_message: content?.success_message || DEFAULTS.success_message,
     error_message: content?.error_message || DEFAULTS.error_message,
   };
@@ -116,11 +118,16 @@ export default function RedaktionForm({
   const [stadt, setStadt] = useState("");
   const [land, setLand] = useState("");
   const [vollbeschreibung, setVollbeschreibung] = useState("");
-  const [coordinates, setCoordinates] = useState<{ lat: number; lng: number } | null>(null);
+  const [coordinates, setCoordinates] = useState<{
+    lat: number;
+    lng: number;
+  } | null>(null);
 
   // Mapbox autocomplete
   const [geoQuery, setGeoQuery] = useState("");
-  const [geoSuggestions, setGeoSuggestions] = useState<GeocodingSuggestion[]>([]);
+  const [geoSuggestions, setGeoSuggestions] = useState<GeocodingSuggestion[]>(
+    [],
+  );
   const [geoLoading, setGeoLoading] = useState(false);
   const geoDebounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
@@ -166,7 +173,9 @@ export default function RedaktionForm({
     const cityContext = s.context?.find((c) => c.id.startsWith("place."));
     const countryContext = s.context?.find((c) => c.id.startsWith("country."));
     const streetPart = s.address ? `${s.text} ${s.address}` : s.text;
-    const adressPart = plzContext ? `${streetPart}, ${plzContext.text}` : streetPart;
+    const adressPart = plzContext
+      ? `${streetPart}, ${plzContext.text}`
+      : streetPart;
     setAdresse(adressPart);
     setGeoQuery(s.place_name);
     setCoordinates({ lat, lng });
@@ -485,11 +494,7 @@ export default function RedaktionForm({
             />
             <div className={styles.audioMetaRow}>
               <p className={styles.hint}>MP3, M4A, WAV — max. 50 MB</p>
-              <a
-                href={AUDIO_GUIDE_PDF}
-                download
-                className={styles.guideLink}
-              >
+              <a href={AUDIO_GUIDE_PDF} download className={styles.guideLink}>
                 <Download size={15} aria-hidden="true" />
                 Tipps für die Audiodatei
               </a>
@@ -522,7 +527,9 @@ export default function RedaktionForm({
             onChange={handleTitelbildUpload}
             className={styles.fileInput}
           />
-          {titelbildUploading && <p className={styles.hint}>Wird hochgeladen…</p>}
+          {titelbildUploading && (
+            <p className={styles.hint}>Wird hochgeladen…</p>
+          )}
           {titelbildError && (
             <p className={styles.fieldError}>{titelbildError}</p>
           )}
